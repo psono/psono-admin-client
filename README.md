@@ -14,6 +14,15 @@ The documentation for the psono server can be found here:
 
 [Psono Documentation](https://doc.psono.com/)
 
+# Things that have not yet found a place in our docs
+
+## Start of a dev server
+
+To start a server for development do the following
+
+	yarn start:dev
+
+Afterwards you can visit http://localhost:8080
 
 ## LICENSE
 
