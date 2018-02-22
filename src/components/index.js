@@ -81,10 +81,10 @@ import Small from "./Typography/Small.jsx";
 import A from './Typography/A.jsx';
 
 // ##############################
-// // // LoginForm
+// // // Form
 // #############################
 
-import LoginForm from "./LoginForm/LoginForm.jsx";
+import LoginForm from "./Form/LoginForm.jsx";
 
 export {
     // Cards
@@ -109,6 +109,6 @@ export {
     Tasks,
     // Typography
     P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small, A,
-    // LoginForm
+    // Form
     LoginForm,
 };

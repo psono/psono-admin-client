@@ -10,6 +10,7 @@ import {
     Dashboard, Person, ContentPaste, LibraryBooks, BubbleChart, LocationOn, Notifications
 } from 'material-ui-icons';
 
+
 const appRoutes = [
     { path: "/dashboard", sidebarName: "Dashboard", navbarName: "Material Dashboard", icon: Dashboard, component: DashboardPage },
     { path: "/user", sidebarName: "User Profile", navbarName: "Profile", icon: Person, component: UserProfile },

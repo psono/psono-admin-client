@@ -23,6 +23,9 @@ import { appStyle } from '../../variables/styles';
 import image from '../../assets/img/background.jpg';
 import logo from '../../assets/img/logo.png';
 
+
+import user from '../../utils/user';
+
 const switchRoutes = (<Switch>
 {
     appRoutes.map((prop,key) => {
@@ -48,6 +51,10 @@ class App extends React.Component{
         return this.props.location.pathname !== "/maps";
     }
     componentDidMount(){
+
+        if (!user.isLoggedIn()) {
+            return;
+        }
         if(window.innerWidth > 991)
         {
             // eslint-disable-next-line
@@ -58,6 +65,10 @@ class App extends React.Component{
         this.refs.mainPanel.scrollTop = 0;
     }
     render(){
+
+        if (!user.isLoggedIn()) {
+            return ( <Redirect to="/login"/> )
+        }
         const { classes, ...rest } = this.props;
         return (
             <div className={classes.wrapper}>
