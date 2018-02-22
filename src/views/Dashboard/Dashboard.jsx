@@ -17,24 +17,21 @@ import {
     dailySalesChart ,
     emailsSubscriptionChart,
     completedTasksChart
-} from '../../variables/charts.jsx';
+} from '../../variables/charts';
 
-import { dashboardStyle } from '../../variables/styles.jsx';
+import { dashboardStyle } from '../../variables/styles';
 
 class Dashboard extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: 0,
-        };
-        this.handleChange = (event, value) => {
-            this.setState({ value });
-        };
-        this.handleChangeIndex = index => {
-            this.setState({ value: index });
-        };
-    }
+    state = {
+        value: 0,
+    };
+    handleChange = (event, value) => {
+        this.setState({ value });
+    };
 
+    handleChangeIndex = index => {
+        this.setState({ value: index });
+    };
     render(){
         return (
             <div>

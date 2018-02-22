@@ -13,17 +13,14 @@ import {
     bugs,
     website,
     server
-} from '../../variables/general.jsx';
+} from '../../variables/general';
 
-import { tasksCardStyle } from '../../variables/styles.jsx';
+import { tasksCardStyle } from '../../variables/styles';
 
 class TasksCard extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: 0,
-        };
-    }
+    state = {
+        value: 0,
+    };
     handleChange = (event, value) => {
         this.setState({ value });
     };

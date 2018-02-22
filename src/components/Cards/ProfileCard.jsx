@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { profileCardStyle } from '../../variables/styles.jsx';
+import { profileCardStyle } from '../../variables/styles';
 
 class ProfileCard extends React.Component{
     render(){

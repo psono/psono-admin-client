@@ -5,7 +5,7 @@ import {
 import { Close } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { snackbarContentStyle } from '../../variables/styles.jsx';
+import { snackbarContentStyle } from '../../variables/styles';
 
 class SnackbarContent extends React.Component{
     render(){

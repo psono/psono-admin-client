@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { regularCardStyle } from '../../variables/styles.jsx';
+import { regularCardStyle } from '../../variables/styles';
 
 class RegularCard extends React.Component{
     render(){

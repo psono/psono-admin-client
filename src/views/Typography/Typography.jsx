@@ -3,7 +3,7 @@ import {
     withStyles
 } from 'material-ui';
 
-import RegularCard from '../../components/Cards/RegularCard.jsx';
+import RegularCard from '../../components/Cards/RegularCard';
 
 import {
     P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small

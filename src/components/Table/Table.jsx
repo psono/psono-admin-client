@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { tableStyle } from '../../variables/styles.jsx';
+import { tableStyle } from '../../variables/styles';
 
 class CustomTable extends React.Component {
     render(){

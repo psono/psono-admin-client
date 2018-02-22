@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { statsCardStyle } from '../../variables/styles.jsx';
+import { statsCardStyle } from '../../variables/styles';
 
 class StatsCard extends React.Component{
     render(){

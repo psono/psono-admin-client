@@ -18,7 +18,7 @@ import {
 
 import appRoutes from '../../routes/app.jsx';
 
-import { appStyle } from '../../variables/styles.jsx';
+import { appStyle } from '../../variables/styles';
 
 import image from '../../assets/img/sidebar-2.jpg';
 import logo from '../../assets/img/reactlogo.png';

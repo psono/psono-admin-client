@@ -4,7 +4,7 @@ import {
     withStyles
 } from 'material-ui';
 
-import { typographyStyle } from '../../variables/styles.jsx';
+import { typographyStyle } from '../../variables/styles';
 
 class Info extends React.Component{
     render(){

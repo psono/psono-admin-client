@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import { RegularCard, P, A, ItemGrid } from '../../components';
 
-import { iconsStyle } from '../../variables/styles.jsx';
+import { iconsStyle } from '../../variables/styles';
 
 class Icons extends React.Component{
     render(){

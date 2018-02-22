@@ -5,7 +5,7 @@ import {
 } from 'material-ui';
 import { NavLink } from 'react-router-dom';
 
-import { sidebarStyle } from '../../variables/styles.jsx';
+import { sidebarStyle } from '../../variables/styles';
 
 import { HeaderLinks } from '../../components';
 

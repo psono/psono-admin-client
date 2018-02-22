@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { typographyStyle } from '../../variables/styles.jsx';
+import { typographyStyle } from '../../variables/styles';
 
 class P extends React.Component{
     render(){

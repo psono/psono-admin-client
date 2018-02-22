@@ -7,30 +7,27 @@ import {
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { tasksStyle } from '../../variables/styles.jsx';
+import { tasksStyle } from '../../variables/styles';
 
 class Tasks extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            checked: this.props.checkedIndexes,
-        };
-        this.handleToggle = value => () => {
-            const { checked } = this.state;
-            const currentIndex = checked.indexOf(value);
-            const newChecked = [...checked];
+    state = {
+        checked: this.props.checkedIndexes,
+    };
+    handleToggle = value => () => {
+        const { checked } = this.state;
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
 
-            if (currentIndex === -1) {
-                newChecked.push(value);
-            } else {
-                newChecked.splice(currentIndex, 1);
-            }
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
 
-            this.setState({
-                checked: newChecked,
-            });
-        };
-    }
+        this.setState({
+            checked: newChecked,
+        });
+    };
     render(){
         const { classes, tasksIndexes, tasks } = this.props;
         return (

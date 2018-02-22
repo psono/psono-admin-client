@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { iconButtonStyle } from '../../variables/styles.jsx';
+import { iconButtonStyle } from '../../variables/styles';
 
 class IconCustomButton extends React.Component{
     render(){

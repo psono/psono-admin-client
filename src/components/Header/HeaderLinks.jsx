@@ -10,23 +10,19 @@ import { Manager, Target, Popper } from 'react-popper';
 
 import { CustomInput, IconButton as SearchButton } from '../../components';
 
-import { headerLinksStyle } from '../../variables/styles.jsx';
+import { headerLinksStyle } from '../../variables/styles';
 
 class HeaderLinks extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false,
-        };
+    state = {
+      open: false,
+    };
+    handleClick = () => {
+      this.setState({ open: !this.state.open });
+    };
 
-        this.handleClick = () => {
-            this.setState({ open: !this.state.open });
-        };
-
-        this.handleClose = () => {
-            this.setState({ open: false });
-        };
-    }
+    handleClose = () => {
+      this.setState({ open: false });
+    };
     render(){
         const { classes } = this.props;
         const { open } = this.state;

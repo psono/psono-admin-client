@@ -4,7 +4,7 @@ import {
     List, ListItem, withStyles
 } from 'material-ui';
 
-import { footerStyle } from '../../variables/styles.jsx';
+import { footerStyle } from '../../variables/styles';
 
 class Footer extends React.Component{
     render(){

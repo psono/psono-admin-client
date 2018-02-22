@@ -4,7 +4,7 @@ import {
 } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { buttonStyle } from '../../variables/styles.jsx';
+import { buttonStyle } from '../../variables/styles';
 
 class RegularButton extends React.Component{
     render(){

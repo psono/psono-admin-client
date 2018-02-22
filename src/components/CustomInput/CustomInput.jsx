@@ -7,7 +7,7 @@ import {
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { customInputStyle } from '../../variables/styles.jsx';
+import { customInputStyle } from '../../variables/styles';
 
 class CustomInput extends React.Component {
   render() {

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import registerServiceWorker from './registerServiceWorker';
 import { createBrowserHistory } from 'history';
 import {
     Router,
@@ -7,8 +8,8 @@ import {
     Switch
 } from 'react-router-dom';
 
-// import 'assets/css/material-dashboard-react.css';
-//
+import './assets/css/material-dashboard-react.css';
+
 import indexRoutes from './routes/index.jsx';
 
 const hist = createBrowserHistory();
@@ -26,3 +27,4 @@ ReactDOM.render(
         </Switch>
     </Router>
 , document.getElementById('root'));
+registerServiceWorker();

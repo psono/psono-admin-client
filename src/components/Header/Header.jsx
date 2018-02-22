@@ -7,9 +7,9 @@ import {
     withStyles, AppBar, Toolbar, IconButton, Hidden, Button,
 } from 'material-ui';
 
-import { headerStyle } from '../../variables/styles.jsx';
+import { headerStyle } from '../../variables/styles';
 
-import HeaderLinks from './HeaderLinks.jsx';
+import HeaderLinks from './HeaderLinks';
 
 class Header extends React.Component{
     makeBrand(){
