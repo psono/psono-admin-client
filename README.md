@@ -20,11 +20,33 @@ The documentation for the psono server can be found here:
 
 To start a server for development do the following
 
-	yarn start:dev
+	yarn start
 
-Afterwards you can visit http://localhost:8080
+Afterwards you can visit http://localhost:3000
 
-## LICENSE
+## Build for production
+
+To build everything as standalone for production
+
+	yarn build
+
+Afterwards everthing can be found in the `/build` folder
+
+## Run unittests
+
+To run unit tests
+
+	yarn test
+
+## Run unittests (with coverage)
+
+To run unit tests
+
+	yarn test -- --coverage
+
+
+
+# LICENSE
 
 Visit the [License.md](/LICENSE.md) for more details
 
@@ -33,6 +55,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Below you will find some information on how to perform common tasks.<br>
 You can find the most recent version of this guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+
+# Other
 
 ## Table of Contents
 

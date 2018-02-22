@@ -80,6 +80,12 @@ import Danger from "./Typography/Danger.jsx";
 import Small from "./Typography/Small.jsx";
 import A from './Typography/A.jsx';
 
+// ##############################
+// // // LoginForm
+// #############################
+
+import LoginForm from "./LoginForm/LoginForm.jsx";
+
 export {
     // Cards
     ChartCard, ProfileCard, RegularCard, StatsCard, TasksCard,
@@ -103,4 +109,6 @@ export {
     Tasks,
     // Typography
     P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small, A,
+    // LoginForm
+    LoginForm,
 };

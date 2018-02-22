@@ -1,7 +1,9 @@
 import App from '../containers/App/App.jsx';
+import LoginPage from "../containers/Login/Login";
 
 const indexRoutes = [
-    { path: "/", component: App }
+    { path: "/login", component: LoginPage },
+    { path: "/", component: App },
 ];
 
 export default indexRoutes;

@@ -20,8 +20,8 @@ import appRoutes from '../../routes/app.jsx';
 
 import { appStyle } from '../../variables/styles';
 
-import image from '../../assets/img/sidebar-2.jpg';
-import logo from '../../assets/img/reactlogo.png';
+import image from '../../assets/img/background.jpg';
+import logo from '../../assets/img/logo.png';
 
 const switchRoutes = (<Switch>
 {
@@ -63,7 +63,7 @@ class App extends React.Component{
             <div className={classes.wrapper}>
                 <Sidebar
                     routes={appRoutes}
-                    logoText={"Creative Tim"}
+                    logoText={"Admin"}
                     logo={logo}
                     image={image}
                     handleDrawerToggle={this.handleDrawerToggle}

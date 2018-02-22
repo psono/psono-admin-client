@@ -30,7 +30,7 @@ class Footer extends React.Component{
                     </div>
                     <p className={classes.right}>
                         <span>
-                            &copy; {1900 + (new Date()).getYear()} <a href="http://www.creative-tim.com" className={classes.a}>Creative Tim</a>, made with love for a better web
+                            &copy; {1900 + (new Date()).getYear()} <a href="http://www.psono.com" className={classes.a}>Psono</a>
                         </span>
                     </p>
                 </div>

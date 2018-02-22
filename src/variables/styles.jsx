@@ -125,7 +125,7 @@ const defaultBoxShadow = {
     OTransition: 'all 150ms ease 0s',
     MsTransition: 'all 150ms ease 0s',
     transition: 'all 150ms ease 0s',
-}
+};
 
 // ##############################
 // // // App styles
@@ -158,6 +158,7 @@ const appStyle = theme => ({
         marginTop: '70px',
     }
 });
+
 
 // ##############################
 // // // Sidebar styles
@@ -234,14 +235,14 @@ const sidebarStyle = theme => ({
         }
     },
     logoImage: {
-        width: '30px',
+        width: '100px',
         display: 'inline-block',
         maxHeight: '30px',
         marginLeft: '10px',
         marginRight: '15px',
     },
     img: {
-        width: '35px',
+        width: '105px',
         top: '22px',
         position: 'absolute',
         verticalAlign: 'middle',
@@ -1547,7 +1548,7 @@ const snackbarContentStyle = {
         paddingLeft: '65px',
         display: 'block'
     }
-}
+};
 
 module.exports = {
     dashboardStyle,
@@ -1569,4 +1570,4 @@ module.exports = {
     sidebarStyle,
     appStyle,
     headerLinksStyle,
-}
+};
