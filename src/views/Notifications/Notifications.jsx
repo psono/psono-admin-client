@@ -11,17 +11,14 @@ import {
 } from '../../components';
 
 class Notifications extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            tl: false,
-            tc: false,
-            tr: false,
-            bl: false,
-            bc: false,
-            br: false
-        };
-    }
+    state = {
+        tl: false,
+        tc: false,
+        tr: false,
+        bl: false,
+        bc: false,
+        br: false
+    };
     showNotification(place){
         var x = [];
         x[place] = true;
