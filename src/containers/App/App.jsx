@@ -24,7 +24,9 @@ import image from '../../assets/img/background.jpg';
 import logo from '../../assets/img/logo.png';
 
 
-import user from '../../utils/user';
+import * as actionCreators from "../../actions/actionCreators";
+import {bindActionCreators, compose} from 'redux';
+import {connect} from "react-redux";
 
 const switchRoutes = (<Switch>
 {
@@ -51,8 +53,7 @@ class App extends React.Component{
         return this.props.location.pathname !== "/maps";
     }
     componentDidMount(){
-
-        if (!user.isLoggedIn()) {
+        if (!this.props.state.user.isLoggedIn) {
             return;
         }
         if(window.innerWidth > 991)
@@ -65,8 +66,7 @@ class App extends React.Component{
         this.refs.mainPanel.scrollTop = 0;
     }
     render(){
-
-        if (!user.isLoggedIn()) {
+        if (!this.props.state.user.isLoggedIn) {
             return ( <Redirect to="/login"/> )
         }
         const { classes, ...rest } = this.props;
@@ -110,8 +110,22 @@ class App extends React.Component{
 }
 
 App.propTypes = {
+    store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
-    theme: PropTypes.object.isRequired
+    theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(appStyle, { withTheme: true })(App);
+
+function mapStateToProps(state) {
+    return {state: state}
+}
+
+
+function mapDispatchToProps(dispatch) {
+    return {actions: bindActionCreators(actionCreators, dispatch)}
+}
+
+export default compose(
+    withStyles(appStyle, { withTheme: true }),
+    connect(mapStateToProps, mapDispatchToProps)
+)(App);
