@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-    withStyles
-} from 'material-ui';
-import {
-    LoginForm
-} from '../../components';
-
-import image from '../../assets/img/background.jpg';
-
+import {connect} from 'react-redux';
+import {bindActionCreators, compose} from 'redux';
+import { withStyles } from 'material-ui';
 import PropTypes from 'prop-types';
 
+import { LoginForm } from '../../components';
+import * as actionCreators from '../../actions/actionCreators'
+
+import image from '../../assets/img/background.jpg';
 const style = {
     wrapper: {
         position: 'relative',
@@ -35,13 +33,17 @@ const style = {
 
 class Login extends React.Component{
     render(){
-        const { classes, ...rest } = this.props;
+        const { classes, actions, ...rest } = this.props;
+        function login(username, password) {
+            actions.login(username, password);
+        }
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content}>
                 </div>
                 <LoginForm
                     {...rest}
+                    login={login}
                 />
             </div>
         );
@@ -49,7 +51,19 @@ class Login extends React.Component{
 }
 
 Login.propTypes = {
+    store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(style)(Login);
+function mapStateToProps(state) {
+    return {state: state}
+}
+
+function mapDispatchToProps(dispatch) {
+    return {actions: bindActionCreators(actionCreators, dispatch)}
+}
+
+export default compose(
+    withStyles(style),
+    connect(mapStateToProps, mapDispatchToProps)
+)(Login);
