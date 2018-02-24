@@ -34,16 +34,14 @@ const style = {
 class Login extends React.Component{
     render(){
         const { classes, actions, ...rest } = this.props;
-        function login(username, password) {
-            actions.login(username, password);
-        }
+
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content}>
                 </div>
                 <LoginForm
                     {...rest}
-                    login={login}
+                    login={actions.login}
                 />
             </div>
         );

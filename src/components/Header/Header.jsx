@@ -13,17 +13,18 @@ import HeaderLinks from './HeaderLinks';
 
 class Header extends React.Component{
     makeBrand(){
-        var name;
+        let name;
         this.props.routes.map((prop,key) => {
             if(prop.path === this.props.location.pathname){
                 name = prop.navbarName;
             }
             return null;
-        })
+        });
+        console.log(this.props);
         return name;
     }
     render(){
-        const { classes, color } = this.props;
+        const { classes, actions, color, ...rest } = this.props;
         return (
             <AppBar className={classes.appBar + (color !== undefined ? " " + classes[color]:"")}>
                 <Toolbar className={classes.container}>
@@ -32,7 +33,10 @@ class Header extends React.Component{
                         <Button href="#" className={classes.title}>{this.makeBrand()}</Button>
                     </div>
                     <Hidden smDown implementation="css">
-                        <HeaderLinks />
+                        <HeaderLinks
+                            {...rest}
+                            logout={actions.logout}
+                        />
                     </Hidden>
                     <Hidden mdUp>
                         <IconButton

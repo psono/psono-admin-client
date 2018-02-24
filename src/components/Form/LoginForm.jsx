@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-    withStyles, Grid
+    withStyles, Grid, Checkbox
 } from 'material-ui';
+import { Check } from 'material-ui-icons';
 import {
     Redirect
 } from 'react-router-dom';
@@ -19,33 +20,78 @@ const style = {
         wrapper: {
             width: '540px',
         },
-    }
+    },
+    checked: {
+        color: '#9c27b0'
+    },
+    checkedIcon: {
+        width: '20px',
+        height: '20px',
+        border: '1px solid rgba(0, 0, 0, .54)',
+        borderRadius: '3px',
+    },
+    uncheckedIcon: {
+        width: '0px',
+        height: '0px',
+        padding: '10px',
+        border: '1px solid rgba(0, 0, 0, .54)',
+        borderRadius: '3px',
+    },
 };
 
 class LoginForm extends React.Component {
+
+
     state = {
-        username: '',
+        username: this.props.state.user.username,
         password: '',
+        server: this.props.state.user.server,
+        remember_me: this.props.state.user.remember_me,
+        trust_device: this.props.state.user.trust_device,
+        loginPossible: false,
         errors: [],
         loggedIn: this.props.state.user.isLoggedIn,
     };
 
+    handleToggleRememberMe = () => () => {
+        this.setState({ remember_me: !this.state.remember_me });
+    };
+
+    handleToggleTrustDevice = () => () => {
+        this.setState({ trust_device: !this.state.trust_device });
+    };
+    manageButtonState = () => {
+
+        if (this.state.username && this.state.password)  {
+            this.setState({loginPossible: true});
+        } else {
+            this.setState({loginPossible: false});
+        }
+    };
+    onChangeUsername = (event) => {
+        this.setState({username: event.target.value});
+        this.manageButtonState();
+    };
+    onChangePassword = (event) => {
+        this.setState({password: event.target.value})
+        this.manageButtonState();
+    };
+    onChangeServer = (event) => {
+        this.setState({server: event.target.value})
+        this.manageButtonState();
+    };
+    login = () => {
+        let errors = this.props.login(this.state.username, this.state.password, this.state.server, this.state.remember_me, this.state.trust_device);
+        if (errors) {
+            this.setState({errors})
+        } else {
+            this.setState({loggedIn: true});
+        }
+    };
+
     render() {
         const { classes } = this.props;
-        const login = () => {
-            let errors = this.props.login(this.state.username, this.state.password);
-            if (errors) {
-                this.setState({errors})
-            } else {
-                this.setState({loggedIn: true});
-            }
-        };
-        const onChangeUsername = (event) => {
-            this.setState({username: event.target.value})
-        };
-        const onChangePassword = (event) => {
-            this.setState({password: event.target.value})
-        };
+
 
         const errors = (
             <ItemGrid xs={8} sm={8} md={8} style={{marginTop: '20px'}}>
@@ -79,7 +125,7 @@ class LoginForm extends React.Component {
                                         }}
                                         inputProps={{
                                             value: this.state.username,
-                                            onChange: onChangeUsername,
+                                            onChange: this.onChangeUsername,
                                         }}
                                     />
                                 </ItemGrid>
@@ -94,17 +140,60 @@ class LoginForm extends React.Component {
                                         }}
                                         inputProps={{
                                             value: this.state.password,
-                                            onChange: onChangePassword,
+                                            onChange: this.onChangePassword,
                                             type: 'password',
                                         }}
                                     />
                                 </ItemGrid>
                             </Grid>
                             <Grid container>
+                                <ItemGrid xs={12} sm={12} md={12}>
+                                    <Checkbox
+                                        tabIndex={1}
+                                        checked={this.state.remember_me}
+                                        onClick={this.handleToggleRememberMe()}
+                                        checkedIcon={<Check className={classes.checkedIcon}/>}
+                                        icon={<Check className={classes.uncheckedIcon}/>}
+                                        classes={{
+                                            checked: classes.checked,
+                                        }}
+                                    /> Remember username and server
+                                </ItemGrid>
+                            </Grid>
+                            <Grid container>
+                                <ItemGrid xs={12} sm={12} md={12}>
+                                    <Checkbox
+                                        tabIndex={2}
+                                        checked={this.state.trust_device}
+                                        onClick={this.handleToggleTrustDevice()}
+                                        checkedIcon={<Check className={classes.checkedIcon}/>}
+                                        icon={<Check className={classes.uncheckedIcon}/>}
+                                        classes={{
+                                            checked: classes.checked,
+                                        }}
+                                    /> Trust device
+                                </ItemGrid>
+                            </Grid>
+                            <Grid container>
                                 <ItemGrid xs={4} sm={4} md={4} style={{marginTop: '20px'}}>
-                                    <Button color="primary" onClick={login}>Login</Button>
+                                    <Button color="primary" onClick={this.login} disabled={!this.state.loginPossible}>Login</Button>
                                 </ItemGrid>
                                 {errors}
+                            </Grid>
+                            <Grid container>
+                                <ItemGrid xs={12} sm={12} md={12}>
+                                    <CustomInput
+                                        labelText="Server"
+                                        id="server"
+                                        formControlProps={{
+                                            fullWidth: true
+                                        }}
+                                        inputProps={{
+                                            value: this.state.server,
+                                            onChange: this.onChangeServer
+                                        }}
+                                    />
+                                </ItemGrid>
                             </Grid>
                         </div>
                     }

@@ -63,7 +63,9 @@ class App extends React.Component{
         }
     }
     componentDidUpdate(){
-        this.refs.mainPanel.scrollTop = 0;
+        if (this.refs.mainPanel) {
+            this.refs.mainPanel.scrollTop = 0;
+        }
     }
     render(){
         if (!this.props.state.user.isLoggedIn) {
