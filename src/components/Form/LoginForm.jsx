@@ -12,6 +12,8 @@ import {
     RegularCard, Button, CustomInput, ItemGrid, SnackbarContent
 } from '../../components';
 
+import helper from '../../services/helper'
+
 const style = {
     wrapper: {
         width: '340px',
@@ -56,6 +58,10 @@ class LoginForm extends React.Component {
         loggedIn: this.props.state.user.isLoggedIn,
         server_info: {},
         multifactors: [],
+        yubikey_otp: '',
+        duo: '',
+        google_authenticator: '',
+        duo_request: false,
     };
 
     handleToggleRememberMe = () => () => {
@@ -73,6 +79,15 @@ class LoginForm extends React.Component {
             this.setState({loginPossible: false});
         }
     };
+    onChangeYubikeyOTP = (event) => {
+        this.setState({yubikey_otp: event.target.value});
+    };
+    onChangeDuo = (event) => {
+        this.setState({duo: event.target.value});
+    };
+    onChangeGoogleAuthentication = (event) => {
+        this.setState({google_authenticator: event.target.value});
+    };
     onChangeUsername = (event) => {
         this.setState({username: event.target.value});
         this.manageButtonState();
@@ -86,16 +101,97 @@ class LoginForm extends React.Component {
         this.manageButtonState();
     };
 
-    handle_multifactor = () => {
+    requirement_check_mfa = () => {
         let multifactors = this.state.multifactors;
         if (multifactors.length === 0) {
             this.props.activate_token().then(() => {
-                this.setState({'loggedIn': true})
+                this.setState({
+                    loggedIn: true,
+                    loginLoading: false
+                })
             });
-
         } else {
-            // TODO handle multifactors
-            console.log(multifactors);
+            this.setState({
+                loginLoading: false
+            });
+            this.handle_mfa()
+        }
+    };
+
+    verify_yubikey_otp = () => {
+        let multifactors = this.state.multifactors;
+
+        this.props.yubikey_otp_verify(this.state.yubikey_otp).then(
+            () => {
+                helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                this.setState({multifactors: multifactors});
+                this.requirement_check_mfa();
+            },
+            (errors) => {
+                this.setState({errors});
+            }
+        )
+    };
+
+    verify_google_authenticator = () => {
+        let multifactors = this.state.multifactors;
+
+        this.props.ga_verify(this.state.google_authenticator).then(
+            () => {
+                helper.remove_from_array(multifactors, 'google_authenticator_2fa');
+                this.setState({multifactors: multifactors});
+                this.requirement_check_mfa();
+            },
+            (errors) => {
+                this.setState({errors});
+            }
+        )
+    };
+
+    verify_duo = () => {
+        let multifactors = this.state.multifactors;
+        let duo_code = this.state.duo;
+        if (duo_code === '') {
+            duo_code = undefined;
+        }
+
+        this.props.duo_verify(duo_code).then(
+            () => {
+                helper.remove_from_array(multifactors, 'duo_2fa');
+                this.setState({multifactors: multifactors});
+                this.requirement_check_mfa();
+            },
+            (errors) => {
+                this.setState({errors});
+            }
+        )
+    };
+
+    handle_mfa = () => {
+        let multifactors = this.state.multifactors;
+        if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
+            this.setState({
+                view: 'yubikey_otp',
+                loginLoading: false
+            });
+        } else if (multifactors.indexOf('google_authenticator_2fa') !== -1) {
+            this.setState({
+                view: 'google_authenticator',
+                loginLoading: false
+            });
+        } else if (multifactors.indexOf('duo_2fa') !== -1) {
+            this.setState({
+                view: 'duo',
+                loginLoading: false
+            });
+            this.verify_duo()
+        } else {
+            this.setState({
+                view: 'default',
+                errors: ['Unknown multi-factor authentication requested by server.'],
+                loginLoading: false
+            });
+            this.logout();
         }
     };
 
@@ -114,7 +210,7 @@ class LoginForm extends React.Component {
                     return this.props.login(password, this.state.server_info).then(
                         (required_multifactors) => {
                             this.setState({multifactors: required_multifactors});
-                            this.handle_multifactor()
+                            this.requirement_check_mfa()
                         },
                         (result) => {
                             this.setState({loginLoading: false});
@@ -151,7 +247,7 @@ class LoginForm extends React.Component {
         this.props.login(password, this.state.server_info).then(
             (required_multifactors) => {
                 this.setState({multifactors: required_multifactors});
-                this.handle_multifactor()
+                this.requirement_check_mfa()
             },
             (result) => {
                 this.setState({loginLoading: false});
@@ -170,7 +266,8 @@ class LoginForm extends React.Component {
     cancel = () => {
         this.setState({
             view: 'default',
-            password: ''
+            password: '',
+            errors: []
         });
         this.props.logout();
     };
@@ -202,7 +299,7 @@ class LoginForm extends React.Component {
                         cardTitle="Login"
                         cardSubtitle="Enter your username and password:"
                         content={
-                            <div>
+                            <form onSubmit={e => { e.preventDefault(); }}>
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
@@ -264,7 +361,7 @@ class LoginForm extends React.Component {
                                 </Grid>
                                 <Grid container>
                                     <ItemGrid xs={4} sm={4} md={4} style={{marginTop: '20px'}}>
-                                        <Button color="primary" onClick={this.initiate_login}
+                                        <Button color="primary" onClick={this.initiate_login} type="submit"
                                                 disabled={!this.state.loginPossible || this.state.loginLoading}>
                                             <span style={!this.state.loginLoading ? {} : { display: 'none' }}>Login</span>
                                             <BarLoader color={'#FFF'} height={17} width={37} loading={this.state.loginLoading}  />
@@ -287,7 +384,7 @@ class LoginForm extends React.Component {
                                         />
                                     </ItemGrid>
                                 </Grid>
-                            </div>
+                            </form>
                         }
                     />
                 </div>
@@ -300,7 +397,7 @@ class LoginForm extends React.Component {
                         cardTitle="New Server"
                         cardSubtitle="Verify the fingerprint and approve it."
                         content={
-                            <div>
+                            <form onSubmit={e => { e.preventDefault(); }}>
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
@@ -322,14 +419,131 @@ class LoginForm extends React.Component {
                                 </Grid>
                                 <Grid container>
                                     <ItemGrid xs={12} sm={4} md={12} style={{marginTop: '20px'}}>
-                                        <Button color="primary" onClick={this.approve_host} >Approve</Button>
+                                        <Button color="primary" onClick={this.approve_host} type="submit">Approve</Button>
                                         <Button color="transparent" onClick={this.cancel} >Cancel</Button>
                                     </ItemGrid>
                                 </Grid>
                                 <Grid container>
                                     {errors}
                                 </Grid>
-                            </div>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'yubikey_otp') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle="Yubikey Authentication"
+                        cardSubtitle="Please enter your yubikey below."
+                        content={
+                            <form onSubmit={e => { e.preventDefault(); }}>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText="Yubikey"
+                                            id="yubikey_otp"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                value: this.state.yubikey_otp,
+                                                onChange: this.onChangeYubikeyOTP,
+                                            }}
+                                        />
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={4} md={12} style={{marginTop: '20px'}}>
+                                        <Button color="primary" onClick={this.verify_yubikey_otp} type="submit">Send</Button>
+                                        <Button color="transparent" onClick={this.cancel} >Cancel</Button>
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    {errors}
+                                </Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'google_authenticator') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle="Google Authentication"
+                        cardSubtitle="Please enter your Google authenticator code below."
+                        content={
+                            <form onSubmit={e => { e.preventDefault(); }}>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText="Google Authenticator"
+                                            id="google_authenticator"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                value: this.state.google_authenticator,
+                                                onChange: this.onChangeGoogleAuthentication,
+                                            }}
+                                        />
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={4} md={12} style={{marginTop: '20px'}}>
+                                        <Button color="primary" onClick={this.verify_google_authenticator} type="submit">Send</Button>
+                                        <Button color="transparent" onClick={this.cancel} >Cancel</Button>
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    {errors}
+                                </Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'duo') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle="Duo Authentication"
+                        cardSubtitle="Please approve the request on your phone or enter a code below."
+                        content={
+                            <form onSubmit={e => { e.preventDefault(); }}>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText="Duo Code"
+                                            id="duo"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                value: this.state.duo,
+                                                onChange: this.onChangeDuo,
+                                            }}
+                                        />
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={4} md={12} style={{marginTop: '20px'}}>
+                                        <Button color="primary" onClick={this.verify_duo} type="submit">Send</Button>
+                                        <Button color="transparent" onClick={this.cancel} >Cancel</Button>
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    {errors}
+                                </Grid>
+                            </form>
                         }
                     />
                 </div>

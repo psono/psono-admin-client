@@ -13,7 +13,7 @@ function activate() {
 /**
  * Returns the device fingerprint
  *
- * @returns {promise} Returns promise with the device fingerprint
+ * @returns Promise<AxiosResponse<any>> Returns promise with the device fingerprint
  */
 function get_device_fingerprint_async() {
 

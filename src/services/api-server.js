@@ -38,12 +38,12 @@ function call(method, endpoint, data, headers, session_secret_key) {
 
     const url = store.getState().server.url + endpoint;
 
-    // if (session_secret_key && data !== null) {
-    //     data['request_time'] = new Date().toISOString();
-    //     data = cryptoLibrary.encrypt_data(JSON.stringify(data), session_secret_key);
-    // }
-    return new Promise((resolve, reject) => {
+    if (session_secret_key && data !== null) {
+        data['request_time'] = new Date().toISOString();
+        data = cryptoLibrary.encrypt_data(JSON.stringify(data), session_secret_key);
+    }
 
+    return new Promise((resolve, reject) => {
         axios({
             method,
             url,
@@ -57,7 +57,7 @@ function call(method, endpoint, data, headers, session_secret_key) {
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
-                reject(error.response)
+                return reject(decrypt_data(session_secret_key, error.response))
             } else if (error.request) {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of

@@ -28,10 +28,82 @@ function initiate_login(username, server, remember_me, trust_device) {
 let session_password = '';
 let verification = {};
 
+
+
+/**
+ * Ajax POST request to the backend with the token
+ *
+ * @param {string} ga_token The GA Token
+ *
+ * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
+ */
+function ga_verify(ga_token) {
+
+    const token = store.getState().user.token;
+    const session_secret_key = store.getState().user.session_secret_key;
+
+    return psono_server.ga_verify(token, ga_token, session_secret_key).catch(
+        (response) => {
+            if (response.hasOwnProperty('data') && response.data.hasOwnProperty('non_field_errors')) {
+                return Promise.reject(response.data.non_field_errors);
+            } else {
+                return Promise.reject(response);
+            }
+        }
+    );
+}
+
+/**
+ * Ajax POST request to the backend with the token
+ *
+ * @param {string} [duo_token] (optional) The Duo Token
+ *
+ * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
+ */
+function duo_verify(duo_token) {
+
+    const token = store.getState().user.token;
+    const session_secret_key = store.getState().user.session_secret_key;
+
+    return psono_server.duo_verify(token, duo_token, session_secret_key).catch(
+        (response) => {
+            if (response.hasOwnProperty('data') && response.data.hasOwnProperty('non_field_errors')) {
+                return Promise.reject(response.data.non_field_errors);
+            } else {
+                return Promise.reject(response);
+            }
+        }
+    );
+}
+
+/**
+ * Ajax POST request to the backend with the token
+ *
+ * @param {string} yubikey_otp The YubiKey OTP token
+ *
+ * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
+ */
+function yubikey_otp_verify(yubikey_otp) {
+
+    const token = store.getState().user.token;
+    const session_secret_key = store.getState().user.session_secret_key;
+
+    return psono_server.yubikey_otp_verify(token, yubikey_otp, session_secret_key).catch(
+        (response) => {
+            if (response.hasOwnProperty('data') && response.data.hasOwnProperty('non_field_errors')) {
+                return Promise.reject(response.data.non_field_errors);
+            } else {
+                return Promise.reject(response);
+            }
+        }
+    );
+}
+
+
 /**
  * Handles the validation of the token with the server by solving the cryptographic puzzle
  *
- * @returns {promise} Returns a promise with the the final activate token was successful or not
+ * @returns Promise<AxiosResponse<any>> Returns a promise with the the final activate token was successful or not
  */
 function activate_token() {
 
@@ -40,7 +112,6 @@ function activate_token() {
     const user_sauce = store.getState().user.user_sauce;
 
     const onSuccess = function (activation_data) {
-        console.log(activation_data);
         // decrypt user secret key
         const user_secret_key = cryptoLibrary.decrypt_secret(
             activation_data.data.user.secret_key,
@@ -185,6 +256,11 @@ function login(password, server_info) {
 }
 
 function logout() {
+
+    const token = store.getState().user.token;
+    const session_secret_key = store.getState().user.session_secret_key;
+
+    psono_server.logout(token, session_secret_key);
     action.logout()
 }
 
@@ -192,6 +268,9 @@ const service = {
     initiate_login,
     login,
     activate_token,
+    ga_verify,
+    duo_verify,
+    yubikey_otp_verify,
     logout,
 };
 

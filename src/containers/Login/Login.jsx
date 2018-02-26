@@ -48,6 +48,9 @@ class Login extends React.Component{
                     login={user.login}
                     activate_token={user.activate_token}
                     logout={user.logout}
+                    yubikey_otp_verify={user.yubikey_otp_verify}
+                    duo_verify={user.duo_verify}
+                    ga_verify={user.ga_verify}
                 />
             </div>
         );
