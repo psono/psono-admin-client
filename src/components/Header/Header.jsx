@@ -8,6 +8,7 @@ import {
 } from 'material-ui';
 
 import { headerStyle } from '../../variables/styles';
+import user from '../../services/user'
 
 import HeaderLinks from './HeaderLinks';
 
@@ -20,11 +21,10 @@ class Header extends React.Component{
             }
             return null;
         });
-        console.log(this.props);
         return name;
     }
     render(){
-        const { classes, actions, color, ...rest } = this.props;
+        const { classes, color, ...rest } = this.props;
         return (
             <AppBar className={classes.appBar + (color !== undefined ? " " + classes[color]:"")}>
                 <Toolbar className={classes.container}>
@@ -35,7 +35,7 @@ class Header extends React.Component{
                     <Hidden smDown implementation="css">
                         <HeaderLinks
                             {...rest}
-                            logout={actions.logout}
+                            logout={user.logout}
                         />
                     </Hidden>
                     <Hidden mdUp>

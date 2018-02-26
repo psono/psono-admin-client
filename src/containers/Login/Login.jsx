@@ -5,7 +5,9 @@ import { withStyles } from 'material-ui';
 import PropTypes from 'prop-types';
 
 import { LoginForm } from '../../components';
-import * as actionCreators from '../../actions/actionCreators'
+import actionCreators from '../../actions/actionCreators'
+import user from '../../services/user'
+import host from '../../services/host'
 
 import image from '../../assets/img/background.jpg';
 const style = {
@@ -33,7 +35,7 @@ const style = {
 
 class Login extends React.Component{
     render(){
-        const { classes, actions, ...rest } = this.props;
+        const { classes, ...rest } = this.props;
 
         return (
             <div className={classes.wrapper}>
@@ -41,7 +43,11 @@ class Login extends React.Component{
                 </div>
                 <LoginForm
                     {...rest}
-                    login={actions.login}
+                    initiate_login={user.initiate_login}
+                    approve_host={host.approve_host}
+                    login={user.login}
+                    activate_token={user.activate_token}
+                    logout={user.logout}
                 />
             </div>
         );

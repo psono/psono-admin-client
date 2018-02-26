@@ -24,7 +24,7 @@ import image from '../../assets/img/background.jpg';
 import logo from '../../assets/img/logo.png';
 
 
-import * as actionCreators from "../../actions/actionCreators";
+import actionCreators from "../../actions/actionCreators";
 import {bindActionCreators, compose} from 'redux';
 import {connect} from "react-redux";
 
@@ -124,7 +124,9 @@ function mapStateToProps(state) {
 
 
 function mapDispatchToProps(dispatch) {
-    return {actions: bindActionCreators(actionCreators, dispatch)}
+    return {
+        actions: bindActionCreators(actionCreators, dispatch)
+    }
 }
 
 export default compose(

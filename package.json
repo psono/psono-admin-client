@@ -8,7 +8,15 @@
   "author": "Sascha Pfeiffer",
   "license": "Apache-2.0",
   "dependencies": {
+    "@devexpress/dx-react-core": "^1.0.1",
+    "@devexpress/dx-react-grid": "^1.0.1",
+    "@devexpress/dx-react-grid-material-ui": "^1.0.1",
+    "axios": "^0.18.0",
     "chartist": "^0.10.1",
+    "clientjs": "^0.1.11",
+    "ecma-nacl": "^2.4.2",
+    "js-sha256": "^0.9.0",
+    "js-sha512": "^0.7.1",
     "material-ui": "1.0.0-beta.30",
     "material-ui-icons": "1.0.0-beta.17",
     "npm-run-all": "^4.1.1",
@@ -22,10 +30,12 @@
     "react-scripts": "1.1.1",
     "react-spinners": "^0.2.6",
     "react-swipeable-views": "^0.12.12",
+    "react-timeout": "^1.0.1",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.9.1",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "uuid-js": "^0.7.5"
   },
   "scripts": {
     "start": "react-scripts start",

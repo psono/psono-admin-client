@@ -6,7 +6,11 @@ import ChartCard from './Cards/ChartCard.jsx';
 import ProfileCard from './Cards/ProfileCard.jsx';
 import RegularCard from './Cards/RegularCard.jsx';
 import StatsCard from './Cards/StatsCard.jsx';
+import VersionCard from './Cards/VersionCard.jsx';
+import LicenseCard from './Cards/LicenseCard.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
+import ReleaseCard from './Cards/ReleaseCard.jsx';
+import UsersCard from './Cards/UsersCard.jsx';
 
 // ##############################
 // // // CustomButtons
@@ -58,12 +62,19 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 // #############################
 
 import Table from './Table/Table.jsx';
+import DxTable from './Table/DxTable.jsx';
 
 // ##############################
 // // // Tasks
 // #############################
 
 import Tasks from './Tasks/Tasks.jsx';
+
+// ##############################
+// // // Releases
+// #############################
+
+import Releases from './Releases/Releases.jsx';
 
 // ##############################
 // // // Typography
@@ -88,7 +99,7 @@ import LoginForm from "./Form/LoginForm.jsx";
 
 export {
     // Cards
-    ChartCard, ProfileCard, RegularCard, StatsCard, TasksCard,
+    ChartCard, ProfileCard, RegularCard, StatsCard, VersionCard, LicenseCard, TasksCard, ReleaseCard, UsersCard,
     // CustomButtons
     Button, IconButton,
     // CustomInput
@@ -104,9 +115,11 @@ export {
     //Snackbar
     Snackbar, SnackbarContent,
     // Table
-    Table,
+    Table, DxTable,
     // Tasks
     Tasks,
+    // Releases
+    Releases,
     // Typography
     P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small, A,
     // Form

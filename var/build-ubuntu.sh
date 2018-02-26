@@ -8,6 +8,8 @@ apt-get update && \
 apt-get -y install nodejs yarn && \
 yarn --version && \
 yarn config set registry https://psono.jfrog.io/psono/api/npm/npm/ && \
+yarn config set @devexpress:registry https://psono.jfrog.io/psono/api/npm/npm/ && \
+yarn config set @types:registry https://psono.jfrog.io/psono/api/npm/npm/ && \
 yarn install && \
 yarn global add karma-cli -g && \
 yarn build

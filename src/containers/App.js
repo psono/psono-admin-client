@@ -1,48 +1,30 @@
 import React, { Component } from 'react';
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import { createLogger } from 'redux-logger'
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 import { HashLoader } from 'react-spinners'
 import { createBrowserHistory } from 'history';
-
 import {
     Router,
     Route,
     Switch
 } from 'react-router-dom';
 
+import store from '../services/store'
+
+
 import 'chartist/dist/chartist.min.css';
 import 'chartist/dist/chartist.min.js';
+import 'clientjs/dist/client.min.js'
 
 import '../assets/css/material-dashboard-react.css';
 import indexRoutes from '../routes/index.jsx';
-import rootReducer from '../reducers'
 
 const hist = createBrowserHistory();
-const loggerMiddleware = createLogger();
-
-const persistConfig = {
-    key: 'root',
-    storage,
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-let store = createStore(
-    persistedReducer,
-    applyMiddleware(
-        thunkMiddleware, // lets us dispatch() functions
-        loggerMiddleware // neat middleware that logs actions
-    )
-);
 
 let persistor = persistStore(store);
 
-
 class App extends Component {
+
     render() {
         return (
             <PersistGate loading={<HashLoader />} persistor={persistor}>
