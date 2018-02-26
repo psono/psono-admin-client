@@ -161,7 +161,7 @@ function is_valid_username(username) {
     const res = username.split("@");
     username = res[0];
 
-    const USERNAME_REGEXP = /^[a-z0-9.\-]*$/i;
+    const USERNAME_REGEXP = /^[a-z0-9.-]*$/i;
     let error;
     if( ! USERNAME_REGEXP.test(username)) {
         return 'Usernames may only contain letters, numbers, periods and dashes';
@@ -253,7 +253,7 @@ function endsWith (to_test, suffix) {
  * @param {string} test Testable string
  */
 function get_password_filter(test) {
-    const regex = new RegExp(test.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'i');
+    const regex = new RegExp(test.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1"), 'i');
 
     return function(datastore_entry) {
         return regex.test(datastore_entry.name) || regex.test(datastore_entry.urlfilter);
@@ -264,6 +264,7 @@ const service = {
     parse_url,
     get_domain,
     form_full_username,
+    validate_group_name_contain,
     is_valid_username,
     remove_from_array,
     copy_to_clipboard,
