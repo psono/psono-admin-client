@@ -4,8 +4,6 @@ import {
     withStyles,
 } from 'material-ui';
 import {
-    Switch,
-    Route,
     Redirect
 } from 'react-router-dom';
 // creates a beautiful scrollbar
@@ -28,19 +26,9 @@ import actionCreators from "../../actions/actionCreators";
 import {bindActionCreators, compose} from 'redux';
 import {connect} from "react-redux";
 
-const switchRoutes = (<Switch>
-{
-    appRoutes.map((prop,key) => {
-        if(prop.redirect)
-            return (
-                <Redirect from={prop.path} to={prop.to} key={key}/>
-            );
-        return (
-            <Route path={prop.path} component={prop.component} key={key}/>
-        );
-    })
-}
-</Switch>);
+
+import SwitchRoutes from "./SwitchRoutes"
+
 
 class App extends React.Component{
     state = {
@@ -72,6 +60,7 @@ class App extends React.Component{
             return ( <Redirect to="/login"/> )
         }
         const { classes, ...rest } = this.props;
+
         return (
             <div className={classes.wrapper}>
                 <Sidebar
@@ -95,12 +84,12 @@ class App extends React.Component{
                         this.getRoute() ?(
                                 <div className={classes.content}>
                                     <div className={classes.container}>
-                                        {switchRoutes}
+                                        <SwitchRoutes {...rest} />
                                     </div>
                                 </div>
                             ):(
                                 <div className={classes.map}>
-                                    {switchRoutes}
+                                    <SwitchRoutes {...rest} />
                                 </div>
                             )
                     }

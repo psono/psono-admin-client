@@ -3,14 +3,21 @@
  */
 
 import axios from 'axios';
+import action from '../actions/boundActionCreators';
 import store from './store'
 
 function get_version() {
-    console.log(store.getState().user.web_client);
+    const client_url = store.getState().client.url;
+    return axios.get(client_url + '/VERSION.txt')
+}
+
+function set_url(url) {
+    action.set_client_url(url)
 }
 
 const client = {
     get_version,
+    set_url,
 };
 
 export default client;

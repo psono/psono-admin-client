@@ -89,6 +89,26 @@ function info() {
 }
 
 /**
+ * GET: Returns the server info for administrators
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_info(token, session_secret_key) {
+    const endpoint = '/admin/info/';
+    const connection_type = "GET";
+    const data = null;
+
+    const headers = {
+        "Authorization": "Token "+ token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * Ajax POST request to the backend with email and authkey for login, saves a token together with user_id
  * and all the different keys of a user in the apidata storage
  *
@@ -1658,6 +1678,7 @@ function delete_account(token, session_secret_key, authkey) {
 
 const service = {
     info,
+    admin_info,
     login,
     ga_verify,
     duo_verify,

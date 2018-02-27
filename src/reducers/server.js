@@ -6,7 +6,7 @@ import {
 import store from '../services/store'
 
 
-const default_server = 'https://www.psono.pw/server';
+const default_url = 'https://www.psono.pw/server';
 const default_api = '';
 const default_authentication_methods = [];
 const default_public_key = '';
@@ -19,7 +19,7 @@ const default_license_valid_till = undefined;
 
 function server(
     state = {
-        url: default_server,
+        url: default_url,
         api: default_api,
         authentication_methods: default_authentication_methods,
         public_key: default_public_key,
@@ -34,7 +34,7 @@ function server(
     switch (action.type) {
         case LOGOUT:
             return Object.assign({}, state, {
-                url: store.getState().user.remember_me ? state.url : default_server.toLowerCase(),
+                url: store.getState().user.remember_me ? state.url : default_url.toLowerCase(),
                 api: default_api,
                 authentication_methods: default_authentication_methods,
                 public_key: default_public_key,

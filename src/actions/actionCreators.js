@@ -6,6 +6,7 @@ import {
     LOGOUT,
     SET_SERVER_URL,
     SET_SERVER_INFO,
+    SET_CLIENT_URL,
 } from './actionTypes'
 
 
@@ -70,6 +71,15 @@ function set_server_url(url) {
     };
 }
 
+function set_client_url(url) {
+    return (dispatch) => {
+        dispatch({
+            type: SET_CLIENT_URL,
+            url: url
+        });
+    };
+}
+
 function set_known_hosts(known_hosts) {
     return (dispatch) => {
         dispatch({
@@ -86,6 +96,7 @@ const actionCreators = {
     logout,
     set_server_info,
     set_server_url,
+    set_client_url,
     set_known_hosts,
 };
 

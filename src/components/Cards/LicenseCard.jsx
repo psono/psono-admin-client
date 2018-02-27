@@ -7,51 +7,45 @@ import StatsCard from './StatsCard';
 
 class LicenseCard extends React.Component{
     render(){
-        const { current_users, max_users } = this.props;
+        const { active, licensed, total } = this.props;
 
-        if (! current_users) {
+        let ratio = '' + total + '/' + active;
+        let ratio_text = 'Total / active';
+        if (licensed) {
+            ratio = ratio + '/' + licensed;
+            ratio_text = ratio_text + '/ licensed';
+        }
+
+        if (active === '') {
             return <StatsCard
                 icon={Update}
                 iconColor="orange"
-                title="Registrations"
+                title="Users"
                 description="waiting ..."
                 statIcon={Update}
                 statIconColor="gray"
-                statText="Waiting for users ..."
+                statText="Waiting for data ..."
             />
-        } else if (max_users && current_users === max_users) {
+        } else if (licensed && active === licensed) {
             return <StatsCard
                 icon={Accessibility}
-                iconColor="orange"
-                title="Registrations"
-                description={this.state.server_license_ratio}
-                small="users"
+                iconColor="red"
+                title="Users"
+                description={ratio}
                 statIcon={Warning}
-                statIconColor={this.state.server_license_stat_icon}
-                statLink={{text: "Upgrade your license...", href:"https://psono.com"}}
-            />
-        } else if (max_users) {
-            return <StatsCard
-                icon={Accessibility}
-                iconColor="orange"
-                title="Registrations"
-                description={this.state.server_license_ratio}
-                small="users"
-                statIcon={Warning}
-                statIconColor={this.state.server_license_stat_icon}
-                statText={'Registered users'}
+                statIconColor={'danger'}
+                statLink={{text: ratio_text, href:"https://psono.com"}}
             />
         } else {
             return <StatsCard
                 icon={Accessibility}
-                iconColor="orange"
-                title="Registrations"
-                description={current_users}
-                small="users"
+                iconColor="green"
+                title="Users"
+                description={ratio}
                 statIcon={Done}
-                statText={'Registered users'}
+                statIconColor={'danger'}
+                statText={ratio_text}
             />
-
         }
     }
 }
@@ -62,8 +56,9 @@ LicenseCard.defaultProps = {
 };
 
 LicenseCard.propTypes = {
-    current_users: PropTypes.node.isRequired,
-    max_users: PropTypes.node,
+    active: PropTypes.node,
+    total: PropTypes.node,
+    licensed: PropTypes.node,
     valid_from: PropTypes.node,
     valid_till: PropTypes.node,
 };

@@ -8,6 +8,7 @@ import RegularCard from './Cards/RegularCard.jsx';
 import StatsCard from './Cards/StatsCard.jsx';
 import VersionCard from './Cards/VersionCard.jsx';
 import LicenseCard from './Cards/LicenseCard.jsx';
+import Sessions from './Cards/Sessions.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
 import UsersCard from './Cards/UsersCard.jsx';
@@ -99,7 +100,7 @@ import LoginForm from "./Form/LoginForm.jsx";
 
 export {
     // Cards
-    ChartCard, ProfileCard, RegularCard, StatsCard, VersionCard, LicenseCard, TasksCard, ReleaseCard, UsersCard,
+    ChartCard, ProfileCard, RegularCard, StatsCard, VersionCard, LicenseCard, Sessions, TasksCard, ReleaseCard, UsersCard,
     // CustomButtons
     Button, IconButton,
     // CustomInput
