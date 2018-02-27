@@ -64,18 +64,14 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 
 import Table from './Table/Table.jsx';
 import DxTable from './Table/DxTable.jsx';
+import DxTableAllFeatures from './Table/DxTableAllFeatures.jsx';
+import DxTableReleases from './Table/DxTableReleases.jsx';
 
 // ##############################
 // // // Tasks
 // #############################
 
 import Tasks from './Tasks/Tasks.jsx';
-
-// ##############################
-// // // Releases
-// #############################
-
-import Releases from './Releases/Releases.jsx';
 
 // ##############################
 // // // Typography
@@ -116,11 +112,9 @@ export {
     //Snackbar
     Snackbar, SnackbarContent,
     // Table
-    Table, DxTable,
+    Table, DxTable, DxTableAllFeatures, DxTableReleases,
     // Tasks
     Tasks,
-    // Releases
-    Releases,
     // Typography
     P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small, A,
     // Form

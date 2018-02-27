@@ -3,14 +3,14 @@ import {
     withStyles, Grid
 } from 'material-ui';
 import {
-    ArrowUpward, AccessTime, Accessibility
+    ArrowUpward, ArrowDownward, AccessTime
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 // react plugin for creating charts
 import ChartistGraph from 'react-chartist';
 
 import {
-    Sessions, VersionCard, LicenseCard, ChartCard, ReleaseCard, RegularCard, Table, ItemGrid
+    Sessions, VersionCard, LicenseCard, ChartCard, ReleaseCard, RegularCard, ItemGrid, DxTable
 } from '../../components';
 
 import {
@@ -23,6 +23,7 @@ import psono_server from '../../services/api-server'
 import psono_client from '../../services/api-client'
 
 const Chartist = require('chartist');
+
 
 class Dashboard extends React.Component{
     state = {
@@ -54,26 +55,53 @@ class Dashboard extends React.Component{
         this.setState({ value: index });
     };
 
+    convert_tags_to_releases(tags) {
+        tags.forEach((r) => {
+            Object.keys(r.commit).forEach(function (key) {
+                r[key] = r.commit[key];
+            });
+
+            Object.keys(r.release).forEach(function (key) {
+                r[key] = r.release[key];
+            });
+            r.created_at = r.created_at.replace('.000Z', '').replace('T', ' ')
+            r.description = r.description.split('\n').map((item, key) => {
+                if (item.startsWith('# ') || item.trim() === '') {
+                    return null;
+                } else {
+                    return <span key={key}>{item}<br/></span>
+                }
+            });
+            delete(r.commit);
+            delete(r.release);
+        });
+    }
+
 
     componentDidMount(){
 
         gitlab.psono_server.get_tags().then(
             (response) => {
-                this.setState({ server_tags: response.data });
-                this.setState({ server_latest_version: response.data[0].name });
+                this.convert_tags_to_releases(response.data);
+                this.setState({
+                    server_tags: response.data,
+                    server_latest_version: response.data[0].name
+                });
             }
         );
         gitlab.psono_client.get_tags().then(
             (response) => {
-                this.setState({ client_tags: response.data });
-                this.setState({ client_latest_version: response.data[0].name });
+                this.convert_tags_to_releases(response.data);
+                this.setState({
+                    client_tags: response.data,
+                    client_latest_version: response.data[0].name
+                });
             }
         );
 
         psono_server.admin_info(this.props.state.user.token, this.props.state.user.session_secret_key).then(
             (response) => {
                 response.data.info = JSON.parse(response.data.info);
-                console.log(response.data);
 
                 let label_day = [];
                 let data_day_total = [];
@@ -109,11 +137,11 @@ class Dashboard extends React.Component{
 
                 let registrations = [];
                 response.data.registrations.forEach(function(r) {
-                    registrations.push([
-                        r.date,
-                        r.username,
-                        r.active ? 'yes': 'no',
-                    ]);
+                    registrations.push({
+                        date: r.date,
+                        username: r.username,
+                        active: r.active ? 'yes': 'no',
+                    });
                 });
 
                 this.setState({
@@ -149,7 +177,38 @@ class Dashboard extends React.Component{
     }
 
     render(){
-        console.log(this.state);
+
+        let registration_text;
+        if (this.state.count_registrations_second_week) {
+            let percentage = Math.round(this.state.count_registrations_second_week / this.state.count_registrations_first_week*100 - 100);
+            if (percentage >= 0) {
+                registration_text = (
+                    <span>
+                        <span className={this.props.classes.successText}>
+                            <ArrowUpward className={this.props.classes.upArrowCardCategory}/> {percentage}%
+                        </span> increase in this weeks registrations.
+                    </span>
+                );
+            } else {
+                registration_text = (
+                    <span>
+                        <span className={this.props.classes.dangerText}>
+                            <ArrowDownward className={this.props.classes.upArrowCardCategory}/> {-percentage}%
+                        </span> decrease in this weeks registrations.
+                    </span>
+                );
+            }
+        } else {
+            registration_text = (
+                <span>
+                <span className={this.props.classes.successText}>
+                    <ArrowUpward className={this.props.classes.upArrowCardCategory}/> 55%
+                </span> increase in this weeks registrations.
+            </span>
+            );
+        }
+
+
         return (
             <div>
                 <Grid container>
@@ -218,13 +277,9 @@ class Dashboard extends React.Component{
                                 }
                                 chartColor="blue"
                                 title="Registrations past 14 days"
-                                text={
-                                    <span>
-                                        <span className={this.props.classes.successText}><ArrowUpward className={this.props.classes.upArrowCardCategory}/> 55%</span> increase in this weeks registrations.
-                                    </span>
-                                }
+                                text={registration_text}
                                 statIcon={AccessTime}
-                                statText={"This week " + this.state.count_registrations_second_week +  " users registered (last week: " + this.state.count_registrations_first_week +  ")"}
+                                statText={"This week " + this.state.count_registrations_second_week +  " users registered (last week: " + this.state.count_registrations_first_week +  " users)"}
                             />) : null
                         }
                     </ItemGrid>
@@ -282,10 +337,13 @@ class Dashboard extends React.Component{
                                 cardTitle="Registrations"
                                 cardSubtitle="Last 10 new users joining."
                                 content={
-                                    <Table
-                                        tableHeaderColor="warning"
-                                        tableHead={['Date','Username','Active']}
-                                        tableData={this.state.registrations}
+                                    <DxTable
+                                        columns={[
+                                            { name: 'date', title: 'Date' },
+                                            { name: 'username', title: 'Username' },
+                                            { name: 'active', title: 'Active' },
+                                        ]}
+                                        rows={this.state.registrations}
                                     />
                                 }
                             />) : null

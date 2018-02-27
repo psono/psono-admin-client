@@ -26,7 +26,7 @@ class Sessions extends React.Component{
                 title="Sessions"
                 description={total + '/' + users + '/' + devices}
                 statIcon={Update}
-                statText="Total / users / devices."
+                statText="Total / Users / Devices"
             />
 
         }

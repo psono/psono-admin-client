@@ -7,7 +7,7 @@ import {
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { DxTable } from '../../components';
+import { DxTableAllFeatures } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -20,7 +20,6 @@ class UsersCard extends React.Component{
     };
     render(){
         const { classes, users, sessions } = this.props;
-
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -64,14 +63,15 @@ class UsersCard extends React.Component{
                     {
                         this.state.value === 0 && (
                             <Typography component="div">
-                                <DxTable
+                                <DxTableAllFeatures
                                     columns={[
-                                        { name: 'id', title: 'ID' },
-                                        { name: 'username', title: 'Username' },
+                                        { name: 'username', title: 'Username'},
+                                        { name: 'create_date', title: 'Registered' },
                                         { name: 'is_active', title: 'Active' },
                                         { name: 'is_email_active', title: 'Email Active' },
-                                        { name: 'create_date', title: 'Registered' },
-                                        { name: 'two_fa', title: '2-FA' },
+                                        { name: 'yubikey_2fa', title: 'Yubikey' },
+                                        { name: 'ga_2fa', title: 'Google Auth' },
+                                        { name: 'duo_2fa', title: 'Duo Auth' },
                                     ]}
                                     rows={users}
                                 />
@@ -81,15 +81,14 @@ class UsersCard extends React.Component{
                     {
                         this.state.value === 1 && (
                             <Typography component="div">
-                                <DxTable
+                                <DxTableAllFeatures
                                     columns={[
-                                        { name: 'id', title: 'ID' },
                                         { name: 'username', title: 'Username' },
-                                        { name: 'is_active', title: 'Active' },
-                                        { name: 'device_description', title: 'Device Description' },
-                                        { name: 'device_fingerprint', title: 'Device Fingerprint' },
                                         { name: 'create_date', title: 'Logged in at' },
-                                        { name: 'valid_till', title: 'Expires at' },
+                                        { name: 'valid_till', title: 'Valid till' },
+                                        { name: 'device_description', title: 'Device Description' },
+                                        { name: 'device_fingerprint', title: 'Device' },
+                                        { name: 'active', title: 'Active' },
                                     ]}
                                     rows={sessions}
                                 />

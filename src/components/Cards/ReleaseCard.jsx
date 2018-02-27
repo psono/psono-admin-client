@@ -7,7 +7,7 @@ import {
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { Releases } from '../../components';
+import { DxTableReleases } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -63,8 +63,12 @@ class ReleaseCard extends React.Component{
                     {
                         this.state.value === 0 && (
                             <Typography component="div">
-                                <Releases
-                                    releases={server_releases}
+                                <DxTableReleases
+                                    columns={[
+                                        { name: 'name', title: 'Version' },
+                                        { name: 'created_at', title: 'Date' },
+                                    ]}
+                                    rows={server_releases}
                                 />
                             </Typography>
                         )
@@ -72,8 +76,12 @@ class ReleaseCard extends React.Component{
                     {
                         this.state.value === 1 && (
                             <Typography component="div">
-                                <Releases
-                                    releases={client_releases}
+                                <DxTableReleases
+                                    columns={[
+                                        { name: 'name', title: 'Version' },
+                                        { name: 'created_at', title: 'Date' },
+                                    ]}
+                                    rows={client_releases}
                                 />
                             </Typography>
                         )

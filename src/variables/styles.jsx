@@ -637,6 +637,9 @@ const dashboardStyle = {
     successText: {
         color: successColor,
     },
+    dangerText: {
+        color: dangerColor,
+    },
     upArrowCardCategory: {
         width: 14,
         height: 14,

@@ -9,11 +9,11 @@ class LicenseCard extends React.Component{
     render(){
         const { active, licensed, total } = this.props;
 
-        let ratio = '' + total + '/' + active;
-        let ratio_text = 'Total / active';
+        let ratio = '' + active + '/' + total;
+        let ratio_text = 'Active / Total';
         if (licensed) {
             ratio = ratio + '/' + licensed;
-            ratio_text = ratio_text + '/ licensed';
+            ratio_text = ratio_text + '/ Licensed';
         }
 
         if (active === '') {
@@ -43,7 +43,7 @@ class LicenseCard extends React.Component{
                 title="Users"
                 description={ratio}
                 statIcon={Done}
-                statIconColor={'danger'}
+                statIconColor={'gray'}
                 statText={ratio_text}
             />
         }
