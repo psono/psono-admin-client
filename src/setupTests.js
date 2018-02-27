@@ -4,3 +4,7 @@ const localStorageMock = {
     clear: jest.fn()
 };
 global.localStorage = localStorageMock;
+
+jest.mock('./services/clientjs', () => ({
+    getFingerprint: () => { return 'dummy_fingerprint' }
+}));
