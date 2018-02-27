@@ -25,18 +25,19 @@ const transition = {
     MozTransition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
     OTransition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
     MsTransition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
-    transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
+    transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)'
 };
 
 const container = {
     paddingRight: '15px',
     paddingLeft: '15px',
     marginRight: 'auto',
-    marginLeft: 'auto',
+    marginLeft: 'auto'
 };
 
 const boxShadow = {
-    boxShadow: '0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)'
+    boxShadow:
+        '0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)'
 };
 
 const card = {
@@ -47,13 +48,13 @@ const card = {
     boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.14)',
     borderRadius: '3px',
     color: 'rgba(0, 0, 0, 0.87)',
-    background: '#fff',
+    background: '#fff'
 };
 
 const defaultFont = {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     fontWeight: '300',
-    lineHeight: '1.5em',
+    lineHeight: '1.5em'
 };
 
 const primaryColor = '#9c27b0';
@@ -65,40 +66,45 @@ const roseColor = '#e91e63';
 const grayColor = '#999999';
 
 const primaryBoxShadow = {
-    boxShadow: '0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2)'
+    boxShadow:
+        '0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2)'
 };
 const infoBoxShadow = {
-    boxShadow: '0 12px 20px -10px rgba(0, 188, 212, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(0, 188, 212, 0.2)',
+    boxShadow:
+        '0 12px 20px -10px rgba(0, 188, 212, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(0, 188, 212, 0.2)'
 };
 const successBoxShadow = {
-    boxShadow: '0 12px 20px -10px rgba(76, 175, 80, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(76, 175, 80, 0.2)',
+    boxShadow:
+        '0 12px 20px -10px rgba(76, 175, 80, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(76, 175, 80, 0.2)'
 };
 const warningBoxShadow = {
-    boxShadow: '0 12px 20px -10px rgba(255, 152, 0, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(255, 152, 0, 0.2)',
+    boxShadow:
+        '0 12px 20px -10px rgba(255, 152, 0, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(255, 152, 0, 0.2)'
 };
-const dangerBoxShadow =  {
-    boxShadow: '0 12px 20px -10px rgba(244, 67, 54, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2)',
+const dangerBoxShadow = {
+    boxShadow:
+        '0 12px 20px -10px rgba(244, 67, 54, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2)'
 };
 
 const orangeCardHeader = {
     background: 'linear-gradient(60deg, #ffa726, #fb8c00)',
-    ...warningBoxShadow,
+    ...warningBoxShadow
 };
 const greenCardHeader = {
     background: 'linear-gradient(60deg, #66bb6a, #43a047)',
-    ...successBoxShadow,
+    ...successBoxShadow
 };
 const redCardHeader = {
     background: 'linear-gradient(60deg, #ef5350, #e53935)',
-    ...dangerBoxShadow,
+    ...dangerBoxShadow
 };
 const blueCardHeader = {
     background: 'linear-gradient(60deg, #26c6da, #00acc1)',
-    ...infoBoxShadow,
+    ...infoBoxShadow
 };
 const purpleCardHeader = {
     background: 'linear-gradient(60deg, #ab47bc, #8e24aa)',
-    ...primaryBoxShadow,
+    ...primaryBoxShadow
 };
 
 const cardActions = {
@@ -106,25 +112,26 @@ const cardActions = {
     paddingTop: '10px',
     borderTop: '1px solid #eeeeee',
     height: 'auto',
-    ...defaultFont,
+    ...defaultFont
 };
 
 const cardHeader = {
     margin: '-20px 15px 0',
     borderRadius: '3px',
-    padding: '15px',
+    padding: '15px'
 };
 
 const defaultBoxShadow = {
     border: '0',
     borderRadius: '3px',
-    boxShadow: '0 10px 20px -12px rgba(0, 0, 0, 0.42), 0 3px 20px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
+    boxShadow:
+        '0 10px 20px -12px rgba(0, 0, 0, 0.42), 0 3px 20px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
     padding: '10px 0',
     WebkitTransition: 'all 150ms ease 0s',
     MozTransition: 'all 150ms ease 0s',
     OTransition: 'all 150ms ease 0s',
     MsTransition: 'all 150ms ease 0s',
-    transition: 'all 150ms ease 0s',
+    transition: 'all 150ms ease 0s'
 };
 
 // ##############################
@@ -135,30 +142,29 @@ const appStyle = theme => ({
     wrapper: {
         position: 'relative',
         top: '0',
-        height: '100vh',
+        height: '100vh'
     },
     mainPanel: {
         [theme.breakpoints.up('md')]: {
-            width: `calc(100% - ${drawerWidth}px)`,
+            width: `calc(100% - ${drawerWidth}px)`
         },
         overflow: 'auto',
         position: 'relative',
         float: 'right',
         ...transition,
         maxHeight: '100%',
-        width: '100%',
+        width: '100%'
     },
     content: {
         marginTop: '70px',
         padding: '30px 15px',
-        minHeight: 'calc(100% - 123px)',
+        minHeight: 'calc(100% - 123px)'
     },
     container,
-    map:{
-        marginTop: '70px',
+    map: {
+        marginTop: '70px'
     }
 });
-
 
 // ##############################
 // // // Sidebar styles
@@ -178,7 +184,7 @@ const sidebarStyle = theme => ({
         [theme.breakpoints.up('md')]: {
             width: drawerWidth,
             position: 'fixed',
-            height: '100%',
+            height: '100%'
         },
         [theme.breakpoints.down('sm')]: {
             width: drawerWidth,
@@ -201,14 +207,14 @@ const sidebarStyle = theme => ({
             OTransform: `translate3d(${drawerWidth}px, 0, 0)`,
             MsTransform: `translate3d(${drawerWidth}px, 0, 0)`,
             transform: `translate3d(${drawerWidth}px, 0, 0)`,
-            ...transition,
-        },
+            ...transition
+        }
     },
     logo: {
         position: 'relative',
         padding: '15px 15px',
         zIndex: '4',
-        '&:after':{
+        '&:after': {
             content: '""',
             position: 'absolute',
             bottom: '0',
@@ -216,7 +222,7 @@ const sidebarStyle = theme => ({
             height: '1px',
             right: '15px',
             width: 'calc(100% - 30px)',
-            backgroundColor: 'rgba(180, 180, 180, 0.3)',
+            backgroundColor: 'rgba(180, 180, 180, 0.3)'
         }
     },
     logoLink: {
@@ -231,7 +237,7 @@ const sidebarStyle = theme => ({
         textDecoration: 'none',
         backgroundColor: 'transparent',
         '&,&:hover': {
-            color: '#FFFFFF',
+            color: '#FFFFFF'
         }
     },
     logoImage: {
@@ -239,14 +245,14 @@ const sidebarStyle = theme => ({
         display: 'inline-block',
         maxHeight: '30px',
         marginLeft: '10px',
-        marginRight: '15px',
+        marginRight: '15px'
     },
     img: {
         width: '105px',
         top: '22px',
         position: 'absolute',
         verticalAlign: 'middle',
-        border: '0',
+        border: '0'
     },
     background: {
         position: 'absolute',
@@ -266,7 +272,7 @@ const sidebarStyle = theme => ({
             content: '""',
             display: 'block',
             background: '#000',
-            opacity: '.8',
+            opacity: '.8'
         }
     },
     list: {
@@ -275,13 +281,12 @@ const sidebarStyle = theme => ({
         paddingTop: '0',
         paddingBottom: '0',
         marginBottom: '0',
-        listStyle: 'none',
-
+        listStyle: 'none'
     },
     item: {
         position: 'relative',
         display: 'block',
-        textDecoration: 'none',
+        textDecoration: 'none'
     },
     itemLink: {
         WebkitTransition: 'all 300ms linear',
@@ -295,7 +300,7 @@ const sidebarStyle = theme => ({
         display: 'block',
         padding: '10px 15px',
         backgroundColor: 'transparent',
-        ...defaultFont,
+        ...defaultFont
     },
     itemIcon: {
         width: '24px',
@@ -304,56 +309,64 @@ const sidebarStyle = theme => ({
         marginRight: '15px',
         textAlign: 'center',
         verticalAlign: 'middle',
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: 'rgba(255, 255, 255, 0.8)'
     },
     itemText: {
         ...defaultFont,
         margin: '0',
         lineHeight: '30px',
         fontSize: '14px',
-        color: '#FFFFFF',
+        color: '#FFFFFF'
     },
     whiteFont: {
-        color: "#FFFFFF"
+        color: '#FFFFFF'
     },
     purple: {
         backgroundColor: primaryColor,
         ...primaryBoxShadow,
         '&:hover': {
             backgroundColor: primaryColor,
-            ...primaryBoxShadow,
+            ...primaryBoxShadow
         }
     },
     blue: {
         backgroundColor: infoColor,
-        boxShadow: '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)',
+        boxShadow:
+            '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)',
         '&:hover': {
             backgroundColor: infoColor,
-            boxShadow: '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)',
+            boxShadow:
+                '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)'
         }
     },
     green: {
         backgroundColor: successColor,
-        boxShadow: '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)',
+        boxShadow:
+            '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)',
         '&:hover': {
             backgroundColor: successColor,
-            boxShadow: '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)',
+            boxShadow:
+                '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)'
         }
     },
     orange: {
         backgroundColor: warningColor,
-        boxShadow: '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)',
+        boxShadow:
+            '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)',
         '&:hover': {
             backgroundColor: warningColor,
-            boxShadow: '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)',
+            boxShadow:
+                '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)'
         }
     },
     red: {
         backgroundColor: dangerColor,
-        boxShadow: '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)',
+        boxShadow:
+            '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)',
         '&:hover': {
             backgroundColor: dangerColor,
-            boxShadow: '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)',
+            boxShadow:
+                '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)'
         }
     },
     sidebarWrapper: {
@@ -361,7 +374,7 @@ const sidebarStyle = theme => ({
         height: 'calc(100vh - 75px)',
         overflow: 'auto',
         width: '260px',
-        zIndex: '4',
+        zIndex: '4'
     }
 });
 
@@ -372,7 +385,7 @@ const sidebarStyle = theme => ({
 const headerStyle = theme => ({
     appBar: {
         top: '-30px',
-        [theme.breakpoints.down('md')]:{
+        [theme.breakpoints.down('md')]: {
             top: '-15px'
         },
         backgroundColor: 'transparent',
@@ -393,11 +406,11 @@ const headerStyle = theme => ({
         MsTransition: 'all 150ms ease 0s',
         transition: 'all 150ms ease 0s',
         minHeight: '50px',
-        display: 'block',
+        display: 'block'
     },
     container,
-    flex:{
-        flex: 1,
+    flex: {
+        flex: 1
     },
     title: {
         ...defaultFont,
@@ -447,10 +460,10 @@ const headerStyle = theme => ({
 
 const headerLinksStyle = theme => ({
     popperClose: {
-      pointerEvents: 'none',
+        pointerEvents: 'none'
     },
     search: {
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             margin: '10px 15px',
             float: 'none !important',
             paddingTop: '1px',
@@ -458,20 +471,20 @@ const headerLinksStyle = theme => ({
             padding: '10px 15px',
             width: 'auto',
             marginTop: '40px'
-        },
+        }
     },
     linkText: {
         zIndex: '4',
         ...defaultFont,
-        fontSize: '14px',
+        fontSize: '14px'
     },
     buttonLink: {
         top: '-6px',
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             display: 'flex',
             marginLeft: '30px',
-            width: 'auto',
-        },
+            width: 'auto'
+        }
     },
     searchButton: {
         [theme.breakpoints.down('sm')]: {
@@ -482,27 +495,27 @@ const headerLinksStyle = theme => ({
     },
     top: {
         top: '-6px',
-        zIndex: '4',
+        zIndex: '4'
     },
-    searchIcon:{
+    searchIcon: {
         width: '17px',
-        zIndex: '4',
+        zIndex: '4'
     },
-    links:{
+    links: {
         width: '20px',
         height: '20px',
         zIndex: '4',
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             display: 'block',
             width: '30px',
             height: '30px',
             color: '#a9afbb',
-            marginRight: '15px',
-        },
+            marginRight: '15px'
+        }
     },
     notifications: {
         zIndex: '4',
-        [theme.breakpoints.up('md')]:{
+        [theme.breakpoints.up('md')]: {
             position: 'absolute',
             top: '5px',
             border: '1px solid #FFF',
@@ -516,13 +529,13 @@ const headerLinksStyle = theme => ({
             textAlign: 'center',
             lineHeight: '16px',
             verticalAlign: 'middle',
-            display: 'block',
+            display: 'block'
         },
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             ...defaultFont,
             fontSize: '14px',
             marginRight: '8px'
-        },
+        }
     },
     dropdown: {
         borderRadius: '3px',
@@ -538,7 +551,7 @@ const headerLinksStyle = theme => ({
         listStyle: 'none',
         backgroundColor: '#fff',
         WebkitBackgroundClip: 'padding-box',
-        backgroundClip: 'padding-box',
+        backgroundClip: 'padding-box'
     },
     pooperResponsive: {
         [theme.breakpoints.down('sm')]: {
@@ -574,9 +587,9 @@ const headerLinksStyle = theme => ({
         '&:hover': {
             backgroundColor: primaryColor,
             color: '#FFFFFF',
-            ...primaryBoxShadow,
+            ...primaryBoxShadow
         }
-    },
+    }
 });
 
 // ##############################
@@ -594,7 +607,7 @@ const footerStyle = {
         display: 'block',
         ...defaultFont,
         fontWeight: '500',
-        fontSize: '12px',
+        fontSize: '12px'
     },
     left: {
         float: 'left!important',
@@ -604,28 +617,28 @@ const footerStyle = {
         padding: '15px 0',
         margin: '0',
         fontSize: '14px',
-        float: 'right!important',
+        float: 'right!important'
     },
     footer: {
         bottom: '0',
         borderTop: '1px solid #e7e7e7',
         padding: '15px 0',
-        ...defaultFont,
+        ...defaultFont
     },
     container,
     a: {
         color: primaryColor,
         textDecoration: 'none',
-        backgroundColor: 'transparent',
+        backgroundColor: 'transparent'
     },
     list: {
         marginBottom: '0',
         padding: '0',
-        marginTop: '0',
+        marginTop: '0'
     },
     inlineBlock: {
         display: 'inline-block',
-        paddingTop: '0px',
+        paddingTop: '0px'
     }
 };
 
@@ -635,16 +648,16 @@ const footerStyle = {
 
 const dashboardStyle = {
     successText: {
-        color: successColor,
+        color: successColor
     },
     dangerText: {
-        color: dangerColor,
+        color: dangerColor
     },
     upArrowCardCategory: {
         width: 14,
-        height: 14,
-    },
-}
+        height: 14
+    }
+};
 
 // ##############################
 // // // Icons styles
@@ -655,12 +668,12 @@ const iconsStyle = {
         width: '100%',
         height: '500px',
         border: '0',
-        ...boxShadow,
+        ...boxShadow
     },
     iframeContainer: {
-        margin: '0 -20px 0',
+        margin: '0 -20px 0'
     }
-}
+};
 
 // ##############################
 // // // StatsCard styles
@@ -671,7 +684,7 @@ const statsCardStyle = {
     cardHeader: {
         ...cardHeader,
         float: 'left',
-        textAlign: 'center',
+        textAlign: 'center'
     },
     orangeCardHeader,
     greenCardHeader,
@@ -681,15 +694,15 @@ const statsCardStyle = {
     cardContent: {
         textAlign: 'right',
         paddingTop: '10px',
-        padding: '15px 20px',
+        padding: '15px 20px'
     },
     cardIcon: {
         width: '40px',
         height: '36px',
-        fill: '#fff',
+        fill: '#fff'
     },
     cardAvatar: {
-        margin: '8px',
+        margin: '8px'
     },
     cardCategory: {
         marginBottom: '0',
@@ -700,15 +713,15 @@ const statsCardStyle = {
     cardTitle: {
         margin: '0',
         ...defaultFont,
-        fontSize: '1.625em',
+        fontSize: '1.625em'
     },
     cardTitleSmall: {
         fontSize: '65%',
         fontWeight: '400',
         lineHeight: '1',
-        color: '#777',
+        color: '#777'
     },
-    cardActions:{
+    cardActions: {
         ...cardActions,
         padding: '0!important'
     },
@@ -723,33 +736,33 @@ const statsCardStyle = {
         position: 'relative',
         top: '4px',
         width: '16px',
-        height: '16px',
+        height: '16px'
     },
     warningCardStatsIcon: {
-        color: warningColor,
+        color: warningColor
     },
     primaryCardStatsIcon: {
-        color: primaryColor,
+        color: primaryColor
     },
     dangerCardStatsIcon: {
-        color: dangerColor,
+        color: dangerColor
     },
     successCardStatsIcon: {
-        color: successColor,
+        color: successColor
     },
     infoCardStatsIcon: {
-        color: infoColor,
+        color: infoColor
     },
     roseCardStatsIcon: {
-        color: roseColor,
+        color: roseColor
     },
     grayCardStatsIcon: {
-        color: grayColor,
+        color: grayColor
     },
     cardStatsLink: {
         color: primaryColor,
         textDecoration: 'none',
-        ...defaultFont,
+        ...defaultFont
     }
 };
 
@@ -763,7 +776,7 @@ const chartCardStyle = {
         ...cardHeader,
         padding: '0',
         minHeight: '160px',
-        ...defaultFont,
+        ...defaultFont
     },
     orangeCardHeader,
     greenCardHeader,
@@ -771,21 +784,21 @@ const chartCardStyle = {
     blueCardHeader,
     purpleCardHeader,
     cardContent: {
-        padding: '15px 20px',
+        padding: '15px 20px'
     },
     cardTitle: {
         marginTop: '0',
         marginBottom: '5px',
         ...defaultFont,
-        fontSize: '1.175em',
+        fontSize: '1.175em'
     },
     cardCategory: {
         marginBottom: '0',
         color: grayColor,
         ...defaultFont,
-        fontSize: '0.9em',
+        fontSize: '0.9em'
     },
-    cardActions:{
+    cardActions: {
         ...cardActions,
         padding: '0!important'
     },
@@ -800,33 +813,33 @@ const chartCardStyle = {
         position: 'relative',
         top: '4px',
         width: '16px',
-        height: '16px',
+        height: '16px'
     },
     warningCardStatsIcon: {
-        color: warningColor,
+        color: warningColor
     },
     primaryCardStatsIcon: {
-        color: primaryColor,
+        color: primaryColor
     },
     dangerCardStatsIcon: {
-        color: dangerColor,
+        color: dangerColor
     },
     successCardStatsIcon: {
-        color: successColor,
+        color: successColor
     },
     infoCardStatsIcon: {
-        color: infoColor,
+        color: infoColor
     },
     roseCardStatsIcon: {
-        color: roseColor,
+        color: roseColor
     },
     grayCardStatsIcon: {
-        color: grayColor,
+        color: grayColor
     },
     cardStatsLink: {
         color: primaryColor,
         textDecoration: 'none',
-        ...defaultFont,
+        ...defaultFont
     }
 };
 
@@ -841,7 +854,7 @@ const tasksCardStyle = theme => ({
         ...cardHeader,
         ...defaultFont,
         background: 'linear-gradient(60deg, #ab47bc, #8e24aa)',
-        ...primaryBoxShadow,
+        ...primaryBoxShadow
     },
     cardTitle: {
         ...defaultFont,
@@ -849,7 +862,7 @@ const tasksCardStyle = theme => ({
         padding: '10px 10px 10px 0',
         lineHeight: '24px',
         fontSize: '14px',
-        color: '#FFFFFF',
+        color: '#FFFFFF'
     },
     tabWrapper: {
         width: 'auto',
@@ -857,40 +870,40 @@ const tasksCardStyle = theme => ({
         alignItems: 'inherit',
         flexDirection: 'row',
         justifyContent: 'center',
-        [theme.breakpoints.down('sm')]:{
-            display: 'flex',
-        },
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex'
+        }
     },
-    tabIcon:{
+    tabIcon: {
         float: 'left',
-        [theme.breakpoints.down('sm')]:{
-            marginTop: '-2px',
-        },
+        [theme.breakpoints.down('sm')]: {
+            marginTop: '-2px'
+        }
     },
     displayNone: {
-        display: 'none',
+        display: 'none'
     },
     labelIcon: {
         height: '44px',
         width: '110px',
         minWidth: '72px',
         paddingLeft: '14px',
-        borderRadius: '3px',
+        borderRadius: '3px'
     },
     tabsContainer: {
         marginTop: '4px',
         color: '#FFFFFF',
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             display: 'grid'
-        },
+        }
     },
     tabs: {
         width: '110px',
         minWidth: '70px',
-        paddingLeft: '12px',
+        paddingLeft: '12px'
     },
     cardHeaderContent: {
-        flex: 'none',
+        flex: 'none'
     },
     label: {
         lineHeight: '19px',
@@ -901,8 +914,8 @@ const tasksCardStyle = theme => ({
     },
     rootInheritSelected: {
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        transition: 'background-color .1s .2s',
-    },
+        transition: 'background-color .1s .2s'
+    }
 });
 
 // ##############################
@@ -913,15 +926,15 @@ const regularCardStyle = {
     card,
     cardPlain: {
         background: 'transparent',
-        boxShadow: 'none',
+        boxShadow: 'none'
     },
     cardHeader: {
         ...cardHeader,
-        ...defaultFont,
+        ...defaultFont
     },
-    cardPlainHeader:{
+    cardPlainHeader: {
         marginLeft: 0,
-        marginRight: 0,
+        marginRight: 0
     },
     orangeCardHeader,
     greenCardHeader,
@@ -933,13 +946,13 @@ const regularCardStyle = {
         marginTop: '0',
         marginBottom: '5px',
         ...defaultFont,
-        fontSize: '1.125em',
+        fontSize: '1.125em'
     },
     cardSubtitle: {
         ...defaultFont,
         marginBottom: '0',
         color: 'rgba(255, 255, 255, 0.62)',
-        margin: '0 0 10px',
+        margin: '0 0 10px'
     },
     cardActions: {
         padding: '14px',
@@ -956,12 +969,12 @@ const profileCardStyle = {
     card: {
         marginTop: '30px',
         textAlign: 'center',
-        ...card,
+        ...card
     },
     cardHeader: {
         display: 'inline-block',
         width: '100%',
-        padding: '0px',
+        padding: '0px'
     },
     cardAvatar: {
         maxWidth: '130px',
@@ -969,13 +982,13 @@ const profileCardStyle = {
         margin: '-50px auto 0',
         borderRadius: '50%',
         overflow: 'hidden',
-        ...boxShadow,
+        ...boxShadow
     },
     img: {
         width: '100%',
         height: 'auto',
         verticalAlign: 'middle',
-        border: '0',
+        border: '0'
     },
     textAlign: {
         textAlign: 'center'
@@ -986,18 +999,18 @@ const profileCardStyle = {
         fontSize: '1em',
         textTransform: 'uppercase',
         marginTop: '10px',
-        marginBottom: '10px',
+        marginBottom: '10px'
     },
     cardTitle: {
         ...defaultFont,
         fontSize: '1.3em',
         marginTop: '10px',
-        marginBottom: '10px',
+        marginBottom: '10px'
     },
     cardDescription: {
         ...defaultFont,
         padding: '15px 20px',
-        margin: '0 0 10px',
+        margin: '0 0 10px'
     },
     cardActions: {
         height: 'auto',
@@ -1013,7 +1026,8 @@ const buttonStyle = {
     button: {
         backgroundColor: grayColor,
         color: '#FFFFFF',
-        boxShadow: '0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12)',
         border: 'none',
         borderRadius: '3px',
         position: 'relative',
@@ -1024,7 +1038,8 @@ const buttonStyle = {
         textTransform: 'uppercase',
         letterSpacing: '0',
         willChange: 'box-shadow, transform',
-        transition: 'box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition:
+            'box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         lineHeight: '1.42857143',
         textAlign: 'center',
         whiteSpace: 'nowrap',
@@ -1034,58 +1049,71 @@ const buttonStyle = {
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: grayColor,
-            boxShadow: '0 14px 26px -12px rgba(153, 153, 153, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 153, 153, 0.2)'
+            boxShadow:
+                '0 14px 26px -12px rgba(153, 153, 153, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 153, 153, 0.2)'
         }
     },
-    fullWidth:{
+    fullWidth: {
         width: '100%'
     },
     primary: {
         backgroundColor: primaryColor,
-        boxShadow: '0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12)',
         '&:hover': {
             backgroundColor: primaryColor,
-            boxShadow: '0 14px 26px -12px rgba(156, 39, 176, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(156, 39, 176, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(156, 39, 176, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(156, 39, 176, 0.2)'
         }
     },
     info: {
         backgroundColor: infoColor,
-        boxShadow: '0 2px 2px 0 rgba(0, 188, 212, 0.14), 0 3px 1px -2px rgba(0, 188, 212, 0.2), 0 1px 5px 0 rgba(0, 188, 212, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(0, 188, 212, 0.14), 0 3px 1px -2px rgba(0, 188, 212, 0.2), 0 1px 5px 0 rgba(0, 188, 212, 0.12)',
         '&:hover': {
             backgroundColor: infoColor,
-            boxShadow: '0 14px 26px -12px rgba(0, 188, 212, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 188, 212, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(0, 188, 212, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 188, 212, 0.2)'
         }
     },
     success: {
         backgroundColor: successColor,
-        boxShadow: '0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12)',
         '&:hover': {
             backgroundColor: successColor,
-            boxShadow: '0 14px 26px -12px rgba(76, 175, 80, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(76, 175, 80, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(76, 175, 80, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(76, 175, 80, 0.2)'
         }
     },
     warning: {
         backgroundColor: warningColor,
-        boxShadow: '0 2px 2px 0 rgba(255, 152, 0, 0.14), 0 3px 1px -2px rgba(255, 152, 0, 0.2), 0 1px 5px 0 rgba(255, 152, 0, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(255, 152, 0, 0.14), 0 3px 1px -2px rgba(255, 152, 0, 0.2), 0 1px 5px 0 rgba(255, 152, 0, 0.12)',
         '&:hover': {
             backgroundColor: warningColor,
-            boxShadow: '0 14px 26px -12px rgba(255, 152, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 152, 0, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(255, 152, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 152, 0, 0.2)'
         }
     },
     danger: {
         backgroundColor: dangerColor,
-        boxShadow: '0 2px 2px 0 rgba(244, 67, 54, 0.14), 0 3px 1px -2px rgba(244, 67, 54, 0.2), 0 1px 5px 0 rgba(244, 67, 54, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(244, 67, 54, 0.14), 0 3px 1px -2px rgba(244, 67, 54, 0.2), 0 1px 5px 0 rgba(244, 67, 54, 0.12)',
         '&:hover': {
             backgroundColor: dangerColor,
-            boxShadow: '0 14px 26px -12px rgba(244, 67, 54, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(244, 67, 54, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(244, 67, 54, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(244, 67, 54, 0.2)'
         }
     },
     rose: {
         backgroundColor: roseColor,
-        boxShadow: '0 2px 2px 0 rgba(233, 30, 99, 0.14), 0 3px 1px -2px rgba(233, 30, 99, 0.2), 0 1px 5px 0 rgba(233, 30, 99, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(233, 30, 99, 0.14), 0 3px 1px -2px rgba(233, 30, 99, 0.2), 0 1px 5px 0 rgba(233, 30, 99, 0.12)',
         '&:hover': {
             backgroundColor: roseColor,
-            boxShadow: '0 14px 26px -12px rgba(233, 30, 99, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(233, 30, 99, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(233, 30, 99, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(233, 30, 99, 0.2)'
         }
     },
     white: {
@@ -1095,21 +1123,21 @@ const buttonStyle = {
         }
     },
     simple: {
-        '&,&:focus,&:hover':{
+        '&,&:focus,&:hover': {
             color: '#FFFFFF',
             background: 'transparent',
-            boxShadow: 'none',
+            boxShadow: 'none'
         }
     },
     transparent: {
         '&,&:focus,&:hover': {
-            color: "inherit",
+            color: 'inherit',
             background: 'transparent',
-            boxShadow: 'none',
+            boxShadow: 'none'
         }
     },
     round: {
-        borderRadius: '30px',
+        borderRadius: '30px'
     },
     disabled: {
         opacity: '0.65',
@@ -1130,7 +1158,8 @@ const iconButtonStyle = {
         fontSize: '24px',
         margin: 'auto',
         padding: '0',
-        boxShadow: '0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12)',
         overflow: 'hidden',
         position: 'relative',
         lineHeight: 'normal',
@@ -1139,7 +1168,8 @@ const iconButtonStyle = {
         textTransform: 'uppercase',
         letterSpacing: '0',
         willChange: 'box-shadow, transform',
-        transition: 'box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition:
+            'box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'inline-block',
         textAlign: 'center',
         whiteSpace: 'nowrap',
@@ -1151,55 +1181,68 @@ const iconButtonStyle = {
         backgroundColor: grayColor,
         '&:hover': {
             backgroundColor: grayColor,
-            boxShadow: '0 14px 26px -12px rgba(153, 153, 153, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 153, 153, 0.2)'
+            boxShadow:
+                '0 14px 26px -12px rgba(153, 153, 153, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 153, 153, 0.2)'
         }
     },
     primary: {
         backgroundColor: primaryColor,
-        boxShadow: '0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12)',
         '&:hover': {
             backgroundColor: primaryColor,
-            boxShadow: '0 14px 26px -12px rgba(156, 39, 176, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(156, 39, 176, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(156, 39, 176, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(156, 39, 176, 0.2)'
         }
     },
     info: {
         backgroundColor: infoColor,
-        boxShadow: '0 2px 2px 0 rgba(0, 188, 212, 0.14), 0 3px 1px -2px rgba(0, 188, 212, 0.2), 0 1px 5px 0 rgba(0, 188, 212, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(0, 188, 212, 0.14), 0 3px 1px -2px rgba(0, 188, 212, 0.2), 0 1px 5px 0 rgba(0, 188, 212, 0.12)',
         '&:hover': {
             backgroundColor: infoColor,
-            boxShadow: '0 14px 26px -12px rgba(0, 188, 212, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 188, 212, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(0, 188, 212, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 188, 212, 0.2)'
         }
     },
     success: {
         backgroundColor: successColor,
-        boxShadow: '0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(76, 175, 80, 0.14), 0 3px 1px -2px rgba(76, 175, 80, 0.2), 0 1px 5px 0 rgba(76, 175, 80, 0.12)',
         '&:hover': {
             backgroundColor: successColor,
-            boxShadow: '0 14px 26px -12px rgba(76, 175, 80, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(76, 175, 80, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(76, 175, 80, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(76, 175, 80, 0.2)'
         }
     },
     warning: {
         backgroundColor: warningColor,
-        boxShadow: '0 2px 2px 0 rgba(255, 152, 0, 0.14), 0 3px 1px -2px rgba(255, 152, 0, 0.2), 0 1px 5px 0 rgba(255, 152, 0, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(255, 152, 0, 0.14), 0 3px 1px -2px rgba(255, 152, 0, 0.2), 0 1px 5px 0 rgba(255, 152, 0, 0.12)',
         '&:hover': {
             backgroundColor: warningColor,
-            boxShadow: '0 14px 26px -12px rgba(255, 152, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 152, 0, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(255, 152, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 152, 0, 0.2)'
         }
     },
     danger: {
         backgroundColor: dangerColor,
-        boxShadow: '0 2px 2px 0 rgba(244, 67, 54, 0.14), 0 3px 1px -2px rgba(244, 67, 54, 0.2), 0 1px 5px 0 rgba(244, 67, 54, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(244, 67, 54, 0.14), 0 3px 1px -2px rgba(244, 67, 54, 0.2), 0 1px 5px 0 rgba(244, 67, 54, 0.12)',
         '&:hover': {
             backgroundColor: dangerColor,
-            boxShadow: '0 14px 26px -12px rgba(244, 67, 54, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(244, 67, 54, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(244, 67, 54, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(244, 67, 54, 0.2)'
         }
     },
     rose: {
         backgroundColor: roseColor,
-        boxShadow: '0 2px 2px 0 rgba(233, 30, 99, 0.14), 0 3px 1px -2px rgba(233, 30, 99, 0.2), 0 1px 5px 0 rgba(233, 30, 99, 0.12)',
+        boxShadow:
+            '0 2px 2px 0 rgba(233, 30, 99, 0.14), 0 3px 1px -2px rgba(233, 30, 99, 0.2), 0 1px 5px 0 rgba(233, 30, 99, 0.12)',
         '&:hover': {
             backgroundColor: roseColor,
-            boxShadow: '0 14px 26px -12px rgba(233, 30, 99, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(233, 30, 99, 0.2)',
+            boxShadow:
+                '0 14px 26px -12px rgba(233, 30, 99, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(233, 30, 99, 0.2)'
         }
     },
     white: {
@@ -1211,7 +1254,7 @@ const iconButtonStyle = {
     simple: {
         color: '#FFFFFF',
         background: 'transparent',
-        boxShadow: 'none',
+        boxShadow: 'none'
     }
 };
 
@@ -1221,25 +1264,25 @@ const iconButtonStyle = {
 
 const tableStyle = theme => ({
     warningTableHeader: {
-        color: warningColor,
+        color: warningColor
     },
     primaryTableHeader: {
-        color: primaryColor,
+        color: primaryColor
     },
     dangerTableHeader: {
-        color: dangerColor,
+        color: dangerColor
     },
     successTableHeader: {
-        color: successColor,
+        color: successColor
     },
     infoTableHeader: {
-        color: infoColor,
+        color: infoColor
     },
     roseTableHeader: {
-        color: roseColor,
+        color: roseColor
     },
     grayTableHeader: {
-        color: grayColor,
+        color: grayColor
     },
     table: {
         marginBottom: '0',
@@ -1247,25 +1290,25 @@ const tableStyle = theme => ({
         maxWidth: '100%',
         backgroundColor: 'transparent',
         borderSpacing: '0',
-        borderCollapse: 'collapse',
+        borderCollapse: 'collapse'
     },
     tableHeadCell: {
         color: 'inherit',
         ...defaultFont,
-        fontSize: '1em',
+        fontSize: '1em'
     },
     tableCell: {
         ...defaultFont,
         lineHeight: '1.42857143',
         padding: '12px 8px',
-        verticalAlign: 'middle',
+        verticalAlign: 'middle'
     },
     tableResponsive: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
-        overflowX: 'auto',
+        overflowX: 'auto'
     }
-})
+});
 
 // ##############################
 // // // CustomInput styles
@@ -1274,13 +1317,13 @@ const tableStyle = theme => ({
 const customInputStyle = {
     disabled: {
         '&:before': {
-            backgroundColor: 'transparent !important',
+            backgroundColor: 'transparent !important'
         }
     },
     underline: {
         '&:before': {
             backgroundColor: '#D2D2D2',
-            height: '1px !important',
+            height: '1px !important'
         }
     },
     inkbar: {
@@ -1303,7 +1346,7 @@ const customInputStyle = {
         color: '#AAAAAA',
         fontWeight: '400',
         fontSize: '14px',
-        lineHeight: '1.42857',
+        lineHeight: '1.42857'
     },
     labelRootError: {
         color: dangerColor
@@ -1320,15 +1363,15 @@ const customInputStyle = {
         width: '24px',
         height: '24px',
         textAlign: 'center',
-        pointerEvents: 'none',
+        pointerEvents: 'none'
     },
     marginTop: {
-        marginTop: '16px',
+        marginTop: '16px'
     },
     formControl: {
         paddingBottom: '10px',
         margin: '27px 0 0 0',
-        position: 'relative',
+        position: 'relative'
     }
 };
 
@@ -1338,7 +1381,7 @@ const customInputStyle = {
 
 const tasksStyle = {
     table: {
-        marginBottom: '0',
+        marginBottom: '0'
     },
     tableRow: {
         position: 'relative',
@@ -1348,7 +1391,7 @@ const tasksStyle = {
         display: 'flex',
         border: 'none',
         padding: '12px 8px !important',
-        verticalAlign: 'middle',
+        verticalAlign: 'middle'
     },
     tableCell: {
         ...defaultFont,
@@ -1356,25 +1399,25 @@ const tasksStyle = {
         verticalAlign: 'middle',
         border: 'none',
         lineHeight: '1.42857143',
-        fontSize: '14px',
+        fontSize: '14px'
     },
     tableActionButton: {
         width: '27px',
-        height: '27px',
+        height: '27px'
     },
     tableActionButtonIcon: {
         width: '17px',
-        height: '17px',
+        height: '17px'
     },
     edit: {
         backgroundColor: 'transparent',
         color: primaryColor,
-        boxShadow: 'none',
+        boxShadow: 'none'
     },
     close: {
         backgroundColor: 'transparent',
         color: dangerColor,
-        boxShadow: 'none',
+        boxShadow: 'none'
     },
     checked: {
         color: primaryColor
@@ -1383,14 +1426,14 @@ const tasksStyle = {
         width: '20px',
         height: '20px',
         border: '1px solid rgba(0, 0, 0, .54)',
-        borderRadius: '3px',
+        borderRadius: '3px'
     },
     uncheckedIcon: {
         width: '0px',
         height: '0px',
         padding: '10px',
         border: '1px solid rgba(0, 0, 0, .54)',
-        borderRadius: '3px',
+        borderRadius: '3px'
     },
     tooltip: {
         padding: '10px 15px',
@@ -1400,7 +1443,8 @@ const tasksStyle = {
         background: '#FFFFFF',
         border: 'none',
         borderRadius: '3px',
-        boxShadow: '0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)',
+        boxShadow:
+            '0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)',
         maxWidth: '200px',
         textAlign: 'center',
         fontFamily: '"Helvetica Neue",Helvetica,Arial,sans-serif',
@@ -1414,8 +1458,8 @@ const tasksStyle = {
         wordSpacing: 'normal',
         wordWrap: 'normal',
         whiteSpace: 'normal',
-        lineBreak: 'auto',
-    },
+        lineBreak: 'auto'
+    }
 };
 
 // ##############################
@@ -1425,11 +1469,11 @@ const tasksStyle = {
 const typographyStyle = {
     defaultFontStyle: {
         ...defaultFont,
-        fontSize : '14px',
+        fontSize: '14px'
     },
     defaultHeaderMargins: {
         marginTop: '20px',
-        marginBottom: '10px',
+        marginBottom: '10px'
     },
     pStyle: {
         margin: '0 0 10px'
@@ -1438,7 +1482,7 @@ const typographyStyle = {
         padding: '10px 20px',
         margin: '0 0 20px',
         fontSize: '17.5px',
-        borderLeft: '5px solid #eee',
+        borderLeft: '5px solid #eee'
     },
     quoteText: {
         margin: '0 0 10px',
@@ -1448,37 +1492,37 @@ const typographyStyle = {
         display: 'block',
         fontSize: '80%',
         lineHeight: '1.42857143',
-        color: '#777',
+        color: '#777'
     },
     mutedText: {
-        color: '#777',
+        color: '#777'
     },
     primaryText: {
-        color: primaryColor,
+        color: primaryColor
     },
     infoText: {
-        color: infoColor,
+        color: infoColor
     },
     successText: {
-        color: successColor,
+        color: successColor
     },
     warningText: {
-        color: warningColor,
+        color: warningColor
     },
     dangerText: {
-        color: dangerColor,
+        color: dangerColor
     },
     smallText: {
         fontSize: '65%',
         fontWeight: '400',
         lineHeight: '1',
-        color: '#777',
+        color: '#777'
     },
     aStyle: {
         textDecoration: 'none',
         backgroundColor: 'transparent',
-        '&,&:hover':{
-            color: '#FFFFFF',
+        '&,&:hover': {
+            color: '#FFFFFF'
         }
     }
 };
@@ -1498,45 +1542,46 @@ const snackbarContentStyle = {
         backgroundColor: 'white',
         color: '#555555',
         borderRadius: '3px',
-        boxShadow: '0 12px 20px -10px rgba(255, 255, 255, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(255, 255, 255, 0.2)',
+        boxShadow:
+            '0 12px 20px -10px rgba(255, 255, 255, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(255, 255, 255, 0.2)'
     },
     info: {
         backgroundColor: '#00d3ee',
         color: '#ffffff',
-        ...infoBoxShadow,
+        ...infoBoxShadow
     },
     success: {
         backgroundColor: '#5cb860',
         color: '#ffffff',
-        ...successBoxShadow,
+        ...successBoxShadow
     },
     warning: {
         backgroundColor: '#ffa21a',
         color: '#ffffff',
-        ...warningBoxShadow,
+        ...warningBoxShadow
     },
     danger: {
         backgroundColor: '#f55a4e',
         color: '#ffffff',
-        ...dangerBoxShadow,
+        ...dangerBoxShadow
     },
     primary: {
         backgroundColor: '#af2cc5',
         color: '#ffffff',
-        ...primaryBoxShadow,
+        ...primaryBoxShadow
     },
     message: {
         padding: '0',
         display: 'block',
-        maxWidth: '89%',
+        maxWidth: '89%'
     },
     close: {
         width: '14px',
-        height: '14px',
+        height: '14px'
     },
     iconButton: {
         width: '24px',
-        height: '24px',
+        height: '24px'
     },
     icon: {
         display: 'block',
@@ -1545,7 +1590,7 @@ const snackbarContentStyle = {
         top: '50%',
         marginTop: '-15px',
         width: '30px',
-        height: '30px',
+        height: '30px'
     },
     iconMessage: {
         paddingLeft: '65px',
@@ -1572,5 +1617,5 @@ module.exports = {
     headerStyle,
     sidebarStyle,
     appStyle,
-    headerLinksStyle,
+    headerLinksStyle
 };

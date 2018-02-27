@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    withStyles
-} from 'material-ui';
+import { withStyles } from 'material-ui';
 
 import { typographyStyle } from '../../variables/styles';
 
-class Small extends React.Component{
-    render(){
+class Small extends React.Component {
+    render() {
         const { classes, children } = this.props;
         return (
-            <div className={classes.defaultFontStyle + " " + classes.smallText}>
+            <div className={classes.defaultFontStyle + ' ' + classes.smallText}>
                 {children}
             </div>
         );

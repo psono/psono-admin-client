@@ -6,8 +6,10 @@ var Chartist = require('chartist');
 // ##############################
 // // // variables used to create animation on charts
 // #############################
-var delays = 80, durations = 500;
-var delays2 = 80, durations2 = 500;
+var delays = 80,
+    durations = 500;
+var delays2 = 80,
+    durations2 = 500;
 
 // ##############################
 // // // Daily Sales
@@ -16,9 +18,7 @@ var delays2 = 80, durations2 = 500;
 const dailySalesChart = {
     data: {
         labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-            [12, 17, 7, 17, 23, 18, 38]
-        ]
+        series: [[12, 17, 7, 17, 23, 18, 38]]
     },
     options: {
         lineSmooth: Chartist.Interpolation.cardinal({
@@ -34,14 +34,18 @@ const dailySalesChart = {
         }
     },
     // for animation
-    animation : {
-        "draw" : function(data) {
+    animation: {
+        draw: function(data) {
             if (data.type === 'line' || data.type === 'area') {
                 data.element.animate({
                     d: {
                         begin: 600,
                         dur: 700,
-                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        from: data.path
+                            .clone()
+                            .scale(1, 0)
+                            .translate(0, data.chartRect.height())
+                            .stringify(),
                         to: data.path.clone().stringify(),
                         easing: Chartist.Svg.Easing.easeOutQuint
                     }
@@ -59,7 +63,7 @@ const dailySalesChart = {
             }
         }
     }
-}
+};
 
 // ##############################
 // // // Email Subscriptions
@@ -67,10 +71,21 @@ const dailySalesChart = {
 
 const emailsSubscriptionChart = {
     data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-        ]
+        labels: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'Mai',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ],
+        series: [[542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]]
     },
     options: {
         axisX: {
@@ -86,17 +101,20 @@ const emailsSubscriptionChart = {
         }
     },
     responsiveOptions: [
-        ['screen and (max-width: 640px)', {
-            seriesBarDistance: 5,
-            axisX: {
-                labelInterpolationFnc: function(value) {
-                    return value[0];
+        [
+            'screen and (max-width: 640px)',
+            {
+                seriesBarDistance: 5,
+                axisX: {
+                    labelInterpolationFnc: function(value) {
+                        return value[0];
+                    }
                 }
             }
-        }]
+        ]
     ],
     animation: {
-        "draw": function(data) {
+        draw: function(data) {
             if (data.type === 'bar') {
                 data.element.animate({
                     opacity: {
@@ -119,9 +137,7 @@ const emailsSubscriptionChart = {
 const completedTasksChart = {
     data: {
         labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
-        series: [
-            [230, 750, 450, 300, 280, 240, 200, 190]
-        ]
+        series: [[230, 750, 450, 300, 280, 240, 200, 190]]
     },
     options: {
         lineSmooth: Chartist.Interpolation.cardinal({
@@ -137,13 +153,17 @@ const completedTasksChart = {
         }
     },
     animation: {
-        "draw": function(data) {
+        draw: function(data) {
             if (data.type === 'line' || data.type === 'area') {
                 data.element.animate({
                     d: {
                         begin: 600,
                         dur: 700,
-                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        from: data.path
+                            .clone()
+                            .scale(1, 0)
+                            .translate(0, data.chartRect.height())
+                            .stringify(),
                         to: data.path.clone().stringify(),
                         easing: Chartist.Svg.Easing.easeOutQuint
                     }

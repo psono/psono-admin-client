@@ -1,13 +1,13 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators, compose} from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
 import { withStyles } from 'material-ui';
 import PropTypes from 'prop-types';
 
 import { LoginForm } from '../../components';
-import actionCreators from '../../actions/actionCreators'
-import user from '../../services/user'
-import host from '../../services/host'
+import actionCreators from '../../actions/actionCreators';
+import user from '../../services/user';
+import host from '../../services/host';
 
 import image from '../../assets/img/background.jpg';
 const style = {
@@ -19,28 +19,26 @@ const style = {
         backgroundSize: 'cover',
         display: 'flex',
         'justify-content': 'center',
-        'align-items': 'center',
+        'align-items': 'center'
     },
     content: {
         width: '100%',
         height: '100%',
         'z-index': '3',
-        content: "",
+        content: '',
         opacity: '.8',
         position: 'absolute',
-        background: '#000',
-    },
+        background: '#000'
+    }
 };
 
-
-class Login extends React.Component{
-    render(){
+class Login extends React.Component {
+    render() {
         const { classes, ...rest } = this.props;
 
         return (
             <div className={classes.wrapper}>
-                <div className={classes.content}>
-                </div>
+                <div className={classes.content} />
                 <LoginForm
                     {...rest}
                     initiate_login={user.initiate_login}
@@ -59,15 +57,15 @@ class Login extends React.Component{
 
 Login.propTypes = {
     store: PropTypes.object.isRequired,
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
-    return {state: state}
+    return { state: state };
 }
 
 function mapDispatchToProps(dispatch) {
-    return {actions: bindActionCreators(actionCreators, dispatch)}
+    return { actions: bindActionCreators(actionCreators, dispatch) };
 }
 
 export default compose(

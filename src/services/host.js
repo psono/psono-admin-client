@@ -1,9 +1,8 @@
-import helper from './helper'
-import store from "./store";
-import psono_server from "./api-server";
-import cryptoLibrary from "./cryptoLibrary"
-import action from "../actions/boundActionCreators";
-
+import helper from './helper';
+import store from './store';
+import psono_server from './api-server';
+import cryptoLibrary from './cryptoLibrary';
+import action from '../actions/boundActionCreators';
 
 /**
  * Returns all known hosts
@@ -48,7 +47,6 @@ function update_known_hosts(new_known_hosts) {
  * @returns {*} The result of the search / comparison
  */
 function check_known_hosts(server_url, verify_key) {
-
     const known_hosts = get_known_hosts();
     server_url = server_url.toLowerCase();
 
@@ -72,7 +70,6 @@ function check_known_hosts(server_url, verify_key) {
     };
 }
 
-
 /**
  * Validates the signature of the server and compares it to known hosts.
  *
@@ -81,18 +78,22 @@ function check_known_hosts(server_url, verify_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function check_host(server) {
-
-    const onSuccess = function(response){
-
+    const onSuccess = function(response) {
         let check_result;
         const data = response.data;
         const server_url = server.toLowerCase();
         const info = JSON.parse(data['info']);
-        const split_version = info.version.split(" ");
-        info.version = "v" + split_version[0];
+        const split_version = info.version.split(' ');
+        info.version = 'v' + split_version[0];
         info.build = split_version[2].replace(')', '');
 
-        if (! cryptoLibrary.validate_signature(data['info'], data['signature'], data['verify_key'])) {
+        if (
+            !cryptoLibrary.validate_signature(
+                data['info'],
+                data['signature'],
+                data['verify_key']
+            )
+        ) {
             return {
                 server_url: server_url,
                 status: 'invalid_signature',
@@ -104,15 +105,13 @@ function check_host(server) {
         check_result = check_known_hosts(server_url, data['verify_key']);
 
         if (check_result['status'] === 'matched') {
-
             return {
                 server_url: server_url,
                 status: 'matched',
                 verify_key: data['verify_key'],
                 info: info
             };
-        } else if(check_result['status'] === 'signature_changed') {
-
+        } else if (check_result['status'] === 'signature_changed') {
             return {
                 server_url: server_url,
                 status: 'signature_changed',
@@ -155,8 +154,8 @@ function approve_host(server_url, verify_key) {
     }
 
     known_hosts.push({
-        'url': server_url,
-        'verify_key': verify_key
+        url: server_url,
+        verify_key: verify_key
     });
 
     update_known_hosts(known_hosts);
@@ -168,17 +167,17 @@ function approve_host(server_url, verify_key) {
  * @param {string} fingerprint The fingerprint of the host
  */
 function delete_known_host(fingerprint) {
-
     let known_hosts = get_known_hosts();
 
-    helper.remove_from_array(known_hosts, fingerprint, function(known_host, fingerprint) {
+    helper.remove_from_array(known_hosts, fingerprint, function(
+        known_host,
+        fingerprint
+    ) {
         return known_host['verify_key'] === fingerprint;
     });
 
     update_known_hosts(known_hosts);
 }
-
-
 
 const service = {
     get_known_hosts,

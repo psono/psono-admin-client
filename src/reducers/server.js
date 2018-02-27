@@ -1,10 +1,9 @@
 import {
     LOGOUT,
     SET_SERVER_INFO,
-    SET_SERVER_URL,
-} from '../actions/actionTypes'
-import store from '../services/store'
-
+    SET_SERVER_URL
+} from '../actions/actionTypes';
+import store from '../services/store';
 
 const default_url = 'https://www.psono.pw/server';
 const default_api = '';
@@ -16,7 +15,6 @@ const default_license_max_users = undefined;
 const default_license_valid_from = undefined;
 const default_license_valid_till = undefined;
 
-
 function server(
     state = {
         url: default_url,
@@ -27,14 +25,16 @@ function server(
         build: default_build,
         license_max_users: default_license_max_users,
         license_valid_from: default_license_valid_from,
-        license_valid_till: default_license_valid_till,
+        license_valid_till: default_license_valid_till
     },
     action
 ) {
     switch (action.type) {
         case LOGOUT:
             return Object.assign({}, state, {
-                url: store.getState().user.remember_me ? state.url : default_url.toLowerCase(),
+                url: store.getState().user.remember_me
+                    ? state.url
+                    : default_url.toLowerCase(),
                 api: default_api,
                 authentication_methods: default_authentication_methods,
                 public_key: default_public_key,
@@ -42,7 +42,7 @@ function server(
                 build: default_build,
                 license_max_users: default_license_max_users,
                 license_valid_from: default_license_valid_from,
-                license_valid_till: default_license_valid_till,
+                license_valid_till: default_license_valid_till
             });
         case SET_SERVER_INFO:
             return Object.assign({}, state, {
@@ -54,15 +54,15 @@ function server(
                 build: action.build,
                 license_max_users: action.license_max_users,
                 license_valid_from: action.license_valid_from,
-                license_valid_till: action.license_valid_till,
+                license_valid_till: action.license_valid_till
             });
         case SET_SERVER_URL:
             return Object.assign({}, state, {
-                url: action.url.toLowerCase(),
+                url: action.url.toLowerCase()
             });
         default:
-            return state
+            return state;
     }
 }
 
-export default server
+export default server;

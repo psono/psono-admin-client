@@ -1,6 +1,6 @@
-import DashboardPage from "../views/Dashboard/Dashboard.jsx";
+import DashboardPage from '../views/Dashboard/Dashboard.jsx';
 // import UserProfile from "../views/UserProfile/UserProfile.jsx";
-import Users from "../views/Users/Users.jsx";
+import Users from '../views/Users/Users.jsx';
 // import TableList from "../views/TableList/TableList.jsx";
 // import Typography from "../views/Typography/Typography.jsx";
 // import Icons from "../views/Icons/Icons.jsx";
@@ -8,15 +8,26 @@ import Users from "../views/Users/Users.jsx";
 // import NotificationsPage from "../views/Notifications/Notifications.jsx";
 
 import {
-    Dashboard, Person//, ContentPaste, LibraryBooks, BubbleChart, LocationOn, Notifications
+    Dashboard,
+    Person //, ContentPaste, LibraryBooks, BubbleChart, LocationOn, Notifications
 } from 'material-ui-icons';
 
-
 let appRoutes = [
-    { path: "/dashboard", sidebarName: "Dashboard", navbarName: "Dashboard", icon: Dashboard, component: DashboardPage },
-    { path: "/users", sidebarName: "Users", navbarName: "Users", icon: Person, component: Users },
+    {
+        path: '/dashboard',
+        sidebarName: 'Dashboard',
+        navbarName: 'Dashboard',
+        icon: Dashboard,
+        component: DashboardPage
+    },
+    {
+        path: '/users',
+        sidebarName: 'Users',
+        navbarName: 'Users',
+        icon: Person,
+        component: Users
+    }
 ];
-
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     //dev
@@ -34,7 +45,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 }
 
 appRoutes = appRoutes.concat([
-    { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" },
+    { redirect: true, path: '/', to: '/dashboard', navbarName: 'Redirect' }
 ]);
 
 export default appRoutes;

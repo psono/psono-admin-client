@@ -6,49 +6,50 @@ import {
     LOGOUT,
     SET_SERVER_URL,
     SET_SERVER_INFO,
-    SET_CLIENT_URL,
-} from './actionTypes'
-
+    SET_CLIENT_URL
+} from './actionTypes';
 
 function set_user_info_1(username, remember_me, trust_device) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch({
             type: SET_USER_INFO_1,
             username,
             remember_me,
-            trust_device,
+            trust_device
         });
-
     };
 }
-function set_user_info_2(user_private_key, user_public_key, session_secret_key, token, user_sauce) {
-    return (dispatch) => {
+function set_user_info_2(
+    user_private_key,
+    user_public_key,
+    session_secret_key,
+    token,
+    user_sauce
+) {
+    return dispatch => {
         dispatch({
             type: SET_USER_INFO_2,
             user_private_key,
             user_public_key,
             session_secret_key,
             token,
-            user_sauce,
+            user_sauce
         });
-
     };
 }
 function set_user_info_3(user_id, user_email, user_secret_key) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch({
             type: SET_USER_INFO_3,
             user_id,
             user_email,
             user_secret_key
         });
-
     };
 }
 
 function logout() {
-    return (dispatch) => {
-
+    return dispatch => {
         dispatch({
             type: LOGOUT
         });
@@ -56,14 +57,14 @@ function logout() {
 }
 
 function set_server_info(info) {
-    return (dispatch) => {
+    return dispatch => {
         info.type = SET_SERVER_INFO;
         dispatch(info);
     };
 }
 
 function set_server_url(url) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch({
             type: SET_SERVER_URL,
             url: url
@@ -72,7 +73,7 @@ function set_server_url(url) {
 }
 
 function set_client_url(url) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch({
             type: SET_CLIENT_URL,
             url: url
@@ -81,7 +82,7 @@ function set_client_url(url) {
 }
 
 function set_known_hosts(known_hosts) {
-    return (dispatch) => {
+    return dispatch => {
         dispatch({
             type: SET_KNOWN_HOSTS,
             known_hosts: known_hosts
@@ -97,8 +98,7 @@ const actionCreators = {
     set_server_info,
     set_server_url,
     set_client_url,
-    set_known_hosts,
+    set_known_hosts
 };
 
-export default actionCreators
-
+export default actionCreators;

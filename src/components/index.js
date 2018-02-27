@@ -77,28 +77,38 @@ import Tasks from './Tasks/Tasks.jsx';
 // // // Typography
 // #############################
 
-import P from "./Typography/P.jsx";
-import Quote from "./Typography/Quote.jsx";
-import Muted from "./Typography/Muted.jsx";
-import Primary from "./Typography/Primary.jsx";
-import Info from "./Typography/Info.jsx";
-import Success from "./Typography/Success.jsx";
-import Warning from "./Typography/Warning.jsx";
-import Danger from "./Typography/Danger.jsx";
-import Small from "./Typography/Small.jsx";
+import P from './Typography/P.jsx';
+import Quote from './Typography/Quote.jsx';
+import Muted from './Typography/Muted.jsx';
+import Primary from './Typography/Primary.jsx';
+import Info from './Typography/Info.jsx';
+import Success from './Typography/Success.jsx';
+import Warning from './Typography/Warning.jsx';
+import Danger from './Typography/Danger.jsx';
+import Small from './Typography/Small.jsx';
 import A from './Typography/A.jsx';
 
 // ##############################
 // // // Form
 // #############################
 
-import LoginForm from "./Form/LoginForm.jsx";
+import LoginForm from './Form/LoginForm.jsx';
 
 export {
     // Cards
-    ChartCard, ProfileCard, RegularCard, StatsCard, VersionCard, LicenseCard, Sessions, TasksCard, ReleaseCard, UsersCard,
+    ChartCard,
+    ProfileCard,
+    RegularCard,
+    StatsCard,
+    VersionCard,
+    LicenseCard,
+    Sessions,
+    TasksCard,
+    ReleaseCard,
+    UsersCard,
     // CustomButtons
-    Button, IconButton,
+    Button,
+    IconButton,
     // CustomInput
     CustomInput,
     // Footer
@@ -106,17 +116,31 @@ export {
     // Grid
     ItemGrid,
     // Header
-    Header, HeaderLinks,
+    Header,
+    HeaderLinks,
     // Sidebar
     Sidebar,
     //Snackbar
-    Snackbar, SnackbarContent,
+    Snackbar,
+    SnackbarContent,
     // Table
-    Table, DxTable, DxTableAllFeatures, DxTableReleases,
+    Table,
+    DxTable,
+    DxTableAllFeatures,
+    DxTableReleases,
     // Tasks
     Tasks,
     // Typography
-    P, Quote, Muted, Primary, Info, Success, Warning, Danger, Small, A,
+    P,
+    Quote,
+    Muted,
+    Primary,
+    Info,
+    Success,
+    Warning,
+    Danger,
+    Small,
+    A,
     // Form
-    LoginForm,
+    LoginForm
 };

@@ -1,14 +1,14 @@
-import { combineReducers } from 'redux'
-import persistent from './persistent'
-import user from './user'
-import server from './server'
-import client from './client'
+import { combineReducers } from 'redux';
+import persistent from './persistent';
+import user from './user';
+import server from './server';
+import client from './client';
 
 const rootReducer = combineReducers({
     persistent,
     user,
     server,
-    client,
+    client
 });
 
-export default rootReducer
+export default rootReducer;

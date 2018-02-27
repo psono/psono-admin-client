@@ -2,8 +2,6 @@
  * Helper Service
  */
 
-
-
 /**
  * Checks weather a string is a valid ipv4 address
  *
@@ -11,7 +9,9 @@
  * @returns {boolean} Returns the split up url
  */
 function is_ipv4_address(address) {
-    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(address);
+    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+        address
+    );
 }
 
 /**
@@ -29,26 +29,37 @@ function parse_url(url) {
     let port = null;
 
     // According to RFC http://www.ietf.org/rfc/rfc3986.txt Appendix B
-    const pattern = new RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
-    const matches =  url.match(pattern);
+    const pattern = new RegExp(
+        '^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?'
+    );
+    const matches = url.match(pattern);
 
-    if (typeof(matches[4]) !== 'undefined') {
-        authority = matches[4].replace(/^(www\.)/,"");
-        splitted_authority = authority.split(":");
+    if (typeof matches[4] !== 'undefined') {
+        authority = matches[4].replace(/^(www\.)/, '');
+        splitted_authority = authority.split(':');
     }
 
-    if (typeof(splitted_authority) !== 'undefined' && splitted_authority.length === 2) {
+    if (
+        typeof splitted_authority !== 'undefined' &&
+        splitted_authority.length === 2
+    ) {
         port = splitted_authority[splitted_authority.length - 1];
     }
-    if (typeof(splitted_authority) !== 'undefined') {
-        splitted_domain = splitted_authority[0].split(".");
+    if (typeof splitted_authority !== 'undefined') {
+        splitted_domain = splitted_authority[0].split('.');
         full_domain = splitted_authority[0];
     }
 
-    if (typeof(splitted_domain) !== 'undefined' && is_ipv4_address(full_domain)) {
-        top_domain = full_domain
-    } else if(typeof(splitted_domain) !== 'undefined') {
-        top_domain = splitted_domain[splitted_domain.length - 2] + '.' + splitted_domain[splitted_domain.length - 1];
+    if (
+        typeof splitted_domain !== 'undefined' &&
+        is_ipv4_address(full_domain)
+    ) {
+        top_domain = full_domain;
+    } else if (typeof splitted_domain !== 'undefined') {
+        top_domain =
+            splitted_domain[splitted_domain.length - 2] +
+            '.' +
+            splitted_domain[splitted_domain.length - 1];
     }
 
     return {
@@ -68,7 +79,7 @@ function parse_url(url) {
  * @param url
  * @returns {*}
  */
-function get_domain (url) {
+function get_domain(url) {
     const parsed_url = parse_url(url);
     return parsed_url.full_domain;
 }
@@ -82,8 +93,11 @@ function get_domain (url) {
  */
 function validate_username_start(username, forbidden_chars) {
     for (let i = 0; i < forbidden_chars.length; i++) {
-        if (username.substring(0, forbidden_chars[i].length) === forbidden_chars[i]) {
-            return 'Usernames may not start with "'+ forbidden_chars[i] +'"';
+        if (
+            username.substring(0, forbidden_chars[i].length) ===
+            forbidden_chars[i]
+        ) {
+            return 'Usernames may not start with "' + forbidden_chars[i] + '"';
         }
     }
 }
@@ -97,8 +111,11 @@ function validate_username_start(username, forbidden_chars) {
  */
 function validate_username_end(username, forbidden_chars) {
     for (let i = 0; i < forbidden_chars.length; i++) {
-        if (username.substring(username.length - forbidden_chars[i].length) === forbidden_chars[i]) {
-            return 'Usernames may not end with "'+ forbidden_chars[i] +'"';
+        if (
+            username.substring(username.length - forbidden_chars[i].length) ===
+            forbidden_chars[i]
+        ) {
+            return 'Usernames may not end with "' + forbidden_chars[i] + '"';
         }
     }
 }
@@ -113,7 +130,7 @@ function validate_username_end(username, forbidden_chars) {
 function validate_username_contain(username, forbidden_chars) {
     for (let i = 0; i < forbidden_chars.length; i++) {
         if (username.indexOf(forbidden_chars[i]) !== -1) {
-            return 'Usernames may not contain "'+ forbidden_chars[i] +'"';
+            return 'Usernames may not contain "' + forbidden_chars[i] + '"';
         }
     }
 }
@@ -128,7 +145,7 @@ function validate_username_contain(username, forbidden_chars) {
 function validate_group_name_contain(group_name, forbidden_chars) {
     for (let i = 0; i < forbidden_chars.length; i++) {
         if (group_name.indexOf(forbidden_chars[i]) !== -1) {
-            return 'Group name may not contain "'+ forbidden_chars[i] +'"';
+            return 'Group name may not contain "' + forbidden_chars[i] + '"';
         }
     }
 }
@@ -141,7 +158,7 @@ function validate_group_name_contain(group_name, forbidden_chars) {
  * @returns {string} The full username
  */
 function form_full_username(username, domain) {
-    if (username.indexOf('@') === -1){
+    if (username.indexOf('@') === -1) {
         return username + '@' + domain;
     } else {
         return username;
@@ -157,13 +174,12 @@ function form_full_username(username, domain) {
  * @returns {boolean|string} Returns true or a string with the error
  */
 function is_valid_username(username) {
-
-    const res = username.split("@");
+    const res = username.split('@');
     username = res[0];
 
     const USERNAME_REGEXP = /^[a-z0-9.-]*$/i;
     let error;
-    if( ! USERNAME_REGEXP.test(username)) {
+    if (!USERNAME_REGEXP.test(username)) {
         return 'Usernames may only contain letters, numbers, periods and dashes';
     }
 
@@ -171,17 +187,17 @@ function is_valid_username(username) {
         return 'Usernames may not be shorter than 3 chars';
     }
 
-    error = validate_username_start(username, [".", "-"]);
+    error = validate_username_start(username, ['.', '-']);
     if (error) {
         return error;
     }
 
-    error = validate_username_end(username, [".", "-"]);
+    error = validate_username_end(username, ['.', '-']);
     if (error) {
         return error;
     }
 
-    error = validate_username_contain(username, ["..", "--", '.-', '-.']);
+    error = validate_username_contain(username, ['..', '--', '.-', '-.']);
     if (error) {
         return error;
     }
@@ -200,18 +216,17 @@ function remove_from_array(array, search, cmp_fct) {
     if (!array) {
         return;
     }
-    if (typeof(cmp_fct) === 'undefined') {
+    if (typeof cmp_fct === 'undefined') {
         cmp_fct = function(a, b) {
             return a === b;
-        }
+        };
     }
-    for(let i = array.length - 1; i >= 0; i--) {
-        if(cmp_fct(array[i], search)) {
+    for (let i = array.length - 1; i >= 0; i--) {
+        if (cmp_fct(array[i], search)) {
             array.splice(i, 1);
         }
     }
 }
-
 
 /**
  * Copies some content to the clipboard
@@ -219,8 +234,7 @@ function remove_from_array(array, search, cmp_fct) {
  * @param {string} content The content to copy
  */
 function copy_to_clipboard(content) {
-
-    const copy = function (e) {
+    const copy = function(e) {
         e.preventDefault();
         if (e.clipboardData) {
             e.clipboardData.setData('text/plain', content);
@@ -242,10 +256,12 @@ function copy_to_clipboard(content) {
  *
  * @returns {boolean} Whether the string ends with the suffix or not
  */
-function endsWith (to_test, suffix) {
-    return suffix !== "" && to_test.indexOf(suffix, to_test.length - suffix.length) !== -1;
+function endsWith(to_test, suffix) {
+    return (
+        suffix !== '' &&
+        to_test.indexOf(suffix, to_test.length - suffix.length) !== -1
+    );
 }
-
 
 /**
  * Returns a test function that can be used to filter according to the name and urlfilter
@@ -253,11 +269,17 @@ function endsWith (to_test, suffix) {
  * @param {string} test Testable string
  */
 function get_password_filter(test) {
-    const regex = new RegExp(test.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1"), 'i');
+    const regex = new RegExp(
+        test.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1'),
+        'i'
+    );
 
     return function(datastore_entry) {
-        return regex.test(datastore_entry.name) || regex.test(datastore_entry.urlfilter);
-    }
+        return (
+            regex.test(datastore_entry.name) ||
+            regex.test(datastore_entry.urlfilter)
+        );
+    };
 }
 
 const service = {
@@ -269,7 +291,7 @@ const service = {
     remove_from_array,
     copy_to_clipboard,
     endsWith,
-    get_password_filter,
+    get_password_filter
 };
 
 export default service;

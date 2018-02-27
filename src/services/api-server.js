@@ -3,8 +3,8 @@
  */
 
 import axios from 'axios';
-import store from './store'
-import cryptoLibrary from './cryptoLibrary'
+import store from './store';
+import cryptoLibrary from './cryptoLibrary';
 
 /**
  * Decrypts data with a secret
@@ -13,11 +13,20 @@ import cryptoLibrary from './cryptoLibrary'
  * @returns {*}
  */
 function decrypt_data(session_secret_key, data) {
-    if (session_secret_key && data !== null
-        && data.hasOwnProperty('data')
-        && data.data.hasOwnProperty('text')
-        && data.data.hasOwnProperty('nonce')) {
-        data.data = JSON.parse(cryptoLibrary.decrypt_data(data.data.text, data.data.nonce, session_secret_key));
+    if (
+        session_secret_key &&
+        data !== null &&
+        data.hasOwnProperty('data') &&
+        data.data.hasOwnProperty('text') &&
+        data.data.hasOwnProperty('nonce')
+    ) {
+        data.data = JSON.parse(
+            cryptoLibrary.decrypt_data(
+                data.data.text,
+                data.data.nonce,
+                session_secret_key
+            )
+        );
     }
 
     return data;
@@ -35,12 +44,14 @@ function decrypt_data(session_secret_key, data) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function call(method, endpoint, data, headers, session_secret_key) {
-
     const url = store.getState().server.url + endpoint;
 
     if (session_secret_key && data !== null) {
         data['request_time'] = new Date().toISOString();
-        data = cryptoLibrary.encrypt_data(JSON.stringify(data), session_secret_key);
+        data = cryptoLibrary.encrypt_data(
+            JSON.stringify(data),
+            session_secret_key
+        );
     }
 
     return new Promise((resolve, reject) => {
@@ -48,30 +59,31 @@ function call(method, endpoint, data, headers, session_secret_key) {
             method,
             url,
             data,
-            headers,
-        }).then(
-            (data) => {
+            headers
+        })
+            .then(data => {
                 resolve(decrypt_data(session_secret_key, data));
-            }
-        ).catch(function (error) {
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                return reject(decrypt_data(session_secret_key, error.response))
-            } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-            reject({errors: ['Server offline.']})
-        });
+            })
+            .catch(function(error) {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    return reject(
+                        decrypt_data(session_secret_key, error.response)
+                    );
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+                reject({ errors: ['Server offline.'] });
+            });
     });
-
 }
 
 /**
@@ -81,7 +93,7 @@ function call(method, endpoint, data, headers, session_secret_key) {
  */
 function info() {
     const endpoint = '/info/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = null;
 
@@ -98,11 +110,11 @@ function info() {
  */
 function admin_info(token, session_secret_key) {
     const endpoint = '/admin/info/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -118,11 +130,11 @@ function admin_info(token, session_secret_key) {
  */
 function admin_user(token, session_secret_key) {
     const endpoint = '/admin/user/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -138,11 +150,11 @@ function admin_user(token, session_secret_key) {
  */
 function admin_session(token, session_secret_key) {
     const endpoint = '/admin/session/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -160,9 +172,8 @@ function admin_session(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the login status
  */
 function login(login_info, login_info_nonce, public_key, session_duration) {
-
     const endpoint = '/authentication/login/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         login_info: login_info,
         login_info_nonce: login_info_nonce,
@@ -184,14 +195,13 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function ga_verify(token, ga_token, session_secret_key) {
-
     const endpoint = '/authentication/ga-verify/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         ga_token: ga_token
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -207,14 +217,13 @@ function ga_verify(token, ga_token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function duo_verify(token, duo_token, session_secret_key) {
-
     const endpoint = '/authentication/duo-verify/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         duo_token: duo_token
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -230,19 +239,17 @@ function duo_verify(token, duo_token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
-
     const endpoint = '/authentication/yubikey-otp-verify/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         yubikey_otp: yubikey_otp
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax POST request to activate the token
@@ -254,21 +261,24 @@ function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function activate_token(token, verification, verification_nonce, session_secret_key) {
-
+function activate_token(
+    token,
+    verification,
+    verification_nonce,
+    session_secret_key
+) {
     const endpoint = '/authentication/activate-token/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         verification: verification,
         verification_nonce: verification_nonce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax GET request get all sessions
@@ -279,15 +289,13 @@ function activate_token(token, verification, verification_nonce, session_secret_
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function get_sessions(token, session_secret_key) {
-
     const endpoint = '/authentication/sessions/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
-
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
@@ -303,12 +311,12 @@ function get_sessions(token, session_secret_key) {
  */
 function logout(token, session_secret_key, session_id) {
     const endpoint = '/authentication/logout/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
-        'session_id': session_id
+        session_id: session_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -331,9 +339,20 @@ function logout(token, session_secret_key, session_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function register(email, username, authkey, public_key, private_key, private_key_nonce, secret_key, secret_key_nonce, user_sauce, base_url) {
+function register(
+    email,
+    username,
+    authkey,
+    public_key,
+    private_key,
+    private_key_nonce,
+    secret_key,
+    secret_key_nonce,
+    user_sauce,
+    base_url
+) {
     const endpoint = '/authentication/register/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         email: email,
         username: username,
@@ -359,9 +378,9 @@ function register(email, username, authkey, public_key, private_key, private_key
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the activation status
  */
-function verify_email (activation_code) {
+function verify_email(activation_code) {
     const endpoint = '/authentication/verify-email/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         activation_code: activation_code
     };
@@ -386,9 +405,19 @@ function verify_email (activation_code) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the update status
  */
-function update_user(token, session_secret_key, email, authkey, authkey_old, private_key, private_key_nonce, secret_key, secret_key_nonce) {
+function update_user(
+    token,
+    session_secret_key,
+    email,
+    authkey,
+    authkey_old,
+    private_key,
+    private_key_nonce,
+    secret_key,
+    secret_key_nonce
+) {
     const endpoint = '/user/update/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         email: email,
         authkey: authkey,
@@ -399,7 +428,7 @@ function update_user(token, session_secret_key, email, authkey, authkey_old, pri
         secret_key_nonce: secret_key_nonce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -417,9 +446,16 @@ function update_user(token, session_secret_key, email, authkey, authkey_old, pri
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the recovery_data_id
  */
-function write_recoverycode(token, session_secret_key, recovery_authkey, recovery_data, recovery_data_nonce, recovery_sauce) {
+function write_recoverycode(
+    token,
+    session_secret_key,
+    recovery_authkey,
+    recovery_data,
+    recovery_data_nonce,
+    recovery_sauce
+) {
     const endpoint = '/recoverycode/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         recovery_authkey: recovery_authkey,
         recovery_data: recovery_data,
@@ -427,7 +463,7 @@ function write_recoverycode(token, session_secret_key, recovery_authkey, recover
         recovery_sauce: recovery_sauce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -443,7 +479,7 @@ function write_recoverycode(token, session_secret_key, recovery_authkey, recover
  */
 function enable_recoverycode(username, recovery_authkey) {
     const endpoint = '/password/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         username: username,
         recovery_authkey: recovery_authkey
@@ -463,9 +499,14 @@ function enable_recoverycode(username, recovery_authkey) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the recovery_data
  */
-function set_password(username, recovery_authkey, update_data, update_data_nonce) {
+function set_password(
+    username,
+    recovery_authkey,
+    update_data,
+    update_data_nonce
+) {
     const endpoint = '/password/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         username: username,
         recovery_authkey: recovery_authkey,
@@ -486,19 +527,21 @@ function set_password(username, recovery_authkey, update_data, update_data_nonce
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function read_datastore (token, session_secret_key, datastore_id) {
-    if (datastore_id === undefined) { datastore_id = null; }
+function read_datastore(token, session_secret_key, datastore_id) {
+    if (datastore_id === undefined) {
+        datastore_id = null;
+    }
 
-    const endpoint = '/datastore/' + (datastore_id === null ? '' : datastore_id + '/');
-    const connection_type = "GET";
+    const endpoint =
+        '/datastore/' + (datastore_id === null ? '' : datastore_id + '/');
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request to create a datatore with the token as authentication and optional already some data,
@@ -516,11 +559,19 @@ function read_datastore (token, session_secret_key, datastore_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function create_datastore(token, session_secret_key, type, description, encrypted_data,
-                                 encrypted_data_nonce, is_default, encrypted_data_secret_key,
-                                 encrypted_data_secret_key_nonce) {
+function create_datastore(
+    token,
+    session_secret_key,
+    type,
+    description,
+    encrypted_data,
+    encrypted_data_nonce,
+    is_default,
+    encrypted_data_secret_key,
+    encrypted_data_secret_key_nonce
+) {
     const endpoint = '/datastore/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         type: type,
         description: description,
@@ -531,7 +582,7 @@ function create_datastore(token, session_secret_key, type, description, encrypte
         secret_key_nonce: encrypted_data_secret_key_nonce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -549,14 +600,14 @@ function create_datastore(token, session_secret_key, type, description, encrypte
  */
 function delete_datastore(token, session_secret_key, datastore_id, authkey) {
     const endpoint = '/datastore/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         datastore_id: datastore_id,
         authkey: authkey
     };
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -577,10 +628,19 @@ function delete_datastore(token, session_secret_key, datastore_id, authkey) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function write_datastore(token, session_secret_key, datastore_id, encrypted_data, encrypted_data_nonce,
-                                encrypted_data_secret_key, encrypted_data_secret_key_nonce, description, is_default) {
+function write_datastore(
+    token,
+    session_secret_key,
+    datastore_id,
+    encrypted_data,
+    encrypted_data_nonce,
+    encrypted_data_secret_key,
+    encrypted_data_secret_key_nonce,
+    description,
+    is_default
+) {
     const endpoint = '/datastore/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         datastore_id: datastore_id,
         data: encrypted_data,
@@ -591,7 +651,7 @@ function write_datastore(token, session_secret_key, datastore_id, encrypted_data
         is_default: is_default
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -609,15 +669,21 @@ function write_datastore(token, session_secret_key, datastore_id, encrypted_data
  */
 function read_secret(token, session_secret_key, secret_id, synchronous) {
     const endpoint = '/secret/' + secret_id + '/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key, synchronous);
+    return call(
+        connection_type,
+        endpoint,
+        data,
+        headers,
+        session_secret_key,
+        synchronous
+    );
 }
-
 
 /**
  * Ajax PUT request to create a datatore with the token as authentication and optional already some data,
@@ -633,9 +699,17 @@ function read_secret(token, session_secret_key, secret_id, synchronous) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the new secret_id
  */
-function create_secret(token, session_secret_key, encrypted_data, encrypted_data_nonce, link_id, parent_datastore_id, parent_share_id) {
+function create_secret(
+    token,
+    session_secret_key,
+    encrypted_data,
+    encrypted_data_nonce,
+    link_id,
+    parent_datastore_id,
+    parent_share_id
+) {
     const endpoint = '/secret/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         data: encrypted_data,
         data_nonce: encrypted_data_nonce,
@@ -644,7 +718,7 @@ function create_secret(token, session_secret_key, encrypted_data, encrypted_data
         parent_share_id: parent_share_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -661,16 +735,22 @@ function create_secret(token, session_secret_key, encrypted_data, encrypted_data
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function write_secret(token, session_secret_key, secret_id, encrypted_data, encrypted_data_nonce) {
+function write_secret(
+    token,
+    session_secret_key,
+    secret_id,
+    encrypted_data,
+    encrypted_data_nonce
+) {
     const endpoint = '/secret/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         secret_id: secret_id,
         data: encrypted_data,
         data_nonce: encrypted_data_nonce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -687,16 +767,22 @@ function write_secret(token, session_secret_key, secret_id, encrypted_data, encr
  *
  * @returns {Promise<AxiosResponse<any>>} Returns promise with the status of the move
  */
-function move_secret_link(token, session_secret_key, link_id, new_parent_share_id, new_parent_datastore_id) {
+function move_secret_link(
+    token,
+    session_secret_key,
+    link_id,
+    new_parent_share_id,
+    new_parent_datastore_id
+) {
     const endpoint = '/secret/link/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         link_id: link_id,
         new_parent_share_id: new_parent_share_id,
         new_parent_datastore_id: new_parent_datastore_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -713,13 +799,13 @@ function move_secret_link(token, session_secret_key, link_id, new_parent_share_i
  */
 function delete_secret_link(token, session_secret_key, link_id) {
     const endpoint = '/secret/link/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         link_id: link_id
     };
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -735,12 +821,11 @@ function delete_secret_link(token, session_secret_key, link_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_share(token, session_secret_key, share_id) {
-
     const endpoint = '/share/' + share_id + '/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -755,17 +840,15 @@ function read_share(token, session_secret_key, share_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_shares(token, session_secret_key) {
-
     const endpoint = '/share/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request to create a datastore with the token as authentication and optional already some data,
@@ -783,22 +866,31 @@ function read_shares(token, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status and the new share id
  */
-function create_share(token, session_secret_key, encrypted_data, encrypted_data_nonce, key, key_nonce, parent_share_id,
-                             parent_datastore_id, link_id) {
+function create_share(
+    token,
+    session_secret_key,
+    encrypted_data,
+    encrypted_data_nonce,
+    key,
+    key_nonce,
+    parent_share_id,
+    parent_datastore_id,
+    link_id
+) {
     const endpoint = '/share/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         data: encrypted_data,
         data_nonce: encrypted_data_nonce,
         key: key,
         key_nonce: key_nonce,
-        key_type: "symmetric",
+        key_type: 'symmetric',
         parent_share_id: parent_share_id,
         parent_datastore_id: parent_datastore_id,
         link_id: link_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -815,16 +907,22 @@ function create_share(token, session_secret_key, encrypted_data, encrypted_data_
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status of the update
  */
-function write_share(token, session_secret_key, share_id, encrypted_data, encrypted_data_nonce) {
+function write_share(
+    token,
+    session_secret_key,
+    share_id,
+    encrypted_data,
+    encrypted_data_nonce
+) {
     const endpoint = '/share/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         share_id: share_id,
         data: encrypted_data,
         data_nonce: encrypted_data_nonce
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -841,10 +939,10 @@ function write_share(token, session_secret_key, share_id, encrypted_data, encryp
  */
 function read_share_rights(token, session_secret_key, share_id) {
     const endpoint = '/share/rights/' + share_id + '/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -860,15 +958,14 @@ function read_share_rights(token, session_secret_key, share_id) {
  */
 function read_share_rights_overview(token, session_secret_key) {
     const endpoint = '/share/right/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request with the token as authentication to create share rights for a user
@@ -890,11 +987,24 @@ function read_share_rights_overview(token, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function create_share_right(token, session_secret_key, encrypted_title, encrypted_title_nonce,
-                                   encrypted_type, encrypted_type_nonce, share_id, user_id, group_id, key,
-                                   key_nonce, read, write, grant) {
+function create_share_right(
+    token,
+    session_secret_key,
+    encrypted_title,
+    encrypted_title_nonce,
+    encrypted_type,
+    encrypted_type_nonce,
+    share_id,
+    user_id,
+    group_id,
+    key,
+    key_nonce,
+    read,
+    write,
+    grant
+) {
     const endpoint = '/share/right/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         title: encrypted_title,
         title_nonce: encrypted_title_nonce,
@@ -910,12 +1020,11 @@ function create_share_right(token, session_secret_key, encrypted_title, encrypte
         grant: grant
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax POST request with the token as authentication to update the share rights for a user
@@ -931,10 +1040,18 @@ function create_share_right(token, session_secret_key, encrypted_title, encrypte
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function update_share_right(token, session_secret_key, share_id,
-                                   user_id, group_id, read, write, grant) {
+function update_share_right(
+    token,
+    session_secret_key,
+    share_id,
+    user_id,
+    group_id,
+    read,
+    write,
+    grant
+) {
     const endpoint = '/share/right/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         share_id: share_id,
         user_id: user_id,
@@ -944,7 +1061,7 @@ function update_share_right(token, session_secret_key, share_id,
         grant: grant
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -960,16 +1077,21 @@ function update_share_right(token, session_secret_key, share_id,
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function delete_share_right(token, session_secret_key, user_share_right_id, group_share_right_id) {
+function delete_share_right(
+    token,
+    session_secret_key,
+    user_share_right_id,
+    group_share_right_id
+) {
     const endpoint = '/share/right/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         user_share_right_id: user_share_right_id,
         group_share_right_id: group_share_right_id
     };
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -985,10 +1107,10 @@ function delete_share_right(token, session_secret_key, user_share_right_id, grou
  */
 function read_share_rights_inherit_overview(token, session_secret_key) {
     const endpoint = '/share/right/inherit/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1007,9 +1129,16 @@ function read_share_rights_inherit_overview(token, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function accept_share_right(token, session_secret_key, share_right_id, key, key_nonce, key_type) {
+function accept_share_right(
+    token,
+    session_secret_key,
+    share_right_id,
+    key,
+    key_nonce,
+    key_type
+) {
     const endpoint = '/share/right/accept/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         share_right_id: share_right_id,
         key: key,
@@ -1017,7 +1146,7 @@ function accept_share_right(token, session_secret_key, share_right_id, key, key_
         key_type: key_type
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1034,12 +1163,12 @@ function accept_share_right(token, session_secret_key, share_right_id, key, key_
  */
 function decline_share_right(token, session_secret_key, share_right_id) {
     const endpoint = '/share/right/decline/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         share_right_id: share_right_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1057,13 +1186,13 @@ function decline_share_right(token, session_secret_key, share_right_id) {
  */
 function search_user(token, session_secret_key, user_id, user_username) {
     const endpoint = '/user/search/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         user_id: user_id,
         user_username: user_username
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1080,12 +1209,12 @@ function search_user(token, session_secret_key, user_id, user_username) {
  */
 function create_ga(token, session_secret_key, title) {
     const endpoint = '/user/ga/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         title: title
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1101,11 +1230,11 @@ function create_ga(token, session_secret_key, title) {
  */
 function read_ga(token, session_secret_key) {
     const endpoint = '/user/ga/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1121,16 +1250,21 @@ function read_ga(token, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
-function activate_ga(token, session_secret_key, google_authenticator_id, google_authenticator_token) {
+function activate_ga(
+    token,
+    session_secret_key,
+    google_authenticator_id,
+    google_authenticator_token
+) {
     const endpoint = '/user/ga/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         google_authenticator_id: google_authenticator_id,
         google_authenticator_token: google_authenticator_token
     };
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1147,14 +1281,14 @@ function activate_ga(token, session_secret_key, google_authenticator_id, google_
  */
 function delete_ga(token, session_secret_key, google_authenticator_id) {
     const endpoint = '/user/ga/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         google_authenticator_id: google_authenticator_id
     };
 
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1172,9 +1306,16 @@ function delete_ga(token, session_secret_key, google_authenticator_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the secret
  */
-function create_duo(token, session_secret_key, title, integration_key, secret_key, host) {
+function create_duo(
+    token,
+    session_secret_key,
+    title,
+    integration_key,
+    secret_key,
+    host
+) {
     const endpoint = '/user/duo/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         title: title,
         integration_key: integration_key,
@@ -1182,7 +1323,7 @@ function create_duo(token, session_secret_key, title, integration_key, secret_ke
         host: host
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1198,11 +1339,11 @@ function create_duo(token, session_secret_key, title, integration_key, secret_ke
  */
 function read_duo(token, session_secret_key) {
     const endpoint = '/user/duo/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1220,14 +1361,14 @@ function read_duo(token, session_secret_key) {
  */
 function activate_duo(token, session_secret_key, duo_id, duo_token) {
     const endpoint = '/user/duo/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         duo_id: duo_id,
         duo_token: duo_token
     };
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1244,14 +1385,14 @@ function activate_duo(token, session_secret_key, duo_id, duo_token) {
  */
 function delete_duo(token, session_secret_key, duo_id) {
     const endpoint = '/user/duo/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         duo_id: duo_id
     };
 
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1269,13 +1410,13 @@ function delete_duo(token, session_secret_key, duo_id) {
  */
 function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         title: title,
         yubikey_otp: yubikey_otp
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1291,11 +1432,11 @@ function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
  */
 function read_yubikey_otp(token, session_secret_key) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1311,16 +1452,21 @@ function read_yubikey_otp(token, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
-function activate_yubikey_otp(token, session_secret_key, yubikey_id, yubikey_otp) {
+function activate_yubikey_otp(
+    token,
+    session_secret_key,
+    yubikey_id,
+    yubikey_otp
+) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         yubikey_id: yubikey_id,
         yubikey_otp: yubikey_otp
     };
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1337,19 +1483,18 @@ function activate_yubikey_otp(token, session_secret_key, yubikey_id, yubikey_otp
  */
 function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         yubikey_otp_id: yubikey_otp_id
     };
 
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request with the token as authentication to create a link between a share and a datastore or another
@@ -1364,9 +1509,16 @@ function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function create_share_link(token, session_secret_key, link_id, share_id, parent_share_id, parent_datastore_id) {
+function create_share_link(
+    token,
+    session_secret_key,
+    link_id,
+    share_id,
+    parent_share_id,
+    parent_datastore_id
+) {
     const endpoint = '/share/link/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         link_id: link_id,
         share_id: share_id,
@@ -1374,7 +1526,7 @@ function create_share_link(token, session_secret_key, link_id, share_id, parent_
         parent_datastore_id: parent_datastore_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1392,16 +1544,22 @@ function create_share_link(token, session_secret_key, link_id, share_id, parent_
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function move_share_link(token, session_secret_key, link_id, new_parent_share_id, new_parent_datastore_id) {
+function move_share_link(
+    token,
+    session_secret_key,
+    link_id,
+    new_parent_share_id,
+    new_parent_datastore_id
+) {
     const endpoint = '/share/link/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         link_id: link_id,
         new_parent_share_id: new_parent_share_id,
         new_parent_datastore_id: new_parent_datastore_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1418,13 +1576,13 @@ function move_share_link(token, session_secret_key, link_id, new_parent_share_id
  */
 function delete_share_link(token, session_secret_key, link_id) {
     const endpoint = '/share/link/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         link_id: link_id
     };
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1440,18 +1598,19 @@ function delete_share_link(token, session_secret_key, link_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group(token, session_secret_key, group_id) {
-    if (group_id === undefined) { group_id = null; }
+    if (group_id === undefined) {
+        group_id = null;
+    }
 
     const endpoint = '/group/' + (group_id === null ? '' : group_id + '/');
-    const connection_type = "GET";
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request to create a group with the token as authentication and together with the name of the group
@@ -1467,10 +1626,18 @@ function read_group(token, session_secret_key, group_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function create_group(token, session_secret_key, name, secret_key, secret_key_nonce, private_key,
-                             private_key_nonce, public_key) {
+function create_group(
+    token,
+    session_secret_key,
+    name,
+    secret_key,
+    secret_key_nonce,
+    private_key,
+    private_key_nonce,
+    public_key
+) {
     const endpoint = '/group/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         name: name,
         secret_key: secret_key,
@@ -1480,7 +1647,7 @@ function create_group(token, session_secret_key, name, secret_key, secret_key_no
         public_key: public_key
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1498,14 +1665,14 @@ function create_group(token, session_secret_key, name, secret_key, secret_key_no
  */
 function update_group(token, session_secret_key, group_id, name) {
     const endpoint = '/group/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         group_id: group_id,
         name: name
     };
 
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1522,14 +1689,14 @@ function update_group(token, session_secret_key, group_id, name) {
  */
 function delete_group(token, session_secret_key, group_id) {
     const endpoint = '/group/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         group_id: group_id
     };
 
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1546,18 +1713,20 @@ function delete_group(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group_rights(token, session_secret_key, group_id) {
-    if (group_id === undefined) { group_id = null; }
+    if (group_id === undefined) {
+        group_id = null;
+    }
 
-    const endpoint = '/group/rights/' + (group_id === null ? '' : group_id + '/');
-    const connection_type = "GET";
+    const endpoint =
+        '/group/rights/' + (group_id === null ? '' : group_id + '/');
+    const connection_type = 'GET';
     const data = null;
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax PUT request to create a group membership for another user for a group with the token as authentication
@@ -1576,11 +1745,21 @@ function read_group_rights(token, session_secret_key, group_id) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function create_membership(token, session_secret_key, group_id, user_id, secret_key, secret_key_nonce,
-                                  secret_key_type, private_key,
-                                  private_key_nonce, private_key_type, group_admin) {
+function create_membership(
+    token,
+    session_secret_key,
+    group_id,
+    user_id,
+    secret_key,
+    secret_key_nonce,
+    secret_key_type,
+    private_key,
+    private_key_nonce,
+    private_key_type,
+    group_admin
+) {
     const endpoint = '/membership/';
-    const connection_type = "PUT";
+    const connection_type = 'PUT';
     const data = {
         group_id: group_id,
         user_id: user_id,
@@ -1593,12 +1772,11 @@ function create_membership(token, session_secret_key, group_id, user_id, secret_
         group_admin: group_admin
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
 }
-
 
 /**
  * Ajax POST request to update a group membership with the token as authentication
@@ -1610,15 +1788,20 @@ function create_membership(token, session_secret_key, group_id, user_id, secret_
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function update_membership(token, session_secret_key, membership_id, group_admin) {
+function update_membership(
+    token,
+    session_secret_key,
+    membership_id,
+    group_admin
+) {
     const endpoint = '/membership/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         membership_id: membership_id,
         group_admin: group_admin
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1635,14 +1818,14 @@ function update_membership(token, session_secret_key, membership_id, group_admin
  */
 function delete_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         membership_id: membership_id
     };
 
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1660,12 +1843,12 @@ function delete_membership(token, session_secret_key, membership_id) {
  */
 function accept_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/accept/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         membership_id: membership_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1682,12 +1865,12 @@ function accept_membership(token, session_secret_key, membership_id) {
  */
 function decline_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/decline/';
-    const connection_type = "POST";
+    const connection_type = 'POST';
     const data = {
         membership_id: membership_id
     };
     const headers = {
-        "Authorization": "Token "+ token
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);
@@ -1704,13 +1887,13 @@ function decline_membership(token, session_secret_key, membership_id) {
  */
 function delete_account(token, session_secret_key, authkey) {
     const endpoint = '/user/delete/';
-    const connection_type = "DELETE";
+    const connection_type = 'DELETE';
     const data = {
         authkey: authkey
     };
     const headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Token "+ token
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
     };
 
     return call(connection_type, endpoint, data, headers, session_secret_key);

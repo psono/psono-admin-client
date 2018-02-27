@@ -1,31 +1,31 @@
 import React from 'react';
-import {
-    withStyles, Grid
-} from 'material-ui';
-import {
-    ArrowUpward, ArrowDownward, AccessTime
-} from 'material-ui-icons';
+import { withStyles, Grid } from 'material-ui';
+import { ArrowUpward, ArrowDownward, AccessTime } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 // react plugin for creating charts
 import ChartistGraph from 'react-chartist';
 
 import {
-    Sessions, VersionCard, LicenseCard, ChartCard, ReleaseCard, RegularCard, ItemGrid, DxTable
+    Sessions,
+    VersionCard,
+    LicenseCard,
+    ChartCard,
+    ReleaseCard,
+    RegularCard,
+    ItemGrid,
+    DxTable
 } from '../../components';
 
-import {
-    dailySalesChart ,
-} from '../../variables/charts';
+import { dailySalesChart } from '../../variables/charts';
 
 import { dashboardStyle } from '../../variables/styles';
-import gitlab from '../../services/api-gitlab'
-import psono_server from '../../services/api-server'
-import psono_client from '../../services/api-client'
+import gitlab from '../../services/api-gitlab';
+import psono_server from '../../services/api-server';
+import psono_client from '../../services/api-client';
 
 const Chartist = require('chartist');
 
-
-class Dashboard extends React.Component{
+class Dashboard extends React.Component {
     state = {
         value: 0,
         client_tags: [],
@@ -45,7 +45,7 @@ class Dashboard extends React.Component{
         server_license_stat_link: '',
         server_license_stat_text: '',
         count_registrations_first_week: 0,
-        count_registrations_second_week: 0,
+        count_registrations_second_week: 0
     };
     handleChange = (event, value) => {
         this.setState({ value });
@@ -56,51 +56,54 @@ class Dashboard extends React.Component{
     };
 
     convert_tags_to_releases(tags) {
-        tags.forEach((r) => {
-            Object.keys(r.commit).forEach(function (key) {
+        tags.forEach(r => {
+            Object.keys(r.commit).forEach(function(key) {
                 r[key] = r.commit[key];
             });
 
-            Object.keys(r.release).forEach(function (key) {
+            Object.keys(r.release).forEach(function(key) {
                 r[key] = r.release[key];
             });
-            r.created_at = r.created_at.replace('.000Z', '').replace('T', ' ')
+            r.created_at = r.created_at.replace('.000Z', '').replace('T', ' ');
             r.description = r.description.split('\n').map((item, key) => {
                 if (item.startsWith('# ') || item.trim() === '') {
                     return null;
                 } else {
-                    return <span key={key}>{item}<br/></span>
+                    return (
+                        <span key={key}>
+                            {item}
+                            <br />
+                        </span>
+                    );
                 }
             });
-            delete(r.commit);
-            delete(r.release);
+            delete r.commit;
+            delete r.release;
         });
     }
 
+    componentDidMount() {
+        gitlab.psono_server.get_tags().then(response => {
+            this.convert_tags_to_releases(response.data);
+            this.setState({
+                server_tags: response.data,
+                server_latest_version: response.data[0].name
+            });
+        });
+        gitlab.psono_client.get_tags().then(response => {
+            this.convert_tags_to_releases(response.data);
+            this.setState({
+                client_tags: response.data,
+                client_latest_version: response.data[0].name
+            });
+        });
 
-    componentDidMount(){
-
-        gitlab.psono_server.get_tags().then(
-            (response) => {
-                this.convert_tags_to_releases(response.data);
-                this.setState({
-                    server_tags: response.data,
-                    server_latest_version: response.data[0].name
-                });
-            }
-        );
-        gitlab.psono_client.get_tags().then(
-            (response) => {
-                this.convert_tags_to_releases(response.data);
-                this.setState({
-                    client_tags: response.data,
-                    client_latest_version: response.data[0].name
-                });
-            }
-        );
-
-        psono_server.admin_info(this.props.state.user.token, this.props.state.user.session_secret_key).then(
-            (response) => {
+        psono_server
+            .admin_info(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key
+            )
+            .then(response => {
                 response.data.info = JSON.parse(response.data.info);
 
                 let label_day = [];
@@ -117,9 +120,11 @@ class Dashboard extends React.Component{
                         return;
                     }
                     if (count > 6) {
-                        count_registrations_first_week = count_registrations_first_week + r.count_new;
+                        count_registrations_first_week =
+                            count_registrations_first_week + r.count_new;
                     } else {
-                        count_registrations_second_week = count_registrations_second_week + r.count_new;
+                        count_registrations_second_week =
+                            count_registrations_second_week + r.count_new;
                     }
                     label_day.push(r.weekday);
                     data_day_new.push(r.count_new);
@@ -140,20 +145,24 @@ class Dashboard extends React.Component{
                     registrations.push({
                         date: r.date,
                         username: r.username,
-                        active: r.active ? 'yes': 'no',
+                        active: r.active ? 'yes' : 'no'
                     });
                 });
 
                 this.setState({
-                    server_license_max_users: response.data.info.license_max_users,
+                    server_license_max_users:
+                        response.data.info.license_max_users,
                     server_user_count_active: response.data.user_count_active,
                     server_user_count_total: response.data.user_count_total,
                     server_token_count_device: response.data.token_count_device,
                     server_token_count_user: response.data.token_count_user,
                     server_token_count_total: response.data.token_count_total,
-                    server_license_valid_from: response.data.info.license_valid_from,
-                    server_license_valid_till: response.data.info.license_valid_till,
-                    server_used_version: "v" + response.data.info.version.split(" ")[0],
+                    server_license_valid_from:
+                        response.data.info.license_valid_from,
+                    server_license_valid_till:
+                        response.data.info.license_valid_till,
+                    server_used_version:
+                        'v' + response.data.info.version.split(' ')[0],
                     count_registrations_first_week,
                     count_registrations_second_week,
                     label_day,
@@ -162,52 +171,68 @@ class Dashboard extends React.Component{
                     label_month,
                     data_month_new,
                     data_month_total,
-                    registrations,
+                    registrations
                 });
                 psono_client.set_url(response.data.info.web_client);
-                return psono_client.get_version().then(
-                    (response) => {
-                        this.setState({
-                            client_used_version: "v" + response.data.split(" ")[0]
-                        });
-                    }
-                )
-            }
-        )
+                return psono_client.get_version().then(response => {
+                    this.setState({
+                        client_used_version: 'v' + response.data.split(' ')[0]
+                    });
+                });
+            });
     }
 
-    render(){
-
+    render() {
         let registration_text;
         if (this.state.count_registrations_second_week) {
-            let percentage = Math.round(this.state.count_registrations_second_week / this.state.count_registrations_first_week*100 - 100);
+            let percentage = Math.round(
+                this.state.count_registrations_second_week /
+                    this.state.count_registrations_first_week *
+                    100 -
+                    100
+            );
             if (percentage >= 0) {
                 registration_text = (
                     <span>
                         <span className={this.props.classes.successText}>
-                            <ArrowUpward className={this.props.classes.upArrowCardCategory}/> {percentage}%
-                        </span> increase in this weeks registrations.
+                            <ArrowUpward
+                                className={
+                                    this.props.classes.upArrowCardCategory
+                                }
+                            />{' '}
+                            {percentage}%
+                        </span>{' '}
+                        increase in this weeks registrations.
                     </span>
                 );
             } else {
                 registration_text = (
                     <span>
                         <span className={this.props.classes.dangerText}>
-                            <ArrowDownward className={this.props.classes.upArrowCardCategory}/> {-percentage}%
-                        </span> decrease in this weeks registrations.
+                            <ArrowDownward
+                                className={
+                                    this.props.classes.upArrowCardCategory
+                                }
+                            />{' '}
+                            {-percentage}%
+                        </span>{' '}
+                        decrease in this weeks registrations.
                     </span>
                 );
             }
         } else {
             registration_text = (
                 <span>
-                <span className={this.props.classes.successText}>
-                    <ArrowUpward className={this.props.classes.upArrowCardCategory}/> 55%
-                </span> increase in this weeks registrations.
-            </span>
+                    <span className={this.props.classes.successText}>
+                        <ArrowUpward
+                            className={this.props.classes.upArrowCardCategory}
+                        />{' '}
+                        55%
+                    </span>{' '}
+                    increase in this weeks registrations.
+                </span>
             );
         }
-
 
         return (
             <div>
@@ -247,22 +272,30 @@ class Dashboard extends React.Component{
                     <ItemGrid xs={12} sm={12} md={6}>
                         {this.state.data_day_total !== undefined ? (
                             <ChartCard
-                                chart={<ChartistGraph
+                                chart={
+                                    <ChartistGraph
                                         className="ct-chart"
                                         data={{
                                             labels: this.state.label_day,
                                             series: [
                                                 this.state.data_day_total,
-                                                this.state.data_day_new,
+                                                this.state.data_day_new
                                             ]
                                         }}
                                         type="Line"
                                         options={{
-                                            lineSmooth: Chartist.Interpolation.cardinal({
-                                                tension: 0
-                                            }),
+                                            lineSmooth: Chartist.Interpolation.cardinal(
+                                                {
+                                                    tension: 0
+                                                }
+                                            ),
                                             low: 0,
-                                            high: Math.max(...this.state.data_day_total, ...this.state.data_day_new)*1.05,
+                                            high:
+                                                Math.max(
+                                                    ...this.state
+                                                        .data_day_total,
+                                                    ...this.state.data_day_new
+                                                ) * 1.05,
                                             chartPadding: {
                                                 top: 0,
                                                 right: 0,
@@ -270,57 +303,67 @@ class Dashboard extends React.Component{
                                                 left: 0
                                             }
                                         }}
-                                        listener={
-                                            dailySalesChart.animation
-                                        }
+                                        listener={dailySalesChart.animation}
                                     />
                                 }
                                 chartColor="blue"
                                 title="Registrations past 14 days"
                                 text={registration_text}
                                 statIcon={AccessTime}
-                                statText={"This week " + this.state.count_registrations_second_week +  " users registered (last week: " + this.state.count_registrations_first_week +  " users)"}
-                            />) : null
-                        }
+                                statText={
+                                    'This week ' +
+                                    this.state.count_registrations_second_week +
+                                    ' users registered (last week: ' +
+                                    this.state.count_registrations_first_week +
+                                    ' users)'
+                                }
+                            />
+                        ) : null}
                     </ItemGrid>
                     <ItemGrid xs={12} sm={12} md={6}>
                         {this.state.data_month_total !== undefined ? (
                             <ChartCard
-                                chart={<ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: this.state.label_month,
-                                        series: [
-                                            this.state.data_month_total,
-                                            this.state.data_month_new,
-                                        ]
-                                    }}
-                                    type="Line"
-                                    options={{
-                                        lineSmooth: Chartist.Interpolation.cardinal({
-                                            tension: 0
-                                        }),
-                                        low: 0,
-                                        high: Math.max(...this.state.data_month_total, ...this.state.data_month_new)*1.05,
-                                        chartPadding: {
-                                            top: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            left: 0
-                                        }
-                                    }}
-                                    listener={
-                                        dailySalesChart.animation
-                                    }
-                                />
+                                chart={
+                                    <ChartistGraph
+                                        className="ct-chart"
+                                        data={{
+                                            labels: this.state.label_month,
+                                            series: [
+                                                this.state.data_month_total,
+                                                this.state.data_month_new
+                                            ]
+                                        }}
+                                        type="Line"
+                                        options={{
+                                            lineSmooth: Chartist.Interpolation.cardinal(
+                                                {
+                                                    tension: 0
+                                                }
+                                            ),
+                                            low: 0,
+                                            high:
+                                                Math.max(
+                                                    ...this.state
+                                                        .data_month_total,
+                                                    ...this.state.data_month_new
+                                                ) * 1.05,
+                                            chartPadding: {
+                                                top: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                left: 0
+                                            }
+                                        }}
+                                        listener={dailySalesChart.animation}
+                                    />
                                 }
                                 chartColor="green"
                                 title="Users"
                                 text="Registered users over time"
                                 statIcon={AccessTime}
                                 statText="Last registration: "
-                            />) : null
-                        }
+                            />
+                        ) : null}
                     </ItemGrid>
                 </Grid>
                 <Grid container>
@@ -340,14 +383,17 @@ class Dashboard extends React.Component{
                                     <DxTable
                                         columns={[
                                             { name: 'date', title: 'Date' },
-                                            { name: 'username', title: 'Username' },
-                                            { name: 'active', title: 'Active' },
+                                            {
+                                                name: 'username',
+                                                title: 'Username'
+                                            },
+                                            { name: 'active', title: 'Active' }
                                         ]}
                                         rows={this.state.registrations}
                                     />
                                 }
-                            />) : null
-                        }
+                            />
+                        ) : null}
                     </ItemGrid>
                 </Grid>
             </div>
@@ -356,7 +402,7 @@ class Dashboard extends React.Component{
 }
 
 Dashboard.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withStyles(dashboardStyle)(Dashboard);

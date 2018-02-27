@@ -2,19 +2,19 @@
  * Store service
  */
 
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import { createLogger } from 'redux-logger'
-import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { createLogger } from 'redux-logger';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-import rootReducer from '../reducers'
+import rootReducer from '../reducers';
 
 const loggerMiddleware = createLogger();
 
 const persistConfig = {
     key: 'root',
-    storage,
+    storage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

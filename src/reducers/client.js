@@ -1,30 +1,25 @@
-import {
-    LOGOUT,
-    SET_CLIENT_URL,
-} from '../actions/actionTypes'
-
+import { LOGOUT, SET_CLIENT_URL } from '../actions/actionTypes';
 
 const default_url = '';
 
-
 function server(
     state = {
-        url: default_url,
+        url: default_url
     },
     action
 ) {
     switch (action.type) {
         case LOGOUT:
             return Object.assign({}, state, {
-                url: default_url.toLowerCase(),
+                url: default_url.toLowerCase()
             });
         case SET_CLIENT_URL:
             return Object.assign({}, state, {
-                url: action.url.toLowerCase(),
+                url: action.url.toLowerCase()
             });
         default:
-            return state
+            return state;
     }
 }
 
-export default server
+export default server;

@@ -10,13 +10,23 @@ const PROJECT_ID_PSONO_PSONO_CLIENT = 1732421;
 
 const psono_server = {
     get_tags() {
-        return axios.get(GITLAB_API + '/projects/' + PROJECT_ID_PSONO_PSONO_SERVER + '/repository/tags')
+        return axios.get(
+            GITLAB_API +
+                '/projects/' +
+                PROJECT_ID_PSONO_PSONO_SERVER +
+                '/repository/tags'
+        );
     }
 };
 
 const psono_client = {
     get_tags() {
-        return axios.get(GITLAB_API + '/projects/' + PROJECT_ID_PSONO_PSONO_CLIENT + '/repository/tags')
+        return axios.get(
+            GITLAB_API +
+                '/projects/' +
+                PROJECT_ID_PSONO_PSONO_CLIENT +
+                '/repository/tags'
+        );
     }
 };
 

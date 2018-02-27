@@ -7,7 +7,7 @@ import {
     SortingState,
     GroupingState,
     IntegratedSorting,
-    IntegratedGrouping,
+    IntegratedGrouping
 } from '@devexpress/dx-react-grid';
 import PropTypes from 'prop-types';
 
@@ -20,16 +20,15 @@ import {
     PagingPanel,
     GroupingPanel,
     DragDropProvider,
-    Toolbar,
+    Toolbar
 } from '@devexpress/dx-react-grid-material-ui';
 
 class DxTableAllFeatures extends React.PureComponent {
-
     state = {
-        grouping: [],
+        grouping: []
     };
 
-    changeGrouping = (grouping) => {
+    changeGrouping = grouping => {
         this.setState({ grouping });
     };
 
@@ -38,17 +37,14 @@ class DxTableAllFeatures extends React.PureComponent {
         const { grouping } = this.state;
 
         return (
-            <DxGrid
-                columns={columns}
-                rows={rows}
-            >
+            <DxGrid columns={columns} rows={rows}>
                 <DragDropProvider />
-                <SortingState defaultSorting={[]}/>
-                <GroupingState grouping={grouping} onGroupingChange={this.changeGrouping} />
-                <PagingState
-                    defaultCurrentPage={0}
-                    pageSize={25}
+                <SortingState defaultSorting={[]} />
+                <GroupingState
+                    grouping={grouping}
+                    onGroupingChange={this.changeGrouping}
                 />
+                <PagingState defaultCurrentPage={0} pageSize={25} />
                 <FilteringState defaultFilters={[]} />
                 <IntegratedFiltering />
                 <IntegratedPaging />
@@ -69,9 +65,7 @@ class DxTableAllFeatures extends React.PureComponent {
 DxTableAllFeatures.propTypes = {
     //classes: PropTypes.object.isRequired,
     columns: PropTypes.array.isRequired,
-    rows: PropTypes.array,
+    rows: PropTypes.array
 };
-
-
 
 export default DxTableAllFeatures;

@@ -1,14 +1,13 @@
-import client_js from './clientjs'
+import client_js from './clientjs';
 
 let fingerprint;
 
 activate();
 function activate() {
-    get_device_fingerprint_async().then(function(local_fingerprint){
+    get_device_fingerprint_async().then(function(local_fingerprint) {
         fingerprint = local_fingerprint;
-    })
+    });
 }
-
 
 /**
  * Returns the device fingerprint
@@ -16,7 +15,6 @@ function activate() {
  * @returns Promise<AxiosResponse<any>> Returns promise with the device fingerprint
  */
 function get_device_fingerprint_async() {
-
     return new Promise((resolve, reject) => {
         resolve(client_js.getFingerprint());
     });
@@ -87,27 +85,26 @@ function is_opera() {
  */
 function get_device_description() {
     let description = '';
-    if (typeof(client_js.getDeviceVendor()) !== 'undefined') {
+    if (typeof client_js.getDeviceVendor() !== 'undefined') {
         description = description + client_js.getDeviceVendor() + ' ';
     }
-    if (typeof(client_js.getDevice()) !== 'undefined') {
+    if (typeof client_js.getDevice() !== 'undefined') {
         description = description + client_js.getDevice() + ' ';
     }
-    if (typeof(client_js.getOS()) !== 'undefined') {
+    if (typeof client_js.getOS() !== 'undefined') {
         description = description + client_js.getOS() + ' ';
     }
-    if (typeof(client_js.getOSVersion()) !== 'undefined') {
+    if (typeof client_js.getOSVersion() !== 'undefined') {
         description = description + client_js.getOSVersion() + ' ';
     }
-    if (typeof(client_js.getBrowser()) !== 'undefined') {
+    if (typeof client_js.getBrowser() !== 'undefined') {
         description = description + client_js.getBrowser() + ' ';
     }
-    if (typeof(client_js.getBrowserVersion()) !== 'undefined') {
+    if (typeof client_js.getBrowserVersion() !== 'undefined') {
         description = description + client_js.getBrowserVersion() + ' ';
     }
-    return description
+    return description;
 }
-
 
 const service = {
     get_device_fingerprint: get_device_fingerprint,
@@ -116,7 +113,7 @@ const service = {
     is_firefox: is_firefox,
     is_safari: is_safari,
     is_opera: is_opera,
-    get_device_description: get_device_description,
+    get_device_description: get_device_description
 };
 
 export default service;

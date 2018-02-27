@@ -1,16 +1,18 @@
 import React from 'react';
-import {
-    Grid, InputLabel,
-} from 'material-ui';
+import { Grid, InputLabel } from 'material-ui';
 
 import {
-    ProfileCard, RegularCard, Button, CustomInput, ItemGrid
+    ProfileCard,
+    RegularCard,
+    Button,
+    CustomInput,
+    ItemGrid
 } from '../../components';
 
 import avatar from '../../assets/img/faces/marc.jpg';
 
-class UserProfile extends React.Component{
-    render(){
+class UserProfile extends React.Component {
+    render() {
         return (
             <div>
                 <Grid container>
@@ -103,7 +105,11 @@ class UserProfile extends React.Component{
                                     </Grid>
                                     <Grid container>
                                         <ItemGrid xs={12} sm={12} md={12}>
-                                            <InputLabel style={{color: '#AAAAAA'}}>About me</InputLabel>
+                                            <InputLabel
+                                                style={{ color: '#AAAAAA' }}
+                                            >
+                                                About me
+                                            </InputLabel>
                                             <CustomInput
                                                 labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
                                                 id="about-me"
@@ -131,7 +137,9 @@ class UserProfile extends React.Component{
                             title="Alec Thompson"
                             description="Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is..."
                             footer={
-                                <Button color="primary" round>Follow</Button>
+                                <Button color="primary" round>
+                                    Follow
+                                </Button>
                             }
                         />
                     </ItemGrid>
