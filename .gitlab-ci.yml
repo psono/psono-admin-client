@@ -235,4 +235,3 @@ deploy-github:
 #    url: https://addons.mozilla.org/de/firefox/addon/psono-pw-password-manager/
 #  only:
 #    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
-

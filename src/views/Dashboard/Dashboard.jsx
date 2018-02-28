@@ -13,7 +13,7 @@ import {
     ReleaseCard,
     RegularCard,
     ItemGrid,
-    DxTable
+    CustomPaginationActionsTable
 } from '../../components';
 
 import { dailySalesChart } from '../../variables/charts';
@@ -380,8 +380,8 @@ class Dashboard extends React.Component {
                                 cardTitle="Registrations"
                                 cardSubtitle="Last 10 new users joining."
                                 content={
-                                    <DxTable
-                                        columns={[
+                                    <CustomPaginationActionsTable
+                                        tableHead={[
                                             { name: 'date', title: 'Date' },
                                             {
                                                 name: 'username',
@@ -389,7 +389,7 @@ class Dashboard extends React.Component {
                                             },
                                             { name: 'active', title: 'Active' }
                                         ]}
-                                        rows={this.state.registrations}
+                                        tableData={this.state.registrations}
                                     />
                                 }
                             />

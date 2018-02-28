@@ -11,7 +11,7 @@ import {
 import { Person, DevicesOther } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { DxTableAllFeatures } from '../../components';
+import { CustomPaginationActionsTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -73,8 +73,8 @@ class UsersCard extends React.Component {
                 <CardContent>
                     {this.state.value === 0 && (
                         <Typography component="div">
-                            <DxTableAllFeatures
-                                columns={[
+                            <CustomPaginationActionsTable
+                                tableHead={[
                                     { name: 'username', title: 'Username' },
                                     {
                                         name: 'create_date',
@@ -89,14 +89,14 @@ class UsersCard extends React.Component {
                                     { name: 'ga_2fa', title: 'Google Auth' },
                                     { name: 'duo_2fa', title: 'Duo Auth' }
                                 ]}
-                                rows={users}
+                                tableData={users}
                             />
                         </Typography>
                     )}
                     {this.state.value === 1 && (
                         <Typography component="div">
-                            <DxTableAllFeatures
-                                columns={[
+                            <CustomPaginationActionsTable
+                                tableHead={[
                                     { name: 'username', title: 'Username' },
                                     {
                                         name: 'create_date',
@@ -113,7 +113,7 @@ class UsersCard extends React.Component {
                                     },
                                     { name: 'active', title: 'Active' }
                                 ]}
-                                rows={sessions}
+                                tableData={sessions}
                             />
                         </Typography>
                     )}

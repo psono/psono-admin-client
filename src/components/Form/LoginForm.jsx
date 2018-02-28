@@ -244,10 +244,12 @@ class LoginForm extends React.Component {
                 result => {
                     if (result.hasOwnProperty('errors')) {
                         let errors = result.errors;
-                        this.setState({ errors });
+                        this.setState({ errors, loginLoading: false });
                     } else {
-                        console.log(result);
-                        this.setState({ errors: [result] });
+                        this.setState({
+                            errors: [result],
+                            loginLoading: false
+                        });
                     }
                 }
             )

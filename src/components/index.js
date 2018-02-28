@@ -63,9 +63,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 // #############################
 
 import Table from './Table/Table.jsx';
-import DxTable from './Table/DxTable.jsx';
-import DxTableAllFeatures from './Table/DxTableAllFeatures.jsx';
-import DxTableReleases from './Table/DxTableReleases.jsx';
+import CustomPaginationActionsTable from './Table/CustomPaginationActionsTable.jsx';
 
 // ##############################
 // // // Tasks
@@ -125,9 +123,7 @@ export {
     SnackbarContent,
     // Table
     Table,
-    DxTable,
-    DxTableAllFeatures,
-    DxTableReleases,
+    CustomPaginationActionsTable,
     // Tasks
     Tasks,
     // Typography

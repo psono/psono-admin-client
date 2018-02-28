@@ -11,7 +11,7 @@ import {
 import { Domain, DevicesOther } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { DxTableReleases } from '../../components';
+import { CustomPaginationActionsTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -73,23 +73,31 @@ class ReleaseCard extends React.Component {
                 <CardContent>
                     {this.state.value === 0 && (
                         <Typography component="div">
-                            <DxTableReleases
-                                columns={[
+                            <CustomPaginationActionsTable
+                                tableHead={[
                                     { name: 'name', title: 'Version' },
-                                    { name: 'created_at', title: 'Date' }
+                                    { name: 'created_at', title: 'Date' },
+                                    {
+                                        name: 'description',
+                                        title: 'Release Notes'
+                                    }
                                 ]}
-                                rows={server_releases}
+                                tableData={server_releases}
                             />
                         </Typography>
                     )}
                     {this.state.value === 1 && (
                         <Typography component="div">
-                            <DxTableReleases
-                                columns={[
+                            <CustomPaginationActionsTable
+                                tableHead={[
                                     { name: 'name', title: 'Version' },
-                                    { name: 'created_at', title: 'Date' }
+                                    { name: 'created_at', title: 'Date' },
+                                    {
+                                        name: 'description',
+                                        title: 'Release Notes'
+                                    }
                                 ]}
-                                rows={client_releases}
+                                tableData={client_releases}
                             />
                         </Typography>
                     )}
