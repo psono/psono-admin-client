@@ -9,6 +9,7 @@ import store from '../services/store';
 
 import 'chartist/dist/chartist.min.css';
 import 'chartist/dist/chartist.min.js';
+import 'chartist-plugin-axistitle/dist/chartist-plugin-axistitle.min.js';
 import 'clientjs/dist/client.min.js';
 
 import '../assets/css/material-dashboard-react.css';

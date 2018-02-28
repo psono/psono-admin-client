@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "chartist": "^0.10.1",
+    "chartist-plugin-axistitle": "^0.0.4",
     "clientjs": "^0.1.11",
     "ecma-nacl": "^2.4.2",
     "husky": "^0.14.3",

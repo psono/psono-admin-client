@@ -299,15 +299,38 @@ class Dashboard extends React.Component {
                                             chartPadding: {
                                                 top: 0,
                                                 right: 0,
-                                                bottom: 0,
-                                                left: 0
-                                            }
+                                                bottom: 10,
+                                                left: 10
+                                            },
+                                            plugins: [
+                                                Chartist.plugins.ctAxisTitle({
+                                                    axisX: {
+                                                        axisTitle:
+                                                            'Weekday (red: new users, white: total users)',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 0,
+                                                            y: 35
+                                                        },
+                                                        textAnchor: 'middle'
+                                                    },
+                                                    axisY: {
+                                                        axisTitle: 'Users',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 10,
+                                                            y: -10
+                                                        },
+                                                        flipTitle: false
+                                                    }
+                                                })
+                                            ]
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
                                 }
                                 chartColor="blue"
-                                title="Registrations past 14 days"
+                                title="Registrations per day"
                                 text={registration_text}
                                 statIcon={AccessTime}
                                 statText={
@@ -350,15 +373,38 @@ class Dashboard extends React.Component {
                                             chartPadding: {
                                                 top: 0,
                                                 right: 0,
-                                                bottom: 0,
-                                                left: 0
-                                            }
+                                                bottom: 10,
+                                                left: 10
+                                            },
+                                            plugins: [
+                                                Chartist.plugins.ctAxisTitle({
+                                                    axisX: {
+                                                        axisTitle:
+                                                            'Month (red: new users, white: total users)',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 0,
+                                                            y: 35
+                                                        },
+                                                        textAnchor: 'middle'
+                                                    },
+                                                    axisY: {
+                                                        axisTitle: 'Users',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 10,
+                                                            y: -10
+                                                        },
+                                                        flipTitle: false
+                                                    }
+                                                })
+                                            ]
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
                                 }
                                 chartColor="green"
-                                title="Users"
+                                title="Users per month"
                                 text="Registered users over time"
                                 statIcon={AccessTime}
                                 statText="Last registration: "
