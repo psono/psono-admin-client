@@ -13,6 +13,6 @@ yarn config set @types:registry https://psono.jfrog.io/psono/api/npm/npm/ && \
 yarn install && \
 yarn global add karma-cli -g && \
 yarn build && \
-sh var/update_version.sh && \
+./var/update_version.sh && \
 cp LICENSE.md build/LICENSE.md
  
