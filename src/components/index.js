@@ -8,6 +8,7 @@ import RegularCard from './Cards/RegularCard.jsx';
 import StatsCard from './Cards/StatsCard.jsx';
 import VersionCard from './Cards/VersionCard.jsx';
 import LicenseCard from './Cards/LicenseCard.jsx';
+import HealthcheckCard from './Cards/HealthcheckCard.jsx';
 import Sessions from './Cards/Sessions.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
@@ -100,6 +101,7 @@ export {
     StatsCard,
     VersionCard,
     LicenseCard,
+    HealthcheckCard,
     Sessions,
     TasksCard,
     ReleaseCard,

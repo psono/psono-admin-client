@@ -15,7 +15,7 @@ class Sessions extends React.Component {
                     icon={Update}
                     iconColor="orange"
                     title="Sessions"
-                    description="waiting ..."
+                    description=""
                     statIcon={Update}
                     statIconColor="gray"
                     statText="Waiting for data ..."

@@ -101,6 +101,20 @@ function info() {
 }
 
 /**
+ * GET: Returns the server healthcheck
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function healthcheck() {
+    const endpoint = '/healthcheck/';
+    const connection_type = 'GET';
+    const data = null;
+    const headers = null;
+
+    return call(connection_type, endpoint, data, headers);
+}
+
+/**
  * GET: Returns the server info (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -1901,6 +1915,7 @@ function delete_account(token, session_secret_key, authkey) {
 
 const service = {
     info,
+    healthcheck,
     admin_info,
     admin_user,
     admin_session,

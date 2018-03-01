@@ -1,55 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Warning, Done, Update, Accessibility } from 'material-ui-icons/index';
+import { Warning, Done, Update, Favorite } from 'material-ui-icons/index';
 
 import StatsCard from './StatsCard';
 
 class LicenseCard extends React.Component {
     render() {
-        const { active, licensed, total } = this.props;
+        const {
+            healthcheck,
+            title,
+            sub_title_success,
+            sub_title_error
+        } = this.props;
 
-        let ratio = '' + active + '/' + total;
-        let ratio_text = 'Active / Total';
-        if (licensed) {
-            ratio = ratio + '/' + licensed;
-            ratio_text = ratio_text + '/ Licensed';
-        }
+        const sub_title = healthcheck ? sub_title_success : sub_title_error;
 
-        if (active === '') {
+        if (typeof healthcheck === 'undefined') {
             return (
                 <StatsCard
                     icon={Update}
                     iconColor="orange"
-                    title="Users"
+                    title={title}
                     description="loading"
                     statIcon={Update}
                     statIconColor="gray"
                     statText="Waiting for data ..."
                 />
             );
-        } else if (licensed && active === licensed) {
+        } else if (!healthcheck) {
             return (
                 <StatsCard
-                    icon={Accessibility}
+                    icon={Favorite}
                     iconColor="red"
-                    title="Users"
-                    description={ratio}
+                    title={title}
+                    description={'Unhealthy'}
                     statIcon={Warning}
                     statIconColor={'danger'}
-                    statLink={{ text: ratio_text, href: 'https://psono.com' }}
+                    statText={sub_title}
                 />
             );
         } else {
             return (
                 <StatsCard
-                    icon={Accessibility}
+                    icon={Favorite}
                     iconColor="green"
-                    title="Users"
-                    description={ratio}
+                    title={title}
+                    description={'Healthy'}
                     statIcon={Done}
                     statIconColor={'gray'}
-                    statText={ratio_text}
+                    statText={sub_title}
                 />
             );
         }
@@ -62,11 +62,9 @@ LicenseCard.defaultProps = {
 };
 
 LicenseCard.propTypes = {
-    active: PropTypes.node,
-    total: PropTypes.node,
-    licensed: PropTypes.node,
-    valid_from: PropTypes.node,
-    valid_till: PropTypes.node
+    title: PropTypes.node,
+    sub_title_success: PropTypes.node,
+    sub_title_error: PropTypes.node
 };
 
 export default LicenseCard;

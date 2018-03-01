@@ -20,7 +20,7 @@ class VersionCard extends React.Component {
                     icon={Update}
                     iconColor="orange"
                     title={title}
-                    description="waiting ..."
+                    description="loading"
                     statIcon={Update}
                     statIconColor="gray"
                     statText="Waiting for version ..."
