@@ -5,6 +5,7 @@
 import axios from 'axios';
 import store from './store';
 import cryptoLibrary from './cryptoLibrary';
+import user from './user';
 
 /**
  * Decrypts data with a secret
@@ -68,6 +69,11 @@ function call(method, endpoint, data, headers, session_secret_key) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
+                    console.log(error.response);
+                    if (error.response.status === 401 && user.is_logged_in()) {
+                        // session expired, lets log the user out
+                        user.logout();
+                    }
                     return reject(
                         decrypt_data(session_secret_key, error.response)
                     );
@@ -167,6 +173,76 @@ function admin_session(token, session_secret_key) {
     const connection_type = 'GET';
     const data = null;
 
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a user (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} user_id The user id of the user to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_user(token, session_secret_key, user_id) {
+    const endpoint = '/admin/user/';
+    const connection_type = 'DELETE';
+    const data = {
+        user_id: user_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a session (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} session_id The session id of the session to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_session(token, session_secret_key, session_id) {
+    const endpoint = '/admin/session/';
+    const connection_type = 'DELETE';
+    const data = {
+        session_id: session_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Update a user (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} user_id The user id of the user to delete
+ * @param {boolean} [is_active] (optional) Activates (or deactivates) the user
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_update_user(token, session_secret_key, user_id, is_active) {
+    const endpoint = '/admin/user/';
+    const connection_type = 'PUT';
+    const data = {
+        user_id: user_id,
+        is_active: is_active
+    };
     const headers = {
         Authorization: 'Token ' + token
     };
@@ -1919,6 +1995,9 @@ const service = {
     admin_info,
     admin_user,
     admin_session,
+    admin_delete_user,
+    admin_delete_session,
+    admin_update_user,
     login,
     ga_verify,
     duo_verify,

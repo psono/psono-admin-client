@@ -11,7 +11,7 @@ import {
 import { Domain, DevicesOther, Web } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { CustomPaginationActionsTable } from '../../components';
+import { CustomTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -89,46 +89,46 @@ class ReleaseCard extends React.Component {
                 <CardContent>
                     {this.state.value === 0 && (
                         <Typography component="div">
-                            <CustomPaginationActionsTable
-                                tableHead={[
-                                    { name: 'name', title: 'Version' },
-                                    { name: 'created_at', title: 'Date' },
+                            <CustomTable
+                                head={[
+                                    { id: 'name', label: 'Version' },
+                                    { id: 'created_at', label: 'Date' },
                                     {
-                                        name: 'description',
-                                        title: 'Release Notes'
+                                        id: 'description',
+                                        label: 'Release Notes'
                                     }
                                 ]}
-                                tableData={server_releases}
+                                data={server_releases}
                             />
                         </Typography>
                     )}
                     {this.state.value === 1 && (
                         <Typography component="div">
-                            <CustomPaginationActionsTable
-                                tableHead={[
-                                    { name: 'name', title: 'Version' },
-                                    { name: 'created_at', title: 'Date' },
+                            <CustomTable
+                                head={[
+                                    { id: 'name', label: 'Version' },
+                                    { id: 'created_at', label: 'Date' },
                                     {
-                                        name: 'description',
-                                        title: 'Release Notes'
+                                        id: 'description',
+                                        label: 'Release Notes'
                                     }
                                 ]}
-                                tableData={client_releases}
+                                data={client_releases}
                             />
                         </Typography>
                     )}
                     {this.state.value === 2 && (
                         <Typography component="div">
-                            <CustomPaginationActionsTable
-                                tableHead={[
-                                    { name: 'name', title: 'Version' },
-                                    { name: 'created_at', title: 'Date' },
+                            <CustomTable
+                                head={[
+                                    { id: 'name', label: 'Version' },
+                                    { id: 'created_at', label: 'Date' },
                                     {
-                                        name: 'description',
-                                        title: 'Release Notes'
+                                        id: 'description',
+                                        label: 'Release Notes'
                                     }
                                 ]}
-                                tableData={admin_client_releases}
+                                data={admin_client_releases}
                             />
                         </Typography>
                     )}

@@ -64,7 +64,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 // #############################
 
 import Table from './Table/Table.jsx';
-import CustomPaginationActionsTable from './Table/CustomPaginationActionsTable.jsx';
+import CustomTable from './Table/CustomTable.jsx';
 
 // ##############################
 // // // Tasks
@@ -125,7 +125,7 @@ export {
     SnackbarContent,
     // Table
     Table,
-    CustomPaginationActionsTable,
+    CustomTable,
     // Tasks
     Tasks,
     // Typography

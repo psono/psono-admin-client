@@ -15,7 +15,7 @@ import {
     ReleaseCard,
     RegularCard,
     ItemGrid,
-    CustomPaginationActionsTable
+    CustomTable
 } from '../../components';
 
 import { dailySalesChart } from '../../variables/charts';
@@ -204,7 +204,6 @@ class Dashboard extends React.Component {
             });
 
         axios.get('./VERSION.txt').then(response => {
-            console.log(response.data);
             this.setState({
                 admin_client_used_version: 'v' + response.data.split(' ')[0]
             });
@@ -497,16 +496,16 @@ class Dashboard extends React.Component {
                                 cardTitle="Registrations"
                                 cardSubtitle="Last 10 new users joining."
                                 content={
-                                    <CustomPaginationActionsTable
-                                        tableHead={[
-                                            { name: 'date', title: 'Date' },
+                                    <CustomTable
+                                        head={[
+                                            { id: 'date', label: 'Date' },
                                             {
-                                                name: 'username',
-                                                title: 'Username'
+                                                id: 'username',
+                                                label: 'Username'
                                             },
-                                            { name: 'active', title: 'Active' }
+                                            { id: 'active', label: 'Active' }
                                         ]}
-                                        tableData={this.state.registrations}
+                                        data={this.state.registrations}
                                     />
                                 }
                             />

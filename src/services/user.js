@@ -291,6 +291,10 @@ function logout() {
     action.logout();
 }
 
+function is_logged_in() {
+    return store.getState().user.isLoggedIn;
+}
+
 const service = {
     initiate_login,
     login,
@@ -298,7 +302,8 @@ const service = {
     ga_verify,
     duo_verify,
     yubikey_otp_verify,
-    logout
+    logout,
+    is_logged_in
 };
 
 export default service;
