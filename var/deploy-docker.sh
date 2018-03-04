@@ -7,5 +7,5 @@ docker tag psono-docker.jfrog.io/psono/psono-admin-client:latest psono/psono-adm
 docker push psono/psono-admin-client:latest
 
 # Inform production stage about new image
-# curl -X POST https://hooks.microbadger.com/images/psono/psono-admin-client/jMnJgDVZTpT4TUX-RlxTKa38Nc4=
-# curl -X POST $psono_image_updater_url
+curl -X POST https://hooks.microbadger.com/images/psono/psono-admin-client/mQL9_d3jeUgSgEF1WMmat_rKrv8=
+curl -X POST $psono_image_updater_url
