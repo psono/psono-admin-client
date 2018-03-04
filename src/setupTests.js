@@ -8,10 +8,12 @@ const localStorageMock = {
 };
 global.localStorage = localStorageMock;
 
-jest.mock('./services/clientjs', () => ({
-    getFingerprint: () => {
-        return 'dummy_fingerprint';
-    }
-}));
+jest.mock('./services/clientjs', () => {
+    return {
+        getFingerprint: () => {
+            return 'dummy_fingerprint';
+        }
+    };
+});
 
 configure({ adapter: new Adapter() });

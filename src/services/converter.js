@@ -281,8 +281,7 @@ function uuid_to_hex(val) {
  * @returns {uuid} Returns uuid
  */
 function hex_to_uuid(val) {
-    return uuid.fromURN(val);
-    //return uuid.unparse(from_hex(val));
+    return uuid.fromBytes(from_hex(val)).toString();
 }
 
 const Mnemonic = (function() {

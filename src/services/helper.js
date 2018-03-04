@@ -75,13 +75,76 @@ function parse_url(url) {
 }
 
 /**
+ * Parses an URL to get the full domain from it.
+ * example: https://docs.google.com -> docs.google.com
  *
- * @param url
- * @returns {*}
+ * @param {url} url The URL we want to parse
+ * @returns {string} The full domain of the url
  */
 function get_domain(url) {
     const parsed_url = parse_url(url);
     return parsed_url.full_domain;
+}
+
+/**
+ * Checks if array1 starts with array2
+ *
+ * @param {array} array1 The array that should contain array2
+ * @param {array} array2 The array that should be part of array1
+ * @returns {boolean} Returns if array1 starts with array2
+ */
+function array_starts_with(array1, array2) {
+    if (!(array1 instanceof Array)) {
+        return false;
+    }
+    if (!(array2 instanceof Array)) {
+        return false;
+    }
+
+    if (array1.length < array2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < array1.length; i++) {
+        if (i === array2.length) {
+            return true;
+        }
+        if (array1[i] instanceof Array && array2[i] instanceof Array) {
+            if (!array1[i].equals(array2[i])) {
+                return false;
+            }
+        } else if (array1[i] !== array2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Creates a list of items that are in a given datastore tree object
+ *
+ * @param {object} obj The datastore tree object
+ * @param {array} list The list object we want to fill
+ */
+function create_list(obj, list) {
+    let i;
+    for (i = 0; obj.items && i < obj.items.length; i++) {
+        list.push(obj.items[i]);
+    }
+    for (i = 0; obj.folders && i < obj.folders.length; i++) {
+        create_list(obj.folders[i], list);
+    }
+}
+
+/**
+ * Takes an object and duplicates it
+ *
+ * @param {*} obj initial object that we want to duplicate
+ *
+ * @returns {*} Returns a duplicate of object
+ */
+function duplicate_object(obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 /**
@@ -206,6 +269,68 @@ function is_valid_username(username) {
 }
 
 /**
+ * Determines if the group name is a valid group name. It should not contain "@" and be shorter than 3 chars
+ *
+ * @param {string} group_name A string that could be a valid group name
+ *
+ * @returns {boolean|string} Returns true or a string with the error
+ */
+function is_valid_group_name(group_name) {
+    let error;
+
+    if (group_name.length < 3) {
+        return 'Group name may not be shorter than 3 chars';
+    }
+
+    error = validate_group_name_contain(group_name, ['@']);
+    if (error) {
+        return error;
+    }
+
+    return true;
+}
+
+/**
+ * Determines if the password is a valid password.
+ * If yes the function returns true. If not, the function returns an error string
+ *
+ * @param {string} password A string that could be a valid password
+ * @param {string} password2 The second password that needs to match the first
+ *
+ * @returns {boolean|string} Returns true or a string with the error
+ */
+function is_valid_password(password, password2) {
+    if (password.length < 12) {
+        return 'Password too short (min 12 chars).';
+    }
+
+    if (password !== password2) {
+        return "Passwords don't match.";
+    }
+    return true;
+}
+
+/**
+ * Splits a string into several chunks
+ *
+ * @param {string} str The string to split
+ * @param {int} len The length of the chunks
+ *
+ * @returns {Array} Returns the chunks with length "len" as array
+ */
+function split_string_in_chunks(str, len) {
+    const size = Math.ceil(str.length / len);
+    const chunks = new Array(size);
+    let offset = 0;
+
+    for (let i = 0; i < size; ++i, offset += len) {
+        chunks[i] = str.substring(offset, offset + len);
+    }
+
+    return chunks;
+}
+
+/**
  * Search an array for an item
  *
  * @param {Array} array The array to search
@@ -285,9 +410,15 @@ function get_password_filter(test) {
 const service = {
     parse_url,
     get_domain,
+    array_starts_with,
+    create_list,
+    duplicate_object,
     form_full_username,
     validate_group_name_contain,
     is_valid_username,
+    is_valid_group_name,
+    is_valid_password,
+    split_string_in_chunks,
     remove_from_array,
     copy_to_clipboard,
     endsWith,
