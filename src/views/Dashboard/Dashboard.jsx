@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { ArrowUpward, ArrowDownward, AccessTime } from 'material-ui-icons';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 // react plugin for creating charts
 import ChartistGraph from 'react-chartist';
 
@@ -9,11 +10,12 @@ import {
     Sessions,
     VersionCard,
     LicenseCard,
+    HealthcheckCard,
     ChartCard,
     ReleaseCard,
     RegularCard,
     ItemGrid,
-    DxTable
+    CustomTable
 } from '../../components';
 
 import { dailySalesChart } from '../../variables/charts';
@@ -28,6 +30,9 @@ const Chartist = require('chartist');
 class Dashboard extends React.Component {
     state = {
         value: 0,
+        admin_client_tags: [],
+        admin_client_latest_version: '',
+        admin_client_used_version: '',
         client_tags: [],
         client_latest_version: '',
         client_used_version: '',
@@ -45,7 +50,12 @@ class Dashboard extends React.Component {
         server_license_stat_link: '',
         server_license_stat_text: '',
         count_registrations_first_week: 0,
-        count_registrations_second_week: 0
+        count_registrations_second_week: 0,
+        healthcheck: {
+            db_read: {},
+            db_sync: {},
+            time_sync: {}
+        }
     };
     handleChange = (event, value) => {
         this.setState({ value });
@@ -97,7 +107,19 @@ class Dashboard extends React.Component {
                 client_latest_version: response.data[0].name
             });
         });
+        gitlab.psono_admin_client.get_tags().then(response => {
+            this.convert_tags_to_releases(response.data);
+            this.setState({
+                admin_client_tags: response.data,
+                admin_client_latest_version: response.data[0].name
+            });
+        });
 
+        psono_server.healthcheck().then(response => {
+            this.setState({
+                healthcheck: response.data
+            });
+        });
         psono_server
             .admin_info(
                 this.props.state.user.token,
@@ -180,6 +202,12 @@ class Dashboard extends React.Component {
                     });
                 });
             });
+
+        axios.get('./VERSION.txt').then(response => {
+            this.setState({
+                admin_client_used_version: 'v' + response.data.split(' ')[0]
+            });
+        });
     }
 
     render() {
@@ -237,34 +265,34 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={3}>
-                        <LicenseCard
-                            active={this.state.server_user_count_active}
-                            total={this.state.server_user_count_total}
-                            licensed={this.state.server_license_max_users}
-                            valid_from={this.state.server_license_valid_from}
-                            valid_till={this.state.server_license_valid_till}
+                    <ItemGrid xs={12} sm={4} md={4}>
+                        <HealthcheckCard
+                            title={'DB Accessibility'}
+                            sub_title_success={'Is the database reachable?'}
+                            sub_title_error={'Database connection broken.'}
+                            healthcheck={this.state.healthcheck.db_read.healthy}
                         />
                     </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={3}>
-                        <Sessions
-                            users={this.state.server_token_count_user}
-                            devices={this.state.server_token_count_device}
-                            total={this.state.server_token_count_total}
+                    <ItemGrid xs={12} sm={4} md={4}>
+                        <HealthcheckCard
+                            title={'DB Synchronized'}
+                            sub_title_success={
+                                'Are there any pending database migrations?'
+                            }
+                            sub_title_error={
+                                'Pending database migrations detected.'
+                            }
+                            healthcheck={this.state.healthcheck.db_sync.healthy}
                         />
                     </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={3}>
-                        <VersionCard
-                            used_version={this.state.client_used_version}
-                            latest_version={this.state.client_latest_version}
-                            title="Client Version"
-                        />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={3}>
-                        <VersionCard
-                            used_version={this.state.server_used_version}
-                            latest_version={this.state.server_latest_version}
-                            title="Server Version"
+                    <ItemGrid xs={12} sm={4} md={4}>
+                        <HealthcheckCard
+                            title={'Time Sync'}
+                            sub_title_success={'Is the server time correct?'}
+                            sub_title_error={'Server time out of sync.'}
+                            healthcheck={
+                                this.state.healthcheck.time_sync.healthy
+                            }
                         />
                     </ItemGrid>
                 </Grid>
@@ -299,15 +327,38 @@ class Dashboard extends React.Component {
                                             chartPadding: {
                                                 top: 0,
                                                 right: 0,
-                                                bottom: 0,
-                                                left: 0
-                                            }
+                                                bottom: 10,
+                                                left: 10
+                                            },
+                                            plugins: [
+                                                Chartist.plugins.ctAxisTitle({
+                                                    axisX: {
+                                                        axisTitle:
+                                                            'Weekday (red: new users, white: total users)',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 0,
+                                                            y: 35
+                                                        },
+                                                        textAnchor: 'middle'
+                                                    },
+                                                    axisY: {
+                                                        axisTitle: 'Users',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 10,
+                                                            y: -10
+                                                        },
+                                                        flipTitle: false
+                                                    }
+                                                })
+                                            ]
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
                                 }
                                 chartColor="blue"
-                                title="Registrations past 14 days"
+                                title="Registrations per day"
                                 text={registration_text}
                                 statIcon={AccessTime}
                                 statText={
@@ -350,15 +401,38 @@ class Dashboard extends React.Component {
                                             chartPadding: {
                                                 top: 0,
                                                 right: 0,
-                                                bottom: 0,
-                                                left: 0
-                                            }
+                                                bottom: 10,
+                                                left: 10
+                                            },
+                                            plugins: [
+                                                Chartist.plugins.ctAxisTitle({
+                                                    axisX: {
+                                                        axisTitle:
+                                                            'Month (red: new users, white: total users)',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 0,
+                                                            y: 35
+                                                        },
+                                                        textAnchor: 'middle'
+                                                    },
+                                                    axisY: {
+                                                        axisTitle: 'Users',
+                                                        axisClass: 'ct-label',
+                                                        offset: {
+                                                            x: 10,
+                                                            y: -10
+                                                        },
+                                                        flipTitle: false
+                                                    }
+                                                })
+                                            ]
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
                                 }
                                 chartColor="green"
-                                title="Users"
+                                title="Users per month"
                                 text="Registered users over time"
                                 statIcon={AccessTime}
                                 statText="Last registration: "
@@ -367,10 +441,52 @@ class Dashboard extends React.Component {
                     </ItemGrid>
                 </Grid>
                 <Grid container>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                        <LicenseCard
+                            active={this.state.server_user_count_active}
+                            total={this.state.server_user_count_total}
+                            licensed={this.state.server_license_max_users}
+                            valid_from={this.state.server_license_valid_from}
+                            valid_till={this.state.server_license_valid_till}
+                        />
+                    </ItemGrid>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                        <Sessions
+                            users={this.state.server_token_count_user}
+                            devices={this.state.server_token_count_device}
+                            total={this.state.server_token_count_total}
+                        />
+                    </ItemGrid>
+                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                        <VersionCard
+                            used_version={this.state.client_used_version}
+                            latest_version={this.state.client_latest_version}
+                            title="Client Version"
+                        />
+                    </ItemGrid>
+                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                        <VersionCard
+                            used_version={this.state.server_used_version}
+                            latest_version={this.state.server_latest_version}
+                            title="Server Version"
+                        />
+                    </ItemGrid>
+                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                        <VersionCard
+                            used_version={this.state.admin_client_used_version}
+                            latest_version={
+                                this.state.admin_client_latest_version
+                            }
+                            title="Portal Version"
+                        />
+                    </ItemGrid>
+                </Grid>
+                <Grid container>
                     <ItemGrid xs={12} sm={12} md={6}>
                         <ReleaseCard
                             server_releases={this.state.server_tags}
                             client_releases={this.state.client_tags}
+                            admin_client_releases={this.state.admin_client_tags}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={12} md={6}>
@@ -380,16 +496,16 @@ class Dashboard extends React.Component {
                                 cardTitle="Registrations"
                                 cardSubtitle="Last 10 new users joining."
                                 content={
-                                    <DxTable
-                                        columns={[
-                                            { name: 'date', title: 'Date' },
+                                    <CustomTable
+                                        head={[
+                                            { id: 'date', label: 'Date' },
                                             {
-                                                name: 'username',
-                                                title: 'Username'
+                                                id: 'username',
+                                                label: 'Username'
                                             },
-                                            { name: 'active', title: 'Active' }
+                                            { id: 'active', label: 'Active' }
                                         ]}
-                                        rows={this.state.registrations}
+                                        data={this.state.registrations}
                                     />
                                 }
                             />

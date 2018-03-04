@@ -8,6 +8,7 @@ import RegularCard from './Cards/RegularCard.jsx';
 import StatsCard from './Cards/StatsCard.jsx';
 import VersionCard from './Cards/VersionCard.jsx';
 import LicenseCard from './Cards/LicenseCard.jsx';
+import HealthcheckCard from './Cards/HealthcheckCard.jsx';
 import Sessions from './Cards/Sessions.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
@@ -63,9 +64,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 // #############################
 
 import Table from './Table/Table.jsx';
-import DxTable from './Table/DxTable.jsx';
-import DxTableAllFeatures from './Table/DxTableAllFeatures.jsx';
-import DxTableReleases from './Table/DxTableReleases.jsx';
+import CustomTable from './Table/CustomTable.jsx';
 
 // ##############################
 // // // Tasks
@@ -102,6 +101,7 @@ export {
     StatsCard,
     VersionCard,
     LicenseCard,
+    HealthcheckCard,
     Sessions,
     TasksCard,
     ReleaseCard,
@@ -125,9 +125,7 @@ export {
     SnackbarContent,
     // Table
     Table,
-    DxTable,
-    DxTableAllFeatures,
-    DxTableReleases,
+    CustomTable,
     // Tasks
     Tasks,
     // Typography

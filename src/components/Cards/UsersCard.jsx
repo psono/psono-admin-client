@@ -8,10 +8,16 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
-import { Person, DevicesOther } from 'material-ui-icons';
+import {
+    Person,
+    DevicesOther,
+    Delete,
+    DoNotDisturb,
+    CheckBox
+} from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { DxTableAllFeatures } from '../../components';
+import { CustomTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -23,7 +29,15 @@ class UsersCard extends React.Component {
         this.setState({ value });
     };
     render() {
-        const { classes, users, sessions } = this.props;
+        const {
+            classes,
+            users,
+            sessions,
+            onDeleteUsers,
+            onActivate,
+            onDeactivate,
+            onDeleteSessions
+        } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -73,47 +87,72 @@ class UsersCard extends React.Component {
                 <CardContent>
                     {this.state.value === 0 && (
                         <Typography component="div">
-                            <DxTableAllFeatures
-                                columns={[
-                                    { name: 'username', title: 'Username' },
+                            <CustomTable
+                                headerFunctions={[
                                     {
-                                        name: 'create_date',
-                                        title: 'Registered'
+                                        title: 'Activate User(s)',
+                                        onClick: onActivate,
+                                        icon: <CheckBox />
                                     },
-                                    { name: 'is_active', title: 'Active' },
                                     {
-                                        name: 'is_email_active',
-                                        title: 'Email Active'
+                                        title: 'Deactivate User(s)',
+                                        onClick: onDeactivate,
+                                        icon: <DoNotDisturb />
                                     },
-                                    { name: 'yubikey_2fa', title: 'Yubikey' },
-                                    { name: 'ga_2fa', title: 'Google Auth' },
-                                    { name: 'duo_2fa', title: 'Duo Auth' }
+                                    {
+                                        title: 'Delete User(s)',
+                                        onClick: onDeleteUsers,
+                                        icon: <Delete />
+                                    }
                                 ]}
-                                rows={users}
+                                onDelete={onDeleteUsers}
+                                head={[
+                                    { id: 'username', label: 'Username' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Registered'
+                                    },
+                                    { id: 'is_active', label: 'Active' },
+                                    {
+                                        id: 'is_email_active',
+                                        label: 'Email Active'
+                                    },
+                                    { id: 'yubikey_2fa', label: 'Yubikey' },
+                                    { id: 'ga_2fa', label: 'Google Auth' },
+                                    { id: 'duo_2fa', label: 'Duo Auth' }
+                                ]}
+                                data={users}
                             />
                         </Typography>
                     )}
                     {this.state.value === 1 && (
                         <Typography component="div">
-                            <DxTableAllFeatures
-                                columns={[
-                                    { name: 'username', title: 'Username' },
+                            <CustomTable
+                                headerFunctions={[
                                     {
-                                        name: 'create_date',
-                                        title: 'Logged in at'
-                                    },
-                                    { name: 'valid_till', title: 'Valid till' },
-                                    {
-                                        name: 'device_description',
-                                        title: 'Device Description'
-                                    },
-                                    {
-                                        name: 'device_fingerprint',
-                                        title: 'Device'
-                                    },
-                                    { name: 'active', title: 'Active' }
+                                        title: 'Delete Session(s)',
+                                        onClick: onDeleteSessions,
+                                        icon: <Delete />
+                                    }
                                 ]}
-                                rows={sessions}
+                                head={[
+                                    { id: 'username', label: 'Username' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Logged in at'
+                                    },
+                                    { id: 'valid_till', label: 'Valid till' },
+                                    {
+                                        id: 'device_description',
+                                        label: 'Device Description'
+                                    },
+                                    {
+                                        id: 'device_fingerprint',
+                                        label: 'Device'
+                                    },
+                                    { id: 'active', label: 'Active' }
+                                ]}
+                                data={sessions}
                             />
                         </Typography>
                     )}

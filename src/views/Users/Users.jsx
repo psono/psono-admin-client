@@ -3,16 +3,81 @@ import { withStyles, Grid } from 'material-ui';
 import PropTypes from 'prop-types';
 
 import { UsersCard, ItemGrid } from '../../components';
-
 import { dashboardStyle } from '../../variables/styles';
-
 import psono_server from '../../services/api-server';
+import helper from '../../services/helper';
 
 class Users extends React.Component {
     state = {
         users: [],
         sessions: []
     };
+
+    onDeleteUsers(user_ids) {
+        user_ids.forEach(user_id => {
+            psono_server.admin_delete_user(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                user_id
+            );
+        });
+
+        let { users } = this.state;
+        user_ids.forEach(user_id => {
+            helper.remove_from_array(users, user_id, function(a, b) {
+                return a.id === b;
+            });
+        });
+
+        this.setState({ users: users });
+    }
+
+    update_users(user_ids, is_active) {
+        let { users } = this.state;
+        user_ids.forEach(user_id => {
+            psono_server.admin_update_user(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                user_id,
+                is_active
+            );
+
+            users.forEach(user => {
+                if (user.id === user_id) {
+                    user.is_active = is_active ? 'yes' : 'no';
+                }
+            });
+        });
+
+        this.setState({ users: users });
+    }
+
+    onActivateUsers(user_ids) {
+        return this.update_users(user_ids, true);
+    }
+
+    onDeactivateUsers(user_ids) {
+        return this.update_users(user_ids, false);
+    }
+
+    onDeleteSessions(session_ids) {
+        session_ids.forEach(session_id => {
+            psono_server.admin_delete_session(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                session_id
+            );
+        });
+
+        let { sessions } = this.state;
+        session_ids.forEach(session_id => {
+            helper.remove_from_array(sessions, session_id, function(a, b) {
+                return a.id === b;
+            });
+        });
+
+        this.setState({ sessions: sessions });
+    }
 
     componentDidMount() {
         psono_server
@@ -23,7 +88,7 @@ class Users extends React.Component {
             .then(response => {
                 const { users } = response.data;
 
-                users.forEach(function(u) {
+                users.forEach(u => {
                     u.is_active = u.is_active ? 'yes' : 'no';
                     u.is_email_active = u.is_email_active ? 'yes' : 'no';
                     u.yubikey_2fa = u.yubikey_2fa ? 'yes' : 'no';
@@ -41,11 +106,9 @@ class Users extends React.Component {
                 this.props.state.user.session_secret_key
             )
             .then(response => {
-                console.log(response.data);
-
                 const { sessions } = response.data;
 
-                sessions.forEach(function(u) {
+                sessions.forEach(u => {
                     u.active = u.active ? 'yes' : 'no';
                 });
 
@@ -63,6 +126,18 @@ class Users extends React.Component {
                         <UsersCard
                             users={this.state.users}
                             sessions={this.state.sessions}
+                            onDeleteUsers={user_ids =>
+                                this.onDeleteUsers(user_ids)
+                            }
+                            onActivate={user_ids =>
+                                this.onActivateUsers(user_ids)
+                            }
+                            onDeactivate={user_ids =>
+                                this.onDeactivateUsers(user_ids)
+                            }
+                            onDeleteSessions={session_ids =>
+                                this.onDeleteSessions(session_ids)
+                            }
                         />
                     </ItemGrid>
                 </Grid>
