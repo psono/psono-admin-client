@@ -15,7 +15,9 @@ import 'clientjs/dist/client.min.js';
 import '../assets/css/material-dashboard-react.css';
 import indexRoutes from '../routes/index.jsx';
 
-const hist = createBrowserHistory();
+const hist = createBrowserHistory({
+    basename: '/portal'
+});
 
 let persistor = persistStore(store);
 
@@ -23,7 +25,7 @@ class App extends Component {
     render() {
         return (
             <PersistGate loading={<HashLoader />} persistor={persistor}>
-                <Router history={hist}>
+                <Router history={hist} basename="/portal">
                     <Switch>
                         {indexRoutes.map((prop, key) => {
                             return (

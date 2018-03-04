@@ -7,7 +7,7 @@
   "repository": "git@gitlab.com:psono/psono-admin-client.git",
   "author": "Sascha Pfeiffer",
   "license": "Apache-2.0",
-  "homepage": ".",
+  "homepage": "/portal",
   "dependencies": {
     "axios": "^0.18.0",
     "chartist": "^0.10.1",
