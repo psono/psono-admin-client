@@ -10,7 +10,12 @@ import storage from 'redux-persist/lib/storage';
 
 import rootReducer from '../reducers';
 
-const loggerMiddleware = createLogger();
+const middlewares = [thunkMiddleware];
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    const loggerMiddleware = createLogger();
+    middlewares.push(loggerMiddleware);
+}
 
 const persistConfig = {
     key: 'root',
@@ -19,12 +24,6 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-let service = createStore(
-    persistedReducer,
-    applyMiddleware(
-        thunkMiddleware, // lets us dispatch() functions
-        loggerMiddleware // neat middleware that logs actions
-    )
-);
+let service = createStore(persistedReducer, applyMiddleware(...middlewares));
 
 export default service;
