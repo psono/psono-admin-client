@@ -203,7 +203,7 @@ class Dashboard extends React.Component {
                 });
             });
 
-        axios.get('./VERSION.txt').then(response => {
+        axios.get('/portal/VERSION.txt').then(response => {
             this.setState({
                 admin_client_used_version: 'v' + response.data.split(' ')[0]
             });
