@@ -234,7 +234,6 @@ class LoginForm extends React.Component {
                                         let errors = result.non_field_errors;
                                         this.setState({ errors });
                                     } else {
-                                        console.log(result);
                                         this.setState({ errors: [result] });
                                     }
                                 }
