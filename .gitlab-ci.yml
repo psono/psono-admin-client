@@ -135,9 +135,9 @@ release-artifacts:
     - apt-get install -y curl
     - curl -fL https://getcli.jfrog.io | sh
     - ./jfrog rt c rt-server-1 --url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials
-#    - ./jfrog rt cp --flat psono/admin-client/$CI_BUILD_REF_NAME/firefox-extension.zip psono/admin-client/latest/
-#    - ./jfrog rt cp --flat psono/admin-client/$CI_BUILD_REF_NAME/chrome-extension.zip psono/admin-client/latest/
-    - ./jfrog rt cp --flat psono/admin-client/$CI_BUILD_REF_NAME/webclient.zip psono/admin-client/latest/
+#    - ./jfrog rt cp --flat true psono/admin-client/$CI_BUILD_REF_NAME/firefox-extension.zip psono/admin-client/latest/
+#    - ./jfrog rt cp --flat true psono/admin-client/$CI_BUILD_REF_NAME/chrome-extension.zip psono/admin-client/latest/
+    - ./jfrog rt cp --flat true psono/admin-client/$CI_BUILD_REF_NAME/webclient.zip psono/admin-client/latest/
   only:
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
