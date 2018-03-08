@@ -6,6 +6,7 @@ import axios from 'axios';
 import store from './store';
 import cryptoLibrary from './cryptoLibrary';
 import user from './user';
+import device from './device';
 
 /**
  * Decrypts data with a secret
@@ -49,6 +50,7 @@ function call(method, endpoint, data, headers, session_secret_key) {
 
     if (session_secret_key && data !== null) {
         data['request_time'] = new Date().toISOString();
+        data['request_device_fingerprint'] = device.get_device_fingerprint();
         data = cryptoLibrary.encrypt_data(
             JSON.stringify(data),
             session_secret_key
