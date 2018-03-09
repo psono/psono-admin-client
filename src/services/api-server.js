@@ -183,6 +183,26 @@ function admin_session(token, session_secret_key) {
 }
 
 /**
+ * GET: Returns a list of all groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_group(token, session_secret_key) {
+    const endpoint = '/admin/group/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -1997,6 +2017,7 @@ const service = {
     admin_info,
     admin_user,
     admin_session,
+    admin_group,
     admin_delete_user,
     admin_delete_session,
     admin_update_user,

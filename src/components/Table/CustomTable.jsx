@@ -49,9 +49,6 @@ class CustomTableHead extends React.Component {
                             />
                         </TableCell>
                     ) : null}
-                    {/*{headers.map(n => {*/}
-                    {/*return <TableCell key={n}>{n}</TableCell>;*/}
-                    {/*})}*/}
                     {head.map(column => {
                         return (
                             <TableCell
@@ -125,7 +122,7 @@ const toolbarStyles = theme => ({
 });
 
 let CustomTableToolbar = props => {
-    const { numSelected, classes, headerFunctions } = props;
+    const { numSelected, classes, headerFunctions, title } = props;
 
     return (
         <Toolbar
@@ -139,7 +136,7 @@ let CustomTableToolbar = props => {
                         {numSelected} selected
                     </Typography>
                 ) : (
-                    <Typography variant="title">Nutrition</Typography>
+                    <Typography variant="title">{title}</Typography>
                 )}
             </div>
             <div className={classes.spacer} />
@@ -167,7 +164,8 @@ let CustomTableToolbar = props => {
 
 CustomTableToolbar.propTypes = {
     classes: PropTypes.object.isRequired,
-    numSelected: PropTypes.number.isRequired
+    numSelected: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired
 };
 
 CustomTableToolbar = withStyles(toolbarStyles)(CustomTableToolbar);
@@ -287,7 +285,7 @@ class CustomTable extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const { classes, head, data, rowsPerPage } = this.props;
+        const { classes, head, title, data, rowsPerPage } = this.props;
         const indexs = this.loadIndexs(head);
         const { order, orderBy, selected, page } = this.state;
         const emptyRows =
@@ -299,6 +297,7 @@ class CustomTable extends React.Component {
                 <CustomTableToolbar
                     numSelected={selected.length}
                     headerFunctions={this.headerFunctions()}
+                    title={title}
                 />
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table}>
@@ -386,6 +385,7 @@ class CustomTable extends React.Component {
 CustomTable.defaultProps = {
     rowsPerPage: 10,
     checkBox: false,
+    title: '',
     headerFunctions: []
 };
 
@@ -393,6 +393,7 @@ CustomTable.propTypes = {
     classes: PropTypes.object.isRequired,
     head: PropTypes.array.isRequired,
     data: PropTypes.array.isRequired,
+    title: PropTypes.string,
     headerFunctions: PropTypes.array,
     rowsPerPage: PropTypes.number,
     checkBox: PropTypes.bool

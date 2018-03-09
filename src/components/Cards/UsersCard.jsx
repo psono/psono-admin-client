@@ -11,6 +11,7 @@ import {
 import {
     Person,
     DevicesOther,
+    Group,
     Delete,
     DoNotDisturb,
     CheckBox
@@ -33,6 +34,7 @@ class UsersCard extends React.Component {
             classes,
             users,
             sessions,
+            groups,
             onDeleteUsers,
             onActivate,
             onDeactivate,
@@ -66,7 +68,7 @@ class UsersCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Person className={classes.tabIcon} />}
-                                label={'User'}
+                                label={'Users'}
                             />
                             <Tab
                                 classes={{
@@ -81,6 +83,17 @@ class UsersCard extends React.Component {
                                 }
                                 label={'Sessions'}
                             />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Groups'}
+                            />
                         </Tabs>
                     }
                 />
@@ -88,6 +101,7 @@ class UsersCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
+                                title="Users"
                                 headerFunctions={[
                                     {
                                         title: 'Activate User(s)',
@@ -128,6 +142,7 @@ class UsersCard extends React.Component {
                     {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
+                                title="Sessions"
                                 headerFunctions={[
                                     {
                                         title: 'Delete Session(s)',
@@ -156,6 +171,26 @@ class UsersCard extends React.Component {
                             />
                         </Typography>
                     )}
+                    {this.state.value === 2 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Groups"
+                                headerFunctions={[]}
+                                head={[
+                                    { id: 'name', label: 'Name' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Created at'
+                                    },
+                                    {
+                                        id: 'member_count',
+                                        label: 'Members'
+                                    }
+                                ]}
+                                data={groups}
+                            />
+                        </Typography>
+                    )}
                 </CardContent>
             </Card>
         );
@@ -164,8 +199,9 @@ class UsersCard extends React.Component {
 
 UsersCard.propTypes = {
     classes: PropTypes.object.isRequired,
-    users: PropTypes.array.isRequired,
-    sessions: PropTypes.array.isRequired
+    users: PropTypes.array,
+    sessions: PropTypes.array,
+    groups: PropTypes.array
 };
 
 export default withStyles(tasksCardStyle)(UsersCard);

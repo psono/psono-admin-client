@@ -252,6 +252,17 @@ class Users extends React.Component {
                     device_labels
                 });
             });
+        psono_server
+            .admin_group(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key
+            )
+            .then(response => {
+                const { groups } = response.data;
+                this.setState({
+                    groups
+                });
+            });
     }
 
     render() {
@@ -344,7 +355,7 @@ class Users extends React.Component {
                             }
                             chartColor="blue"
                             title="Devices"
-                            fontAwesomeStatsIcon="chrome"
+                            fontAwesomeStatsIcon="tablet"
                             statText={'Distribution by Device'}
                         />
                     </ItemGrid>
@@ -446,6 +457,7 @@ class Users extends React.Component {
                         <UsersCard
                             users={this.state.users}
                             sessions={this.state.sessions}
+                            groups={this.state.groups}
                             onDeleteUsers={user_ids =>
                                 this.onDeleteUsers(user_ids)
                             }
