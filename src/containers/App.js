@@ -10,8 +10,9 @@ import store from '../services/store';
 import 'chartist/dist/chartist.min.css';
 import 'chartist/dist/chartist.min.js';
 import 'chartist-plugin-axistitle/dist/chartist-plugin-axistitle.min.js';
-import 'clientjs/dist/client.min.js';
+import 'font-awesome/css/font-awesome.min.css';
 
+import 'clientjs/dist/client.min.js';
 import '../assets/css/material-dashboard-react.css';
 import indexRoutes from '../routes/index.jsx';
 
