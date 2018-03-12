@@ -49,11 +49,26 @@ function call(method, endpoint, data, headers, session_secret_key) {
     const url = store.getState().server.url + endpoint;
 
     if (session_secret_key && data !== null) {
-        data['request_time'] = new Date().toISOString();
-        data['request_device_fingerprint'] = device.get_device_fingerprint();
         data = cryptoLibrary.encrypt_data(
             JSON.stringify(data),
             session_secret_key
+        );
+    }
+
+    if (
+        session_secret_key &&
+        headers &&
+        headers.hasOwnProperty('Authorization')
+    ) {
+        const validator = {
+            request_time: new Date().toISOString(),
+            request_device_fingerprint: device.get_device_fingerprint()
+        };
+        headers['Authorization-Validator'] = JSON.stringify(
+            cryptoLibrary.encrypt_data(
+                JSON.stringify(validator),
+                session_secret_key
+            )
         );
     }
 
@@ -71,11 +86,15 @@ function call(method, endpoint, data, headers, session_secret_key) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response);
+                    if (error.response.status === 403 && user.is_logged_in()) {
+                        // User did not have permission
+                        user.logout('Permission denied.');
+                    }
                     if (error.response.status === 401 && user.is_logged_in()) {
                         // session expired, lets log the user out
-                        user.logout();
+                        user.logout('Session expired.');
                     }
+                    console.log(error.response);
                     return reject(
                         decrypt_data(session_secret_key, error.response)
                     );
@@ -172,6 +191,26 @@ function admin_user(token, session_secret_key) {
  */
 function admin_session(token, session_secret_key) {
     const endpoint = '/admin/session/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns a list of all groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_group(token, session_secret_key) {
+    const endpoint = '/admin/group/';
     const connection_type = 'GET';
     const data = null;
 
@@ -1997,6 +2036,7 @@ const service = {
     admin_info,
     admin_user,
     admin_session,
+    admin_group,
     admin_delete_user,
     admin_delete_session,
     admin_update_user,

@@ -8,6 +8,7 @@ import {
     Typography
 } from 'material-ui';
 import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
 
 import { chartCardStyle } from '../../variables/styles';
 
@@ -21,7 +22,8 @@ class ChartCard extends React.Component {
             title,
             text,
             statLink,
-            statText
+            statText,
+            fontAwesomeStatsIcon
         } = this.props;
         return (
             <Card className={classes.card}>
@@ -48,13 +50,17 @@ class ChartCard extends React.Component {
                 </CardContent>
                 <CardActions className={classes.cardActions}>
                     <div className={classes.cardStats}>
-                        <this.props.statIcon
-                            className={
-                                classes.cardStatsIcon +
-                                ' ' +
-                                classes[statIconColor + 'CardStatsIcon']
-                            }
-                        />{' '}
+                        {fontAwesomeStatsIcon ? (
+                            <FontAwesome name={fontAwesomeStatsIcon} />
+                        ) : (
+                            <this.props.statIcon
+                                className={
+                                    classes.cardStatsIcon +
+                                    ' ' +
+                                    classes[statIconColor + 'CardStatsIcon']
+                                }
+                            />
+                        )}{' '}
                         {statLink !== undefined ? (
                             <a
                                 href={statLink.href}
@@ -82,7 +88,8 @@ ChartCard.propTypes = {
     chart: PropTypes.object.isRequired,
     title: PropTypes.node,
     text: PropTypes.node,
-    statIcon: PropTypes.func.isRequired,
+    statIcon: PropTypes.func,
+    fontAwesomeStatsIcon: PropTypes.node,
     statIconColor: PropTypes.oneOf([
         'warning',
         'primary',

@@ -55,8 +55,10 @@ class Dashboard extends React.Component {
             db_read: {},
             db_sync: {},
             time_sync: {}
-        }
+        },
+        tr: true
     };
+
     handleChange = (event, value) => {
         this.setState({ value });
     };

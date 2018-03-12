@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-    InfoOutline,
-    Warning,
-    Done,
-    Update,
-    ThumbUp
-} from 'material-ui-icons/index';
+import { InfoOutline, Warning, Done, Update, ThumbUp } from 'material-ui-icons';
 
 import StatsCard from './StatsCard';
 

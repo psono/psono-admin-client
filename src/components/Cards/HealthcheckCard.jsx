@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Warning, Done, Update, Favorite } from 'material-ui-icons/index';
+import { Warning, Done, Update, Favorite } from 'material-ui-icons';
 
 import StatsCard from './StatsCard';
 

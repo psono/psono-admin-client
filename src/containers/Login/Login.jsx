@@ -4,7 +4,7 @@ import { bindActionCreators, compose } from 'redux';
 import { withStyles } from 'material-ui';
 import PropTypes from 'prop-types';
 
-import { LoginForm } from '../../components';
+import { LoginForm, Notification } from '../../components';
 import actionCreators from '../../actions/actionCreators';
 import user from '../../services/user';
 import host from '../../services/host';
@@ -39,6 +39,7 @@ class Login extends React.Component {
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content} />
+                <Notification state={this.props.state} />
                 <LoginForm
                     {...rest}
                     initiate_login={user.initiate_login}
