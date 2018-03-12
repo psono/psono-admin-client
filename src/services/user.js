@@ -9,6 +9,7 @@ import cryptoLibrary from './cryptoLibrary';
 import helper from './helper';
 import store from './store';
 import device from './device';
+import notification from './notification';
 
 function initiate_login(username, server, remember_me, trust_device) {
     action.set_server_url(server);
@@ -217,11 +218,10 @@ function handle_login_response(
     return required_multifactors;
 }
 
-function login(password, server_info) {
+function login(password, server_info, send_plain) {
     const username = store.getState().user.username;
     const trust_device = store.getState().user.trust_device;
     const server_public_key = server_info.info.public_key;
-    const send_plain = false;
 
     let authkey = cryptoLibrary.generate_authkey(username, password);
 
@@ -283,12 +283,20 @@ function login(password, server_info) {
         .then(onSuccess, onError);
 }
 
-function logout() {
+/**
+ * Initiates the logout, deletes all data including user tokens and session secrets
+ *
+ * @param {string} msg An optional message to display
+ */
+function logout(msg = '') {
     const token = store.getState().user.token;
     const session_secret_key = store.getState().user.session_secret_key;
 
     psono_server.logout(token, session_secret_key);
     action.logout();
+    if (msg) {
+        notification.info_send(msg);
+    }
 }
 
 function is_logged_in() {

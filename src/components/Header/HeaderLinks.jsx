@@ -15,7 +15,8 @@ import {
 } from 'material-ui';
 import { Manager, Target, Popper } from 'react-popper';
 
-//import { CustomInput, IconButton as SearchButton } from '../../components';
+// import { Snackbar CustomInput, IconButton as SearchButton } from '../../components';
+import { Notification } from '../../components';
 
 import { headerLinksStyle } from '../../variables/styles';
 
@@ -38,6 +39,7 @@ class HeaderLinks extends React.Component {
     render() {
         const { classes } = this.props;
         const { open } = this.state;
+
         return (
             <div>
                 {/*<CustomInput*/}
@@ -93,6 +95,7 @@ class HeaderLinks extends React.Component {
                 {/*</ClickAwayListener>*/}
                 {/*</Popper>*/}
                 {/*</Manager>*/}
+                <Notification state={this.props.state} />
 
                 <Manager style={{ display: 'inline-block', marginTop: '40px' }}>
                     <Target>

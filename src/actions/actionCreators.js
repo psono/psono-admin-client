@@ -6,7 +6,9 @@ import {
     LOGOUT,
     SET_SERVER_URL,
     SET_SERVER_INFO,
-    SET_CLIENT_URL
+    SET_CLIENT_URL,
+    NOTIFICATION_SEND,
+    NOTIFICATION_SET
 } from './actionTypes';
 
 function set_user_info_1(username, remember_me, trust_device) {
@@ -90,6 +92,25 @@ function set_known_hosts(known_hosts) {
     };
 }
 
+function send_notification(message, message_type) {
+    return dispatch => {
+        dispatch({
+            type: NOTIFICATION_SEND,
+            message: message,
+            message_type: message_type
+        });
+    };
+}
+
+function set_notifications(messages) {
+    return dispatch => {
+        dispatch({
+            type: NOTIFICATION_SET,
+            messages: messages
+        });
+    };
+}
+
 const actionCreators = {
     set_user_info_1,
     set_user_info_2,
@@ -98,7 +119,9 @@ const actionCreators = {
     set_server_info,
     set_server_url,
     set_client_url,
-    set_known_hosts
+    set_known_hosts,
+    send_notification,
+    set_notifications
 };
 
 export default actionCreators;

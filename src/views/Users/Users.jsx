@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
 import { UsersCard, ChartCard, ItemGrid } from '../../components';
 import { dashboardStyle } from '../../variables/styles';
@@ -11,6 +12,7 @@ import ChartistGraph from 'react-chartist';
 
 class Users extends React.Component {
     state = {
+        redirect_to: '',
         users: [],
         sessions: [],
         os_data: [],
@@ -68,6 +70,12 @@ class Users extends React.Component {
 
     onDeactivateUsers(user_ids) {
         return this.update_users(user_ids, false);
+    }
+
+    onEditUser(user_ids) {
+        this.setState({
+            redirect_to: '/user/' + user_ids[0]
+        });
     }
 
     onDeleteSessions(session_ids) {
@@ -266,6 +274,9 @@ class Users extends React.Component {
     }
 
     render() {
+        if (this.state.redirect_to) {
+            return <Redirect to={this.state.redirect_to} />;
+        }
         return (
             <div>
                 <Grid container>
@@ -467,6 +478,7 @@ class Users extends React.Component {
                             onDeactivate={user_ids =>
                                 this.onDeactivateUsers(user_ids)
                             }
+                            onEditUser={user_ids => this.onEditUser(user_ids)}
                             onDeleteSessions={session_ids =>
                                 this.onDeleteSessions(session_ids)
                             }

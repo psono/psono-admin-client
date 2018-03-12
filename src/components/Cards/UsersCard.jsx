@@ -14,7 +14,8 @@ import {
     Group,
     Delete,
     DoNotDisturb,
-    CheckBox
+    CheckBox,
+    Edit
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -36,6 +37,7 @@ class UsersCard extends React.Component {
             sessions,
             groups,
             onDeleteUsers,
+            onEditUser,
             onActivate,
             onDeactivate,
             onDeleteSessions
@@ -48,7 +50,7 @@ class UsersCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="Releases:"
+                    title="User Management:"
                     action={
                         <Tabs
                             classes={{
@@ -103,6 +105,12 @@ class UsersCard extends React.Component {
                             <CustomTable
                                 title="Users"
                                 headerFunctions={[
+                                    {
+                                        title: 'Edit User',
+                                        onClick: onEditUser,
+                                        icon: <Edit />,
+                                        max_selected: 1
+                                    },
                                     {
                                         title: 'Activate User(s)',
                                         onClick: onActivate,

@@ -49,9 +49,6 @@ function call(method, endpoint, data, headers, session_secret_key) {
     const url = store.getState().server.url + endpoint;
 
     if (session_secret_key && data !== null) {
-        // TODO Remove once all servers have migrated to the new version
-        data['request_time'] = new Date().toISOString();
-
         data = cryptoLibrary.encrypt_data(
             JSON.stringify(data),
             session_secret_key
@@ -89,11 +86,15 @@ function call(method, endpoint, data, headers, session_secret_key) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    console.log(error.response);
+                    if (error.response.status === 403 && user.is_logged_in()) {
+                        // User did not have permission
+                        user.logout('Permission denied.');
+                    }
                     if (error.response.status === 401 && user.is_logged_in()) {
                         // session expired, lets log the user out
-                        user.logout();
+                        user.logout('Session expired.');
                     }
+                    console.log(error.response);
                     return reject(
                         decrypt_data(session_secret_key, error.response)
                     );

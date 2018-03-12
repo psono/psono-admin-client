@@ -197,6 +197,54 @@ class LoginForm extends React.Component {
         }
     };
 
+    has_ldap_auth = server_check => {
+        return (
+            server_check.hasOwnProperty('info') &&
+            server_check['info'].hasOwnProperty('authentication_methods') &&
+            server_check['info']['authentication_methods'].indexOf('LDAP') !==
+                -1
+        );
+    };
+
+    approve_send_plain = () => {
+        return this.next_login_step(true);
+    };
+
+    disapprove_send_plain = () => {
+        return this.next_login_step(false);
+    };
+
+    next_login_step = send_plain => {
+        let password = this.state.password;
+        this.setState({ password: '' });
+
+        return this.props
+            .login(password, this.state.server_info, send_plain)
+            .then(
+                required_multifactors => {
+                    this.setState({
+                        multifactors: required_multifactors
+                    });
+                    this.requirement_check_mfa();
+                },
+                result => {
+                    this.setState({ loginLoading: false });
+                    if (result.hasOwnProperty('non_field_errors')) {
+                        let errors = result.non_field_errors;
+                        this.setState({
+                            view: 'default',
+                            errors
+                        });
+                    } else {
+                        this.setState({
+                            view: 'default',
+                            errors: [result]
+                        });
+                    }
+                }
+            );
+    };
+
     initiate_login = () => {
         this.setState({ loginLoading: true });
         this.setState({ errors: [] });
@@ -212,32 +260,13 @@ class LoginForm extends React.Component {
                     this.setState({ server_info: result });
                     if (result.status !== 'matched') {
                         this.setState({ view: result.status });
+                    } else if (this.has_ldap_auth(result)) {
+                        this.setState({
+                            view: 'ask_send_plain',
+                            loginLoading: false
+                        });
                     } else {
-                        let password = this.state.password;
-                        this.setState({ password: '' });
-                        return this.props
-                            .login(password, this.state.server_info)
-                            .then(
-                                required_multifactors => {
-                                    this.setState({
-                                        multifactors: required_multifactors
-                                    });
-                                    this.requirement_check_mfa();
-                                },
-                                result => {
-                                    this.setState({ loginLoading: false });
-                                    if (
-                                        result.hasOwnProperty(
-                                            'non_field_errors'
-                                        )
-                                    ) {
-                                        let errors = result.non_field_errors;
-                                        this.setState({ errors });
-                                    } else {
-                                        this.setState({ errors: [result] });
-                                    }
-                                }
-                            );
+                        return this.next_login_step(false);
                     }
                 },
                 result => {
@@ -298,13 +327,12 @@ class LoginForm extends React.Component {
 
         const errors = (
             <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
-                {this.state.errors.map((prop, key) => {
+                {this.state.errors.map((prop, index) => {
                     return (
                         <SnackbarContent
                             message={prop}
-                            close
                             color="danger"
-                            key={key}
+                            key={index}
                         />
                     );
                 })}
@@ -708,6 +736,62 @@ class LoginForm extends React.Component {
                                             onClick={this.cancel}
                                         >
                                             Cancel
+                                        </Button>
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'ask_send_plain') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle="Server Info"
+                        cardSubtitle="The server asks for your plaintext password."
+                        content={
+                            <form
+                                onSubmit={e => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    <ItemGrid xs={12} sm={12} md={12}>
+                                        <SnackbarContent
+                                            color="warning"
+                                            message={
+                                                'Accepting this will send your plain password to the server and ' +
+                                                'should only be allowed if you are using LDAP or similar authentication ' +
+                                                'methods. You can decline this, but this might fail in an ' +
+                                                'authentication failure.'
+                                            }
+                                        />
+                                    </ItemGrid>
+                                </Grid>
+                                <Grid container>
+                                    <ItemGrid
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="warning"
+                                            onClick={this.approve_send_plain}
+                                            type="submit"
+                                        >
+                                            Approve (unsafe)
+                                        </Button>
+                                        <Button
+                                            color="success"
+                                            onClick={this.disapprove_send_plain}
+                                        >
+                                            Disapprove (safe)
                                         </Button>
                                     </ItemGrid>
                                 </Grid>

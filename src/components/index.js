@@ -47,6 +47,12 @@ import Header from './Header/Header.jsx';
 import HeaderLinks from './Header/HeaderLinks.jsx';
 
 // ##############################
+// // // Notification
+// #############################
+
+import Notification from './Notification/Notification.jsx';
+
+// ##############################
 // // // Sidebar
 // #############################
 
@@ -118,6 +124,8 @@ export {
     // Header
     Header,
     HeaderLinks,
+    // Notification
+    Notification,
     // Sidebar
     Sidebar,
     //Snackbar
