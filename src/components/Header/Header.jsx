@@ -1,4 +1,5 @@
 import React from 'react';
+import matchPath from 'react-router/matchPath';
 import PropTypes from 'prop-types';
 import { Menu } from 'material-ui-icons';
 import {
@@ -17,14 +18,18 @@ import HeaderLinks from './HeaderLinks';
 
 class Header extends React.Component {
     makeBrand() {
-        let name;
-        this.props.routes.map((prop, key) => {
-            if (prop.path === this.props.location.pathname) {
-                name = prop.navbarName;
+        for (let i = 0; i < this.props.routes.length; i++) {
+            if (
+                matchPath(
+                    this.props.location.pathname,
+                    this.props.routes[i].path
+                ) === null
+            ) {
+                continue;
             }
-            return null;
-        });
-        return name;
+            return this.props.routes[i].navbarName;
+        }
+        return null;
     }
     render() {
         const { classes, color, ...rest } = this.props;

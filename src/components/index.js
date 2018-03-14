@@ -13,6 +13,7 @@ import Sessions from './Cards/Sessions.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
 import UsersCard from './Cards/UsersCard.jsx';
+import UserCard from './Cards/UserCard.jsx';
 
 // ##############################
 // // // CustomButtons
@@ -112,6 +113,7 @@ export {
     TasksCard,
     ReleaseCard,
     UsersCard,
+    UserCard,
     // CustomButtons
     Button,
     IconButton,

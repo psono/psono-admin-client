@@ -21,7 +21,7 @@ import {
 import { dailySalesChart } from '../../variables/charts';
 
 import { dashboardStyle } from '../../variables/styles';
-import gitlab from '../../services/api-gitlab';
+import api_static from '../../services/api-static';
 import psono_server from '../../services/api-server';
 import psono_client from '../../services/api-client';
 
@@ -95,27 +95,45 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        gitlab.psono_server.get_tags().then(response => {
-            this.convert_tags_to_releases(response.data);
-            this.setState({
-                server_tags: response.data,
-                server_latest_version: response.data[0].name
+        if (this.props.state.server.type === 'CE') {
+            api_static
+                .get('/gitlab.com/psono/psono-server/changelog.json')
+                .then(response => {
+                    this.convert_tags_to_releases(response.data);
+                    this.setState({
+                        server_tags: response.data,
+                        server_latest_version: response.data[0].name
+                    });
+                });
+        } else {
+            api_static
+                .get('/gitlab.com/psono-enterprise/psono-server/changelog.json')
+                .then(response => {
+                    this.convert_tags_to_releases(response.data);
+                    this.setState({
+                        server_tags: response.data,
+                        server_latest_version: response.data[0].name
+                    });
+                });
+        }
+        api_static
+            .get('/gitlab.com/psono/psono-client/changelog.json')
+            .then(response => {
+                this.convert_tags_to_releases(response.data);
+                this.setState({
+                    client_tags: response.data,
+                    client_latest_version: response.data[0].name
+                });
             });
-        });
-        gitlab.psono_client.get_tags().then(response => {
-            this.convert_tags_to_releases(response.data);
-            this.setState({
-                client_tags: response.data,
-                client_latest_version: response.data[0].name
+        api_static
+            .get('/gitlab.com/psono/psono-admin-client/changelog.json')
+            .then(response => {
+                this.convert_tags_to_releases(response.data);
+                this.setState({
+                    admin_client_tags: response.data,
+                    admin_client_latest_version: response.data[0].name
+                });
             });
-        });
-        gitlab.psono_admin_client.get_tags().then(response => {
-            this.convert_tags_to_releases(response.data);
-            this.setState({
-                admin_client_tags: response.data,
-                admin_client_latest_version: response.data[0].name
-            });
-        });
 
         psono_server.healthcheck().then(response => {
             this.setState({

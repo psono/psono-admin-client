@@ -162,15 +162,19 @@ function admin_info(token, session_secret_key) {
 }
 
 /**
- * GET: Returns a list of all users (for administrators)
+ * GET: Returns a list of all users (for administrators) or the user details of a single user
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
+ * @param {uuid} {user_id} (optional) The user id
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_user(token, session_secret_key) {
-    const endpoint = '/admin/user/';
+function admin_user(token, session_secret_key, user_id) {
+    if (user_id === undefined) {
+        user_id = null;
+    }
+    const endpoint = '/admin/user/' + (user_id === null ? '' : user_id + '/');
     const connection_type = 'GET';
     const data = null;
 

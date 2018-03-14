@@ -97,7 +97,7 @@ class Sidebar extends React.Component {
                     >
                         {brand}
                         <div className={classes.sidebarWrapper}>
-                            <HeaderLinks />
+                            <HeaderLinks state={this.props.state} />
                             {links}
                         </div>
                         {image !== undefined ? (

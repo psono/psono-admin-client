@@ -8,7 +8,8 @@ import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
 import { Header, Footer, Sidebar } from '../../components';
 
-import appRoutes from '../../routes/app.jsx';
+import otherLinks from '../../routes/other';
+import sidebarLinks from '../../routes/sidebar';
 
 import { appStyle } from '../../variables/styles';
 
@@ -50,11 +51,11 @@ class App extends React.Component {
             return <Redirect to="/login" />;
         }
         const { classes, ...rest } = this.props;
-
+        const headerLinks = otherLinks.concat(sidebarLinks);
         return (
             <div className={classes.wrapper}>
                 <Sidebar
-                    routes={appRoutes}
+                    routes={sidebarLinks}
                     logoText={'Admin'}
                     logo={logo}
                     image={image}
@@ -65,7 +66,7 @@ class App extends React.Component {
                 />
                 <div className={classes.mainPanel} ref="mainPanel">
                     <Header
-                        routes={appRoutes}
+                        routes={otherLinks.concat(headerLinks)}
                         handleDrawerToggle={this.handleDrawerToggle}
                         {...rest}
                     />

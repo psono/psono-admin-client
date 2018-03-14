@@ -5,7 +5,7 @@ import notification from '../../services/notification';
 
 import { Snackbar } from '../index';
 
-class Notifications extends React.Component {
+class Notification extends React.Component {
     render() {
         const messages = this.props.state.notification.messages;
 
@@ -40,4 +40,4 @@ class Notifications extends React.Component {
     }
 }
 
-export default Notifications;
+export default Notification;
