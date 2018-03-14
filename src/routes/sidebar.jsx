@@ -17,7 +17,7 @@ import {
     // Notifications
 } from 'material-ui-icons';
 
-let appRoutes = [
+let routes = [
     {
         path: '/dashboard',
         sidebarName: 'Dashboard',
@@ -32,19 +32,12 @@ let appRoutes = [
         icon: Person,
         component: Users
     }
-    // {
-    //     path: '/user/01bb1fa3-df31-447a-8fcf-92ccfdfcae57',
-    //     sidebarName: 'Users',
-    //     navbarName: 'Users',
-    //     icon: Person,
-    //     component: Users
-    // }
 ];
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     //dev
     // preserve
-    // appRoutes = appRoutes.concat([
+    // routes = routes.concat([
     //     {
     //         path: '/profile',
     //         sidebarName: 'Orig. User Profile',
@@ -92,8 +85,8 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // prod
 }
 
-appRoutes = appRoutes.concat([
+routes = routes.concat([
     { redirect: true, path: '/', to: '/dashboard', navbarName: 'Redirect' }
 ]);
 
-export default appRoutes;
+export default routes;

@@ -258,6 +258,7 @@ class LoginForm extends React.Component {
             .then(
                 result => {
                     this.setState({ server_info: result });
+                    this.props.actions.set_server_info(result.info);
                     if (result.status !== 'matched') {
                         this.setState({ view: result.status });
                     } else if (this.has_ldap_auth(result)) {

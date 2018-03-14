@@ -8,22 +8,14 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
-import {
-    Person,
-    DevicesOther,
-    Group,
-    Delete,
-    DoNotDisturb,
-    //Edit,
-    CheckBox
-} from 'material-ui-icons';
+import { DevicesOther, Group, Delete } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
-class UsersCard extends React.Component {
+class UserCard extends React.Component {
     state = {
         value: 0
     };
@@ -31,17 +23,7 @@ class UsersCard extends React.Component {
         this.setState({ value });
     };
     render() {
-        const {
-            classes,
-            users,
-            sessions,
-            groups,
-            onDeleteUsers,
-            //onEditUser,
-            onActivate,
-            onDeactivate,
-            onDeleteSessions
-        } = this.props;
+        const { classes, sessions, groups, onDeleteSessions } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -50,7 +32,7 @@ class UsersCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="User Management:"
+                    title="User Details:"
                     action={
                         <Tabs
                             classes={{
@@ -61,17 +43,6 @@ class UsersCard extends React.Component {
                             indicatorClassName={classes.displayNone}
                             textColor="inherit"
                         >
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
-                                }}
-                                icon={<Person className={classes.tabIcon} />}
-                                label={'Users'}
-                            />
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
@@ -103,53 +74,6 @@ class UsersCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Users"
-                                headerFunctions={[
-                                    // {
-                                    //     title: 'Edit User',
-                                    //     onClick: onEditUser,
-                                    //     icon: <Edit />,
-                                    //     max_selected: 1
-                                    // },
-                                    {
-                                        title: 'Activate User(s)',
-                                        onClick: onActivate,
-                                        icon: <CheckBox />
-                                    },
-                                    {
-                                        title: 'Deactivate User(s)',
-                                        onClick: onDeactivate,
-                                        icon: <DoNotDisturb />
-                                    },
-                                    {
-                                        title: 'Delete User(s)',
-                                        onClick: onDeleteUsers,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                onDelete={onDeleteUsers}
-                                head={[
-                                    { id: 'username', label: 'Username' },
-                                    {
-                                        id: 'create_date',
-                                        label: 'Registered'
-                                    },
-                                    { id: 'is_active', label: 'Active' },
-                                    {
-                                        id: 'is_email_active',
-                                        label: 'Email Active'
-                                    },
-                                    { id: 'yubikey_2fa', label: 'Yubikey' },
-                                    { id: 'ga_2fa', label: 'Google Auth' },
-                                    { id: 'duo_2fa', label: 'Duo Auth' }
-                                ]}
-                                data={users}
-                            />
-                        </Typography>
-                    )}
-                    {this.state.value === 1 && (
-                        <Typography component="div">
-                            <CustomTable
                                 title="Sessions"
                                 headerFunctions={[
                                     {
@@ -159,7 +83,6 @@ class UsersCard extends React.Component {
                                     }
                                 ]}
                                 head={[
-                                    { id: 'username', label: 'Username' },
                                     {
                                         id: 'create_date',
                                         label: 'Logged in at'
@@ -179,7 +102,7 @@ class UsersCard extends React.Component {
                             />
                         </Typography>
                     )}
-                    {this.state.value === 2 && (
+                    {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
                                 title="Groups"
@@ -189,10 +112,6 @@ class UsersCard extends React.Component {
                                     {
                                         id: 'create_date',
                                         label: 'Created at'
-                                    },
-                                    {
-                                        id: 'member_count',
-                                        label: 'Members'
                                     }
                                 ]}
                                 data={groups}
@@ -205,11 +124,10 @@ class UsersCard extends React.Component {
     }
 }
 
-UsersCard.propTypes = {
+UserCard.propTypes = {
     classes: PropTypes.object.isRequired,
-    users: PropTypes.array,
     sessions: PropTypes.array,
     groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(UsersCard);
+export default withStyles(tasksCardStyle)(UserCard);

@@ -60,8 +60,10 @@ function logout() {
 
 function set_server_info(info) {
     return dispatch => {
-        info.type = SET_SERVER_INFO;
-        dispatch(info);
+        dispatch({
+            type: SET_SERVER_INFO,
+            info
+        });
     };
 }
 
