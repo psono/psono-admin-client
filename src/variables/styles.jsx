@@ -885,7 +885,7 @@ const tasksCardStyle = theme => ({
     },
     labelIcon: {
         height: '44px',
-        width: '110px',
+        width: '140px',
         minWidth: '72px',
         paddingLeft: '14px',
         borderRadius: '3px'

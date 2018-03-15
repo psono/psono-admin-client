@@ -23,7 +23,21 @@ class UserCard extends React.Component {
         this.setState({ value });
     };
     render() {
-        const { classes, sessions, groups, onDeleteSessions } = this.props;
+        const {
+            classes,
+            sessions,
+            memberships,
+            duos,
+            yubikey_otps,
+            google_authenticators,
+            recovery_codes,
+            onDeleteSessions,
+            onDeleteMemberships,
+            onDeleteDuos,
+            onDeleteYubikeyOtps,
+            onDeleteGoogleAuthenticators,
+            onDeleteRecoveryCodes
+        } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -65,7 +79,51 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Groups'}
+                                label={'Memberships'}
+                            />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Duos'}
+                            />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Yubikeys'}
+                            />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Google Auths'}
+                            />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Recovery Codes'}
                             />
                         </Tabs>
                     }
@@ -105,16 +163,114 @@ class UserCard extends React.Component {
                     {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Groups"
-                                headerFunctions={[]}
+                                title="Memberships"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Membership(s)',
+                                        onClick: onDeleteMemberships,
+                                        icon: <Delete />
+                                    }
+                                ]}
                                 head={[
-                                    { id: 'name', label: 'Name' },
+                                    { id: 'group_name', label: 'Group' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Joined at'
+                                    },
+                                    { id: 'accepted', label: 'Accepted' },
+                                    { id: 'admin', label: 'Group Admin' }
+                                ]}
+                                data={memberships}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 2 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Duos"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Duo(s)',
+                                        onClick: onDeleteDuos,
+                                        icon: <Delete />
+                                    }
+                                ]}
+                                head={[
+                                    { id: 'title', label: 'Title' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Created at'
+                                    },
+                                    { id: 'active', label: 'Active' }
+                                ]}
+                                data={duos}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 3 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Yubikeys"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Yubikey(s)',
+                                        onClick: onDeleteYubikeyOtps,
+                                        icon: <Delete />
+                                    }
+                                ]}
+                                head={[
+                                    { id: 'title', label: 'Title' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Created at'
+                                    },
+                                    { id: 'active', label: 'Active' }
+                                ]}
+                                data={yubikey_otps}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 4 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Google Authenticators"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Google Auth(s)',
+                                        onClick: onDeleteGoogleAuthenticators,
+                                        icon: <Delete />
+                                    }
+                                ]}
+                                head={[
+                                    { id: 'title', label: 'Title' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Created at'
+                                    },
+                                    { id: 'active', label: 'Active' }
+                                ]}
+                                data={google_authenticators}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 5 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Recovery Codes"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Recovery Code(s)',
+                                        onClick: onDeleteRecoveryCodes,
+                                        icon: <Delete />
+                                    }
+                                ]}
+                                head={[
                                     {
                                         id: 'create_date',
                                         label: 'Created at'
                                     }
                                 ]}
-                                data={groups}
+                                data={recovery_codes}
                             />
                         </Typography>
                     )}

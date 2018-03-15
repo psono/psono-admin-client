@@ -14,8 +14,8 @@ import {
     Group,
     Delete,
     DoNotDisturb,
-    //Edit,
-    CheckBox
+    CheckBox,
+    Edit
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -37,10 +37,11 @@ class UsersCard extends React.Component {
             sessions,
             groups,
             onDeleteUsers,
-            //onEditUser,
+            onEditUser,
             onActivate,
             onDeactivate,
-            onDeleteSessions
+            onDeleteSessions,
+            onDeleteGroups
         } = this.props;
         return (
             <Card className={classes.card}>
@@ -105,12 +106,12 @@ class UsersCard extends React.Component {
                             <CustomTable
                                 title="Users"
                                 headerFunctions={[
-                                    // {
-                                    //     title: 'Edit User',
-                                    //     onClick: onEditUser,
-                                    //     icon: <Edit />,
-                                    //     max_selected: 1
-                                    // },
+                                    {
+                                        title: 'Edit User',
+                                        onClick: onEditUser,
+                                        icon: <Edit />,
+                                        max_selected: 1
+                                    },
                                     {
                                         title: 'Activate User(s)',
                                         onClick: onActivate,
@@ -183,7 +184,13 @@ class UsersCard extends React.Component {
                         <Typography component="div">
                             <CustomTable
                                 title="Groups"
-                                headerFunctions={[]}
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Group(s)',
+                                        onClick: onDeleteGroups,
+                                        icon: <Delete />
+                                    }
+                                ]}
                                 head={[
                                     { id: 'name', label: 'Name' },
                                     {

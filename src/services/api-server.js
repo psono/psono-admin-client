@@ -272,6 +272,152 @@ function admin_delete_session(token, session_secret_key, session_id) {
 }
 
 /**
+ * DELETE: Deletes a group (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_group(token, session_secret_key, group_id) {
+    const endpoint = '/admin/group/';
+    const connection_type = 'DELETE';
+    const data = {
+        group_id: group_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a group membership (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} membership_id The id of the membership to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_membership(token, session_secret_key, membership_id) {
+    const endpoint = '/admin/membership/';
+    const connection_type = 'DELETE';
+    const data = {
+        membership_id: membership_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a duo (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} duo_id The id of the duo to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_duo(token, session_secret_key, duo_id) {
+    const endpoint = '/admin/duo/';
+    const connection_type = 'DELETE';
+    const data = {
+        duo_id: duo_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a yubikey otp (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} yubikey_otp_id The id of the yubikey otp to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
+    const endpoint = '/admin/yubikey-otp/';
+    const connection_type = 'DELETE';
+    const data = {
+        yubikey_otp_id: yubikey_otp_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a google authenticator (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} google_authenticator_id The id of the google authenticator to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_google_authenticator(
+    token,
+    session_secret_key,
+    google_authenticator_id
+) {
+    const endpoint = '/admin/google-authenticator/';
+    const connection_type = 'DELETE';
+    const data = {
+        google_authenticator_id: google_authenticator_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a reovery code (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} recovery_code_id The id of the recovery code to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_recovery_code(
+    token,
+    session_secret_key,
+    recovery_code_id
+) {
+    const endpoint = '/admin/google-authenticator/';
+    const connection_type = 'DELETE';
+    const data = {
+        recovery_code_id: recovery_code_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * PUT: Update a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -2043,6 +2189,12 @@ const service = {
     admin_group,
     admin_delete_user,
     admin_delete_session,
+    admin_delete_group,
+    admin_delete_membership,
+    admin_delete_duo,
+    admin_delete_yubikey_otp,
+    admin_delete_google_authenticator,
+    admin_delete_recovery_code,
     admin_update_user,
     login,
     ga_verify,
