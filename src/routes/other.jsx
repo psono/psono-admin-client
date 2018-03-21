@@ -1,6 +1,8 @@
-import User from '../views/User/User.jsx';
+import UserEdit from '../views/User/Edit';
+import GroupEdit from '../views/Group/Edit';
+import GroupCreate from '../views/Group/Create';
 
-import { Person } from 'material-ui-icons';
+import { Person, Group } from 'material-ui-icons';
 
 let routes = [
     {
@@ -8,7 +10,21 @@ let routes = [
         sidebarName: 'User',
         navbarName: 'User',
         icon: Person,
-        component: User
+        component: UserEdit
+    },
+    {
+        path: '/group/:group_id',
+        sidebarName: 'Group',
+        navbarName: 'Group',
+        icon: Group,
+        component: GroupEdit
+    },
+    {
+        path: '/groups/create',
+        sidebarName: 'Create Group',
+        navbarName: 'Create Group',
+        icon: Person,
+        component: GroupCreate
     }
 ];
 

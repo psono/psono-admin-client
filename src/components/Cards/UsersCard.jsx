@@ -14,12 +14,12 @@ import {
     Group,
     Delete,
     DoNotDisturb,
-    //Edit,
-    CheckBox
+    CheckBox,
+    Edit
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomTable, Button } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -37,10 +37,14 @@ class UsersCard extends React.Component {
             sessions,
             groups,
             onDeleteUsers,
-            //onEditUser,
+            onEditUser,
+            onEditGroup,
             onActivate,
             onDeactivate,
-            onDeleteSessions
+            onDeleteSessions,
+            onDeleteGroups,
+            onCreateGroup,
+            show_create_group_button
         } = this.props;
         return (
             <Card className={classes.card}>
@@ -105,12 +109,12 @@ class UsersCard extends React.Component {
                             <CustomTable
                                 title="Users"
                                 headerFunctions={[
-                                    // {
-                                    //     title: 'Edit User',
-                                    //     onClick: onEditUser,
-                                    //     icon: <Edit />,
-                                    //     max_selected: 1
-                                    // },
+                                    {
+                                        title: 'Edit User',
+                                        onClick: onEditUser,
+                                        icon: <Edit />,
+                                        max_selected: 1
+                                    },
                                     {
                                         title: 'Activate User(s)',
                                         onClick: onActivate,
@@ -181,9 +185,31 @@ class UsersCard extends React.Component {
                     )}
                     {this.state.value === 2 && (
                         <Typography component="div">
+                            {show_create_group_button ? (
+                                <Button
+                                    color="info"
+                                    onClick={() => {
+                                        onCreateGroup();
+                                    }}
+                                >
+                                    Create Group
+                                </Button>
+                            ) : null}
                             <CustomTable
                                 title="Groups"
-                                headerFunctions={[]}
+                                headerFunctions={[
+                                    {
+                                        title: 'Edit Group',
+                                        onClick: onEditGroup,
+                                        icon: <Edit />,
+                                        max_selected: 1
+                                    },
+                                    {
+                                        title: 'Delete Group(s)',
+                                        onClick: onDeleteGroups,
+                                        icon: <Delete />
+                                    }
+                                ]}
                                 head={[
                                     { id: 'name', label: 'Name' },
                                     {

@@ -1,6 +1,6 @@
-import DashboardPage from '../views/Dashboard/Dashboard.jsx';
+import DashboardPage from '../views/Dashboard/Index';
 //import UserProfile from '../views/UserProfile/UserProfile.jsx';
-import Users from '../views/Users/Users.jsx';
+import Users from '../views/Users/Index';
 // import TableList from '../views/TableList/TableList.jsx';
 // import Typography from '../views/Typography/Typography.jsx';
 // import Icons from '../views/Icons/Icons.jsx';

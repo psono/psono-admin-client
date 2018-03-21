@@ -1,5 +1,11 @@
 import React from 'react';
-import { withStyles, FormControl, InputLabel, Input } from 'material-ui';
+import {
+    withStyles,
+    FormControl,
+    InputLabel,
+    Input,
+    FormHelperText
+} from 'material-ui';
 import { Clear, Check } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -10,6 +16,7 @@ class CustomInput extends React.Component {
         const {
             classes,
             formControlProps,
+            helperText,
             labelText,
             id,
             labelProps,
@@ -23,6 +30,7 @@ class CustomInput extends React.Component {
                 className={
                     formControlProps.className + ' ' + classes.formControl
                 }
+                error={error}
             >
                 {labelText !== undefined ? (
                     <InputLabel
@@ -53,6 +61,9 @@ class CustomInput extends React.Component {
                     id={id}
                     {...inputProps}
                 />
+                {helperText ? (
+                    <FormHelperText>{helperText}</FormHelperText>
+                ) : null}
                 {error ? (
                     <Clear
                         className={
@@ -73,6 +84,7 @@ class CustomInput extends React.Component {
 
 CustomInput.propTypes = {
     classes: PropTypes.object.isRequired,
+    helperText: PropTypes.node,
     labelText: PropTypes.node,
     labelProps: PropTypes.object,
     id: PropTypes.string,

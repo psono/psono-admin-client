@@ -10,6 +10,7 @@ import { Header, Footer, Sidebar } from '../../components';
 
 import otherLinks from '../../routes/other';
 import sidebarLinks from '../../routes/sidebar';
+import ldapLinks from '../../routes/ldap';
 
 import { appStyle } from '../../variables/styles';
 
@@ -51,11 +52,18 @@ class App extends React.Component {
             return <Redirect to="/login" />;
         }
         const { classes, ...rest } = this.props;
-        const headerLinks = otherLinks.concat(sidebarLinks);
+
+        let variableLdapLinks = [];
+        if (this.props.state.server.authentication_methods.indexOf('LDAP')) {
+            variableLdapLinks = ldapLinks;
+        }
+
+        const headerLinks = otherLinks.concat(variableLdapLinks, sidebarLinks);
+
         return (
             <div className={classes.wrapper}>
                 <Sidebar
-                    routes={sidebarLinks}
+                    routes={sidebarLinks.concat(variableLdapLinks)}
                     logoText={'Admin'}
                     logo={logo}
                     image={image}

@@ -15,6 +15,7 @@ class Users extends React.Component {
         redirect_to: '',
         users: [],
         sessions: [],
+        groups: [],
         os_data: [],
         os_labels: [],
         device_data: [],
@@ -25,38 +26,38 @@ class Users extends React.Component {
         twofa_labels: []
     };
 
-    onDeleteUsers(user_ids) {
-        user_ids.forEach(user_id => {
+    onDeleteUsers(selected_users) {
+        selected_users.forEach(user => {
             psono_server.admin_delete_user(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
-                user_id
+                user.id
             );
         });
 
         let { users } = this.state;
-        user_ids.forEach(user_id => {
-            helper.remove_from_array(users, user_id, function(a, b) {
-                return a.id === b;
+        selected_users.forEach(user => {
+            helper.remove_from_array(users, user, function(a, b) {
+                return a.id === b.id;
             });
         });
 
         this.setState({ users: users });
     }
 
-    update_users(user_ids, is_active) {
+    update_users(selected_users, is_active) {
         let { users } = this.state;
-        user_ids.forEach(user_id => {
+        selected_users.forEach(user => {
             psono_server.admin_update_user(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
-                user_id,
+                user.id,
                 is_active
             );
 
-            users.forEach(user => {
-                if (user.id === user_id) {
-                    user.is_active = is_active ? 'yes' : 'no';
+            users.forEach(u => {
+                if (u.id === user.id) {
+                    u.is_active = is_active ? 'yes' : 'no';
                 }
             });
         });
@@ -64,37 +65,68 @@ class Users extends React.Component {
         this.setState({ users: users });
     }
 
-    onActivateUsers(user_ids) {
-        return this.update_users(user_ids, true);
+    onActivateUsers(selected_users) {
+        return this.update_users(selected_users, true);
     }
 
-    onDeactivateUsers(user_ids) {
-        return this.update_users(user_ids, false);
+    onDeactivateUsers(selected_users) {
+        return this.update_users(selected_users, false);
     }
 
-    onEditUser(user_ids) {
+    onEditUser(selected_users) {
         this.setState({
-            redirect_to: '/user/' + user_ids[0]
+            redirect_to: '/user/' + selected_users[0].id
         });
     }
 
-    onDeleteSessions(session_ids) {
-        session_ids.forEach(session_id => {
+    onEditGroup(selected_groups) {
+        this.setState({
+            redirect_to: '/group/' + selected_groups[0].id
+        });
+    }
+
+    onDeleteSessions(selected_sessions) {
+        selected_sessions.forEach(session => {
             psono_server.admin_delete_session(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
-                session_id
+                session.id
             );
         });
 
         let { sessions } = this.state;
-        session_ids.forEach(session_id => {
-            helper.remove_from_array(sessions, session_id, function(a, b) {
-                return a.id === b;
+        selected_sessions.forEach(session => {
+            helper.remove_from_array(sessions, session, function(a, b) {
+                return a.id === b.id;
             });
         });
 
         this.setState({ sessions: sessions });
+    }
+
+    onDeleteGroups(selected_groups) {
+        selected_groups.forEach(group => {
+            psono_server.admin_delete_group(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                group.id
+            );
+        });
+
+        let { groups } = this.state;
+        selected_groups.forEach(group => {
+            helper.remove_from_array(groups, group, function(a, b) {
+                return a.id === b.id;
+            });
+        });
+
+        this.setState({ groups: groups });
+    }
+
+    onCreateGroup() {
+        this.setState({
+            redirect_to: '/groups/create/'
+        });
     }
 
     analyze(data, storage, labels) {
@@ -479,8 +511,18 @@ class Users extends React.Component {
                                 this.onDeactivateUsers(user_ids)
                             }
                             onEditUser={user_ids => this.onEditUser(user_ids)}
-                            onDeleteSessions={session_ids =>
-                                this.onDeleteSessions(session_ids)
+                            onEditGroup={group_ids =>
+                                this.onEditGroup(group_ids)
+                            }
+                            onDeleteSessions={selected_sessions =>
+                                this.onDeleteSessions(selected_sessions)
+                            }
+                            onDeleteGroups={selected_groups =>
+                                this.onDeleteGroups(selected_groups)
+                            }
+                            onCreateGroup={() => this.onCreateGroup()}
+                            show_create_group_button={
+                                this.props.state.server.type === 'EE'
                             }
                         />
                     </ItemGrid>

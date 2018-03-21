@@ -143,6 +143,12 @@ let CustomTableToolbar = props => {
             <div className={classes.actions}>
                 {numSelected > 0 && headerFunctions.length > 0
                     ? headerFunctions.map((headerFunction, index) => {
+                          if (
+                              headerFunction.max_selected &&
+                              numSelected > headerFunction.max_selected
+                          ) {
+                              return null;
+                          }
                           return (
                               <Tooltip title={headerFunction.title} key={index}>
                                   <IconButton
@@ -214,22 +220,24 @@ class CustomTable extends React.Component {
 
     handleSelectAllClick = (event, checked) => {
         if (checked) {
-            this.setState({ selected: this.props.data.map(n => n.id) });
+            this.setState({ selected: this.props.data.map(n => n) });
             return;
         }
         this.setState({ selected: [] });
     };
 
-    handleClick = (event, id) => {
+    handleClick = (event, entry) => {
         if (!this.props.headerFunctions.length > 0) {
             return;
         }
         const { selected } = this.state;
-        const selectedIndex = selected.indexOf(id);
+
+        const selectedIndex = selected.findIndex(i => i.id === entry.id);
+
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
+            newSelected = newSelected.concat(selected, entry);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -282,7 +290,8 @@ class CustomTable extends React.Component {
         return wrappedHeaderFunctions;
     };
 
-    isSelected = id => this.state.selected.indexOf(id) !== -1;
+    isSelected = o2 =>
+        typeof this.state.selected.find(o1 => o1.id === o2.id) !== 'undefined';
 
     render() {
         const { classes, head, title, data, rowsPerPage } = this.props;
@@ -318,12 +327,12 @@ class CustomTable extends React.Component {
                                     page * rowsPerPage + rowsPerPage
                                 )
                                 .map((n, index) => {
-                                    const isSelected = this.isSelected(n.id);
+                                    const isSelected = this.isSelected(n);
                                     return (
                                         <TableRow
                                             hover
                                             onClick={event =>
-                                                this.handleClick(event, n.id)
+                                                this.handleClick(event, n)
                                             }
                                             role="checkbox"
                                             aria-checked={isSelected}

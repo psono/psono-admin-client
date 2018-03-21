@@ -885,7 +885,7 @@ const tasksCardStyle = theme => ({
     },
     labelIcon: {
         height: '44px',
-        width: '110px',
+        width: '140px',
         minWidth: '72px',
         paddingLeft: '14px',
         borderRadius: '3px'
@@ -1376,6 +1376,22 @@ const customInputStyle = {
     checkbox: {
         marginTop: '15px',
         color: '#AAAAAA'
+    },
+    checked: {
+        color: '#9c27b0'
+    },
+    checkedIcon: {
+        width: '20px',
+        height: '20px',
+        border: '1px solid rgba(0, 0, 0, .54)',
+        borderRadius: '3px'
+    },
+    uncheckedIcon: {
+        width: '0px',
+        height: '0px',
+        padding: '10px',
+        border: '1px solid rgba(0, 0, 0, .54)',
+        borderRadius: '3px'
     }
 };
 
