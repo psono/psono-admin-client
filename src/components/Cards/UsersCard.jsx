@@ -19,7 +19,7 @@ import {
 } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomTable, Button } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
@@ -38,10 +38,13 @@ class UsersCard extends React.Component {
             groups,
             onDeleteUsers,
             onEditUser,
+            onEditGroup,
             onActivate,
             onDeactivate,
             onDeleteSessions,
-            onDeleteGroups
+            onDeleteGroups,
+            onCreateGroup,
+            show_create_group_button
         } = this.props;
         return (
             <Card className={classes.card}>
@@ -182,9 +185,25 @@ class UsersCard extends React.Component {
                     )}
                     {this.state.value === 2 && (
                         <Typography component="div">
+                            {show_create_group_button ? (
+                                <Button
+                                    color="info"
+                                    onClick={() => {
+                                        onCreateGroup();
+                                    }}
+                                >
+                                    Create Group
+                                </Button>
+                            ) : null}
                             <CustomTable
                                 title="Groups"
                                 headerFunctions={[
+                                    {
+                                        title: 'Edit Group',
+                                        onClick: onEditGroup,
+                                        icon: <Edit />,
+                                        max_selected: 1
+                                    },
                                     {
                                         title: 'Delete Group(s)',
                                         onClick: onDeleteGroups,

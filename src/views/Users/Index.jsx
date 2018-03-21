@@ -79,6 +79,12 @@ class Users extends React.Component {
         });
     }
 
+    onEditGroup(selected_groups) {
+        this.setState({
+            redirect_to: '/group/' + selected_groups[0].id
+        });
+    }
+
     onDeleteSessions(selected_sessions) {
         selected_sessions.forEach(session => {
             psono_server.admin_delete_session(
@@ -115,6 +121,12 @@ class Users extends React.Component {
         });
 
         this.setState({ groups: groups });
+    }
+
+    onCreateGroup() {
+        this.setState({
+            redirect_to: '/groups/create/'
+        });
     }
 
     analyze(data, storage, labels) {
@@ -209,8 +221,6 @@ class Users extends React.Component {
             )
             .then(response => {
                 const { sessions } = response.data;
-
-                console.log(sessions);
 
                 let os_data = [0, 0, 0, 0, 0, 0];
                 let os_labels = [
@@ -501,11 +511,18 @@ class Users extends React.Component {
                                 this.onDeactivateUsers(user_ids)
                             }
                             onEditUser={user_ids => this.onEditUser(user_ids)}
+                            onEditGroup={group_ids =>
+                                this.onEditGroup(group_ids)
+                            }
                             onDeleteSessions={selected_sessions =>
                                 this.onDeleteSessions(selected_sessions)
                             }
                             onDeleteGroups={selected_groups =>
                                 this.onDeleteGroups(selected_groups)
+                            }
+                            onCreateGroup={() => this.onCreateGroup()}
+                            show_create_group_button={
+                                this.props.state.server.type === 'EE'
                             }
                         />
                     </ItemGrid>

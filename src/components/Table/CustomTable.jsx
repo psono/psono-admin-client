@@ -143,6 +143,12 @@ let CustomTableToolbar = props => {
             <div className={classes.actions}>
                 {numSelected > 0 && headerFunctions.length > 0
                     ? headerFunctions.map((headerFunction, index) => {
+                          if (
+                              headerFunction.max_selected &&
+                              numSelected > headerFunction.max_selected
+                          ) {
+                              return null;
+                          }
                           return (
                               <Tooltip title={headerFunction.title} key={index}>
                                   <IconButton

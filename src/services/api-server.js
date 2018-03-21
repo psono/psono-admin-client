@@ -171,10 +171,7 @@ function admin_info(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_user(token, session_secret_key, user_id) {
-    if (user_id === undefined) {
-        user_id = null;
-    }
-    const endpoint = '/admin/user/' + (user_id === null ? '' : user_id + '/');
+    const endpoint = '/admin/user/' + (!user_id ? '' : user_id + '/');
     const connection_type = 'GET';
     const data = null;
 
@@ -210,12 +207,164 @@ function admin_session(token, session_secret_key) {
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
+ * @param {uuid} {group_id} (optional) The group id
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_group(token, session_secret_key) {
-    const endpoint = '/admin/group/';
+function admin_group(token, session_secret_key, group_id) {
+    const endpoint = '/admin/group/' + (!group_id ? '' : group_id + '/');
     const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns a list of all ldap users (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_user(token, session_secret_key) {
+    const endpoint = '/admin/ldap/user/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns a list of all ldap groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_group(token, session_secret_key) {
+    const endpoint = '/admin/ldap/group/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a LDAP group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} ldap_group_id The ldap group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_create_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    ldap_group_id
+) {
+    const endpoint = '/admin/ldap/group/map/';
+    const connection_type = 'POST';
+    const data = {
+        group_id: group_id,
+        ldap_group_id: ldap_group_id
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a LDAP group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} ldap_group_map_id The group map id
+ * @param {uuid} group_admin The group admin privilege
+ * @param {uuid} share_admin The share admin privilege
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_update_group_map(
+    token,
+    session_secret_key,
+    ldap_group_map_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/ldap/group/map/';
+    const connection_type = 'PUT';
+    const data = {
+        ldap_group_map_id: ldap_group_map_id,
+        group_admin: group_admin,
+        share_admin: share_admin
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a LDAP group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} ldap_group_id The ldap group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_delete_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    ldap_group_id
+) {
+    const endpoint = '/admin/ldap/group/map/';
+    const connection_type = 'DELETE';
+    const data = {
+        group_id: group_id,
+        ldap_group_id: ldap_group_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Triggers a sync of the servers LDAP groups and the actual LDAP groups and returns a list of them (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_ldap_group_sync(token, session_secret_key) {
+    const endpoint = '/admin/ldap/group/';
+    const connection_type = 'POST';
     const data = null;
 
     const headers = {
@@ -265,6 +414,29 @@ function admin_delete_session(token, session_secret_key, session_id) {
     };
     const headers = {
         'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a managed group (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} name The name of the group to create
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_create_group(token, session_secret_key, name) {
+    const endpoint = '/admin/group/';
+    const connection_type = 'POST';
+    const data = {
+        name: name
+    };
+    const headers = {
         Authorization: 'Token ' + token
     };
 
@@ -809,12 +981,7 @@ function set_password(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_datastore(token, session_secret_key, datastore_id) {
-    if (datastore_id === undefined) {
-        datastore_id = null;
-    }
-
-    const endpoint =
-        '/datastore/' + (datastore_id === null ? '' : datastore_id + '/');
+    const endpoint = '/datastore/' + (!datastore_id ? '' : datastore_id + '/');
     const connection_type = 'GET';
     const data = null;
     const headers = {
@@ -1879,11 +2046,7 @@ function delete_share_link(token, session_secret_key, link_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group(token, session_secret_key, group_id) {
-    if (group_id === undefined) {
-        group_id = null;
-    }
-
-    const endpoint = '/group/' + (group_id === null ? '' : group_id + '/');
+    const endpoint = '/group/' + (!group_id ? '' : group_id + '/');
     const connection_type = 'GET';
     const data = null;
     const headers = {
@@ -1994,12 +2157,7 @@ function delete_group(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group_rights(token, session_secret_key, group_id) {
-    if (group_id === undefined) {
-        group_id = null;
-    }
-
-    const endpoint =
-        '/group/rights/' + (group_id === null ? '' : group_id + '/');
+    const endpoint = '/group/rights/' + (!group_id ? '' : group_id + '/');
     const connection_type = 'GET';
     const data = null;
     const headers = {
@@ -2189,12 +2347,19 @@ const service = {
     admin_group,
     admin_delete_user,
     admin_delete_session,
+    admin_create_group,
     admin_delete_group,
     admin_delete_membership,
     admin_delete_duo,
     admin_delete_yubikey_otp,
     admin_delete_google_authenticator,
     admin_delete_recovery_code,
+    admin_ldap_user,
+    admin_ldap_group,
+    admin_ldap_create_group_map,
+    admin_ldap_update_group_map,
+    admin_ldap_delete_group_map,
+    admin_ldap_group_sync,
     admin_update_user,
     login,
     ga_verify,

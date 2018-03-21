@@ -76,10 +76,7 @@ class User extends React.Component {
 
         let { memberships } = this.state.user;
         selected_memberships.forEach(membership => {
-            helper.remove_from_array(memberships, membership.id, function(
-                a,
-                b
-            ) {
+            helper.remove_from_array(memberships, membership, function(a, b) {
                 return a.id === b.id;
             });
         });
@@ -98,7 +95,7 @@ class User extends React.Component {
 
         let { duos } = this.state.user;
         selected_duos.forEach(duo => {
-            helper.remove_from_array(duos, duo.id, function(a, b) {
+            helper.remove_from_array(duos, duo, function(a, b) {
                 return a.id === b.id;
             });
         });
