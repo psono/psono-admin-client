@@ -54,7 +54,10 @@ class App extends React.Component {
         const { classes, ...rest } = this.props;
 
         let variableLdapLinks = [];
-        if (this.props.state.server.authentication_methods.indexOf('LDAP')) {
+        if (
+            this.props.state.server.authentication_methods.indexOf('LDAP') !==
+            -1
+        ) {
             variableLdapLinks = ldapLinks;
         }
 

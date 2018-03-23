@@ -13,7 +13,7 @@ class switchRoutes extends React.Component {
         const { actions, state, store, ...rest } = this.props;
 
         let variableLdapRoutes = [];
-        if (state.server.authentication_methods.indexOf('LDAP')) {
+        if (state.server.authentication_methods.indexOf('LDAP') !== -1) {
             variableLdapRoutes = ldapRoutes;
         }
 
