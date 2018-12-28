@@ -33,7 +33,7 @@
     "react-google-maps": "^9.4.5",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^2.1.2",
     "react-spinners": "^0.2.6",
     "react-swipeable-views": "^0.12.12",
     "react-test-renderer": "^16.2.0",
@@ -45,10 +45,12 @@
     "uuid-js": "^0.7.5"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
-      "prettier --single-quote --write --tab-width 4",
-      "git add"
-    ]
+    "linters": {
+      "src/**/*.{js,jsx,json,css}": [
+        "prettier --single-quote --write --tab-width 4",
+        "git add"
+      ]
+    }
   },
   "jest": {
     "coverageReporters": [
@@ -64,5 +66,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
