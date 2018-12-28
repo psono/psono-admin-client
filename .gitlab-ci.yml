@@ -23,6 +23,15 @@ test-unittests:
 #    - apt-get install -y google-chrome-stable
 #    - karma start ./unittests/karma-chrome-headless.conf.js
 
+
+test-vulnerability-scan:
+  except:
+    - schedules
+  stage: test
+  image: psono-docker.jfrog.io/node:lts-alpine
+  script:
+    - npm audit
+
 #test-linter:
 #  except:
 #    - schedules
