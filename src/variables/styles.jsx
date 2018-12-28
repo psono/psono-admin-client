@@ -138,7 +138,7 @@ const defaultBoxShadow = {
 // // // App styles
 // #############################
 
-const appStyle = theme => ({
+export const appStyle = theme => ({
     wrapper: {
         position: 'relative',
         top: '0',
@@ -170,7 +170,7 @@ const appStyle = theme => ({
 // // // Sidebar styles
 // #############################
 
-const sidebarStyle = theme => ({
+export const sidebarStyle = theme => ({
     drawerPaper: {
         border: 'none',
         position: 'fixed',
@@ -382,7 +382,7 @@ const sidebarStyle = theme => ({
 // // // Header styles
 // #############################
 
-const headerStyle = theme => ({
+export const headerStyle = theme => ({
     appBar: {
         top: '-30px',
         [theme.breakpoints.down('md')]: {
@@ -458,7 +458,7 @@ const headerStyle = theme => ({
 // // // HeaderLinks styles
 // #############################
 
-const headerLinksStyle = theme => ({
+export const headerLinksStyle = theme => ({
     popperClose: {
         pointerEvents: 'none'
     },
@@ -596,7 +596,7 @@ const headerLinksStyle = theme => ({
 // // // Footer styles
 // #############################
 
-const footerStyle = {
+export const footerStyle = {
     block: {
         color: 'inherit',
         padding: '15px',
@@ -646,7 +646,7 @@ const footerStyle = {
 // // // Dashboard styles
 // #############################
 
-const dashboardStyle = {
+export const dashboardStyle = {
     successText: {
         color: successColor
     },
@@ -663,7 +663,7 @@ const dashboardStyle = {
 // // // Icons styles
 // #############################
 
-const iconsStyle = {
+export const iconsStyle = {
     iframe: {
         width: '100%',
         height: '500px',
@@ -679,7 +679,7 @@ const iconsStyle = {
 // // // StatsCard styles
 // #############################
 
-const statsCardStyle = {
+export const statsCardStyle = {
     card,
     cardHeader: {
         ...cardHeader,
@@ -770,7 +770,7 @@ const statsCardStyle = {
 // // // ChartCard styles
 // #############################
 
-const chartCardStyle = {
+export const chartCardStyle = {
     card,
     cardHeader: {
         ...cardHeader,
@@ -847,7 +847,7 @@ const chartCardStyle = {
 // // // TasksCard styles
 // #############################
 
-const tasksCardStyle = theme => ({
+export const tasksCardStyle = theme => ({
     card,
     cardHeader: {
         flex: 'none',
@@ -922,7 +922,7 @@ const tasksCardStyle = theme => ({
 // // // RegularCard styles
 // #############################
 
-const regularCardStyle = {
+export const regularCardStyle = {
     card,
     cardPlain: {
         background: 'transparent',
@@ -965,7 +965,7 @@ const regularCardStyle = {
 // // // ProfileCard styles
 // #############################
 
-const profileCardStyle = {
+export const profileCardStyle = {
     card: {
         marginTop: '30px',
         textAlign: 'center',
@@ -1022,7 +1022,7 @@ const profileCardStyle = {
 // // // Button styles
 // #############################
 
-const buttonStyle = {
+export const buttonStyle = {
     button: {
         backgroundColor: grayColor,
         color: '#FFFFFF',
@@ -1149,7 +1149,7 @@ const buttonStyle = {
 // // // IconButton styles
 // #############################
 
-const iconButtonStyle = {
+export const iconButtonStyle = {
     button: {
         height: '40px',
         minWidth: '40px',
@@ -1262,7 +1262,7 @@ const iconButtonStyle = {
 // // // Table styles
 // #############################
 
-const tableStyle = theme => ({
+export const tableStyle = theme => ({
     warningTableHeader: {
         color: warningColor
     },
@@ -1314,7 +1314,7 @@ const tableStyle = theme => ({
 // // // CustomInput styles
 // #############################
 
-const customInputStyle = {
+export const customInputStyle = {
     disabled: {
         '&:before': {
             backgroundColor: 'transparent !important'
@@ -1399,7 +1399,7 @@ const customInputStyle = {
 // // // Tasks styles
 // #############################
 
-const tasksStyle = {
+export const tasksStyle = {
     table: {
         marginBottom: '0'
     },
@@ -1486,7 +1486,7 @@ const tasksStyle = {
 // // // Typography styles
 // #############################
 
-const typographyStyle = {
+export const typographyStyle = {
     defaultFontStyle: {
         ...defaultFont,
         fontSize: '14px'
@@ -1551,7 +1551,7 @@ const typographyStyle = {
 // // // SnackbarContent styles
 // #############################
 
-const snackbarContentStyle = {
+export const snackbarContentStyle = {
     root: {
         ...defaultFont,
         position: 'relative',
@@ -1616,26 +1616,4 @@ const snackbarContentStyle = {
         paddingLeft: '65px',
         display: 'block'
     }
-};
-
-module.exports = {
-    dashboardStyle,
-    iconsStyle,
-    statsCardStyle,
-    chartCardStyle,
-    tasksCardStyle,
-    regularCardStyle,
-    profileCardStyle,
-    buttonStyle,
-    iconButtonStyle,
-    tableStyle,
-    customInputStyle,
-    tasksStyle,
-    typographyStyle,
-    snackbarContentStyle,
-    footerStyle,
-    headerStyle,
-    sidebarStyle,
-    appStyle,
-    headerLinksStyle
 };

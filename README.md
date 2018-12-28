@@ -22,13 +22,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 To start a server for development do the following
 
-	yarn install
+	npm install
 	
 ## Start of a dev server
 
 To start a server for development do the following
 
-	yarn start
+	npm start
 
 Afterwards you can visit http://localhost:3000
 
@@ -36,7 +36,7 @@ Afterwards you can visit http://localhost:3000
 
 To build everything as standalone for production
 
-	yarn build
+	npm build
 
 Afterwards everthing can be found in the `/build` folder
 
@@ -44,13 +44,13 @@ Afterwards everthing can be found in the `/build` folder
 
 To run unit tests
 
-	yarn test
+	npm test
 
 ## Run unittests (with coverage)
 
 To run unit tests
 
-	yarn test -- --coverage
+	npm test -- --coverage
 
 
 
