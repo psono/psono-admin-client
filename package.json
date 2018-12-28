@@ -46,7 +46,10 @@
   },
   "lint-staged": {
     "linters": {
-      "src/**/*.{js,jsx,json,css}": ["prettier --single-quote --write --tab-width 4","git add"]
+      "src/**/*.{js,jsx,json,css}": [
+        "prettier --single-quote --write --tab-width 4",
+        "git add"
+      ]
     }
   },
   "jest": {
