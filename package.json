@@ -45,10 +45,9 @@
     "uuid-js": "^0.7.5"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
-      "prettier --single-quote --write --tab-width 4",
-      "git add"
-    ]
+    "linters": {
+      "src/**/*.{js,jsx,json,css}": ["prettier --single-quote --write --tab-width 4","git add"]
+    }
   },
   "jest": {
     "coverageReporters": [
