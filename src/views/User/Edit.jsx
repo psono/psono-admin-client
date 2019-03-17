@@ -114,10 +114,7 @@ class User extends React.Component {
 
         let { yubikey_otps } = this.state.user;
         selected_yubikey_otps.forEach(yubikey_otp => {
-            helper.remove_from_array(yubikey_otps, yubikey_otp.id, function(
-                a,
-                b
-            ) {
+            helper.remove_from_array(yubikey_otps, yubikey_otp, function(a, b) {
                 return a.id === b.id;
             });
         });
@@ -138,7 +135,7 @@ class User extends React.Component {
         selected_google_authenticators.forEach(google_authenticator => {
             helper.remove_from_array(
                 google_authenticators,
-                google_authenticator.id,
+                google_authenticator,
                 function(a, b) {
                     return a.id === b.id;
                 }
@@ -159,7 +156,31 @@ class User extends React.Component {
 
         let { recovery_codes } = this.state.user;
         selected_recovery_codes.forEach(recovery_code => {
-            helper.remove_from_array(recovery_codes, recovery_code.id, function(
+            helper.remove_from_array(recovery_codes, recovery_code, function(
+                a,
+                b
+            ) {
+                console.log(a);
+                console.log(b);
+                return a.id === b.id;
+            });
+        });
+
+        this.setState({ recovery_codes: recovery_codes });
+    }
+
+    onDeleteEmergencyCodes(selected_emergency_codes) {
+        selected_emergency_codes.forEach(emergency_code => {
+            psono_server.admin_delete_emergency_code(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                emergency_code.id
+            );
+        });
+
+        let { emergency_codes } = this.state.user;
+        selected_emergency_codes.forEach(emergency_code => {
+            helper.remove_from_array(emergency_codes, emergency_code, function(
                 a,
                 b
             ) {
@@ -167,7 +188,7 @@ class User extends React.Component {
             });
         });
 
-        this.setState({ recovery_codes: recovery_codes });
+        this.setState({ emergency_codes: emergency_codes });
     }
 
     render() {
@@ -316,6 +337,7 @@ class User extends React.Component {
                                 }
                                 yubikey_otps={user.yubikey_otps}
                                 recovery_codes={user.recovery_codes}
+                                emergency_codes={user.emergency_codes}
                                 onDeleteSessions={selected_sessions =>
                                     this.onDeleteSessions(selected_sessions)
                                 }
@@ -340,6 +362,11 @@ class User extends React.Component {
                                 onDeleteRecoveryCodes={selected_recovery_codes =>
                                     this.onDeleteRecoveryCodes(
                                         selected_recovery_codes
+                                    )
+                                }
+                                onDeleteEmergencyCodes={selected_emergency_codes =>
+                                    this.onDeleteEmergencyCodes(
+                                        selected_emergency_codes
                                     )
                                 }
                             />

@@ -31,12 +31,14 @@ class UserCard extends React.Component {
             yubikey_otps,
             google_authenticators,
             recovery_codes,
+            emergency_codes,
             onDeleteSessions,
             onDeleteMemberships,
             onDeleteDuos,
             onDeleteYubikeyOtps,
             onDeleteGoogleAuthenticators,
-            onDeleteRecoveryCodes
+            onDeleteRecoveryCodes,
+            onDeleteEmergencyCodes
         } = this.props;
         return (
             <Card className={classes.card}>
@@ -124,6 +126,17 @@ class UserCard extends React.Component {
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={'Recovery Codes'}
+                            />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Group className={classes.tabIcon} />}
+                                label={'Emergency Codes'}
                             />
                         </Tabs>
                     }
@@ -271,6 +284,28 @@ class UserCard extends React.Component {
                                     }
                                 ]}
                                 data={recovery_codes}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 6 && (
+                        <Typography component="div">
+                            <CustomTable
+                                title="Emergency Codes"
+                                headerFunctions={[
+                                    {
+                                        title: 'Delete Emergency Code(s)',
+                                        onClick: onDeleteEmergencyCodes,
+                                        icon: <Delete />
+                                    }
+                                ]}
+                                head={[
+                                    { id: 'description', label: 'Description' },
+                                    {
+                                        id: 'create_date',
+                                        label: 'Created at'
+                                    }
+                                ]}
+                                data={emergency_codes}
                             />
                         </Typography>
                     )}
