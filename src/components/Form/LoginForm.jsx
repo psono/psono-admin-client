@@ -382,8 +382,11 @@ class LoginForm extends React.Component {
                     ''
                 );
                 this.props.saml_login(saml_token_id).then(
-                    result => {
-                        console.log(result);
+                    required_multifactors => {
+                        this.setState({
+                            multifactors: required_multifactors
+                        });
+                        this.requirement_check_mfa();
                     },
                     result => {
                         this.setState({ loginLoading: false });

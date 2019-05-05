@@ -54,9 +54,9 @@ function get_config(key) {
 function get_saml_return_to_url() {
     return (
         window.location.href
-            .split('/')
-            .slice(0, -1)
-            .join('/') + '/saml/token/'
+            .split('/portal')
+            .slice(0, 1)
+            .join('/') + '/portal/saml/token/'
     );
 }
 

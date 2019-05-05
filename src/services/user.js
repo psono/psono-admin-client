@@ -12,6 +12,9 @@ import device from './device';
 import notification from './notification';
 import browserClient from './browser-client';
 
+let session_password = '';
+let verification = {};
+
 /**
  * Updates the global state with username, server, remember_me and trust_device
  * Returns the result of check_host
@@ -48,7 +51,62 @@ function saml_login(saml_token_id) {
     const server_public_key = store.getState().server.public_key;
     const session_keys = cryptoLibrary.generate_public_private_keypair();
     const onSuccess = function(response) {
-        console.log(response.data);
+        response.data = JSON.parse(
+            cryptoLibrary.decrypt_data_public_key(
+                response.data.login_info,
+                response.data.login_info_nonce,
+                server_public_key,
+                session_keys.private_key
+            )
+        );
+        const server_session_public_key =
+            response.data.server_session_public_key;
+
+        response.data = JSON.parse(
+            cryptoLibrary.decrypt_data_public_key(
+                response.data.data,
+                response.data.data_nonce,
+                server_session_public_key,
+                session_keys.private_key
+            )
+        );
+
+        // decrypt user private key
+        const user_private_key = cryptoLibrary.decrypt_secret(
+            response.data.user.private_key,
+            response.data.user.private_key_nonce,
+            response.data.password,
+            response.data.user.user_sauce
+        );
+        session_password = response.data.password;
+
+        // decrypt the user_validator
+        const user_validator = cryptoLibrary.decrypt_data_public_key(
+            response.data.user_validator,
+            response.data.user_validator_nonce,
+            server_session_public_key,
+            user_private_key
+        );
+
+        // encrypt the validator as verification
+        verification = cryptoLibrary.encrypt_data(
+            user_validator,
+            response.data.session_secret_key
+        );
+
+        action.set_user_username(response.data.user.username);
+
+        action.set_user_info_2(
+            user_private_key,
+            response.data.user.public_key,
+            response.data.session_secret_key,
+            response.data.token,
+            response.data.user.user_sauce
+        );
+
+        const required_multifactors = response.data.required_multifactors;
+
+        return required_multifactors;
     };
 
     const onError = function(response) {
@@ -117,9 +175,6 @@ function get_saml_redirect_url(provider_id) {
             return result.data;
         });
 }
-
-let session_password = '';
-let verification = {};
 
 /**
  * Ajax POST request to the backend with the token
@@ -300,8 +355,6 @@ function handle_login_response(
         session_secret_key
     );
 
-    const required_multifactors = response.data['required_multifactors'];
-
     action.set_user_info_2(
         user_private_key,
         user_public_key,
@@ -309,6 +362,8 @@ function handle_login_response(
         token,
         user_sauce
     );
+
+    const required_multifactors = response.data['required_multifactors'];
 
     return required_multifactors;
 }
