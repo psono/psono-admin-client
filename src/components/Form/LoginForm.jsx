@@ -412,7 +412,7 @@ class LoginForm extends React.Component {
                 {this.state.errors.map((prop, index) => {
                     return (
                         <SnackbarContent
-                            message={prop}
+                            message={t(prop)}
                             color="danger"
                             key={index}
                         />
@@ -443,8 +443,10 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="Login"
-                        cardSubtitle="Enter your username and password:"
+                        cardTitle={t('LOGIN')}
+                        cardSubtitle={
+                            t('ENTER_YOUR_USERNAME_AND_PASSWORD') + ':'
+                        }
                         content={
                             <form
                                 onSubmit={e => {
@@ -455,7 +457,7 @@ class LoginForm extends React.Component {
                                 <Grid container style={regular_login_style}>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Username"
+                                            labelText={t('USERNAME')}
                                             id="username"
                                             formControlProps={{
                                                 fullWidth: true
@@ -470,7 +472,7 @@ class LoginForm extends React.Component {
                                 <Grid container style={regular_login_style}>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Password"
+                                            labelText={t('PASSWORD')}
                                             id="password"
                                             formControlProps={{
                                                 fullWidth: true
@@ -650,8 +652,8 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="New Server"
-                        cardSubtitle="Verify the fingerprint and approve it."
+                        cardTitle={t('NEW_SERVER')}
+                        cardSubtitle={t('VERIFY_FINGERPRINT_AND_APPROVE')}
                         content={
                             <form
                                 onSubmit={e => {
@@ -675,11 +677,9 @@ class LoginForm extends React.Component {
                                             }}
                                         />
                                         <SnackbarContent
-                                            message={
-                                                'It appears, that you want to connect to this ' +
-                                                'server for the first time Please verify that the fingerprint of the server ' +
-                                                'is correct before approving.'
-                                            }
+                                            message={t(
+                                                'IT_APPEARS_THAT_YOU_WANT_TO_CONNECT'
+                                            )}
                                             close
                                             color="info"
                                         />
@@ -719,8 +719,8 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="Yubikey Authentication"
-                        cardSubtitle="Please enter your yubikey below."
+                        cardTitle={t('YUBIKEY_AUTHENTICATION')}
+                        cardSubtitle={t('ENTER_YUBIKEY_BELOW')}
                         content={
                             <form
                                 onSubmit={e => {
@@ -731,7 +731,7 @@ class LoginForm extends React.Component {
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Yubikey"
+                                            labelText={t('YUBIKEY')}
                                             id="yubikey_otp"
                                             formControlProps={{
                                                 fullWidth: true
@@ -778,8 +778,8 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="Google Authentication"
-                        cardSubtitle="Please enter your Google authenticator code below."
+                        cardTitle={t('GOOGLE_AUTHENTICATION')}
+                        cardSubtitle={t('ENTER_GOOGLE_AUTHENTICATOR_BELOW')}
                         content={
                             <form
                                 onSubmit={e => {
@@ -790,7 +790,9 @@ class LoginForm extends React.Component {
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Google Authenticator"
+                                            labelText={t(
+                                                'GOOGLE_AUTHENTICATOR'
+                                            )}
                                             id="google_authenticator"
                                             formControlProps={{
                                                 fullWidth: true
@@ -840,8 +842,10 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="Duo Authentication"
-                        cardSubtitle="Please approve the request on your phone or enter a code below."
+                        cardTitle={t('DUO_AUTHENTICATION')}
+                        cardSubtitle={t(
+                            'PLEASE_APPROVE_ON_PHONE_OR_ENTER_CODE'
+                        )}
                         content={
                             <form
                                 onSubmit={e => {
@@ -852,7 +856,7 @@ class LoginForm extends React.Component {
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Duo Code"
+                                            labelText={t('DUO_CODE')}
                                             id="duo"
                                             formControlProps={{
                                                 fullWidth: true
@@ -898,8 +902,10 @@ class LoginForm extends React.Component {
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
-                        cardTitle="Server Info"
-                        cardSubtitle="The server asks for your plaintext password."
+                        cardTitle={t('SERVER_INFO')}
+                        cardSubtitle={t(
+                            'SERVER_ASKS_FOR_YOUR_PLAINTEXT_PASSWORD'
+                        )}
                         content={
                             <form
                                 onSubmit={e => {
@@ -911,12 +917,9 @@ class LoginForm extends React.Component {
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <SnackbarContent
                                             color="warning"
-                                            message={
-                                                'Accepting this will send your plain password to the server and ' +
-                                                'should only be allowed if you are using LDAP or similar authentication ' +
-                                                'methods. You can decline this, but this might fail in an ' +
-                                                'authentication failure.'
-                                            }
+                                            message={t(
+                                                'ACCEPTING_THIS_WILL_SEND_YOUR_PLAIN_PASSWORD'
+                                            )}
                                         />
                                     </ItemGrid>
                                 </Grid>
