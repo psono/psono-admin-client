@@ -26,22 +26,22 @@ LANGUAGE_CODES = [
 ]
 
 WEBHOOKS = {
-    'cs': 'https://api.poeditor.com/webhooks/6f9ccaf590',
-    'de': 'https://api.poeditor.com/webhooks/cc03403af4',
-    'en': 'https://api.poeditor.com/webhooks/0f5aeab8bc',
-    'es': 'https://api.poeditor.com/webhooks/ab77f8945a',
-    'fi': 'https://api.poeditor.com/webhooks/b8096339f3',
-    'fr': 'https://api.poeditor.com/webhooks/54848feabf',
-    'hr': 'https://api.poeditor.com/webhooks/08749311d2',
-    'it': 'https://api.poeditor.com/webhooks/c935515d00',
-    'ja': 'https://api.poeditor.com/webhooks/333879768e',
-    'ko': 'https://api.poeditor.com/webhooks/f9b7e46774',
-    'nl': 'https://api.poeditor.com/webhooks/e9759d447d',
-    'pl': 'https://api.poeditor.com/webhooks/c509027422',
-    'pt': 'https://api.poeditor.com/webhooks/2ac051e460',
-    'ru': 'https://api.poeditor.com/webhooks/9230be9768',
-    'vi': 'https://api.poeditor.com/webhooks/ae0b49bd93',
-    'zh-cn': 'https://api.poeditor.com/webhooks/22ed2bb261',
+    'cs': 'https://api.poeditor.com/webhooks/fed2e677ff',
+    'de': 'https://api.poeditor.com/webhooks/25c8bbdbdf',
+    'en': 'https://api.poeditor.com/webhooks/2cf5b85261',
+    'es': 'https://api.poeditor.com/webhooks/cf0d541a18',
+    'fi': 'https://api.poeditor.com/webhooks/7d25d5f785',
+    'fr': 'https://api.poeditor.com/webhooks/5991571493',
+    'hr': 'https://api.poeditor.com/webhooks/218017a9ee',
+    'it': 'https://api.poeditor.com/webhooks/993bb97003',
+    'ja': 'https://api.poeditor.com/webhooks/29b75b89d5',
+    'ko': 'https://api.poeditor.com/webhooks/386b97cba5',
+    'nl': 'https://api.poeditor.com/webhooks/8c3b5a5b48',
+    'pl': 'https://api.poeditor.com/webhooks/ca5738b9c7',
+    'pt': 'https://api.poeditor.com/webhooks/d4119c7131',
+    'ru': 'https://api.poeditor.com/webhooks/b5599e4961',
+    'vi': 'https://api.poeditor.com/webhooks/4d4b47eccc',
+    'zh-cn': 'https://api.poeditor.com/webhooks/8ea70c8da9',
 }
 
 
