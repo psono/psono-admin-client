@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, Grid, Checkbox } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { BarLoader } from 'react-spinners';
 import { Check } from 'material-ui-icons';
 import { Redirect } from 'react-router-dom';
@@ -55,6 +57,7 @@ class LoginForm extends React.Component {
         errors: [],
         loggedIn: this.props.state.user.isLoggedIn,
         server_info: {},
+        admin_client_config: {},
         multifactors: [],
         yubikey_otp: '',
         duo: '',
@@ -288,6 +291,47 @@ class LoginForm extends React.Component {
             });
     };
 
+    initiate_saml_login = provider_id => {
+        this.setState({ loginLoading: true });
+        this.setState({ errors: [] });
+        return this.props
+            .initiate_saml_login(
+                this.state.server,
+                this.state.remember_me,
+                this.state.trust_device
+            )
+            .then(
+                result => {
+                    this.setState({ server_info: result });
+                    this.props.actions.set_server_info(result.info);
+                    if (result.status !== 'matched') {
+                        this.setState({ view: result.status });
+                    } else {
+                        this.props
+                            .get_saml_redirect_url(provider_id)
+                            .then(result => {
+                                window.location = result.saml_redirect_url;
+                            });
+                    }
+                },
+                result => {
+                    if (result.hasOwnProperty('errors')) {
+                        let errors = result.errors;
+                        this.setState({ errors, loginLoading: false });
+                    } else {
+                        this.setState({
+                            errors: [result],
+                            loginLoading: false
+                        });
+                    }
+                }
+            )
+            .catch(result => {
+                this.setState({ loginLoading: false });
+                return Promise.reject(result);
+            });
+    };
+
     approve_host = () => {
         this.props.approve_host(
             this.state.server_info.server_url,
@@ -323,9 +367,46 @@ class LoginForm extends React.Component {
         this.props.logout();
     };
 
-    render() {
-        const { classes } = this.props;
+    componentDidMount() {
+        this.props.get_config().then(admin_client_config => {
+            this.setState({
+                server:
+                    this.state.server ||
+                    admin_client_config.backend_servers[0].url,
+                admin_client_config: admin_client_config
+            });
 
+            if (this.props.location.pathname.startsWith('/saml/token/')) {
+                const saml_token_id = this.props.location.pathname.replace(
+                    '/saml/token/',
+                    ''
+                );
+                this.props.saml_login(saml_token_id).then(
+                    result => {
+                        console.log(result);
+                    },
+                    result => {
+                        this.setState({ loginLoading: false });
+                        if (result.hasOwnProperty('non_field_errors')) {
+                            let errors = result.non_field_errors;
+                            this.setState({
+                                view: 'default',
+                                errors
+                            });
+                        } else {
+                            this.setState({
+                                view: 'default',
+                                errors: [result]
+                            });
+                        }
+                    }
+                );
+            }
+        });
+    }
+
+    render() {
+        const { classes, t } = this.props;
         const errors = (
             <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
                 {this.state.errors.map((prop, index) => {
@@ -345,6 +426,20 @@ class LoginForm extends React.Component {
         }
 
         if (this.state.view === 'default') {
+            const saml_provider =
+                this.state.admin_client_config.saml_provider || [];
+            const authentication_methods =
+                this.state.admin_client_config.authentication_methods || [];
+            const server_style = this.state.admin_client_config
+                .allow_custom_server
+                ? {}
+                : { display: 'none' };
+            const regular_login_style = authentication_methods.includes(
+                'AUTHKEY'
+            )
+                ? {}
+                : { display: 'none' };
+
             return (
                 <div className={classes.wrapper}>
                     <RegularCard
@@ -357,7 +452,7 @@ class LoginForm extends React.Component {
                                 }}
                                 autoComplete="off"
                             >
-                                <Grid container>
+                                <Grid container style={regular_login_style}>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText="Username"
@@ -372,7 +467,7 @@ class LoginForm extends React.Component {
                                         />
                                     </ItemGrid>
                                 </Grid>
-                                <Grid container>
+                                <Grid container style={regular_login_style}>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText="Password"
@@ -388,6 +483,57 @@ class LoginForm extends React.Component {
                                         />
                                     </ItemGrid>
                                 </Grid>
+                                {saml_provider.map((provider, i) => {
+                                    const initiate_saml_login_helper = () => {
+                                        return this.initiate_saml_login(
+                                            provider.provider_id
+                                        );
+                                    };
+                                    return (
+                                        <Grid container key={i}>
+                                            <ItemGrid
+                                                xs={4}
+                                                sm={4}
+                                                md={4}
+                                                style={{ marginTop: '20px' }}
+                                            >
+                                                {provider.title}
+                                                <Button
+                                                    color="primary"
+                                                    onClick={
+                                                        initiate_saml_login_helper
+                                                    }
+                                                    type="submit"
+                                                    id="sad"
+                                                >
+                                                    <span
+                                                        style={
+                                                            !this.state
+                                                                .loginLoading
+                                                                ? {}
+                                                                : {
+                                                                      display:
+                                                                          'none'
+                                                                  }
+                                                        }
+                                                    >
+                                                        {provider.button_name}
+                                                    </span>
+                                                    <BarLoader
+                                                        color={'#FFF'}
+                                                        height={17}
+                                                        width={37}
+                                                        loading={
+                                                            this.state
+                                                                .loginLoading
+                                                        }
+                                                    />
+                                                </Button>
+                                            </ItemGrid>
+                                        </Grid>
+                                    );
+                                })}
+
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <Checkbox
@@ -412,7 +558,7 @@ class LoginForm extends React.Component {
                                                 checked: classes.checked
                                             }}
                                         />{' '}
-                                        Remember username and server
+                                        {t('REMEMBER_USERNAME_AND_SERVER')}
                                     </ItemGrid>
                                 </Grid>
                                 <Grid container>
@@ -439,10 +585,10 @@ class LoginForm extends React.Component {
                                                 checked: classes.checked
                                             }}
                                         />{' '}
-                                        Trust device
+                                        {t('TRUST_DEVICE')}
                                     </ItemGrid>
                                 </Grid>
-                                <Grid container>
+                                <Grid container style={regular_login_style}>
                                     <ItemGrid
                                         xs={4}
                                         sm={4}
@@ -477,12 +623,12 @@ class LoginForm extends React.Component {
                                             />
                                         </Button>
                                     </ItemGrid>
-                                    {errors}
                                 </Grid>
-                                <Grid container>
+                                <Grid container>{errors}</Grid>
+                                <Grid container style={server_style}>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Server"
+                                            labelText={t('SERVER')}
                                             id="server"
                                             formControlProps={{
                                                 fullWidth: true
@@ -516,7 +662,7 @@ class LoginForm extends React.Component {
                                 <Grid container>
                                     <ItemGrid xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText="Server Fingerprint"
+                                            labelText={t('FINGERPRINT')}
                                             id="server_fingerprint"
                                             formControlProps={{
                                                 fullWidth: true
@@ -810,4 +956,4 @@ LoginForm.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(style)(LoginForm);
+export default compose(withTranslation(), withStyles(style))(LoginForm);

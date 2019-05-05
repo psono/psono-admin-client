@@ -1,5 +1,6 @@
 import {
     SET_KNOWN_HOSTS,
+    SET_USER_USERNAME,
     SET_USER_INFO_1,
     SET_USER_INFO_2,
     SET_USER_INFO_3,
@@ -7,15 +8,24 @@ import {
     SET_SERVER_URL,
     SET_SERVER_INFO,
     SET_CLIENT_URL,
+    SET_ADMIN_CLIENT_CONFIG,
     NOTIFICATION_SEND,
     NOTIFICATION_SET
 } from './actionTypes';
 
-function set_user_info_1(username, remember_me, trust_device) {
+function set_user_username(username) {
+    return dispatch => {
+        dispatch({
+            type: SET_USER_USERNAME,
+            username
+        });
+    };
+}
+
+function set_user_info_1(remember_me, trust_device) {
     return dispatch => {
         dispatch({
             type: SET_USER_INFO_1,
-            username,
             remember_me,
             trust_device
         });
@@ -85,6 +95,15 @@ function set_client_url(url) {
     };
 }
 
+function set_admin_client_config(config) {
+    return dispatch => {
+        dispatch({
+            type: SET_ADMIN_CLIENT_CONFIG,
+            config: config
+        });
+    };
+}
+
 function set_known_hosts(known_hosts) {
     return dispatch => {
         dispatch({
@@ -114,6 +133,7 @@ function set_notifications(messages) {
 }
 
 const actionCreators = {
+    set_user_username,
     set_user_info_1,
     set_user_info_2,
     set_user_info_3,
@@ -121,6 +141,7 @@ const actionCreators = {
     set_server_info,
     set_server_url,
     set_client_url,
+    set_admin_client_config,
     set_known_hosts,
     send_notification,
     set_notifications

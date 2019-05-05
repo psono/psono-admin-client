@@ -10,17 +10,112 @@ import helper from './helper';
 import store from './store';
 import device from './device';
 import notification from './notification';
+import browserClient from './browser-client';
 
+/**
+ * Updates the global state with username, server, remember_me and trust_device
+ * Returns the result of check_host
+ *
+ * @param username
+ * @param server
+ * @param remember_me
+ * @param trust_device
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 function initiate_login(username, server, remember_me, trust_device) {
     action.set_server_url(server);
     let parsed_url = helper.parse_url(server);
 
     username = helper.form_full_username(username, parsed_url['full_domain']);
-    action.set_user_info_1(username, remember_me, trust_device);
+    action.set_user_username(username);
+    action.set_user_info_1(remember_me, trust_device);
 
     return host.check_host(server).then(response => {
         return response;
     });
+}
+
+/**
+ * Triggered once someone comes back from a redirect to a index.html#!/saml/token/... url
+ * Will try to use the token to authenticate and login
+ *
+ * @param {string} saml_token_id The saml token id
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function saml_login(saml_token_id) {
+    const server_public_key = store.getState().server.public_key;
+    const session_keys = cryptoLibrary.generate_public_private_keypair();
+    const onSuccess = function(response) {
+        console.log(response.data);
+    };
+
+    const onError = function(response) {
+        return Promise.reject(response.data);
+    };
+
+    let login_info = {
+        saml_token_id: saml_token_id,
+        device_time: new Date().toISOString(),
+        device_fingerprint: device.get_device_fingerprint(),
+        device_description: device.get_device_description()
+    };
+
+    login_info = JSON.stringify(login_info);
+
+    // encrypt the login infos
+    const login_info_enc = cryptoLibrary.encrypt_data_public_key(
+        login_info,
+        server_public_key,
+        session_keys.private_key
+    );
+
+    let session_duration = 24 * 60 * 60;
+
+    return psono_server
+        .saml_login(
+            login_info_enc['text'],
+            login_info_enc['nonce'],
+            session_keys.public_key,
+            session_duration
+        )
+        .then(onSuccess, onError);
+}
+
+/**
+ * Updates the global state with server, remember_me and trust_device
+ * Returns the result of check_host
+ *
+ * @param server
+ * @param remember_me
+ * @param trust_device
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function initiate_saml_login(server, remember_me, trust_device) {
+    action.set_server_url(server);
+    action.set_user_info_1(remember_me, trust_device);
+
+    return host.check_host(server).then(response => {
+        return response;
+    });
+}
+
+/**
+ * Takes the provider id and returns (as a promise) the redirect url to initiate the saml auth flow
+ *
+ * @param provider_id
+ *
+ * @returns {promise}
+ */
+function get_saml_redirect_url(provider_id) {
+    const return_to_url = browserClient.get_saml_return_to_url();
+
+    return psono_server
+        .saml_initiate_login(provider_id, return_to_url)
+        .then(result => {
+            return result.data;
+        });
 }
 
 let session_password = '';
@@ -305,6 +400,9 @@ function is_logged_in() {
 
 const service = {
     initiate_login,
+    saml_login,
+    initiate_saml_login,
+    get_saml_redirect_url,
     login,
     activate_token,
     ga_verify,
