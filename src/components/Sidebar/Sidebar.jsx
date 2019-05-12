@@ -9,6 +9,8 @@ import {
     ListItemIcon,
     ListItemText
 } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { NavLink } from 'react-router-dom';
 
 import { sidebarStyle } from '../../variables/styles';
@@ -23,8 +25,8 @@ class Sidebar extends React.Component {
             : false;
     }
     render() {
-        const { classes, color, logo, image, logoText, routes } = this.props;
-        var links = (
+        const { classes, t, color, logo, image, logoText, routes } = this.props;
+        const links = (
             <List className={classes.list}>
                 {routes.map((prop, key) => {
                     if (prop.redirect) return null;
@@ -55,7 +57,7 @@ class Sidebar extends React.Component {
                                     <prop.icon />
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary={prop.sidebarName}
+                                    primary={t(prop.sidebarName)}
                                     className={
                                         classes.itemText +
                                         (this.activeRoute(prop.path)
@@ -70,7 +72,7 @@ class Sidebar extends React.Component {
                 })}
             </List>
         );
-        var brand = (
+        const brand = (
             <div className={classes.logo}>
                 <a href="https://www.psono.com" className={classes.logoLink}>
                     <div className={classes.logoImage}>
@@ -141,4 +143,7 @@ Sidebar.propTypes = {
     theme: PropTypes.object.isRequired
 };
 
-export default withStyles(sidebarStyle, { withTheme: true })(Sidebar);
+export default compose(
+    withTranslation(),
+    withStyles(sidebarStyle, { withTheme: true })
+)(Sidebar);

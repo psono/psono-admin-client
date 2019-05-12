@@ -375,6 +375,117 @@ function admin_ldap_group_sync(token, session_secret_key) {
 }
 
 /**
+ * GET: Returns a list of all SAML groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_group(token, session_secret_key) {
+    const endpoint = '/admin/saml/group/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} saml_group_id The saml group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_create_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    saml_group_id
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'POST';
+    const data = {
+        group_id: group_id,
+        saml_group_id: saml_group_id
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} saml_group_map_id The group map id
+ * @param {uuid} group_admin The group admin privilege
+ * @param {uuid} share_admin The share admin privilege
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_update_group_map(
+    token,
+    session_secret_key,
+    saml_group_map_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'PUT';
+    const data = {
+        saml_group_map_id: saml_group_map_id,
+        group_admin: group_admin,
+        share_admin: share_admin
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} saml_group_id The saml group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_delete_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    saml_group_id
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'DELETE';
+    const data = {
+        group_id: group_id,
+        saml_group_id: saml_group_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -2438,6 +2549,10 @@ const service = {
     admin_ldap_update_group_map,
     admin_ldap_delete_group_map,
     admin_ldap_group_sync,
+    admin_saml_group,
+    admin_saml_create_group_map,
+    admin_saml_update_group_map,
+    admin_saml_delete_group_map,
     admin_update_user,
     login,
     saml_initiate_login,

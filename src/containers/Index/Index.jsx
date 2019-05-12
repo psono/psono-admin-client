@@ -11,6 +11,7 @@ import { Header, Footer, Sidebar } from '../../components';
 import otherLinks from '../../routes/other';
 import sidebarLinks from '../../routes/sidebar';
 import ldapLinks from '../../routes/ldap';
+import samlLinks from '../../routes/saml';
 
 import { appStyle } from '../../variables/styles';
 
@@ -53,20 +54,30 @@ class App extends React.Component {
         }
         const { classes, ...rest } = this.props;
 
-        let variableLdapLinks = [];
+        let variableLinks = [];
         if (
             this.props.state.server.authentication_methods.indexOf('LDAP') !==
             -1
         ) {
-            variableLdapLinks = ldapLinks;
+            ldapLinks.forEach(function(link) {
+                variableLinks.push(link);
+            });
+        }
+        if (
+            this.props.state.server.authentication_methods.indexOf('SAML') !==
+            -1
+        ) {
+            samlLinks.forEach(function(link) {
+                variableLinks.push(link);
+            });
         }
 
-        const headerLinks = otherLinks.concat(variableLdapLinks, sidebarLinks);
+        const headerLinks = otherLinks.concat(variableLinks, sidebarLinks);
 
         return (
             <div className={classes.wrapper}>
                 <Sidebar
-                    routes={sidebarLinks.concat(variableLdapLinks)}
+                    routes={sidebarLinks.concat(variableLinks)}
                     logoText={'Admin'}
                     logo={logo}
                     image={image}

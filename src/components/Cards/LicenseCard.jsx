@@ -13,7 +13,7 @@ class LicenseCard extends React.Component {
         let ratio_text = 'Active / Total';
         if (licensed) {
             ratio = ratio + '/' + licensed;
-            ratio_text = ratio_text + '/ Licensed';
+            ratio_text = ratio_text + ' / Licensed';
         }
 
         if (active === '') {

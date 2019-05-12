@@ -14,6 +14,7 @@ import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
 import UsersCard from './Cards/UsersCard.jsx';
 import LDAPCard from './Cards/LDAPCard.jsx';
+import SAMLCard from './Cards/SAMLCard.jsx';
 import UserCard from './Cards/UserCard.jsx';
 import GroupCard from './Cards/GroupCard.jsx';
 
@@ -116,6 +117,7 @@ export {
     ReleaseCard,
     UsersCard,
     LDAPCard,
+    SAMLCard,
     UserCard,
     GroupCard,
     // CustomButtons

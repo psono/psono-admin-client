@@ -8,6 +8,8 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { Domain, DevicesOther, Web } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -25,6 +27,7 @@ class ReleaseCard extends React.Component {
     render() {
         const {
             classes,
+            t,
             server_releases,
             client_releases,
             admin_client_releases
@@ -57,7 +60,7 @@ class ReleaseCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Domain className={classes.tabIcon} />}
-                                label={'Server'}
+                                label={t('SERVER')}
                             />
                             <Tab
                                 classes={{
@@ -70,7 +73,7 @@ class ReleaseCard extends React.Component {
                                 icon={
                                     <DevicesOther className={classes.tabIcon} />
                                 }
-                                label={'Client'}
+                                label={t('CLIENT')}
                             />
                             <Tab
                                 classes={{
@@ -81,7 +84,7 @@ class ReleaseCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Web className={classes.tabIcon} />}
-                                label={'Portal'}
+                                label={t('PORTAL')}
                             />
                         </Tabs>
                     }
@@ -91,11 +94,11 @@ class ReleaseCard extends React.Component {
                         <Typography component="div">
                             <CustomTable
                                 head={[
-                                    { id: 'name', label: 'Version' },
-                                    { id: 'created_at', label: 'Date' },
+                                    { id: 'name', label: t('VERSION') },
+                                    { id: 'created_at', label: t('DATE') },
                                     {
                                         id: 'description',
-                                        label: 'Release Notes'
+                                        label: t('RELEASE_NOTES')
                                     }
                                 ]}
                                 data={server_releases}
@@ -106,11 +109,11 @@ class ReleaseCard extends React.Component {
                         <Typography component="div">
                             <CustomTable
                                 head={[
-                                    { id: 'name', label: 'Version' },
-                                    { id: 'created_at', label: 'Date' },
+                                    { id: 'name', label: t('VERSION') },
+                                    { id: 'created_at', label: t('DATE') },
                                     {
                                         id: 'description',
-                                        label: 'Release Notes'
+                                        label: t('RELEASE_NOTES')
                                     }
                                 ]}
                                 data={client_releases}
@@ -121,11 +124,11 @@ class ReleaseCard extends React.Component {
                         <Typography component="div">
                             <CustomTable
                                 head={[
-                                    { id: 'name', label: 'Version' },
-                                    { id: 'created_at', label: 'Date' },
+                                    { id: 'name', label: t('VERSION') },
+                                    { id: 'created_at', label: t('DATE') },
                                     {
                                         id: 'description',
-                                        label: 'Release Notes'
+                                        label: t('RELEASE_NOTES')
                                     }
                                 ]}
                                 data={admin_client_releases}
@@ -145,4 +148,6 @@ ReleaseCard.propTypes = {
     admin_client_releases: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(ReleaseCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(
+    ReleaseCard
+);

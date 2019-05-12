@@ -9,6 +9,8 @@ import {
     Tab
 } from 'material-ui';
 import { DevicesOther, Group, Delete } from 'material-ui-icons';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
@@ -25,6 +27,7 @@ class UserCard extends React.Component {
     render() {
         const {
             classes,
+            t,
             sessions,
             memberships,
             duos,
@@ -48,7 +51,7 @@ class UserCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="User Details:"
+                    title={t('USER_DETAILS')}
                     action={
                         <Tabs
                             classes={{
@@ -70,7 +73,7 @@ class UserCard extends React.Component {
                                 icon={
                                     <DevicesOther className={classes.tabIcon} />
                                 }
-                                label={'Sessions'}
+                                label={t('SESSIONS')}
                             />
                             <Tab
                                 classes={{
@@ -81,7 +84,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Memberships'}
+                                label={t('MEMBERSHIPS')}
                             />
                             <Tab
                                 classes={{
@@ -92,7 +95,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Duos'}
+                                label={t('DUOS')}
                             />
                             <Tab
                                 classes={{
@@ -103,7 +106,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Yubikeys'}
+                                label={t('YUBIKEYS')}
                             />
                             <Tab
                                 classes={{
@@ -114,7 +117,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Google Auths'}
+                                label={t('GOOGLE_AUTHS')}
                             />
                             <Tab
                                 classes={{
@@ -125,7 +128,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Recovery Codes'}
+                                label={t('RECOVERY_CODES')}
                             />
                             <Tab
                                 classes={{
@@ -136,7 +139,7 @@ class UserCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Emergency Codes'}
+                                label={t('EMERGENCY_CODES')}
                             />
                         </Tabs>
                     }
@@ -145,10 +148,10 @@ class UserCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Sessions"
+                                title={t('SESSIONS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Session(s)',
+                                        title: t('DELETE_SESSION_S'),
                                         onClick: onDeleteSessions,
                                         icon: <Delete />
                                     }
@@ -156,18 +159,21 @@ class UserCard extends React.Component {
                                 head={[
                                     {
                                         id: 'create_date',
-                                        label: 'Logged in at'
+                                        label: t('LOGGED_IN_AT')
                                     },
-                                    { id: 'valid_till', label: 'Valid till' },
+                                    {
+                                        id: 'valid_till',
+                                        label: t('VALID_TILL')
+                                    },
                                     {
                                         id: 'device_description',
-                                        label: 'Device Description'
+                                        label: t('DEVICE_DESCRIPTION')
                                     },
                                     {
                                         id: 'device_fingerprint',
-                                        label: 'Device'
+                                        label: t('DEVICE')
                                     },
-                                    { id: 'active', label: 'Active' }
+                                    { id: 'active', label: t('ACTIVE') }
                                 ]}
                                 data={sessions}
                             />
@@ -176,22 +182,22 @@ class UserCard extends React.Component {
                     {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Memberships"
+                                title={t('MEMBERSHIPS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Membership(s)',
+                                        title: t('DELETE_MEMBERSHIP_S'),
                                         onClick: onDeleteMemberships,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'group_name', label: 'Group' },
+                                    { id: 'group_name', label: t('GROUP') },
                                     {
                                         id: 'create_date',
-                                        label: 'Joined at'
+                                        label: t('JOINED_AT')
                                     },
-                                    { id: 'accepted', label: 'Accepted' },
-                                    { id: 'admin', label: 'Group Admin' }
+                                    { id: 'accepted', label: t('ACCEPTED') },
+                                    { id: 'admin', label: t('GROUP_ADMIN') }
                                 ]}
                                 data={memberships}
                             />
@@ -200,21 +206,21 @@ class UserCard extends React.Component {
                     {this.state.value === 2 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Duos"
+                                title={t('DUOS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Duo(s)',
+                                        title: t('DELETE_DUO_S'),
                                         onClick: onDeleteDuos,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'title', label: 'Title' },
+                                    { id: 'title', label: t('TITLE') },
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: 'Active' }
+                                    { id: 'active', label: t('ACTIVE') }
                                 ]}
                                 data={duos}
                             />
@@ -223,21 +229,21 @@ class UserCard extends React.Component {
                     {this.state.value === 3 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Yubikeys"
+                                title={t('YUBIKEYS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Yubikey(s)',
+                                        title: t('DELETE_YUBIKEY_S'),
                                         onClick: onDeleteYubikeyOtps,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'title', label: 'Title' },
+                                    { id: 'title', label: t('TITLE') },
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: 'Active' }
+                                    { id: 'active', label: t('ACTIVE') }
                                 ]}
                                 data={yubikey_otps}
                             />
@@ -246,21 +252,21 @@ class UserCard extends React.Component {
                     {this.state.value === 4 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Google Authenticators"
+                                title={t('GOOGLE_AUTHENTICATORS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Google Auth(s)',
+                                        title: t('DELETE_GOOGLE_AUTH_S'),
                                         onClick: onDeleteGoogleAuthenticators,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'title', label: 'Title' },
+                                    { id: 'title', label: t('TITLE') },
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: 'Active' }
+                                    { id: 'active', label: t('ACTIVE') }
                                 ]}
                                 data={google_authenticators}
                             />
@@ -269,10 +275,10 @@ class UserCard extends React.Component {
                     {this.state.value === 5 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Recovery Codes"
+                                title={t('RECOVERY_CODES')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Recovery Code(s)',
+                                        title: t('DELETE_RECOVERY_CODE_S'),
                                         onClick: onDeleteRecoveryCodes,
                                         icon: <Delete />
                                     }
@@ -280,7 +286,7 @@ class UserCard extends React.Component {
                                 head={[
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     }
                                 ]}
                                 data={recovery_codes}
@@ -290,19 +296,22 @@ class UserCard extends React.Component {
                     {this.state.value === 6 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Emergency Codes"
+                                title={t('EMERGENCY_CODES')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Emergency Code(s)',
+                                        title: t('DELETE_NOTFALL_CODE_S'),
                                         onClick: onDeleteEmergencyCodes,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'description', label: 'Description' },
+                                    {
+                                        id: 'description',
+                                        label: t('DESCRIPTION')
+                                    },
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     }
                                 ]}
                                 data={emergency_codes}
@@ -321,4 +330,4 @@ UserCard.propTypes = {
     groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(UserCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(UserCard);

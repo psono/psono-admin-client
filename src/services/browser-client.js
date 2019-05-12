@@ -4,7 +4,8 @@
 
 import axios from 'axios';
 import action from '../actions/boundActionCreators';
-import store from './store';
+
+let _admin_client_config = {};
 
 function load_config() {
     return axios.get('/config.json').then(response => {
@@ -39,14 +40,14 @@ function _get_config(config, key) {
  */
 function get_config(key) {
     return new Promise((resolve, reject) => {
-        let admin_client_config = store.getState().admin_client.config;
-        if (Object.keys(admin_client_config).length === 0) {
+        if (Object.keys(_admin_client_config).length === 0) {
             load_config().then(admin_client_config => {
+                _admin_client_config = admin_client_config;
                 action.set_admin_client_config(admin_client_config);
                 resolve(_get_config(admin_client_config, key));
             });
         } else {
-            resolve(_get_config(admin_client_config, key));
+            resolve(_get_config(_admin_client_config, key));
         }
     });
 }

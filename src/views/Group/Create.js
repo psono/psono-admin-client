@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid, withStyles } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 import {
@@ -61,6 +63,7 @@ class User extends React.Component {
     };
 
     render() {
+        const { t } = this.props;
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
         }
@@ -70,14 +73,14 @@ class User extends React.Component {
                 <Grid container>
                     <ItemGrid xs={12} sm={12} md={12}>
                         <RegularCard
-                            cardTitle="Create Group"
-                            cardSubtitle="Add the necessary details below"
+                            cardTitle={t('CREATE_GROUP')}
+                            cardSubtitle={t('ADD_NECESSARY_DETAILS_BELOW')}
                             content={
                                 <div>
                                     <Grid container>
                                         <ItemGrid xs={12} sm={12} md={7}>
                                             <CustomInput
-                                                labelText="Group Name"
+                                                labelText={t('GROUP_NAME')}
                                                 id="groupname"
                                                 helperText={
                                                     errors_dict.hasOwnProperty(
@@ -109,7 +112,7 @@ class User extends React.Component {
                                     onClick={this.createGroup}
                                     disabled={!this.state.createGroupPossible}
                                 >
-                                    Create Group
+                                    {t('CREATE_GROUP')}
                                 </Button>
                             }
                         />
@@ -120,4 +123,4 @@ class User extends React.Component {
     }
 }
 
-export default withStyles(customInputStyle)(User);
+export default compose(withTranslation(), withStyles(customInputStyle))(User);

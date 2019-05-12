@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid, Checkbox, withStyles } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 
 import { RegularCard, CustomInput, ItemGrid, UserCard } from '../../components';
 import psono_server from '../../services/api-server';
@@ -192,7 +194,7 @@ class User extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, t } = this.props;
         const user = this.state.user;
 
         if (user) {
@@ -200,6 +202,8 @@ class User extends React.Component {
                 this.authentication = 'Normal';
             } else if (user.authentication === 'LDAP') {
                 this.authentication = 'LDAP';
+            } else if (user.authentication === 'SAML') {
+                this.authentication = 'SAML';
             } else {
                 this.authentication = 'UNKNOWN';
             }
@@ -209,14 +213,14 @@ class User extends React.Component {
                     <Grid container>
                         <ItemGrid xs={12} sm={12} md={12}>
                             <RegularCard
-                                cardTitle="Edit User"
-                                cardSubtitle="Update the user details"
+                                cardTitle={t('EDIT_USER')}
+                                cardSubtitle={t('UPDATE_USER_DETAILS')}
                                 content={
                                     <div>
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={7}>
                                                 <CustomInput
-                                                    labelText="Username"
+                                                    labelText={t('USERNAME')}
                                                     id="username"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -230,7 +234,9 @@ class User extends React.Component {
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={12} md={5}>
                                                 <CustomInput
-                                                    labelText="Authentication"
+                                                    labelText={t(
+                                                        'AUTHENTICATION'
+                                                    )}
                                                     id="authentication"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -247,7 +253,7 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={12}>
                                                 <CustomInput
-                                                    labelText="Public Key"
+                                                    labelText={t('PUBLIC_KEY')}
                                                     id="public_key"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -263,7 +269,9 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={4}>
                                                 <CustomInput
-                                                    labelText="Registration Date"
+                                                    labelText={t(
+                                                        'REGISTRATION_DATE'
+                                                    )}
                                                     id="create_date"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -286,7 +294,7 @@ class User extends React.Component {
                                                         checked={user.is_active}
                                                         disabled
                                                     />{' '}
-                                                    Active
+                                                    {t('ACTIVE')}
                                                 </div>
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={6} md={4}>
@@ -300,7 +308,7 @@ class User extends React.Component {
                                                         }
                                                         disabled
                                                     />{' '}
-                                                    Email Verified
+                                                    {t('EMAIL_VERIFIED')}
                                                 </div>
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={6} md={4}>
@@ -314,7 +322,7 @@ class User extends React.Component {
                                                         }
                                                         disabled
                                                     />{' '}
-                                                    Superuser
+                                                    {t('SUPERUSER')}
                                                 </div>
                                             </ItemGrid>
                                         </Grid>
@@ -380,4 +388,4 @@ class User extends React.Component {
     }
 }
 
-export default withStyles(customInputStyle)(User);
+export default compose(withTranslation(), withStyles(customInputStyle))(User);

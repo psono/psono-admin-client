@@ -8,6 +8,8 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { Group, Delete } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -25,8 +27,10 @@ class GroupCard extends React.Component {
     render() {
         const {
             classes,
+            t,
             memberships,
             ldap_groups,
+            saml_groups,
             onDeleteMemberships
         } = this.props;
         return (
@@ -37,7 +41,7 @@ class GroupCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="Group Details:"
+                    title={t('GROUP_DETAILS')}
                     action={
                         <Tabs
                             classes={{
@@ -57,7 +61,7 @@ class GroupCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Memberships'}
+                                label={t('MEMBERSHIPS')}
                             />
                             {ldap_groups && ldap_groups.length > 0 ? (
                                 <Tab
@@ -69,7 +73,20 @@ class GroupCard extends React.Component {
                                             classes.rootInheritSelected
                                     }}
                                     icon={<Group className={classes.tabIcon} />}
-                                    label={'LDAP Groups'}
+                                    label={t('LDAP_GROUPS')}
+                                />
+                            ) : null}
+                            {saml_groups && saml_groups.length > 0 ? (
+                                <Tab
+                                    classes={{
+                                        wrapper: classes.tabWrapper,
+                                        rootLabelIcon: classes.labelIcon,
+                                        label: classes.label,
+                                        rootInheritSelected:
+                                            classes.rootInheritSelected
+                                    }}
+                                    icon={<Group className={classes.tabIcon} />}
+                                    label={t('SAML_GROUPS')}
                                 />
                             ) : null}
                         </Tabs>
@@ -79,22 +96,22 @@ class GroupCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Users:"
+                                title={t('USERS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Membership(s)',
+                                        title: t('DELETE_MEMBERSHIP_S'),
                                         onClick: onDeleteMemberships,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'username', label: 'Username' },
+                                    { id: 'username', label: t('USERNAME') },
                                     {
                                         id: 'create_date',
-                                        label: 'Joined at'
+                                        label: t('JOINED')
                                     },
-                                    { id: 'accepted', label: 'Accepted' },
-                                    { id: 'admin', label: 'Group Admin' }
+                                    { id: 'accepted', label: t('ACCEPTED') },
+                                    { id: 'admin', label: t('GROUP_ADMIN') }
                                 ]}
                                 data={memberships}
                             />
@@ -103,21 +120,47 @@ class GroupCard extends React.Component {
                     {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Mapped LDAP groups:"
+                                title={t('MAPPED_LDAP_GROUPS')}
                                 head={[
-                                    { id: 'mapped', label: 'Mapped' },
-                                    { id: 'dn', label: 'DN' },
+                                    { id: 'mapped', label: t('MAPPED') },
+                                    { id: 'dn', label: t('DN') },
                                     {
                                         id: 'has_group_admin',
-                                        label: 'Group Admin'
+                                        label: t('GROUP_ADMIN')
                                     },
                                     {
                                         id: 'has_share_admin',
-                                        label: 'Share Admin'
+                                        label: t('SHARE_ADMIN')
                                     },
-                                    { id: 'domain', label: 'Domain' }
+                                    { id: 'domain', label: t('DOMAIN') }
                                 ]}
                                 data={ldap_groups}
+                            />
+                        </Typography>
+                    )}
+                    {(this.state.value === 2 ||
+                        (this.state.value === 1 &&
+                            (!ldap_groups || ldap_groups.length < 1))) && (
+                        <Typography component="div">
+                            <CustomTable
+                                title={t('MAPPED_SAML_GROUPS')}
+                                head={[
+                                    { id: 'mapped', label: t('MAPPED') },
+                                    { id: 'saml_name', label: t('NAME') },
+                                    {
+                                        id: 'has_group_admin',
+                                        label: t('GROUP_ADMIN')
+                                    },
+                                    {
+                                        id: 'has_share_admin',
+                                        label: t('SHARE_ADMIN')
+                                    },
+                                    {
+                                        id: 'saml_provider_id',
+                                        label: t('POVIDER_ID')
+                                    }
+                                ]}
+                                data={saml_groups}
                             />
                         </Typography>
                     )}
@@ -133,4 +176,6 @@ GroupCard.propTypes = {
     groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(GroupCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(
+    GroupCard
+);

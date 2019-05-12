@@ -883,13 +883,13 @@ class LoginForm extends React.Component {
                                             onClick={this.verify_duo}
                                             type="submit"
                                         >
-                                            Send
+                                            {t('SEND')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
                                         </Button>
                                     </ItemGrid>
                                 </Grid>
@@ -938,13 +938,13 @@ class LoginForm extends React.Component {
                                             onClick={this.approve_send_plain}
                                             type="submit"
                                         >
-                                            Approve (unsafe)
+                                            {t('APPROVE_UNSAFE')}
                                         </Button>
                                         <Button
                                             color="success"
                                             onClick={this.disapprove_send_plain}
                                         >
-                                            Disapprove (safe)
+                                            {t('DISAPPROVE_UNSAFE')}
                                         </Button>
                                     </ItemGrid>
                                 </Grid>

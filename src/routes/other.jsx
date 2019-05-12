@@ -7,22 +7,22 @@ import { Person, Group } from 'material-ui-icons';
 let routes = [
     {
         path: '/user/:user_id',
-        sidebarName: 'User',
-        navbarName: 'User',
+        sidebarName: 'USER',
+        navbarName: 'USER',
         icon: Person,
         component: UserEdit
     },
     {
         path: '/group/:group_id',
-        sidebarName: 'Group',
-        navbarName: 'Group',
+        sidebarName: 'GROUP',
+        navbarName: 'GROUP',
         icon: Group,
         component: GroupEdit
     },
     {
         path: '/groups/create',
-        sidebarName: 'Create Group',
-        navbarName: 'Create Group',
+        sidebarName: 'CREATE_GROUP',
+        navbarName: 'CREATE_GROUP',
         icon: Person,
         component: GroupCreate
     }

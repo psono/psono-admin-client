@@ -5,6 +5,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import matchPath from 'react-router/matchPath';
 import sidebarRoutes from '../../routes/sidebar';
 import ldapRoutes from '../../routes/ldap';
+import samlRoutes from '../../routes/saml';
 import otherRoutes from '../../routes/other';
 import { appStyle } from '../../variables/styles';
 
@@ -12,12 +13,19 @@ class switchRoutes extends React.Component {
     render() {
         const { actions, state, store, ...rest } = this.props;
 
-        let variableLdapRoutes = [];
+        let variableLinks = [];
         if (state.server.authentication_methods.indexOf('LDAP') !== -1) {
-            variableLdapRoutes = ldapRoutes;
+            ldapRoutes.forEach(function(route) {
+                variableLinks.push(route);
+            });
+        }
+        if (state.server.authentication_methods.indexOf('SAML') !== -1) {
+            samlRoutes.forEach(function(route) {
+                variableLinks.push(route);
+            });
         }
 
-        const routes = otherRoutes.concat(variableLdapRoutes, sidebarRoutes);
+        const routes = otherRoutes.concat(variableLinks, sidebarRoutes);
 
         let match = null;
         for (let i = 0; i < routes.length; i++) {
