@@ -8,7 +8,7 @@ import action from '../actions/boundActionCreators';
 let _admin_client_config = {};
 
 function load_config() {
-    return axios.get('/config.json').then(response => {
+    return axios.get(process.env.PUBLIC_URL + '/config.json').then(response => {
         return response.data;
     });
 }

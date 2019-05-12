@@ -2,7 +2,6 @@ FROM psono-docker.jfrog.io/nginx:alpine
 
 LABEL maintainer="Sascha Pfeiffer <sascha.pfeiffer@psono.com>"
 
-
 RUN apk upgrade --no-cache \
 	&& apk add --no-cache curl
 
@@ -11,11 +10,5 @@ COPY ./configs/default.conf /etc/nginx/conf.d/default.conf
 COPY ./build /usr/share/nginx/html/portal
 COPY ./configs/redirect.html /usr/share/nginx/html/index.html
 
-EXPOSE 80
-
-STOPSIGNAL SIGTERM
-
 HEALTHCHECK --interval=30s --timeout=3s \
 	CMD curl -f http://localhost/ || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
