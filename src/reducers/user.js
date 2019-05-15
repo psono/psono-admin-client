@@ -1,4 +1,5 @@
 import {
+    SET_USER_USERNAME,
     SET_USER_INFO_1,
     SET_USER_INFO_2,
     SET_USER_INFO_3,
@@ -27,9 +28,12 @@ function user(
     action
 ) {
     switch (action.type) {
+        case SET_USER_USERNAME:
+            return Object.assign({}, state, {
+                username: action.username
+            });
         case SET_USER_INFO_1:
             return Object.assign({}, state, {
-                username: action.username,
                 remember_me: action.remember_me,
                 trust_device: action.trust_device
             });

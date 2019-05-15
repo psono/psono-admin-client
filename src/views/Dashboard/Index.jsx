@@ -1,5 +1,7 @@
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
+import { withTranslation, Trans } from 'react-i18next';
+import { compose } from 'redux';
 import { ArrowUpward, ArrowDownward, AccessTime } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -95,6 +97,7 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
+        const { t } = this.props;
         if (this.props.state.server.type === 'CE') {
             api_static
                 .get('/gitlab.com/psono/psono-server/changelog.json')
@@ -187,7 +190,7 @@ class Dashboard extends React.Component {
                     registrations.push({
                         date: r.date,
                         username: r.username,
-                        active: r.active ? 'yes' : 'no'
+                        active: r.active ? t('YES') : t('NO')
                     });
                 });
 
@@ -231,6 +234,11 @@ class Dashboard extends React.Component {
     }
 
     render() {
+        const { t } = this.props;
+        const {
+            count_registrations_second_week,
+            count_registrations_first_week
+        } = this.state;
         let registration_text;
         if (this.state.count_registrations_second_week) {
             let percentage = Math.round(
@@ -250,7 +258,7 @@ class Dashboard extends React.Component {
                             />{' '}
                             {percentage}%
                         </span>{' '}
-                        increase in this weeks registrations.
+                        {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
                     </span>
                 );
             } else {
@@ -264,7 +272,7 @@ class Dashboard extends React.Component {
                             />{' '}
                             {-percentage}%
                         </span>{' '}
-                        decrease in this weeks registrations.
+                        {t('DECREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
                     </span>
                 );
             }
@@ -277,7 +285,7 @@ class Dashboard extends React.Component {
                         />{' '}
                         55%
                     </span>{' '}
-                    increase in this weeks registrations.
+                    {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
                 </span>
             );
         }
@@ -287,29 +295,29 @@ class Dashboard extends React.Component {
                 <Grid container>
                     <ItemGrid xs={12} sm={4} md={4}>
                         <HealthcheckCard
-                            title={'DB Accessibility'}
-                            sub_title_success={'Is the database reachable?'}
-                            sub_title_error={'Database connection broken.'}
+                            title={t('DB_ACCESSIBILITY')}
+                            sub_title_success={t('IS_DB_REACHABLE')}
+                            sub_title_error={t('DB_CONNECTION_BROKEN')}
                             healthcheck={this.state.healthcheck.db_read.healthy}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={4} md={4}>
                         <HealthcheckCard
-                            title={'DB Synchronized'}
-                            sub_title_success={
-                                'Are there any pending database migrations?'
-                            }
-                            sub_title_error={
-                                'Pending database migrations detected.'
-                            }
+                            title={t('DB_SYNCHRONIZED')}
+                            sub_title_success={t(
+                                'ARE_DATABASE_MIGRATIONS_PENDING'
+                            )}
+                            sub_title_error={t(
+                                'PENDING_DATABASE_MIGRATIONS_DETECTED'
+                            )}
                             healthcheck={this.state.healthcheck.db_sync.healthy}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={4} md={4}>
                         <HealthcheckCard
-                            title={'Time Sync'}
-                            sub_title_success={'Is the server time correct?'}
-                            sub_title_error={'Server time out of sync.'}
+                            title={t('TIME_SYNC')}
+                            sub_title_success={t('IS_SERVER_TIME_CORRECT')}
+                            sub_title_error={t('SERVER_TIME_OUT_OF_SYNC')}
                             healthcheck={
                                 this.state.healthcheck.time_sync.healthy
                             }
@@ -353,8 +361,9 @@ class Dashboard extends React.Component {
                                             plugins: [
                                                 Chartist.plugins.ctAxisTitle({
                                                     axisX: {
-                                                        axisTitle:
-                                                            'Weekday (red: new users, white: total users)',
+                                                        axisTitle: t(
+                                                            'WEEKDAY_RED_NEW_USERS_WHITE_TOTAL_USERS'
+                                                        ),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 0,
@@ -363,7 +372,7 @@ class Dashboard extends React.Component {
                                                         textAnchor: 'middle'
                                                     },
                                                     axisY: {
-                                                        axisTitle: 'Users',
+                                                        axisTitle: t('USERS'),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 10,
@@ -378,15 +387,25 @@ class Dashboard extends React.Component {
                                     />
                                 }
                                 chartColor="blue"
-                                title="Registrations per day"
+                                title={t('REGISTRATIONS_PER_DAY')}
                                 text={registration_text}
                                 statIcon={AccessTime}
                                 statText={
-                                    'This week ' +
-                                    this.state.count_registrations_second_week +
-                                    ' users registered (last week: ' +
-                                    this.state.count_registrations_first_week +
-                                    ' users)'
+                                    <Trans
+                                        i18nKey="THIS_WEEK_USERS_VS_LAST_WEEK_USERS"
+                                        count_registrations_second_week={
+                                            count_registrations_second_week
+                                        }
+                                        count_registrations_first_week={
+                                            count_registrations_first_week
+                                        }
+                                    >
+                                        This week{' '}
+                                        {{ count_registrations_second_week }}{' '}
+                                        users registered (last week:{' '}
+                                        {{ count_registrations_first_week }}{' '}
+                                        users)
+                                    </Trans>
                                 }
                             />
                         ) : null}
@@ -427,8 +446,9 @@ class Dashboard extends React.Component {
                                             plugins: [
                                                 Chartist.plugins.ctAxisTitle({
                                                     axisX: {
-                                                        axisTitle:
-                                                            'Month (red: new users, white: total users)',
+                                                        axisTitle: t(
+                                                            'MONTH_RED_NEW_USERS_WHITE_TOTAL_USERS'
+                                                        ),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 0,
@@ -437,7 +457,7 @@ class Dashboard extends React.Component {
                                                         textAnchor: 'middle'
                                                     },
                                                     axisY: {
-                                                        axisTitle: 'Users',
+                                                        axisTitle: t('USERS'),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 10,
@@ -452,10 +472,10 @@ class Dashboard extends React.Component {
                                     />
                                 }
                                 chartColor="green"
-                                title="Users per month"
-                                text="Registered users over time"
+                                title={t('USERS_PER_MONTH')}
+                                text={t('REGISTERED_USERS_OVER_TIME')}
                                 statIcon={AccessTime}
-                                statText="Last registration: "
+                                statText={t('LAST_REGISRATION')}
                             />
                         ) : null}
                     </ItemGrid>
@@ -481,14 +501,14 @@ class Dashboard extends React.Component {
                         <VersionCard
                             used_version={this.state.client_used_version}
                             latest_version={this.state.client_latest_version}
-                            title="Client Version"
+                            title={t('CLIENT_VERSION')}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={6} md={4} lg={2}>
                         <VersionCard
                             used_version={this.state.server_used_version}
                             latest_version={this.state.server_latest_version}
-                            title="Server Version"
+                            title={t('SERVER_VERSION')}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={6} md={4} lg={2}>
@@ -497,7 +517,7 @@ class Dashboard extends React.Component {
                             latest_version={
                                 this.state.admin_client_latest_version
                             }
-                            title="Portal Version"
+                            title={t('PORTAL_VERSION')}
                         />
                     </ItemGrid>
                 </Grid>
@@ -513,17 +533,17 @@ class Dashboard extends React.Component {
                         {this.state.registrations !== undefined ? (
                             <RegularCard
                                 headerColor="orange"
-                                cardTitle="Registrations"
-                                cardSubtitle="Last 10 new users joining."
+                                cardTitle={t('REGISTRATIONS')}
+                                cardSubtitle={t('LAST_JOINED_USERS')}
                                 content={
                                     <CustomTable
                                         head={[
-                                            { id: 'date', label: 'Date' },
+                                            { id: 'date', label: t('DATE') },
                                             {
                                                 id: 'username',
-                                                label: 'Username'
+                                                label: t('USERNAME')
                                             },
-                                            { id: 'active', label: 'Active' }
+                                            { id: 'active', label: t('ACTIVE') }
                                         ]}
                                         data={this.state.registrations}
                                     />
@@ -541,4 +561,6 @@ Dashboard.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Dashboard);
+export default compose(withTranslation(), withStyles(dashboardStyle))(
+    Dashboard
+);

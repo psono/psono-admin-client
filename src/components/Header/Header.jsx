@@ -10,6 +10,8 @@ import {
     Hidden,
     Button
 } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 
 import { headerStyle } from '../../variables/styles';
 import user from '../../services/user';
@@ -27,7 +29,7 @@ class Header extends React.Component {
             ) {
                 continue;
             }
-            return this.props.routes[i].navbarName;
+            return this.props.t(this.props.routes[i].navbarName);
         }
         return null;
     }
@@ -72,4 +74,7 @@ Header.propTypes = {
     color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger'])
 };
 
-export default withStyles(headerStyle, { withTheme: true })(Header);
+export default compose(
+    withTranslation(),
+    withStyles(headerStyle, { withTheme: true })
+)(Header);

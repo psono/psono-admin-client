@@ -8,6 +8,7 @@ import { LoginForm, Notification } from '../../components';
 import actionCreators from '../../actions/actionCreators';
 import user from '../../services/user';
 import host from '../../services/host';
+import browserClient from '../../services/browser-client';
 
 import image from '../../assets/img/background.jpg';
 const style = {
@@ -43,13 +44,17 @@ class Login extends React.Component {
                 <LoginForm
                     {...rest}
                     initiate_login={user.initiate_login}
-                    approve_host={host.approve_host}
+                    saml_login={user.saml_login}
+                    initiate_saml_login={user.initiate_saml_login}
+                    get_saml_redirect_url={user.get_saml_redirect_url}
                     login={user.login}
                     activate_token={user.activate_token}
                     logout={user.logout}
                     yubikey_otp_verify={user.yubikey_otp_verify}
                     duo_verify={user.duo_verify}
                     ga_verify={user.ga_verify}
+                    approve_host={host.approve_host}
+                    get_config={browserClient.get_config}
                 />
             </div>
         );

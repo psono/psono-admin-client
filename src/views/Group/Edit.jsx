@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid, withStyles, Checkbox } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { Check } from 'material-ui-icons';
 
 import {
@@ -30,14 +32,26 @@ class User extends React.Component {
                     u.admin = u.admin ? 'yes' : 'no';
                 });
 
-                const mapped_group_index = {};
+                const mapped_ldap_group_index = {};
                 if (group.hasOwnProperty('ldap_groups')) {
                     group.ldap_groups.forEach(ldap_group => {
-                        mapped_group_index[ldap_group.ldap_group_id] = {
+                        mapped_ldap_group_index[ldap_group.ldap_group_id] = {
                             ldap_group_id: ldap_group.ldap_group_id,
                             ldap_group_map_id: ldap_group.ldap_group_map_id,
                             share_admin: ldap_group.share_admin,
                             group_admin: ldap_group.group_admin
+                        };
+                    });
+                }
+
+                const mapped_saml_group_index = {};
+                if (group.hasOwnProperty('saml_groups')) {
+                    group.saml_groups.forEach(saml_group => {
+                        mapped_saml_group_index[saml_group.saml_group_id] = {
+                            saml_group_id: saml_group.saml_group_id,
+                            saml_group_map_id: saml_group.saml_group_map_id,
+                            share_admin: saml_group.share_admin,
+                            group_admin: saml_group.group_admin
                         };
                     });
                 }
@@ -58,13 +72,13 @@ class User extends React.Component {
 
                             ldap_groups.forEach(ldap_group => {
                                 if (
-                                    mapped_group_index.hasOwnProperty(
+                                    mapped_ldap_group_index.hasOwnProperty(
                                         ldap_group.id
                                     )
                                 ) {
                                     return;
                                 }
-                                mapped_group_index[ldap_group.id] = {
+                                mapped_ldap_group_index[ldap_group.id] = {
                                     ldap_group_id: ldap_group.id,
                                     ldap_group_map_id: '',
                                     share_admin: false,
@@ -74,14 +88,57 @@ class User extends React.Component {
 
                             this.setState({
                                 group: group,
-                                mapped_group_index: mapped_group_index,
+                                mapped_ldap_group_index: mapped_ldap_group_index,
                                 ldap_groups: ldap_groups
                             });
                         });
                 } else {
                     this.setState({
                         group: group,
-                        mapped_group_index: mapped_group_index
+                        mapped_ldap_group_index: mapped_ldap_group_index
+                    });
+                }
+
+                if (
+                    this.props.state.server.authentication_methods.indexOf(
+                        'SAML'
+                    ) !== -1 &&
+                    group.is_managed
+                ) {
+                    psono_server
+                        .admin_saml_group(
+                            this.props.state.user.token,
+                            this.props.state.user.session_secret_key
+                        )
+                        .then(response => {
+                            const saml_groups = response.data.saml_groups;
+
+                            saml_groups.forEach(saml_group => {
+                                if (
+                                    mapped_saml_group_index.hasOwnProperty(
+                                        saml_group.id
+                                    )
+                                ) {
+                                    return;
+                                }
+                                mapped_saml_group_index[saml_group.id] = {
+                                    saml_group_id: saml_group.id,
+                                    saml_group_map_id: '',
+                                    share_admin: false,
+                                    group_admin: false
+                                };
+                            });
+
+                            this.setState({
+                                group: group,
+                                mapped_saml_group_index: mapped_saml_group_index,
+                                saml_groups: saml_groups
+                            });
+                        });
+                } else {
+                    this.setState({
+                        group: group,
+                        mapped_saml_group_index: mapped_saml_group_index
                     });
                 }
             });
@@ -105,19 +162,34 @@ class User extends React.Component {
 
         this.setState({ group: this.state.group });
     }
-    handleToggle(group) {
-        const { mapped_group_index } = this.state;
+
+    handleToggleLDAP(group) {
+        const { mapped_ldap_group_index } = this.state;
         const is_mapped =
-            mapped_group_index.hasOwnProperty(group.id) &&
-            mapped_group_index[group.id]['ldap_group_map_id'];
+            mapped_ldap_group_index.hasOwnProperty(group.id) &&
+            mapped_ldap_group_index[group.id]['ldap_group_map_id'];
+
         if (is_mapped) {
-            this.removeMapping(group);
+            this.removeMappingLDAP(group);
         } else {
-            this.addMapping(group);
+            this.addMappingLDAP(group);
         }
     }
 
-    addMapping(group) {
+    handleToggleSAML(group) {
+        const { mapped_saml_group_index } = this.state;
+        const is_mapped =
+            mapped_saml_group_index.hasOwnProperty(group.id) &&
+            mapped_saml_group_index[group.id]['saml_group_map_id'];
+
+        if (is_mapped) {
+            this.removeMappingSAML(group);
+        } else {
+            this.addMappingSAML(group);
+        }
+    }
+
+    addMappingLDAP(group) {
         psono_server
             .admin_ldap_create_group_map(
                 this.props.state.user.token,
@@ -126,20 +198,38 @@ class User extends React.Component {
                 group.id
             )
             .then(response => {
-                const { mapped_group_index } = this.state;
-                mapped_group_index[group.id]['ldap_group_map_id'] =
+                const { mapped_ldap_group_index } = this.state;
+                mapped_ldap_group_index[group.id]['ldap_group_map_id'] =
                     response.data.id;
                 this.setState({
-                    mapped_group_index
+                    mapped_ldap_group_index
                 });
             });
     }
 
-    removeMapping(group) {
-        const { mapped_group_index } = this.state;
-        mapped_group_index[group.id]['ldap_group_map_id'] = '';
+    addMappingSAML(group) {
+        psono_server
+            .admin_saml_create_group_map(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                this.state.group.id,
+                group.id
+            )
+            .then(response => {
+                const { mapped_saml_group_index } = this.state;
+                mapped_saml_group_index[group.id]['saml_group_map_id'] =
+                    response.data.id;
+                this.setState({
+                    mapped_saml_group_index
+                });
+            });
+    }
+
+    removeMappingLDAP(group) {
+        const { mapped_ldap_group_index } = this.state;
+        mapped_ldap_group_index[group.id]['ldap_group_map_id'] = '';
         this.setState({
-            mapped_group_index
+            mapped_ldap_group_index
         });
         psono_server.admin_ldap_delete_group_map(
             this.props.state.user.token,
@@ -148,32 +238,49 @@ class User extends React.Component {
             group.id
         );
     }
-    handleToggleAdmin(group, type) {
-        const { mapped_group_index } = this.state;
+
+    removeMappingSAML(group) {
+        const { mapped_saml_group_index } = this.state;
+        mapped_saml_group_index[group.id]['saml_group_map_id'] = '';
+        this.setState({
+            mapped_saml_group_index
+        });
+        psono_server.admin_saml_delete_group_map(
+            this.props.state.user.token,
+            this.props.state.user.session_secret_key,
+            this.state.group.id,
+            group.id
+        );
+    }
+
+    handleToggleAdminLDAP(group, type) {
+        const { mapped_ldap_group_index } = this.state;
         const is_mapped =
-            mapped_group_index.hasOwnProperty(group.id) &&
-            mapped_group_index[group.id]['ldap_group_map_id'];
+            mapped_ldap_group_index.hasOwnProperty(group.id) &&
+            mapped_ldap_group_index[group.id]['ldap_group_map_id'];
         if (!is_mapped) {
             return;
         }
 
-        let group_admin = mapped_group_index[group.id]['group_admin'];
-        let share_admin = mapped_group_index[group.id]['share_admin'];
+        let group_admin = mapped_ldap_group_index[group.id]['group_admin'];
+        let share_admin = mapped_ldap_group_index[group.id]['share_admin'];
 
         if (type === 'group') {
             psono_server
                 .admin_ldap_update_group_map(
                     this.props.state.user.token,
                     this.props.state.user.session_secret_key,
-                    mapped_group_index[group.id]['ldap_group_map_id'],
+                    mapped_ldap_group_index[group.id]['ldap_group_map_id'],
                     !group_admin,
                     share_admin
                 )
                 .then(response => {
-                    const { mapped_group_index } = this.state;
-                    mapped_group_index[group.id]['group_admin'] = !group_admin;
+                    const { mapped_ldap_group_index } = this.state;
+                    mapped_ldap_group_index[group.id][
+                        'group_admin'
+                    ] = !group_admin;
                     this.setState({
-                        mapped_group_index
+                        mapped_ldap_group_index
                     });
                 });
         } else {
@@ -181,36 +288,97 @@ class User extends React.Component {
                 .admin_ldap_update_group_map(
                     this.props.state.user.token,
                     this.props.state.user.session_secret_key,
-                    mapped_group_index[group.id]['ldap_group_map_id'],
+                    mapped_ldap_group_index[group.id]['ldap_group_map_id'],
                     group_admin,
                     !share_admin
                 )
                 .then(response => {
-                    const { mapped_group_index } = this.state;
-                    mapped_group_index[group.id]['share_admin'] = !share_admin;
+                    const { mapped_ldap_group_index } = this.state;
+                    mapped_ldap_group_index[group.id][
+                        'share_admin'
+                    ] = !share_admin;
                     this.setState({
-                        mapped_group_index
+                        mapped_ldap_group_index
+                    });
+                });
+        }
+    }
+
+    handleToggleAdminSAML(group, type) {
+        const { mapped_saml_group_index } = this.state;
+        const is_mapped =
+            mapped_saml_group_index.hasOwnProperty(group.id) &&
+            mapped_saml_group_index[group.id]['saml_group_map_id'];
+        if (!is_mapped) {
+            return;
+        }
+
+        let group_admin = mapped_saml_group_index[group.id]['group_admin'];
+        let share_admin = mapped_saml_group_index[group.id]['share_admin'];
+
+        if (type === 'group') {
+            psono_server
+                .admin_saml_update_group_map(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    mapped_saml_group_index[group.id]['saml_group_map_id'],
+                    !group_admin,
+                    share_admin
+                )
+                .then(response => {
+                    const { mapped_saml_group_index } = this.state;
+                    mapped_saml_group_index[group.id][
+                        'group_admin'
+                    ] = !group_admin;
+                    this.setState({
+                        mapped_saml_group_index
+                    });
+                });
+        } else {
+            psono_server
+                .admin_saml_update_group_map(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    mapped_saml_group_index[group.id]['saml_group_map_id'],
+                    group_admin,
+                    !share_admin
+                )
+                .then(response => {
+                    const { mapped_saml_group_index } = this.state;
+                    mapped_saml_group_index[group.id][
+                        'share_admin'
+                    ] = !share_admin;
+                    this.setState({
+                        mapped_saml_group_index
                     });
                 });
         }
     }
 
     render() {
-        const { group, ldap_groups, mapped_group_index } = this.state;
-        const { classes } = this.props;
+        const {
+            group,
+            ldap_groups,
+            mapped_ldap_group_index,
+            saml_groups,
+            mapped_saml_group_index
+        } = this.state;
+        const { classes, t } = this.props;
         if (ldap_groups) {
             ldap_groups.forEach(ldap_group => {
                 ldap_group.mapped = (
                     <Checkbox
                         checked={
-                            mapped_group_index.hasOwnProperty(ldap_group.id) &&
-                            mapped_group_index[ldap_group.id][
+                            mapped_ldap_group_index.hasOwnProperty(
+                                ldap_group.id
+                            ) &&
+                            mapped_ldap_group_index[ldap_group.id][
                                 'ldap_group_map_id'
                             ]
                         }
                         tabIndex={-1}
                         onClick={() => {
-                            this.handleToggle(ldap_group);
+                            this.handleToggleLDAP(ldap_group);
                         }}
                         checkedIcon={<Check className={classes.checkedIcon} />}
                         icon={<Check className={classes.uncheckedIcon} />}
@@ -222,12 +390,20 @@ class User extends React.Component {
                 ldap_group.has_group_admin = (
                     <Checkbox
                         checked={
-                            mapped_group_index.hasOwnProperty(ldap_group.id) &&
-                            mapped_group_index[ldap_group.id]['group_admin']
+                            mapped_ldap_group_index.hasOwnProperty(
+                                ldap_group.id
+                            ) &&
+                            mapped_ldap_group_index[ldap_group.id][
+                                'group_admin'
+                            ]
                         }
                         tabIndex={-1}
                         onClick={() => {
-                            this.handleToggleAdmin(ldap_group, 'group');
+                            this.handleToggleAdminLDAP(
+                                ldap_group,
+                                'group',
+                                'LDAP'
+                            );
                         }}
                         checkedIcon={<Check className={classes.checkedIcon} />}
                         icon={<Check className={classes.uncheckedIcon} />}
@@ -239,12 +415,95 @@ class User extends React.Component {
                 ldap_group.has_share_admin = (
                     <Checkbox
                         checked={
-                            mapped_group_index.hasOwnProperty(ldap_group.id) &&
-                            mapped_group_index[ldap_group.id]['share_admin']
+                            mapped_ldap_group_index.hasOwnProperty(
+                                ldap_group.id
+                            ) &&
+                            mapped_ldap_group_index[ldap_group.id][
+                                'share_admin'
+                            ]
                         }
                         tabIndex={-1}
                         onClick={() => {
-                            this.handleToggleAdmin(ldap_group, 'share');
+                            this.handleToggleAdminLDAP(
+                                ldap_group,
+                                'share',
+                                'LDAP'
+                            );
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+            });
+        }
+        if (saml_groups) {
+            saml_groups.forEach(saml_group => {
+                saml_group.mapped = (
+                    <Checkbox
+                        checked={
+                            mapped_saml_group_index.hasOwnProperty(
+                                saml_group.id
+                            ) &&
+                            mapped_saml_group_index[saml_group.id][
+                                'saml_group_map_id'
+                            ]
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleSAML(saml_group);
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+                saml_group.has_group_admin = (
+                    <Checkbox
+                        checked={
+                            mapped_saml_group_index.hasOwnProperty(
+                                saml_group.id
+                            ) &&
+                            mapped_saml_group_index[saml_group.id][
+                                'group_admin'
+                            ]
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleAdminSAML(
+                                saml_group,
+                                'group',
+                                'SAML'
+                            );
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+                saml_group.has_share_admin = (
+                    <Checkbox
+                        checked={
+                            mapped_saml_group_index.hasOwnProperty(
+                                saml_group.id
+                            ) &&
+                            mapped_saml_group_index[saml_group.id][
+                                'share_admin'
+                            ]
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleAdminSAML(
+                                saml_group,
+                                'share',
+                                'SAML'
+                            );
                         }}
                         checkedIcon={<Check className={classes.checkedIcon} />}
                         icon={<Check className={classes.uncheckedIcon} />}
@@ -262,14 +521,14 @@ class User extends React.Component {
                     <Grid container>
                         <ItemGrid xs={12} sm={12} md={12}>
                             <RegularCard
-                                cardTitle="Edit Group"
-                                cardSubtitle="Update the group details"
+                                cardTitle={t('EDIT_GROUP')}
+                                cardSubtitle={t('UPDATE_GROUP_DETAILS')}
                                 content={
                                     <div>
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={12}>
                                                 <CustomInput
-                                                    labelText="Name"
+                                                    labelText={t('NAME')}
                                                     id="name"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -285,7 +544,7 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={12}>
                                                 <CustomInput
-                                                    labelText="Public Key"
+                                                    labelText={t('PUBLIC_KEY')}
                                                     id="public_key"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -301,7 +560,9 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={4}>
                                                 <CustomInput
-                                                    labelText="Creation Date"
+                                                    labelText={t(
+                                                        'CREATION_DATE'
+                                                    )}
                                                     id="create_date"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -333,6 +594,7 @@ class User extends React.Component {
                                     )
                                 }
                                 ldap_groups={ldap_groups}
+                                saml_groups={saml_groups}
                             />
                         </ItemGrid>
                     </Grid>
@@ -344,4 +606,4 @@ class User extends React.Component {
     }
 }
 
-export default withStyles(customInputStyle)(User);
+export default compose(withTranslation(), withStyles(customInputStyle))(User);

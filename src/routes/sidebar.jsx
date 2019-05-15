@@ -20,15 +20,15 @@ import {
 let routes = [
     {
         path: '/dashboard',
-        sidebarName: 'Dashboard',
-        navbarName: 'Dashboard',
+        sidebarName: 'DASHBOARD',
+        navbarName: 'DASHBOARD',
         icon: Dashboard,
         component: DashboardPage
     },
     {
         path: '/users',
-        sidebarName: 'Users',
-        navbarName: 'Users',
+        sidebarName: 'USERS',
+        navbarName: 'USERS',
         icon: Person,
         component: Users
     }

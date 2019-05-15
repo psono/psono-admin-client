@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid, Checkbox, withStyles } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 
 import { RegularCard, CustomInput, ItemGrid, UserCard } from '../../components';
 import psono_server from '../../services/api-server';
@@ -114,10 +116,7 @@ class User extends React.Component {
 
         let { yubikey_otps } = this.state.user;
         selected_yubikey_otps.forEach(yubikey_otp => {
-            helper.remove_from_array(yubikey_otps, yubikey_otp.id, function(
-                a,
-                b
-            ) {
+            helper.remove_from_array(yubikey_otps, yubikey_otp, function(a, b) {
                 return a.id === b.id;
             });
         });
@@ -138,7 +137,7 @@ class User extends React.Component {
         selected_google_authenticators.forEach(google_authenticator => {
             helper.remove_from_array(
                 google_authenticators,
-                google_authenticator.id,
+                google_authenticator,
                 function(a, b) {
                     return a.id === b.id;
                 }
@@ -159,10 +158,12 @@ class User extends React.Component {
 
         let { recovery_codes } = this.state.user;
         selected_recovery_codes.forEach(recovery_code => {
-            helper.remove_from_array(recovery_codes, recovery_code.id, function(
+            helper.remove_from_array(recovery_codes, recovery_code, function(
                 a,
                 b
             ) {
+                console.log(a);
+                console.log(b);
                 return a.id === b.id;
             });
         });
@@ -170,8 +171,30 @@ class User extends React.Component {
         this.setState({ recovery_codes: recovery_codes });
     }
 
+    onDeleteEmergencyCodes(selected_emergency_codes) {
+        selected_emergency_codes.forEach(emergency_code => {
+            psono_server.admin_delete_emergency_code(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                emergency_code.id
+            );
+        });
+
+        let { emergency_codes } = this.state.user;
+        selected_emergency_codes.forEach(emergency_code => {
+            helper.remove_from_array(emergency_codes, emergency_code, function(
+                a,
+                b
+            ) {
+                return a.id === b.id;
+            });
+        });
+
+        this.setState({ emergency_codes: emergency_codes });
+    }
+
     render() {
-        const { classes } = this.props;
+        const { classes, t } = this.props;
         const user = this.state.user;
 
         if (user) {
@@ -179,6 +202,8 @@ class User extends React.Component {
                 this.authentication = 'Normal';
             } else if (user.authentication === 'LDAP') {
                 this.authentication = 'LDAP';
+            } else if (user.authentication === 'SAML') {
+                this.authentication = 'SAML';
             } else {
                 this.authentication = 'UNKNOWN';
             }
@@ -188,14 +213,14 @@ class User extends React.Component {
                     <Grid container>
                         <ItemGrid xs={12} sm={12} md={12}>
                             <RegularCard
-                                cardTitle="Edit User"
-                                cardSubtitle="Update the user details"
+                                cardTitle={t('EDIT_USER')}
+                                cardSubtitle={t('UPDATE_USER_DETAILS')}
                                 content={
                                     <div>
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={7}>
                                                 <CustomInput
-                                                    labelText="Username"
+                                                    labelText={t('USERNAME')}
                                                     id="username"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -209,7 +234,9 @@ class User extends React.Component {
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={12} md={5}>
                                                 <CustomInput
-                                                    labelText="Authentication"
+                                                    labelText={t(
+                                                        'AUTHENTICATION'
+                                                    )}
                                                     id="authentication"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -226,7 +253,7 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={12}>
                                                 <CustomInput
-                                                    labelText="Public Key"
+                                                    labelText={t('PUBLIC_KEY')}
                                                     id="public_key"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -242,7 +269,9 @@ class User extends React.Component {
                                         <Grid container>
                                             <ItemGrid xs={12} sm={12} md={4}>
                                                 <CustomInput
-                                                    labelText="Registration Date"
+                                                    labelText={t(
+                                                        'REGISTRATION_DATE'
+                                                    )}
                                                     id="create_date"
                                                     formControlProps={{
                                                         fullWidth: true
@@ -265,7 +294,7 @@ class User extends React.Component {
                                                         checked={user.is_active}
                                                         disabled
                                                     />{' '}
-                                                    Active
+                                                    {t('ACTIVE')}
                                                 </div>
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={6} md={4}>
@@ -279,7 +308,7 @@ class User extends React.Component {
                                                         }
                                                         disabled
                                                     />{' '}
-                                                    Email Verified
+                                                    {t('EMAIL_VERIFIED')}
                                                 </div>
                                             </ItemGrid>
                                             <ItemGrid xs={12} sm={6} md={4}>
@@ -293,7 +322,7 @@ class User extends React.Component {
                                                         }
                                                         disabled
                                                     />{' '}
-                                                    Superuser
+                                                    {t('SUPERUSER')}
                                                 </div>
                                             </ItemGrid>
                                         </Grid>
@@ -316,6 +345,7 @@ class User extends React.Component {
                                 }
                                 yubikey_otps={user.yubikey_otps}
                                 recovery_codes={user.recovery_codes}
+                                emergency_codes={user.emergency_codes}
                                 onDeleteSessions={selected_sessions =>
                                     this.onDeleteSessions(selected_sessions)
                                 }
@@ -342,6 +372,11 @@ class User extends React.Component {
                                         selected_recovery_codes
                                     )
                                 }
+                                onDeleteEmergencyCodes={selected_emergency_codes =>
+                                    this.onDeleteEmergencyCodes(
+                                        selected_emergency_codes
+                                    )
+                                }
                             />
                         </ItemGrid>
                     </Grid>
@@ -353,4 +388,4 @@ class User extends React.Component {
     }
 }
 
-export default withStyles(customInputStyle)(User);
+export default compose(withTranslation(), withStyles(customInputStyle))(User);

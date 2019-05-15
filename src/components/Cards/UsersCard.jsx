@@ -17,6 +17,8 @@ import {
     CheckBox,
     Edit
 } from 'material-ui-icons';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
 import { CustomTable, Button } from '../../components';
@@ -33,6 +35,7 @@ class UsersCard extends React.Component {
     render() {
         const {
             classes,
+            t,
             users,
             sessions,
             groups,
@@ -54,7 +57,7 @@ class UsersCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="User Management:"
+                    title={t('USER_MANAGEMENT') + ':'}
                     action={
                         <Tabs
                             classes={{
@@ -74,7 +77,7 @@ class UsersCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Person className={classes.tabIcon} />}
-                                label={'Users'}
+                                label={t('USERS')}
                             />
                             <Tab
                                 classes={{
@@ -87,7 +90,7 @@ class UsersCard extends React.Component {
                                 icon={
                                     <DevicesOther className={classes.tabIcon} />
                                 }
-                                label={'Sessions'}
+                                label={t('SESSIONS')}
                             />
                             <Tab
                                 classes={{
@@ -98,7 +101,7 @@ class UsersCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Groups'}
+                                label={t('GROUPS')}
                             />
                         </Tabs>
                     }
@@ -107,45 +110,51 @@ class UsersCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Users"
+                                title={t('USERS')}
                                 headerFunctions={[
                                     {
-                                        title: 'Edit User',
+                                        title: t('EDIT_USER_S'),
                                         onClick: onEditUser,
                                         icon: <Edit />,
                                         max_selected: 1
                                     },
                                     {
-                                        title: 'Activate User(s)',
+                                        title: t('ACTIVATE_USER_S'),
                                         onClick: onActivate,
                                         icon: <CheckBox />
                                     },
                                     {
-                                        title: 'Deactivate User(s)',
+                                        title: t('DEACTIVATE_USER_S'),
                                         onClick: onDeactivate,
                                         icon: <DoNotDisturb />
                                     },
                                     {
-                                        title: 'Delete User(s)',
+                                        title: t('DELETE_USER_S'),
                                         onClick: onDeleteUsers,
                                         icon: <Delete />
                                     }
                                 ]}
                                 onDelete={onDeleteUsers}
                                 head={[
-                                    { id: 'username', label: 'Username' },
+                                    { id: 'username', label: t('USERNAME') },
                                     {
                                         id: 'create_date',
-                                        label: 'Registered'
+                                        label: t('CREATED_AT')
                                     },
-                                    { id: 'is_active', label: 'Active' },
+                                    { id: 'is_active', label: t('ACTIVE') },
                                     {
                                         id: 'is_email_active',
-                                        label: 'Email Active'
+                                        label: t('EMAIL_ACTIVE')
                                     },
-                                    { id: 'yubikey_2fa', label: 'Yubikey' },
-                                    { id: 'ga_2fa', label: 'Google Auth' },
-                                    { id: 'duo_2fa', label: 'Duo Auth' }
+                                    { id: 'yubikey_2fa', label: t('YUBIKEY') },
+                                    {
+                                        id: 'ga_2fa',
+                                        label: t('GOOGLE_AUTHENTICATOR')
+                                    },
+                                    {
+                                        id: 'duo_2fa',
+                                        label: t('DUO_AUTHENTICATION')
+                                    }
                                 ]}
                                 data={users}
                             />
@@ -157,27 +166,30 @@ class UsersCard extends React.Component {
                                 title="Sessions"
                                 headerFunctions={[
                                     {
-                                        title: 'Delete Session(s)',
+                                        title: t('DELETE_SESSION_S'),
                                         onClick: onDeleteSessions,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'username', label: 'Username' },
+                                    { id: 'username', label: t('USERNAME') },
                                     {
                                         id: 'create_date',
-                                        label: 'Logged in at'
+                                        label: t('LOGGED_IN_AT')
                                     },
-                                    { id: 'valid_till', label: 'Valid till' },
+                                    {
+                                        id: 'valid_till',
+                                        label: t('VALID_TILL')
+                                    },
                                     {
                                         id: 'device_description',
-                                        label: 'Device Description'
+                                        label: t('DEVICE_DESCRIPTION')
                                     },
                                     {
                                         id: 'device_fingerprint',
-                                        label: 'Device'
+                                        label: t('DEVICE')
                                     },
-                                    { id: 'active', label: 'Active' }
+                                    { id: 'active', label: t('ACTIVE') }
                                 ]}
                                 data={sessions}
                             />
@@ -192,33 +204,33 @@ class UsersCard extends React.Component {
                                         onCreateGroup();
                                     }}
                                 >
-                                    Create Group
+                                    {t('CREATE_GROUP')}
                                 </Button>
                             ) : null}
                             <CustomTable
                                 title="Groups"
                                 headerFunctions={[
                                     {
-                                        title: 'Edit Group',
+                                        title: t('EDIT_GROUP'),
                                         onClick: onEditGroup,
                                         icon: <Edit />,
                                         max_selected: 1
                                     },
                                     {
-                                        title: 'Delete Group(s)',
+                                        title: t('DELETE_GROUP_S'),
                                         onClick: onDeleteGroups,
                                         icon: <Delete />
                                     }
                                 ]}
                                 head={[
-                                    { id: 'name', label: 'Name' },
+                                    { id: 'name', label: t('NAME') },
                                     {
                                         id: 'create_date',
-                                        label: 'Created at'
+                                        label: t('CREATED_AT')
                                     },
                                     {
                                         id: 'member_count',
-                                        label: 'Members'
+                                        label: t('MEMBERS')
                                     }
                                 ]}
                                 data={groups}
@@ -238,4 +250,6 @@ UsersCard.propTypes = {
     groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(UsersCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(
+    UsersCard
+);

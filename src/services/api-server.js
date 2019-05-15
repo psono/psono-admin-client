@@ -375,6 +375,117 @@ function admin_ldap_group_sync(token, session_secret_key) {
 }
 
 /**
+ * GET: Returns a list of all SAML groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_group(token, session_secret_key) {
+    const endpoint = '/admin/saml/group/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} saml_group_id The saml group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_create_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    saml_group_id
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'POST';
+    const data = {
+        group_id: group_id,
+        saml_group_id: saml_group_id
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} saml_group_map_id The group map id
+ * @param {uuid} group_admin The group admin privilege
+ * @param {uuid} share_admin The share admin privilege
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_update_group_map(
+    token,
+    session_secret_key,
+    saml_group_map_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'PUT';
+    const data = {
+        saml_group_map_id: saml_group_map_id,
+        group_admin: group_admin,
+        share_admin: share_admin
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a SAML group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} saml_group_id The saml group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_saml_delete_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    saml_group_id
+) {
+    const endpoint = '/admin/saml/group/map/';
+    const connection_type = 'DELETE';
+    const data = {
+        group_id: group_id,
+        saml_group_id: saml_group_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -563,7 +674,7 @@ function admin_delete_google_authenticator(
 }
 
 /**
- * DELETE: Deletes a reovery code (for administrators)
+ * DELETE: Deletes a recovery code (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
@@ -576,10 +687,37 @@ function admin_delete_recovery_code(
     session_secret_key,
     recovery_code_id
 ) {
-    const endpoint = '/admin/google-authenticator/';
+    const endpoint = '/admin/recovery-code/';
     const connection_type = 'DELETE';
     const data = {
         recovery_code_id: recovery_code_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a emergency code (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} emergency_code_id The id of the emergency code to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_emergency_code(
+    token,
+    session_secret_key,
+    emergency_code_id
+) {
+    const endpoint = '/admin/emergency-code/';
+    const connection_type = 'DELETE';
+    const data = {
+        emergency_code_id: emergency_code_id
     };
     const headers = {
         'Content-Type': 'application/json',
@@ -626,6 +764,56 @@ function admin_update_user(token, session_secret_key, user_id, is_active) {
  */
 function login(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/authentication/login/';
+    const connection_type = 'POST';
+    const data = {
+        login_info: login_info,
+        login_info_nonce: login_info_nonce,
+        public_key: public_key,
+        session_duration: session_duration
+    };
+    const headers = null;
+
+    return call(connection_type, endpoint, data, headers);
+}
+
+/**
+ * Ajax POST request to the backend with saml_provider_id and return_to_url. Will return an url where we have
+ * to redirect the user to.
+ *
+ * @param {int} saml_provider_id The saml provider id
+ * @param {string} return_to_url The url to index.html
+ *
+ * @returns {promise} Returns a promise with the login status
+ */
+function saml_initiate_login(saml_provider_id, return_to_url) {
+    const endpoint = '/saml/' + saml_provider_id + '/initiate-login/';
+    const connection_type = 'POST';
+    const data = {
+        return_to_url: return_to_url
+    };
+    const headers = null;
+
+    return call(connection_type, endpoint, data, headers);
+}
+
+/**
+ * Ajax POST request to the backend with email and authkey for login, saves a token together with user_id
+ * and all the different keys of a user in the apidata storage
+ *
+ * @param {string} login_info The encrypted login info (username, authkey, device fingerprint, device description)
+ * @param {string} login_info_nonce The nonce of the login info
+ * @param {string} public_key The session public key
+ * @param {int} session_duration The time the session should be valid for in seconds
+ *
+ * @returns {promise} Returns a promise with the login status
+ */
+function saml_login(
+    login_info,
+    login_info_nonce,
+    public_key,
+    session_duration
+) {
+    const endpoint = '/saml/login/';
     const connection_type = 'POST';
     const data = {
         login_info: login_info,
@@ -2354,14 +2542,21 @@ const service = {
     admin_delete_yubikey_otp,
     admin_delete_google_authenticator,
     admin_delete_recovery_code,
+    admin_delete_emergency_code,
     admin_ldap_user,
     admin_ldap_group,
     admin_ldap_create_group_map,
     admin_ldap_update_group_map,
     admin_ldap_delete_group_map,
     admin_ldap_group_sync,
+    admin_saml_group,
+    admin_saml_create_group_map,
+    admin_saml_update_group_map,
+    admin_saml_delete_group_map,
     admin_update_user,
     login,
+    saml_initiate_login,
+    saml_login,
     ga_verify,
     duo_verify,
     yubikey_otp_verify,

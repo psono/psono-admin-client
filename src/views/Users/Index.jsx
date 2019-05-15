@@ -1,5 +1,7 @@
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
@@ -46,6 +48,7 @@ class Users extends React.Component {
     }
 
     update_users(selected_users, is_active) {
+        const { t } = this.props;
         let { users } = this.state;
         selected_users.forEach(user => {
             psono_server.admin_update_user(
@@ -57,7 +60,7 @@ class Users extends React.Component {
 
             users.forEach(u => {
                 if (u.id === user.id) {
-                    u.is_active = is_active ? 'yes' : 'no';
+                    u.is_active = is_active ? t('YES') : t('NO');
                 }
             });
         });
@@ -169,6 +172,7 @@ class Users extends React.Component {
     }
 
     componentDidMount() {
+        const { t } = this.props;
         psono_server
             .admin_user(
                 this.props.state.user.token,
@@ -186,8 +190,8 @@ class Users extends React.Component {
                 ];
 
                 users.forEach(u => {
-                    u.is_active = u.is_active ? 'yes' : 'no';
-                    u.is_email_active = u.is_email_active ? 'yes' : 'no';
+                    u.is_active = u.is_active ? t('YES') : t('NO');
+                    u.is_email_active = u.is_email_active ? t('YES') : t('NO');
 
                     if (!u.yubikey_2fa && !u.ga_2fa && !u.duo_2fa) {
                         twofa_data[0] = twofa_data[0] + 1;
@@ -202,9 +206,9 @@ class Users extends React.Component {
                         twofa_data[3] = twofa_data[3] + 1;
                     }
 
-                    u.yubikey_2fa = u.yubikey_2fa ? 'yes' : 'no';
-                    u.ga_2fa = u.ga_2fa ? 'yes' : 'no';
-                    u.duo_2fa = u.duo_2fa ? 'yes' : 'no';
+                    u.yubikey_2fa = u.yubikey_2fa ? t('YES') : t('NO');
+                    u.ga_2fa = u.ga_2fa ? t('YES') : t('NO');
+                    u.duo_2fa = u.duo_2fa ? t('YES') : t('NO');
                 });
                 this.cleanup(twofa_data, twofa_labels);
 
@@ -250,7 +254,7 @@ class Users extends React.Component {
                 ];
 
                 sessions.forEach(u => {
-                    u.active = u.active ? 'yes' : 'no';
+                    u.active = u.active ? t('YES') : t('NO');
 
                     this.analyze(u.device_description, os_data, os_labels);
                     this.analyze(
@@ -306,6 +310,7 @@ class Users extends React.Component {
     }
 
     render() {
+        const { t } = this.props;
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
         }
@@ -352,9 +357,9 @@ class Users extends React.Component {
                                 />
                             }
                             chartColor="green"
-                            title="Operation Systems"
+                            title={t('OPERATION_SYSTEMS')}
                             fontAwesomeStatsIcon="linux"
-                            statText={'Distribution by Operation System)'}
+                            statText={t('DISTRIBUTION_BY_OPERATION_SYSTEM')}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={6} md={6} lg={3}>
@@ -397,9 +402,9 @@ class Users extends React.Component {
                                 />
                             }
                             chartColor="blue"
-                            title="Devices"
+                            title={t('DEVICES')}
                             fontAwesomeStatsIcon="tablet"
-                            statText={'Distribution by Device'}
+                            statText={t('DISTRIBUTION_BY_DEVICE')}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={6} md={6} lg={3}>
@@ -442,9 +447,9 @@ class Users extends React.Component {
                                 />
                             }
                             chartColor="purple"
-                            title="Browsers"
+                            title={t('BROWSER')}
                             fontAwesomeStatsIcon="chrome"
-                            statText={'Distribution by Browser'}
+                            statText={t('DISTRIBUTION_BY_BROWSER')}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={6} md={6} lg={3}>
@@ -487,11 +492,9 @@ class Users extends React.Component {
                                 />
                             }
                             chartColor="blue"
-                            title="Two Factor Authentications"
+                            title={t('TWO_FACTOR')}
                             fontAwesomeStatsIcon="angellist"
-                            statText={
-                                'Distribution by Two Factor Authentication'
-                            }
+                            statText={t('DISTRIBUTION_BY_TWO_FACTOR')}
                         />
                     </ItemGrid>
                 </Grid>
@@ -536,4 +539,4 @@ Users.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Users);
+export default compose(withTranslation(), withStyles(dashboardStyle))(Users);

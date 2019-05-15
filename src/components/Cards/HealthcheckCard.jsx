@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 
 import { Warning, Done, Update, Favorite } from 'material-ui-icons';
 
@@ -8,6 +10,7 @@ import StatsCard from './StatsCard';
 class LicenseCard extends React.Component {
     render() {
         const {
+            t,
             healthcheck,
             title,
             sub_title_success,
@@ -22,10 +25,10 @@ class LicenseCard extends React.Component {
                     icon={Update}
                     iconColor="orange"
                     title={title}
-                    description="loading"
+                    description={t('LOADING')}
                     statIcon={Update}
                     statIconColor="gray"
-                    statText="Waiting for data ..."
+                    statText={t('WAITING_FOR_DATA')}
                 />
             );
         } else if (!healthcheck) {
@@ -34,7 +37,7 @@ class LicenseCard extends React.Component {
                     icon={Favorite}
                     iconColor="red"
                     title={title}
-                    description={'Unhealthy'}
+                    description={t('UNHEALTHY')}
                     statIcon={Warning}
                     statIconColor={'danger'}
                     statText={sub_title}
@@ -46,7 +49,7 @@ class LicenseCard extends React.Component {
                     icon={Favorite}
                     iconColor="green"
                     title={title}
-                    description={'Healthy'}
+                    description={t('HEALTHY')}
                     statIcon={Done}
                     statIconColor={'gray'}
                     statText={sub_title}
@@ -67,4 +70,4 @@ LicenseCard.propTypes = {
     sub_title_error: PropTypes.node
 };
 
-export default LicenseCard;
+export default compose(withTranslation())(LicenseCard);

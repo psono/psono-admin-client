@@ -8,6 +8,8 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import { Person, Group, ImportExport } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
@@ -25,6 +27,7 @@ class LDAPCard extends React.Component {
     render() {
         const {
             classes,
+            t,
             ldap_users,
             ldap_groups,
             onImportUsers,
@@ -38,7 +41,7 @@ class LDAPCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="User Management:"
+                    title="LDAP Management:"
                     action={
                         <Tabs
                             classes={{
@@ -58,7 +61,7 @@ class LDAPCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Person className={classes.tabIcon} />}
-                                label={'Users'}
+                                label={t('USERS')}
                             />
                             <Tab
                                 classes={{
@@ -69,7 +72,7 @@ class LDAPCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Groups'}
+                                label={t('GROUPS')}
                             />
                         </Tabs>
                     }
@@ -87,13 +90,13 @@ class LDAPCard extends React.Component {
                                     }
                                 ]}
                                 head={[
-                                    { id: 'username', label: 'Username' },
+                                    { id: 'username', label: t('USERNAME') },
                                     {
                                         id: 'create_date',
-                                        label: 'Imported'
+                                        label: t('IMPORTED')
                                     },
-                                    { id: 'email', label: 'Email' },
-                                    { id: 'dn', label: 'DN' }
+                                    { id: 'email', label: t('EMAIL') },
+                                    { id: 'dn', label: t('DN') }
                                 ]}
                                 data={ldap_users}
                             />
@@ -110,7 +113,7 @@ class LDAPCard extends React.Component {
                                 Sync with LDAP
                             </Button>
                             <CustomTable
-                                title="LDAP Groups"
+                                title={t('LDAP_GROUPS')}
                                 headerFunctions={[]}
                                 head={[
                                     { id: 'dn', label: 'DN' },
@@ -134,4 +137,4 @@ LDAPCard.propTypes = {
     ldap_groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(LDAPCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(LDAPCard);

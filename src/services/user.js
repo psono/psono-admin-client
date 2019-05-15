@@ -10,21 +10,171 @@ import helper from './helper';
 import store from './store';
 import device from './device';
 import notification from './notification';
+import browserClient from './browser-client';
 
+let session_password = '';
+let verification = {};
+
+/**
+ * Updates the global state with username, server, remember_me and trust_device
+ * Returns the result of check_host
+ *
+ * @param username
+ * @param server
+ * @param remember_me
+ * @param trust_device
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 function initiate_login(username, server, remember_me, trust_device) {
     action.set_server_url(server);
     let parsed_url = helper.parse_url(server);
 
     username = helper.form_full_username(username, parsed_url['full_domain']);
-    action.set_user_info_1(username, remember_me, trust_device);
+    action.set_user_username(username);
+    action.set_user_info_1(remember_me, trust_device);
 
     return host.check_host(server).then(response => {
         return response;
     });
 }
 
-let session_password = '';
-let verification = {};
+/**
+ * Triggered once someone comes back from a redirect to a index.html#!/saml/token/... url
+ * Will try to use the token to authenticate and login
+ *
+ * @param {string} saml_token_id The saml token id
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function saml_login(saml_token_id) {
+    const server_public_key = store.getState().server.public_key;
+    const session_keys = cryptoLibrary.generate_public_private_keypair();
+    const onSuccess = function(response) {
+        response.data = JSON.parse(
+            cryptoLibrary.decrypt_data_public_key(
+                response.data.login_info,
+                response.data.login_info_nonce,
+                server_public_key,
+                session_keys.private_key
+            )
+        );
+        const server_session_public_key =
+            response.data.server_session_public_key;
+
+        response.data = JSON.parse(
+            cryptoLibrary.decrypt_data_public_key(
+                response.data.data,
+                response.data.data_nonce,
+                server_session_public_key,
+                session_keys.private_key
+            )
+        );
+
+        // decrypt user private key
+        const user_private_key = cryptoLibrary.decrypt_secret(
+            response.data.user.private_key,
+            response.data.user.private_key_nonce,
+            response.data.password,
+            response.data.user.user_sauce
+        );
+        session_password = response.data.password;
+
+        // decrypt the user_validator
+        const user_validator = cryptoLibrary.decrypt_data_public_key(
+            response.data.user_validator,
+            response.data.user_validator_nonce,
+            server_session_public_key,
+            user_private_key
+        );
+
+        // encrypt the validator as verification
+        verification = cryptoLibrary.encrypt_data(
+            user_validator,
+            response.data.session_secret_key
+        );
+
+        action.set_user_username(response.data.user.username);
+
+        action.set_user_info_2(
+            user_private_key,
+            response.data.user.public_key,
+            response.data.session_secret_key,
+            response.data.token,
+            response.data.user.user_sauce
+        );
+
+        const required_multifactors = response.data.required_multifactors;
+
+        return required_multifactors;
+    };
+
+    const onError = function(response) {
+        return Promise.reject(response.data);
+    };
+
+    let login_info = {
+        saml_token_id: saml_token_id,
+        device_time: new Date().toISOString(),
+        device_fingerprint: device.get_device_fingerprint(),
+        device_description: device.get_device_description()
+    };
+
+    login_info = JSON.stringify(login_info);
+
+    // encrypt the login infos
+    const login_info_enc = cryptoLibrary.encrypt_data_public_key(
+        login_info,
+        server_public_key,
+        session_keys.private_key
+    );
+
+    let session_duration = 24 * 60 * 60;
+
+    return psono_server
+        .saml_login(
+            login_info_enc['text'],
+            login_info_enc['nonce'],
+            session_keys.public_key,
+            session_duration
+        )
+        .then(onSuccess, onError);
+}
+
+/**
+ * Updates the global state with server, remember_me and trust_device
+ * Returns the result of check_host
+ *
+ * @param server
+ * @param remember_me
+ * @param trust_device
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function initiate_saml_login(server, remember_me, trust_device) {
+    action.set_server_url(server);
+    action.set_user_info_1(remember_me, trust_device);
+
+    return host.check_host(server).then(response => {
+        return response;
+    });
+}
+
+/**
+ * Takes the provider id and returns (as a promise) the redirect url to initiate the saml auth flow
+ *
+ * @param provider_id
+ *
+ * @returns {promise}
+ */
+function get_saml_redirect_url(provider_id) {
+    const return_to_url = browserClient.get_saml_return_to_url();
+
+    return psono_server
+        .saml_initiate_login(provider_id, return_to_url)
+        .then(result => {
+            return result.data;
+        });
+}
 
 /**
  * Ajax POST request to the backend with the token
@@ -205,8 +355,6 @@ function handle_login_response(
         session_secret_key
     );
 
-    const required_multifactors = response.data['required_multifactors'];
-
     action.set_user_info_2(
         user_private_key,
         user_public_key,
@@ -214,6 +362,8 @@ function handle_login_response(
         token,
         user_sauce
     );
+
+    const required_multifactors = response.data['required_multifactors'];
 
     return required_multifactors;
 }
@@ -305,6 +455,9 @@ function is_logged_in() {
 
 const service = {
     initiate_login,
+    saml_login,
+    initiate_saml_login,
+    get_saml_redirect_url,
     login,
     activate_token,
     ga_verify,

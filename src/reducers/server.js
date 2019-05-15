@@ -5,7 +5,7 @@ import {
 } from '../actions/actionTypes';
 import store from '../services/store';
 
-const default_url = 'https://www.psono.pw/server';
+const default_url = '';
 const default_api = '';
 const default_authentication_methods = [];
 const default_build = '';

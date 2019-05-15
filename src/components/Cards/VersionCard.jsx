@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withTranslation, Trans } from 'react-i18next';
+import { compose } from 'redux';
 
 import { InfoOutline, Warning, Done, Update, ThumbUp } from 'material-ui-icons';
 
@@ -7,17 +9,17 @@ import StatsCard from './StatsCard';
 
 class VersionCard extends React.Component {
     render() {
-        const { used_version, latest_version, title } = this.props;
+        const { t, used_version, latest_version, title } = this.props;
         if (!used_version || !latest_version) {
             return (
                 <StatsCard
                     icon={Update}
                     iconColor="orange"
                     title={title}
-                    description="loading"
+                    description={t('LOADING')}
                     statIcon={Update}
                     statIconColor="gray"
-                    statText="Waiting for version ..."
+                    statText={t('WAITING_FOR_VERSION')}
                 />
             );
         } else if (used_version === latest_version) {
@@ -28,7 +30,7 @@ class VersionCard extends React.Component {
                     title={title}
                     description={used_version}
                     statIcon={Done}
-                    statText="Up to date, good job admin!"
+                    statText={t('UP_TO_DATE_GOOD_JOB_ADMIN')}
                 />
             );
         } else {
@@ -40,7 +42,14 @@ class VersionCard extends React.Component {
                     description={used_version}
                     statIcon={Warning}
                     statIconColor="danger"
-                    statText={'Version ' + latest_version + ' available'}
+                    statText={
+                        <Trans
+                            i18nKey="VERSION_X_AVAILABLE"
+                            latest_version={latest_version}
+                        >
+                            Version {{ latest_version }} available
+                        </Trans>
+                    }
                 />
             );
         }
@@ -58,4 +67,4 @@ VersionCard.propTypes = {
     latest_version: PropTypes.node.isRequired
 };
 
-export default VersionCard;
+export default compose(withTranslation())(VersionCard);

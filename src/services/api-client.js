@@ -15,9 +15,9 @@ function set_url(url) {
     action.set_client_url(url);
 }
 
-const client = {
+const service = {
     get_version,
     set_url
 };
 
-export default client;
+export default service;
