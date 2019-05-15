@@ -23,7 +23,7 @@ i18n
     .init({
         fallbackLng: 'en',
         debug: true,
-        loadPath: '/locales' + subpath + '/{{lng}}/{{ns}}.json',
+        loadPath: '/locales/' + subpath + '{{lng}}/{{ns}}.json',
         addPath: subpath + 'locales/add/{{lng}}/{{ns}}',
 
         interpolation: {
