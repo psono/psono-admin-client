@@ -3,12 +3,6 @@ import Backend from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-let subpath = '';
-if (process.env.NODE_ENV !== 'development') {
-    subpath = 'portal/';
-}
-console.log(process.env.NODE_ENV);
-
 i18n
     // load translation using xhr -> see /public/locales
     // learn more: https://github.com/i18next/i18next-xhr-backend
@@ -22,9 +16,11 @@ i18n
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
         fallbackLng: 'en',
-        debug: true,
-        loadPath: '/locales/' + subpath + '{{lng}}/{{ns}}.json',
-        addPath: subpath + 'locales/add/{{lng}}/{{ns}}',
+        debug: process.env.NODE_ENV === 'development',
+        backend: {
+            // for all available options read the backend's repository readme file
+            loadPath: process.env.PUBLIC_URL + '/locales/{{lng}}/{{ns}}.json'
+        },
 
         interpolation: {
             escapeValue: false // not needed for react as it escapes by default

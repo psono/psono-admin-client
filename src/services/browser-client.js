@@ -8,16 +8,9 @@ import action from '../actions/boundActionCreators';
 let _admin_client_config = {};
 
 function load_config() {
-    let subpath = '';
-    if (process.env.NODE_ENV !== 'development') {
-        subpath = '/portal';
-    }
-    console.log(process.env.NODE_ENV);
-    return axios
-        .get(process.env.PUBLIC_URL + subpath + '/config.json')
-        .then(response => {
-            return response.data;
-        });
+    return axios.get(process.env.PUBLIC_URL + '/config.json').then(response => {
+        return response.data;
+    });
 }
 
 /**
