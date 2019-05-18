@@ -42,6 +42,20 @@ function get_config(key) {
     return new Promise((resolve, reject) => {
         if (Object.keys(_admin_client_config).length === 0) {
             load_config().then(admin_client_config => {
+                if (
+                    !admin_client_config.hasOwnProperty(
+                        'authentication_methods'
+                    )
+                ) {
+                    admin_client_config['authentication_methods'] = [
+                        'AUTHKEY',
+                        'LDAP',
+                        'SAML'
+                    ];
+                }
+                if (!admin_client_config.hasOwnProperty('saml_provider')) {
+                    admin_client_config['saml_provider'] = [];
+                }
                 _admin_client_config = admin_client_config;
                 action.set_admin_client_config(admin_client_config);
                 resolve(_get_config(admin_client_config, key));
