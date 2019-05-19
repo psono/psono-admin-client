@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
@@ -74,6 +75,12 @@ class Users extends React.Component {
             )
             .then(response => {
                 const { ldap_users } = response.data;
+
+                ldap_users.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                });
                 this.setState({
                     ldap_users
                 });

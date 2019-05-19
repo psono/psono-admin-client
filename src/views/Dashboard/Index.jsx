@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { withTranslation, Trans } from 'react-i18next';
 import { compose } from 'redux';
+import moment from 'moment';
 import { ArrowUpward, ArrowDownward, AccessTime } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -78,7 +79,7 @@ class Dashboard extends React.Component {
             Object.keys(r.release).forEach(function(key) {
                 r[key] = r.release[key];
             });
-            r.created_at = r.created_at.replace('.000Z', '').replace('T', ' ');
+            r.created_at = moment(r.created_at).format('YYYY-MM-DD HH:mm:ss');
             r.description = r.description.split('\n').map((item, key) => {
                 if (item.startsWith('# ') || item.trim() === '') {
                     return null;
@@ -188,7 +189,7 @@ class Dashboard extends React.Component {
                 let registrations = [];
                 response.data.registrations.forEach(function(r) {
                     registrations.push({
-                        date: r.date,
+                        date: moment(r.date).format('YYYY-MM-DD HH:mm:ss'),
                         username: r.username,
                         active: r.active ? t('YES') : t('NO')
                     });

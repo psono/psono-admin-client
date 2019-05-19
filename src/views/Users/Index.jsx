@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
@@ -190,6 +191,9 @@ class Users extends React.Component {
                 ];
 
                 users.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.is_active = u.is_active ? t('YES') : t('NO');
                     u.is_email_active = u.is_email_active ? t('YES') : t('NO');
 
@@ -254,6 +258,12 @@ class Users extends React.Component {
                 ];
 
                 sessions.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.valid_till = moment(u.valid_till).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.active = u.active ? t('YES') : t('NO');
 
                     this.analyze(u.device_description, os_data, os_labels);
@@ -303,6 +313,11 @@ class Users extends React.Component {
             )
             .then(response => {
                 const { groups } = response.data;
+                groups.forEach(g => {
+                    g.create_date = moment(g.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                });
                 this.setState({
                     groups
                 });

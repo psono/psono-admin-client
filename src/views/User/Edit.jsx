@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Checkbox, withStyles } from 'material-ui';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
+import moment from 'moment';
 
 import { RegularCard, CustomInput, ItemGrid, UserCard } from '../../components';
 import psono_server from '../../services/api-server';
@@ -22,24 +23,60 @@ class User extends React.Component {
                 const user = response.data;
 
                 user.sessions.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.valid_till = moment(u.valid_till).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.active = u.active ? 'yes' : 'no';
                 });
 
                 user.duos.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.active = u.active ? 'yes' : 'no';
                 });
 
                 user.yubikey_otps.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.active = u.active ? 'yes' : 'no';
                 });
 
                 user.google_authenticators.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.active = u.active ? 'yes' : 'no';
                 });
 
                 user.memberships.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.accepted = u.accepted ? 'yes' : 'no';
                     u.admin = u.admin ? 'yes' : 'no';
+                });
+
+                user.recovery_codes.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                });
+
+                user.emergency_codes.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                });
+
+                user.share_rights.forEach(u => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                 });
 
                 this.setState({
@@ -277,7 +314,11 @@ class User extends React.Component {
                                                         fullWidth: true
                                                     }}
                                                     inputProps={{
-                                                        value: user.create_date,
+                                                        value: moment(
+                                                            user.create_date
+                                                        ).format(
+                                                            'YYYY-MM-DD HH:mm:ss'
+                                                        ),
                                                         disabled: true,
                                                         readOnly: true
                                                     }}

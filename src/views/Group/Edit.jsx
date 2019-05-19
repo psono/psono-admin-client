@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, withStyles, Checkbox } from 'material-ui';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
+import moment from 'moment';
 import { Check } from 'material-ui-icons';
 
 import {
@@ -568,8 +569,11 @@ class User extends React.Component {
                                                         fullWidth: true
                                                     }}
                                                     inputProps={{
-                                                        value:
-                                                            group.create_date,
+                                                        value: moment(
+                                                            group.create_date
+                                                        ).format(
+                                                            'YYYY-MM-DD HH:mm:ss'
+                                                        ),
                                                         disabled: true,
                                                         readOnly: true
                                                     }}

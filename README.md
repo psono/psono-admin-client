@@ -53,7 +53,6 @@ To run unit tests
 	npm test -- --coverage
 
 
-
 # LICENSE
 
 Visit the [License.md](/LICENSE.md) for more details
