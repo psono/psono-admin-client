@@ -12,6 +12,7 @@ import HealthcheckCard from './Cards/HealthcheckCard.jsx';
 import Sessions from './Cards/Sessions.jsx';
 import TasksCard from './Cards/TasksCard.jsx';
 import ReleaseCard from './Cards/ReleaseCard.jsx';
+import FileserverCard from './Cards/FileserverCard.jsx';
 import UsersCard from './Cards/UsersCard.jsx';
 import LDAPCard from './Cards/LDAPCard.jsx';
 import SAMLCard from './Cards/SAMLCard.jsx';
@@ -115,6 +116,7 @@ export {
     Sessions,
     TasksCard,
     ReleaseCard,
+    FileserverCard,
     UsersCard,
     LDAPCard,
     SAMLCard,
