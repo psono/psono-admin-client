@@ -1,4 +1,6 @@
 {
+  "MAPPED_GROUPS": "Mapped groups",
+  "SAML_MANAGEMENT": "SAML Management:",
   "CLUSTER": "Cluster",
   "HOSTNAME": "Hostname",
   "CREATE_DATE": "Create date",

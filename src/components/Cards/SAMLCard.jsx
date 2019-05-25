@@ -9,6 +9,8 @@ import {
     Tab
 } from 'material-ui';
 import { Group } from 'material-ui-icons';
+import { withTranslation } from 'react-i18next';
+import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
@@ -23,7 +25,7 @@ class SAMLCard extends React.Component {
         this.setState({ value });
     };
     render() {
-        const { classes, saml_groups } = this.props;
+        const { classes, t, saml_groups } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -32,7 +34,7 @@ class SAMLCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="SAML Management:"
+                    title={t('SAML_MANAGEMENT')}
                     action={
                         <Tabs
                             classes={{
@@ -52,7 +54,7 @@ class SAMLCard extends React.Component {
                                         classes.rootInheritSelected
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
-                                label={'Groups'}
+                                label={t('GROUPS')}
                             />
                         </Tabs>
                     }
@@ -61,15 +63,15 @@ class SAMLCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title="SAML Groups"
+                                title={t('SAML_GROUPS')}
                                 headerFunctions={[]}
                                 head={[
-                                    { id: 'saml_name', label: 'Name' },
+                                    { id: 'saml_name', label: t('NAME') },
                                     {
                                         id: 'saml_provider_id',
-                                        label: 'Provider ID'
+                                        label: t('POVIDER_ID')
                                     },
-                                    { id: 'groups', label: 'Mapped Groups' }
+                                    { id: 'groups', label: t('MAPPED_GROUPS') }
                                 ]}
                                 data={saml_groups}
                             />
@@ -87,4 +89,4 @@ SAMLCard.propTypes = {
     saml_groups: PropTypes.array
 };
 
-export default withStyles(tasksCardStyle)(SAMLCard);
+export default compose(withTranslation(), withStyles(tasksCardStyle))(SAMLCard);
