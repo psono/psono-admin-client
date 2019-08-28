@@ -27,20 +27,25 @@ class ReleaseCard extends React.Component {
     render() {
         const {
             classes,
+            headerColor,
             t,
             server_releases,
             client_releases,
-            admin_client_releases
+            admin_client_releases,
+            fileserver_releases
         } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
                     classes={{
-                        root: classes.cardHeader,
+                        root:
+                            classes.cardHeader +
+                            ' ' +
+                            classes[headerColor + 'CardHeader'],
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="Releases:"
+                    title={t('RELEASES')}
                     action={
                         <Tabs
                             classes={{
@@ -86,6 +91,17 @@ class ReleaseCard extends React.Component {
                                 icon={<Web className={classes.tabIcon} />}
                                 label={t('PORTAL')}
                             />
+                            <Tab
+                                classes={{
+                                    wrapper: classes.tabWrapper,
+                                    rootLabelIcon: classes.labelIcon,
+                                    label: classes.label,
+                                    rootInheritSelected:
+                                        classes.rootInheritSelected
+                                }}
+                                icon={<Domain className={classes.tabIcon} />}
+                                label={t('FILESERVER')}
+                            />
                         </Tabs>
                     }
                 />
@@ -101,6 +117,7 @@ class ReleaseCard extends React.Component {
                                         label: t('RELEASE_NOTES')
                                     }
                                 ]}
+                                rowsPerPage={5}
                                 data={server_releases}
                             />
                         </Typography>
@@ -116,6 +133,7 @@ class ReleaseCard extends React.Component {
                                         label: t('RELEASE_NOTES')
                                     }
                                 ]}
+                                rowsPerPage={5}
                                 data={client_releases}
                             />
                         </Typography>
@@ -131,7 +149,24 @@ class ReleaseCard extends React.Component {
                                         label: t('RELEASE_NOTES')
                                     }
                                 ]}
+                                rowsPerPage={5}
                                 data={admin_client_releases}
+                            />
+                        </Typography>
+                    )}
+                    {this.state.value === 3 && (
+                        <Typography component="div">
+                            <CustomTable
+                                head={[
+                                    { id: 'name', label: t('VERSION') },
+                                    { id: 'created_at', label: t('DATE') },
+                                    {
+                                        id: 'description',
+                                        label: t('RELEASE_NOTES')
+                                    }
+                                ]}
+                                data={fileserver_releases}
+                                rowsPerPage={5}
                             />
                         </Typography>
                     )}
@@ -141,11 +176,17 @@ class ReleaseCard extends React.Component {
     }
 }
 
+ReleaseCard.defaultProps = {
+    headerColor: 'blue'
+};
+
 ReleaseCard.propTypes = {
     classes: PropTypes.object.isRequired,
+    headerColor: PropTypes.oneOf(['orange', 'green', 'red', 'blue', 'purple']),
     server_releases: PropTypes.array,
     client_releases: PropTypes.array,
-    admin_client_releases: PropTypes.array
+    admin_client_releases: PropTypes.array,
+    fileserver_releases: PropTypes.array
 };
 
 export default compose(withTranslation(), withStyles(tasksCardStyle))(

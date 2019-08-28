@@ -856,6 +856,11 @@ export const tasksCardStyle = theme => ({
         background: 'linear-gradient(60deg, #ab47bc, #8e24aa)',
         ...primaryBoxShadow
     },
+    orangeCardHeader,
+    greenCardHeader,
+    redCardHeader,
+    blueCardHeader,
+    purpleCardHeader,
     cardTitle: {
         ...defaultFont,
         float: 'left',

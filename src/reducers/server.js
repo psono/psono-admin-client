@@ -13,6 +13,7 @@ const default_license_id = '';
 const default_license_mode = '';
 const default_license_type = '';
 const default_type = '';
+const default_files = false;
 const default_license_max_users = undefined;
 const default_license_valid_from = undefined;
 const default_license_valid_till = undefined;
@@ -33,6 +34,7 @@ function server(
         license_mode: default_license_mode,
         license_type: default_license_type,
         type: default_type,
+        files: default_files,
         license_valid_from: default_license_valid_from,
         license_valid_till: default_license_valid_till,
         log_audit: default_log_audit,
@@ -57,6 +59,7 @@ function server(
                 license_mode: default_license_mode,
                 license_type: default_license_type,
                 type: default_type,
+                files: default_files,
                 license_valid_from: default_license_valid_from,
                 license_valid_till: default_license_valid_till,
                 log_audit: default_log_audit,
@@ -75,6 +78,7 @@ function server(
                 license_mode: action.info.license_mode,
                 license_type: action.info.license_type,
                 type: action.info.type,
+                files: action.info.files,
                 license_valid_from: action.info.license_valid_from,
                 license_valid_till: action.info.license_valid_till,
                 log_audit: action.info.log_audit,

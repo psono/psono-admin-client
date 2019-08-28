@@ -33,6 +33,18 @@ class GroupCard extends React.Component {
             saml_groups,
             onDeleteMemberships
         } = this.props;
+
+        const has_ldap_groups = ldap_groups && ldap_groups.length > 0;
+        const has_saml_groups = saml_groups && saml_groups.length > 0;
+
+        var ldap_index = 1;
+        var saml_index = 2;
+
+        if (!has_ldap_groups && has_saml_groups) {
+            ldap_index = 99;
+            saml_index = 1;
+        }
+
         return (
             <Card className={classes.card}>
                 <CardHeader
@@ -63,7 +75,7 @@ class GroupCard extends React.Component {
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('MEMBERSHIPS')}
                             />
-                            {ldap_groups && ldap_groups.length > 0 ? (
+                            {has_ldap_groups ? (
                                 <Tab
                                     classes={{
                                         wrapper: classes.tabWrapper,
@@ -76,7 +88,7 @@ class GroupCard extends React.Component {
                                     label={t('LDAP_GROUPS')}
                                 />
                             ) : null}
-                            {saml_groups && saml_groups.length > 0 ? (
+                            {has_saml_groups ? (
                                 <Tab
                                     classes={{
                                         wrapper: classes.tabWrapper,
@@ -117,7 +129,7 @@ class GroupCard extends React.Component {
                             />
                         </Typography>
                     )}
-                    {this.state.value === 1 && (
+                    {this.state.value === ldap_index && (
                         <Typography component="div">
                             <CustomTable
                                 title={t('MAPPED_LDAP_GROUPS')}
@@ -138,7 +150,7 @@ class GroupCard extends React.Component {
                             />
                         </Typography>
                     )}
-                    {(this.state.value === 2 ||
+                    {(this.state.value === saml_index ||
                         (this.state.value === 1 &&
                             (!ldap_groups || ldap_groups.length < 1))) && (
                         <Typography component="div">

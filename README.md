@@ -36,7 +36,7 @@ Afterwards you can visit http://localhost:3000
 
 To build everything as standalone for production
 
-	INLINE_RUNTIME_CHUNK=false npm run build npm run build
+	INLINE_RUNTIME_CHUNK=false npm run build
 
 Afterwards everthing can be found in the `/build` folder
 

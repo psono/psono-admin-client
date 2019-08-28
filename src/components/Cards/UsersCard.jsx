@@ -163,7 +163,7 @@ class UsersCard extends React.Component {
                     {this.state.value === 1 && (
                         <Typography component="div">
                             <CustomTable
-                                title="Sessions"
+                                title={t('SESSIONS')}
                                 headerFunctions={[
                                     {
                                         title: t('DELETE_SESSION_S'),
@@ -208,7 +208,7 @@ class UsersCard extends React.Component {
                                 </Button>
                             ) : null}
                             <CustomTable
-                                title="Groups"
+                                title={t('GROUPS')}
                                 headerFunctions={[
                                     {
                                         title: t('EDIT_GROUP'),

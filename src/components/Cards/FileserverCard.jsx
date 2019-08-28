@@ -8,16 +8,16 @@ import {
     Tabs,
     Tab
 } from 'material-ui';
-import { Group } from 'material-ui-icons';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
+import { Domain } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
 
 import { tasksCardStyle } from '../../variables/styles';
 
-class SAMLCard extends React.Component {
+class FileserverCard extends React.Component {
     state = {
         value: 0
     };
@@ -25,16 +25,19 @@ class SAMLCard extends React.Component {
         this.setState({ value });
     };
     render() {
-        const { classes, t, saml_groups } = this.props;
+        const { classes, headerColor, t, fileserver } = this.props;
         return (
             <Card className={classes.card}>
                 <CardHeader
                     classes={{
-                        root: classes.cardHeader,
+                        root:
+                            classes.cardHeader +
+                            ' ' +
+                            classes[headerColor + 'CardHeader'],
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title={t('SAML_MANAGEMENT')}
+                    title={t('FILESERVER_INFO')}
                     action={
                         <Tabs
                             classes={{
@@ -53,8 +56,8 @@ class SAMLCard extends React.Component {
                                     rootInheritSelected:
                                         classes.rootInheritSelected
                                 }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('GROUPS')}
+                                icon={<Domain className={classes.tabIcon} />}
+                                label={t('FILESERVER')}
                             />
                         </Tabs>
                     }
@@ -63,17 +66,19 @@ class SAMLCard extends React.Component {
                     {this.state.value === 0 && (
                         <Typography component="div">
                             <CustomTable
-                                title={t('SAML_GROUPS')}
-                                headerFunctions={[]}
                                 head={[
-                                    { id: 'saml_name', label: t('NAME') },
+                                    { id: 'hostname', label: t('HOSTNAME') },
                                     {
-                                        id: 'saml_provider_id',
-                                        label: t('POVIDER_ID')
+                                        id: 'fileserver_cluster_title',
+                                        label: t('CLUSTER')
                                     },
-                                    { id: 'groups', label: t('MAPPED_GROUPS') }
+                                    {
+                                        id: 'version',
+                                        label: t('VERSION')
+                                    }
                                 ]}
-                                data={saml_groups}
+                                rowsPerPage={5}
+                                data={fileserver}
                             />
                         </Typography>
                     )}
@@ -83,10 +88,16 @@ class SAMLCard extends React.Component {
     }
 }
 
-SAMLCard.propTypes = {
-    classes: PropTypes.object.isRequired,
-    sessions: PropTypes.array,
-    saml_groups: PropTypes.array
+FileserverCard.defaultProps = {
+    headerColor: 'purple'
 };
 
-export default compose(withTranslation(), withStyles(tasksCardStyle))(SAMLCard);
+FileserverCard.propTypes = {
+    classes: PropTypes.object.isRequired,
+    headerColor: PropTypes.oneOf(['orange', 'green', 'red', 'blue', 'purple']),
+    fileserver: PropTypes.array
+};
+
+export default compose(withTranslation(), withStyles(tasksCardStyle))(
+    FileserverCard
+);

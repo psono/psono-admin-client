@@ -16,6 +16,7 @@ import {
     HealthcheckCard,
     ChartCard,
     ReleaseCard,
+    FileserverCard,
     RegularCard,
     ItemGrid,
     CustomTable
@@ -39,6 +40,9 @@ class Dashboard extends React.Component {
         client_tags: [],
         client_latest_version: '',
         client_used_version: '',
+        fileserver: [],
+        fileserver_latest_version: '',
+        fileserver_tags: [],
         server_tags: [],
         server_latest_version: '',
         server_used_version: '',
@@ -138,6 +142,15 @@ class Dashboard extends React.Component {
                     admin_client_latest_version: response.data[0].name
                 });
             });
+        api_static
+            .get('/gitlab.com/psono/psono-fileserver/changelog.json')
+            .then(response => {
+                this.convert_tags_to_releases(response.data);
+                this.setState({
+                    fileserver_tags: response.data,
+                    fileserver_latest_version: response.data[0].name
+                });
+            });
 
         psono_server.healthcheck().then(response => {
             this.setState({
@@ -203,6 +216,7 @@ class Dashboard extends React.Component {
                     server_token_count_device: response.data.token_count_device,
                     server_token_count_user: response.data.token_count_user,
                     server_token_count_total: response.data.token_count_total,
+                    fileserver: response.data.fileserver,
                     server_license_valid_from:
                         response.data.info.license_valid_from,
                     server_license_valid_till:
@@ -240,6 +254,7 @@ class Dashboard extends React.Component {
             count_registrations_second_week,
             count_registrations_first_week
         } = this.state;
+        const { files } = this.props.state.server;
         let registration_text;
         if (this.state.count_registrations_second_week) {
             let percentage = Math.round(
@@ -524,10 +539,19 @@ class Dashboard extends React.Component {
                 </Grid>
                 <Grid container>
                     <ItemGrid xs={12} sm={12} md={6}>
+                        {files && (
+                            <FileserverCard
+                                fileserver={this.state.fileserver}
+                                latest_version={
+                                    this.state.fileserver_latest_version
+                                }
+                            />
+                        )}
                         <ReleaseCard
                             server_releases={this.state.server_tags}
                             client_releases={this.state.client_tags}
                             admin_client_releases={this.state.admin_client_tags}
+                            fileserver_releases={this.state.fileserver_tags}
                         />
                     </ItemGrid>
                     <ItemGrid xs={12} sm={12} md={6}>
