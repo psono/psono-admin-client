@@ -152,11 +152,23 @@ class Dashboard extends React.Component {
                 });
             });
 
-        psono_server.healthcheck().then(response => {
-            this.setState({
-                healthcheck: response.data
-            });
-        });
+        psono_server.healthcheck().then(
+            response => {
+                //healthy is reported as 200
+                this.setState({
+                    healthcheck: response.data
+                });
+            },
+            response => {
+                //error occured, could mean unhealthy...
+                if (response.status === 400) {
+                    //unhealthy is reported as 400
+                    this.setState({
+                        healthcheck: response.data
+                    });
+                }
+            }
+        );
         psono_server
             .admin_info(
                 this.props.state.user.token,
