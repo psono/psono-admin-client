@@ -48,6 +48,8 @@
   "DB_CONNECTION_BROKEN": "Datenbankverbindung unterbrochen.",
   "YES": "Ja",
   "NO": "Nein",
+  "LDAP_MANAGEMENT": "LDAP Management",
+  "SYNC_WITH_LDAP": "Sync mit LDAP",
   "MEMBERS": "Mitglieder",
   "MANAGED": "Managed",
   "EMAIL_ACTIVE": "E-Mail Aktiv",

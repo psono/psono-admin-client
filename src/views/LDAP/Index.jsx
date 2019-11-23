@@ -7,7 +7,6 @@ import { Redirect } from 'react-router-dom';
 import { LDAPCard, ItemGrid } from '../../components';
 import { dashboardStyle } from '../../variables/styles';
 import psono_server from '../../services/api-server';
-import helper from '../../services/helper';
 
 class Users extends React.Component {
     state = {
@@ -15,26 +14,6 @@ class Users extends React.Component {
         ldap_users: [],
         ldap_groups: []
     };
-
-    onImportUsers(selected_ldap_users) {
-        console.log(selected_ldap_users);
-        selected_ldap_users.forEach(ldap_user => {
-            psono_server.admin_ldap_import_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                ldap_user.id
-            );
-        });
-
-        let { ldap_users } = this.state;
-        selected_ldap_users.forEach(ldap_user => {
-            helper.remove_from_array(ldap_users, ldap_user, function(a, b) {
-                return a.id === b.id;
-            });
-        });
-
-        this.setState({ ldap_users: ldap_users });
-    }
 
     createGroupsNode(ldap_group) {
         ldap_group.groups = (
@@ -114,9 +93,6 @@ class Users extends React.Component {
                         <LDAPCard
                             ldap_users={this.state.ldap_users}
                             ldap_groups={this.state.ldap_groups}
-                            onImportUsers={selected_ldap_users =>
-                                this.onImportUsers(selected_ldap_users)
-                            }
                             onSyncGroupsLdap={() => this.onSyncGroupsLdap()}
                         />
                     </ItemGrid>

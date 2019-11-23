@@ -48,6 +48,8 @@
   "DB_CONNECTION_BROKEN": "Database connection broken.",
   "YES": "Yes",
   "NO": "No",
+  "LDAP_MANAGEMENT": "LDAP Management",
+  "SYNC_WITH_LDAP": "Sync with LDAP",
   "MEMBERS": "Members",
   "MANAGED": "Managed",
   "EMAIL_ACTIVE": "E-Mail Active",
