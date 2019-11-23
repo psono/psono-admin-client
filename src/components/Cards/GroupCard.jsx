@@ -123,7 +123,11 @@ class GroupCard extends React.Component {
                                         label: t('JOINED')
                                     },
                                     { id: 'accepted', label: t('ACCEPTED') },
-                                    { id: 'admin', label: t('GROUP_ADMIN') }
+                                    { id: 'admin', label: t('GROUP_ADMIN') },
+                                    {
+                                        id: 'share_admin',
+                                        label: t('SHARE_ADMIN')
+                                    }
                                 ]}
                                 data={memberships}
                             />
@@ -136,10 +140,6 @@ class GroupCard extends React.Component {
                                 head={[
                                     { id: 'mapped', label: t('MAPPED') },
                                     { id: 'dn', label: t('DN') },
-                                    {
-                                        id: 'has_group_admin',
-                                        label: t('GROUP_ADMIN')
-                                    },
                                     {
                                         id: 'has_share_admin',
                                         label: t('SHARE_ADMIN')
@@ -159,10 +159,6 @@ class GroupCard extends React.Component {
                                 head={[
                                     { id: 'mapped', label: t('MAPPED') },
                                     { id: 'saml_name', label: t('NAME') },
-                                    {
-                                        id: 'has_group_admin',
-                                        label: t('GROUP_ADMIN')
-                                    },
                                     {
                                         id: 'has_share_admin',
                                         label: t('SHARE_ADMIN')

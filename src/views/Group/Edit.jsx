@@ -31,6 +31,7 @@ class User extends React.Component {
                 group.memberships.forEach(u => {
                     u.accepted = u.accepted ? 'yes' : 'no';
                     u.admin = u.admin ? 'yes' : 'no';
+                    u.share_admin = u.share_admin ? 'yes' : 'no';
                 });
 
                 const mapped_ldap_group_index = {};

@@ -49,6 +49,7 @@
   "YES": "Yes",
   "NO": "No",
   "MEMBERS": "Members",
+  "MANAGED": "Managed",
   "EMAIL_ACTIVE": "E-Mail Active",
   "DELETE_USER_S": "Delete User(s)",
   "DEACTIVATE_USER_S": "Deactivate User(s)",

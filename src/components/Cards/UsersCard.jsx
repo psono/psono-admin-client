@@ -231,6 +231,10 @@ class UsersCard extends React.Component {
                                     {
                                         id: 'member_count',
                                         label: t('MEMBERS')
+                                    },
+                                    {
+                                        id: 'is_managed',
+                                        label: t('MANAGED')
                                     }
                                 ]}
                                 data={groups}
