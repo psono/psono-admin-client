@@ -317,6 +317,7 @@ class Users extends React.Component {
                     g.create_date = moment(g.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
+                    g.is_managed = g.is_managed ? t('YES') : t('NO');
                 });
                 this.setState({
                     groups

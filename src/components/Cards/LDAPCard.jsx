@@ -10,7 +10,7 @@ import {
 } from 'material-ui';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
-import { Person, Group, ImportExport } from 'material-ui-icons';
+import { Person, Group } from 'material-ui-icons';
 import PropTypes from 'prop-types';
 
 import { CustomTable, Button } from '../../components';
@@ -30,7 +30,6 @@ class LDAPCard extends React.Component {
             t,
             ldap_users,
             ldap_groups,
-            onImportUsers,
             onSyncGroupsLdap
         } = this.props;
         return (
@@ -41,7 +40,7 @@ class LDAPCard extends React.Component {
                         title: classes.cardTitle,
                         content: classes.cardHeaderContent
                     }}
-                    title="LDAP Management:"
+                    title={t('LDAP_MANAGEMENT') + ':'}
                     action={
                         <Tabs
                             classes={{
@@ -82,13 +81,7 @@ class LDAPCard extends React.Component {
                         <Typography component="div">
                             <CustomTable
                                 title="LDAP Users"
-                                headerFunctions={[
-                                    {
-                                        title: 'Import User(s)',
-                                        onClick: onImportUsers,
-                                        icon: <ImportExport />
-                                    }
-                                ]}
+                                headerFunctions={[]}
                                 head={[
                                     { id: 'username', label: t('USERNAME') },
                                     {
@@ -110,7 +103,7 @@ class LDAPCard extends React.Component {
                                     onSyncGroupsLdap();
                                 }}
                             >
-                                Sync with LDAP
+                                {t('SYNC_WITH_LDAP')}
                             </Button>
                             <CustomTable
                                 title={t('LDAP_GROUPS')}
