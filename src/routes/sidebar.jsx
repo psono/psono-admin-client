@@ -1,6 +1,7 @@
 import DashboardPage from '../views/Dashboard/Index';
 //import UserProfile from '../views/UserProfile/UserProfile.jsx';
 import Users from '../views/Users/Index';
+import SecurityReports from '../views/SecurityReports/Index';
 // import TableList from '../views/TableList/TableList.jsx';
 // import Typography from '../views/Typography/Typography.jsx';
 // import Icons from '../views/Icons/Icons.jsx';
@@ -9,7 +10,8 @@ import Users from '../views/Users/Index';
 
 import {
     Dashboard,
-    Person
+    Person,
+    Timeline
     // ContentPaste,
     // LibraryBooks,
     // BubbleChart,
@@ -31,6 +33,13 @@ let routes = [
         navbarName: 'USERS',
         icon: Person,
         component: Users
+    },
+    {
+        path: '/security-reports',
+        sidebarName: 'SECURITY_REPORTS',
+        navbarName: 'SECURITY_REPORTS',
+        icon: Timeline,
+        component: SecurityReports
     }
 ];
 

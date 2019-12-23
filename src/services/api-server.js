@@ -224,6 +224,29 @@ function admin_group(token, session_secret_key, group_id) {
 }
 
 /**
+ * GET: Returns a list of all groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} security_report_id (optional) The security report id
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_security_report(token, session_secret_key, security_report_id) {
+    const endpoint =
+        '/admin/security-report/' +
+        (!security_report_id ? '' : security_report_id + '/');
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * GET: Returns a list of all ldap users (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -2533,6 +2556,7 @@ const service = {
     admin_user,
     admin_session,
     admin_group,
+    admin_security_report,
     admin_delete_user,
     admin_delete_session,
     admin_create_group,
