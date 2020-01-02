@@ -1,4 +1,4 @@
-# PSONO Admin Client - Password Manager [BETA]
+# PSONO Admin Client - Password Manager
 
 Master:  [![build status](https://gitlab.com/psono/psono-admin-client/badges/master/build.svg)](https://gitlab.com/psono/psono-admin-client/commits/master) [![coverage report](https://gitlab.com/psono/psono-admin-client/badges/master/coverage.svg)](https://gitlab.com/psono/psono-admin-client/commits/master)  [![Code Climate](https://codeclimate.com/github/psono/psono-admin-client/badges/gpa.svg)](https://codeclimate.com/github/psono/psono-admin-client) [![build status](https://images.microbadger.com/badges/image/psono/psono-admin-client.svg)](https://hub.docker.com/r/psono/psono-admin-client/)  [![build status](https://img.shields.io/docker/pulls/psono/psono-admin-client.svg)](https://hub.docker.com/r/psono/psono-admin-client/)
 
