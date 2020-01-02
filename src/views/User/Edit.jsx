@@ -272,7 +272,6 @@ class User extends React.Component {
     };
 
     save = () => {
-        // this.setState({ loginLoading: true });
         this.setState({
             errors: [],
             msgs: []
