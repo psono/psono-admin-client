@@ -224,6 +224,29 @@ function admin_group(token, session_secret_key, group_id) {
 }
 
 /**
+ * GET: Returns a list of all groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} security_report_id (optional) The security report id
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_security_report(token, session_secret_key, security_report_id) {
+    const endpoint =
+        '/admin/security-report/' +
+        (!security_report_id ? '' : security_report_id + '/');
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * GET: Returns a list of all ldap users (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -733,16 +756,30 @@ function admin_delete_emergency_code(
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
  * @param {uuid} user_id The user id of the user to delete
+ * @param {string} [email] (optional) The new email address
  * @param {boolean} [is_active] (optional) Activates (or deactivates) the user
+ * @param {boolean} [is_email_active] (optional) Activates (or deactivates) the user
+ * @param {boolean} [is_superuser] (optional) Activates (or deactivates) the user
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_update_user(token, session_secret_key, user_id, is_active) {
+function admin_update_user(
+    token,
+    session_secret_key,
+    user_id,
+    email,
+    is_active,
+    is_email_active,
+    is_superuser
+) {
     const endpoint = '/admin/user/';
     const connection_type = 'PUT';
     const data = {
         user_id: user_id,
-        is_active: is_active
+        email: email,
+        is_active: is_active,
+        is_email_active: is_email_active,
+        is_superuser: is_superuser
     };
     const headers = {
         Authorization: 'Token ' + token
@@ -2533,6 +2570,7 @@ const service = {
     admin_user,
     admin_session,
     admin_group,
+    admin_security_report,
     admin_delete_user,
     admin_delete_session,
     admin_create_group,

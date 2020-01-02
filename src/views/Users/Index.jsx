@@ -56,7 +56,10 @@ class Users extends React.Component {
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
                 user.id,
-                is_active
+                undefined,
+                is_active,
+                undefined,
+                undefined
             );
 
             users.forEach(u => {

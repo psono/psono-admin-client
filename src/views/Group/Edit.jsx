@@ -19,6 +19,7 @@ class User extends React.Component {
     state = {};
 
     componentDidMount() {
+        const { t } = this.props;
         psono_server
             .admin_group(
                 this.props.state.user.token,
@@ -29,9 +30,9 @@ class User extends React.Component {
                 const group = response.data;
 
                 group.memberships.forEach(u => {
-                    u.accepted = u.accepted ? 'yes' : 'no';
-                    u.admin = u.admin ? 'yes' : 'no';
-                    u.share_admin = u.share_admin ? 'yes' : 'no';
+                    u.accepted = u.accepted ? t('YES') : t('NO');
+                    u.admin = u.admin ? t('YES') : t('NO');
+                    u.share_admin = u.share_admin ? t('YES') : t('NO');
                 });
 
                 const mapped_ldap_group_index = {};

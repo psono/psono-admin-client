@@ -95,8 +95,7 @@ class User extends React.Component {
                                                 inputProps={{
                                                     value: this.state.groupname,
                                                     onChange: this
-                                                        .onChangeGroupName,
-                                                    helpertext: 'asdf'
+                                                        .onChangeGroupName
                                                 }}
                                                 error={errors_dict.hasOwnProperty(
                                                     'name'
