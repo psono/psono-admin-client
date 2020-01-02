@@ -4,13 +4,23 @@ import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
 
-import { RegularCard, CustomInput, ItemGrid, UserCard } from '../../components';
+import {
+    Button,
+    RegularCard,
+    CustomInput,
+    ItemGrid,
+    UserCard,
+    SnackbarContent
+} from '../../components';
 import psono_server from '../../services/api-server';
 import { customInputStyle } from '../../variables/styles';
 import helper from '../../services/helper';
 
 class User extends React.Component {
-    state = {};
+    state = {
+        errors: [],
+        msgs: []
+    };
 
     componentDidMount() {
         const { t } = this.props;
@@ -229,6 +239,76 @@ class User extends React.Component {
         this.setState({ emergency_codes: emergency_codes });
     }
 
+    onChangeEmailChange = event => {
+        let { user } = this.state;
+        user.email = event.target.value;
+        this.setState({
+            user
+        });
+    };
+
+    onIsActiveToggle = event => {
+        let { user } = this.state;
+        user.is_active = !user.is_active;
+        this.setState({
+            user
+        });
+    };
+
+    onIsEmailActiveToggle = event => {
+        let { user } = this.state;
+        user.is_email_active = !user.is_email_active;
+        this.setState({
+            user
+        });
+    };
+
+    onIsSuperuserToggle = event => {
+        let { user } = this.state;
+        user.is_superuser = !user.is_superuser;
+        this.setState({
+            user
+        });
+    };
+
+    save = () => {
+        // this.setState({ loginLoading: true });
+        this.setState({
+            errors: [],
+            msgs: []
+        });
+        let { user } = this.state;
+        psono_server
+            .admin_update_user(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                user.id,
+                user.email,
+                user.is_active,
+                user.is_email_active,
+                user.is_superuser
+            )
+            .then(
+                result => {
+                    let msgs = ['SAVE_SUCCESS'];
+                    this.setState({ msgs });
+                },
+                result => {
+                    if (result.data.hasOwnProperty('email')) {
+                        let errors = result.data.email;
+                        this.setState({ errors });
+                    } else if (result.data.hasOwnProperty('errors')) {
+                        let errors = result.data.errors;
+                        this.setState({ errors });
+                    } else {
+                        this.setState({
+                            errors: [result.data]
+                        });
+                    }
+                }
+            );
+    };
+
     render() {
         const { classes, t } = this.props;
         const user = this.state.user;
@@ -246,6 +326,32 @@ class User extends React.Component {
         } else {
             this.authentication = 'UNKNOWN';
         }
+        const errors = (
+            <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
+                {this.state.errors.map((prop, index) => {
+                    return (
+                        <SnackbarContent
+                            message={t(prop)}
+                            color="danger"
+                            key={index}
+                        />
+                    );
+                })}
+            </ItemGrid>
+        );
+        const msgs = (
+            <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
+                {this.state.msgs.map((prop, index) => {
+                    return (
+                        <SnackbarContent
+                            message={t(prop)}
+                            color="info"
+                            key={index}
+                        />
+                    );
+                })}
+            </ItemGrid>
+        );
 
         return (
             <div>
@@ -323,6 +429,20 @@ class User extends React.Component {
                                                 }}
                                             />
                                         </ItemGrid>
+                                        <ItemGrid xs={12} sm={12} md={8}>
+                                            <CustomInput
+                                                labelText={t('EMAIL')}
+                                                id="email"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    value: user.email,
+                                                    onChange: this
+                                                        .onChangeEmailChange
+                                                }}
+                                            />
+                                        </ItemGrid>
                                     </Grid>
                                     <Grid container>
                                         <ItemGrid xs={12} sm={6} md={4}>
@@ -330,7 +450,9 @@ class User extends React.Component {
                                                 <Checkbox
                                                     tabIndex={1}
                                                     checked={user.is_active}
-                                                    disabled
+                                                    onClick={() => {
+                                                        this.onIsActiveToggle();
+                                                    }}
                                                 />{' '}
                                                 {t('ACTIVE')}
                                             </div>
@@ -342,7 +464,9 @@ class User extends React.Component {
                                                     checked={
                                                         user.is_email_active
                                                     }
-                                                    disabled
+                                                    onClick={() => {
+                                                        this.onIsEmailActiveToggle();
+                                                    }}
                                                 />{' '}
                                                 {t('EMAIL_VERIFIED')}
                                             </div>
@@ -352,17 +476,23 @@ class User extends React.Component {
                                                 <Checkbox
                                                     tabIndex={1}
                                                     checked={user.is_superuser}
-                                                    disabled
+                                                    onClick={() => {
+                                                        this.onIsSuperuserToggle();
+                                                    }}
                                                 />{' '}
                                                 {t('SUPERUSER')}
                                             </div>
                                         </ItemGrid>
+                                        {errors}
+                                        {msgs}
                                     </Grid>
                                 </div>
                             }
-                            // footer={
-                            //     <Button color="primary">Update User</Button>
-                            // }
+                            footer={
+                                <Button color="primary" onClick={this.save}>
+                                    {t('SAVE')}
+                                </Button>
+                            }
                         />
                     </ItemGrid>
                 </Grid>

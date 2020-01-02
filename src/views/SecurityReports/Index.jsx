@@ -31,11 +31,9 @@ class SecurityReports extends React.Component {
         count_passwords_duplicate: 0,
         count_recovery_code_exists: 0,
         count_two_factor_exists: 0,
-        count_master_password_tested: 0,
         count_master_password_breached: 0,
         count_master_password_breach_unknown: 0,
         count_master_password_duplicate: 0,
-        count_master_password_duplicate_unknown: 0,
         total_master_password_length: 0,
         total_master_password_variation_count: 0,
         os_data: [],
@@ -89,11 +87,9 @@ class SecurityReports extends React.Component {
                 let count_passwords_duplicate = 0;
                 let count_recovery_code_exists = 0;
                 let count_two_factor_exists = 0;
-                let count_master_password_tested = 0;
                 let count_master_password_breached = 0;
                 let count_master_password_breach_unknown = 0;
                 let count_master_password_duplicate = 0;
-                let count_master_password_duplicate_unknown = 0;
                 let total_master_password_length = 0;
                 let total_master_password_variation_count = 0;
 
@@ -120,43 +116,27 @@ class SecurityReports extends React.Component {
                     if (g.two_factor_exists) {
                         count_two_factor_exists = count_two_factor_exists + 1;
                     }
-                    if (g.master_password_tested) {
-                        count_master_password_tested =
-                            count_master_password_tested + 1;
-                        total_master_password_length =
-                            total_master_password_length +
-                            g.master_password_length;
-                        total_master_password_variation_count =
-                            total_master_password_variation_count +
-                            g.master_password_variation_count;
-                    }
 
-                    if (!g.master_password_tested || !g.check_haveibeenpwned) {
+                    total_master_password_length =
+                        total_master_password_length + g.master_password_length;
+                    total_master_password_variation_count =
+                        total_master_password_variation_count +
+                        g.master_password_variation_count;
+
+                    if (!g.check_haveibeenpwned) {
                         count_master_password_breach_unknown =
                             count_master_password_breach_unknown + 1;
                     } else {
-                        if (
-                            g.master_password_tested &&
-                            g.master_password_breached
-                        ) {
+                        if (g.master_password_breached) {
                             count_master_password_breached =
                                 count_master_password_breached + 1;
                         }
                     }
 
-                    if (!g.master_password_tested) {
-                        count_master_password_duplicate_unknown =
-                            count_master_password_duplicate_unknown + 1;
-                    } else {
-                        if (
-                            g.master_password_tested &&
-                            g.master_password_duplicate
-                        ) {
-                            count_master_password_duplicate =
-                                count_master_password_duplicate + 1;
-                        }
+                    if (g.master_password_duplicate) {
+                        count_master_password_duplicate =
+                            count_master_password_duplicate + 1;
                     }
-
                     g.create_date = moment(g.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
@@ -208,11 +188,9 @@ class SecurityReports extends React.Component {
                     count_passwords_duplicate,
                     count_recovery_code_exists,
                     count_two_factor_exists,
-                    count_master_password_tested,
                     count_master_password_breached,
                     count_master_password_breach_unknown,
                     count_master_password_duplicate,
-                    count_master_password_duplicate_unknown,
                     total_master_password_length,
                     total_master_password_variation_count
                 });
@@ -439,79 +417,7 @@ class SecurityReports extends React.Component {
                     </ItemGrid>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={4} md={4}>
-                        <ChartCard
-                            chart={
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: [
-                                            t('INSECURE') +
-                                                ' (' +
-                                                (this.state.count_reports -
-                                                    this.state
-                                                        .count_master_password_tested) +
-                                                ')',
-                                            t('SCANNED') +
-                                                ' (' +
-                                                this.state
-                                                    .count_master_password_tested +
-                                                ')'
-                                        ],
-                                        series: [
-                                            {
-                                                value:
-                                                    this.state.count_reports -
-                                                    this.state
-                                                        .count_master_password_tested,
-                                                className: 'ct-series-a'
-                                            },
-                                            {
-                                                value: this.state
-                                                    .count_master_password_tested,
-                                                className: 'ct-series-f'
-                                            }
-                                        ]
-                                    }}
-                                    type="Pie"
-                                    options={{
-                                        labelInterpolationFnc: function(value) {
-                                            return value[0];
-                                        }
-                                    }}
-                                    responsiveOptions={[
-                                        [
-                                            'screen and (min-width: 640px)',
-                                            {
-                                                chartPadding: 20,
-                                                labelOffset: 40,
-                                                labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
-                                        ],
-                                        [
-                                            'screen and (min-width: 1024px)',
-                                            {
-                                                labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
-                                    ]}
-                                />
-                            }
-                            chartColor="blue"
-                            title={t('SCANNED_MASTER_PASSWORDS')}
-                            fontAwesomeStatsIcon="flag"
-                            statText={t(
-                                'HOW_MAY_MASTER_PASSWORDS_HAVE_BEE_SCANNED'
-                            )}
-                        />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -530,8 +436,7 @@ class SecurityReports extends React.Component {
                                                 ')',
                                             t('SECURE') +
                                                 ' (' +
-                                                (this.state
-                                                    .count_master_password_tested -
+                                                (this.state.count_reports -
                                                     this.state
                                                         .count_master_password_breach_unknown -
                                                     this.state
@@ -551,8 +456,7 @@ class SecurityReports extends React.Component {
                                             },
                                             {
                                                 value:
-                                                    this.state
-                                                        .count_master_password_tested -
+                                                    this.state.count_reports -
                                                     this.state
                                                         .count_master_password_breach_unknown -
                                                     this.state
@@ -599,7 +503,7 @@ class SecurityReports extends React.Component {
                             )}
                         />
                     </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -611,17 +515,9 @@ class SecurityReports extends React.Component {
                                                 this.state
                                                     .count_master_password_duplicate +
                                                 ')',
-                                            t('UNTESTED') +
-                                                ' (' +
-                                                this.state
-                                                    .count_master_password_duplicate_unknown +
-                                                ')',
                                             t('UNIQUES') +
                                                 ' (' +
-                                                (this.state
-                                                    .count_master_password_tested -
-                                                    this.state
-                                                        .count_master_password_duplicate_unknown -
+                                                (this.state.count_reports -
                                                     this.state
                                                         .count_master_password_duplicate) +
                                                 ')'
@@ -633,16 +529,8 @@ class SecurityReports extends React.Component {
                                                 className: 'ct-series-a'
                                             },
                                             {
-                                                value: this.state
-                                                    .count_master_password_duplicate_unknown,
-                                                className: 'ct-series-b'
-                                            },
-                                            {
                                                 value:
-                                                    this.state
-                                                        .count_master_password_tested -
-                                                    this.state
-                                                        .count_master_password_duplicate_unknown -
+                                                    this.state.count_reports -
                                                     this.state
                                                         .count_master_password_duplicate,
                                                 className: 'ct-series-f'
@@ -687,9 +575,7 @@ class SecurityReports extends React.Component {
                             )}
                         />
                     </ItemGrid>
-                </Grid>
-                <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6} lg={6}>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -775,7 +661,7 @@ class SecurityReports extends React.Component {
                             )}
                         />
                     </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={6}>
+                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
