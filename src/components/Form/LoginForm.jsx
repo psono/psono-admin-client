@@ -437,11 +437,11 @@ class LoginForm extends React.Component {
                 .allow_custom_server
                 ? {}
                 : { display: 'none' };
-            const regular_login_style = authentication_methods.includes(
-                'AUTHKEY'
-            )
-                ? {}
-                : { display: 'none' };
+            const regular_login_style =
+                authentication_methods.includes('AUTHKEY') ||
+                authentication_methods.includes('LDAP')
+                    ? {}
+                    : { display: 'none' };
 
             return (
                 <div className={classes.wrapper}>
