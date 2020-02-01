@@ -1,4 +1,5 @@
 {
+  "USERNAME_OR_PASSWORD_WRONG": "Benutzername oder Passwort falsch",
   "INVALID_EMAIL_FORMAT": "Ungültiges E-Mail Format",
   "INVALID_USERNAME_FORMAT": "Ungültiges Benutzernamen Format",
   "SAVE_SUCCESS": "Erfolgreich gespeichert",

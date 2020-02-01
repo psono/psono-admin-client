@@ -1,4 +1,5 @@
 {
+  "USERNAME_OR_PASSWORD_WRONG": "Username or password wrong",
   "INVALID_EMAIL_FORMAT": "Invalid email format",
   "INVALID_USERNAME_FORMAT": "Invalid username format",
   "SAVE_SUCCESS": "Saved successfully",

@@ -156,23 +156,8 @@ class SecurityReports extends React.Component {
                     g.master_password_breached = g.check_haveibeenpwned
                         ? g.master_password_breached
                         : t('UNTESTED');
-                    g.master_password_breached = g.master_password_tested
-                        ? g.master_password_breached
-                        : t('UNTESTED');
-                    g.master_password_duplicate = g.master_password_tested
-                        ? g.master_password_duplicate
-                        : t('UNTESTED');
-                    g.master_password_length = g.master_password_tested
-                        ? g.master_password_length
-                        : t('UNTESTED');
-                    g.master_password_variation_count = g.master_password_tested
-                        ? g.master_password_variation_count
-                        : t('UNTESTED');
 
                     g.check_haveibeenpwned = g.check_haveibeenpwned
-                        ? t('YES')
-                        : t('NO');
-                    g.master_password_tested = g.master_password_tested
                         ? t('YES')
                         : t('NO');
                 });

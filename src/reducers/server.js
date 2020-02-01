@@ -3,7 +3,6 @@ import {
     SET_SERVER_INFO,
     SET_SERVER_URL
 } from '../actions/actionTypes';
-import store from '../services/store';
 
 const default_url = '';
 const default_api = '';
@@ -48,9 +47,7 @@ function server(
     switch (action.type) {
         case LOGOUT:
             return Object.assign({}, state, {
-                url: store.getState().user.remember_me
-                    ? state.url
-                    : default_url.toLowerCase(),
+                url: action.remember_me ? state.url : default_url.toLowerCase(),
                 api: default_api,
                 authentication_methods: default_authentication_methods,
                 build: default_build,
