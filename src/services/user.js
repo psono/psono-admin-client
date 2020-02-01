@@ -443,7 +443,7 @@ function logout(msg = '') {
     const session_secret_key = store.getState().user.session_secret_key;
 
     psono_server.logout(token, session_secret_key);
-    action.logout();
+    action.logout(store.getState().user.remember_me);
     if (msg) {
         notification.info_send(msg);
     }

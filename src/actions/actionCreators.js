@@ -60,10 +60,11 @@ function set_user_info_3(user_id, user_email, user_secret_key) {
     };
 }
 
-function logout() {
+function logout(remember_me) {
     return dispatch => {
         dispatch({
-            type: LOGOUT
+            type: LOGOUT,
+            remember_me
         });
     };
 }
