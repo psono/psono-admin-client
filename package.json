@@ -9,7 +9,7 @@
   "license": "Apache-2.0",
   "homepage": "/portal",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.19.2",
     "chartist": "^0.10.1",
     "chartist-plugin-axistitle": "^0.0.4",
     "clientjs": "^0.1.11",
