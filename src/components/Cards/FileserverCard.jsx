@@ -7,15 +7,15 @@ import {
     Typography,
     Tabs,
     Tab
-} from 'material-ui';
+} from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
-import { Domain } from 'material-ui-icons';
+import { Domain } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
 
-import { tasksCardStyle } from '../../variables/styles';
+import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class FileserverCard extends React.Component {
     state = {
@@ -45,16 +45,12 @@ class FileserverCard extends React.Component {
                             }}
                             value={this.state.value}
                             onChange={this.handleChange}
-                            indicatorClassName={classes.displayNone}
                             textColor="inherit"
                         >
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Domain className={classes.tabIcon} />}
                                 label={t('FILESERVER')}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
@@ -8,15 +8,15 @@ import { Redirect } from 'react-router-dom';
 
 import {
     ChartCard,
-    ItemGrid,
+    GridItem,
     RegularCard,
     CustomTable
 } from '../../components';
-import { dashboardStyle } from '../../variables/styles';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 
 import ChartistGraph from 'react-chartist';
-import { Search } from 'material-ui-icons';
+import { Search } from '@material-ui/icons';
 
 class SecurityReports extends React.Component {
     state = {
@@ -190,7 +190,7 @@ class SecurityReports extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -255,8 +255,8 @@ class SecurityReports extends React.Component {
                             fontAwesomeStatsIcon="flag"
                             statText={t('HOW_MANY_USERS_SENT_A_REPORT')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -327,8 +327,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_USERS_ARE_MISSING_A_SECOND_FACTOR'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -399,10 +399,10 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_USERS_ARE_MISSING_A_RECOVERY_CODE'
                             )}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -487,8 +487,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_MASTER_PASSWORDS_HAVE_BEEN_BREACHED'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -559,8 +559,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_MASTER_PASSWORDS_HAVE_BEEN_USED_MULTIPLE_TIMES'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -645,8 +645,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_PASSWORDS_HAVE_BEEN_BREACHED'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -717,7 +717,7 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_PASSWORDS_HAVE_BEEN_USED_MULTIPLE_TIMES'
                             )}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
                     <RegularCard

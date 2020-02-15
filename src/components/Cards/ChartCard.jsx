@@ -6,11 +6,11 @@ import {
     CardHeader,
     CardActions,
     Typography
-} from 'material-ui';
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 
-import { chartCardStyle } from '../../variables/styles';
+import chartCardStyle from '../../assets/jss/material-dashboard-react/chartCardStyle';
 
 class ChartCard extends React.Component {
     render() {

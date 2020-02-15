@@ -42,7 +42,7 @@ import Footer from './Footer/Footer.jsx';
 // // // Grid
 // #############################
 
-import ItemGrid from './Grid/ItemGrid.jsx';
+import GridItem from './Grid/GridItem.jsx';
 
 // ##############################
 // // // Header
@@ -76,6 +76,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 
 import Table from './Table/Table.jsx';
 import CustomTable from './Table/CustomTable.jsx';
+import CustomMUIDataTable from './Table/CustomMUIDataTable.jsx';
 
 // ##############################
 // // // Tasks
@@ -130,7 +131,7 @@ export {
     // Footer
     Footer,
     // Grid
-    ItemGrid,
+    GridItem,
     // Header
     Header,
     HeaderLinks,
@@ -144,6 +145,7 @@ export {
     // Table
     Table,
     CustomTable,
+    CustomMUIDataTable,
     // Tasks
     Tasks,
     // Typography

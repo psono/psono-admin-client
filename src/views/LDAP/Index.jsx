@@ -1,11 +1,11 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { LDAPCard, ItemGrid } from '../../components';
-import { dashboardStyle } from '../../variables/styles';
+import { LDAPCard, GridItem } from '../../components';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 
 class Users extends React.Component {
@@ -89,13 +89,13 @@ class Users extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <LDAPCard
                             ldap_users={this.state.ldap_users}
                             ldap_groups={this.state.ldap_groups}
                             onSyncGroupsLdap={() => this.onSyncGroupsLdap()}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

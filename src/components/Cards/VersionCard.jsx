@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
 import { compose } from 'redux';
 
-import { InfoOutline, Warning, Done, Update, ThumbUp } from 'material-ui-icons';
+import {
+    InfoOutline,
+    Warning,
+    Done,
+    Update,
+    ThumbUp
+} from '@material-ui/icons';
 
 import StatsCard from './StatsCard';
 

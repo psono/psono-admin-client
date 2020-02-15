@@ -1,7 +1,7 @@
 /*!
 
  =========================================================
- * Material Dashboard React - v1.0.0 based on Material Dashboard - v1.2.0
+ * Material Dashboard React - v1.2.0 based on Material Dashboard - v1.2.0
  =========================================================
 
  * Product Page: http://www.creative-tim.com/product/material-dashboard-react
@@ -233,4 +233,9 @@ footer ul li a:hover {
         z-index: 9999;
         overflow-x: hidden;
     }
+}
+
+.MuiTab-labelIcon-361,
+.MuiTab-labelIcon-588 {
+    min-height: 50px !important;
 }

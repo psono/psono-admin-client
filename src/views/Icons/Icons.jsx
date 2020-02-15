@@ -1,16 +1,16 @@
 import React from 'react';
-import { withStyles, Grid, Hidden } from 'material-ui';
+import { withStyles, Grid, Hidden } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-import { RegularCard, P, A, ItemGrid } from '../../components';
+import { RegularCard, P, A, GridItem } from '../../components';
 
-import { iconsStyle } from '../../variables/styles';
+import iconsStyle from '../../assets/jss/material-dashboard-react/iconsStyle';
 
 class Icons extends React.Component {
     render() {
         return (
             <Grid container>
-                <ItemGrid xs={12} sm={12} md={12}>
+                <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
                         plainCard
                         cardTitle="Material Design Icons"
@@ -41,7 +41,7 @@ class Icons extends React.Component {
                                     </iframe>
                                 </Hidden>
                                 <Hidden only={['lg', 'md']}>
-                                    <ItemGrid xs={12} sm={12} md={6}>
+                                    <GridItem xs={12} sm={12} md={6}>
                                         <h5>
                                             The icons are visible on Desktop
                                             mode inside an iframe. Since the
@@ -57,12 +57,12 @@ class Icons extends React.Component {
                                                 Material Icons
                                             </a>
                                         </h5>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Hidden>
                             </div>
                         }
                     />
-                </ItemGrid>
+                </GridItem>
             </Grid>
         );
     }

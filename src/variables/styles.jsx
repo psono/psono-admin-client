@@ -916,10 +916,6 @@ export const tasksCardStyle = theme => ({
         fontSize: '12px',
         fontWeight: '400',
         marginLeft: '-10px'
-    },
-    rootInheritSelected: {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        transition: 'background-color .1s .2s'
     }
 });
 

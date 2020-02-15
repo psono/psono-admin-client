@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, Checkbox } from 'material-ui';
+import { withStyles, Grid, Checkbox } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import { BarLoader } from 'react-spinners';
-import { Check } from 'material-ui-icons';
+import { Check } from '@material-ui/icons';
 import { Redirect } from 'react-router-dom';
 import {
     RegularCard,
     Button,
     CustomInput,
-    ItemGrid,
+    GridItem,
     SnackbarContent
 } from '../../components';
 
@@ -411,7 +411,7 @@ class LoginForm extends React.Component {
     render() {
         const { classes, t } = this.props;
         const errors = (
-            <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
+            <GridItem xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
                 {this.state.errors.map((prop, index) => {
                     return (
                         <SnackbarContent
@@ -421,7 +421,7 @@ class LoginForm extends React.Component {
                         />
                     );
                 })}
-            </ItemGrid>
+            </GridItem>
         );
 
         if (this.state.loggedIn) {
@@ -458,7 +458,7 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container style={regular_login_style}>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('USERNAME')}
                                             id="username"
@@ -470,10 +470,10 @@ class LoginForm extends React.Component {
                                                 onChange: this.onChangeUsername
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container style={regular_login_style}>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('PASSWORD')}
                                             id="password"
@@ -486,7 +486,7 @@ class LoginForm extends React.Component {
                                                 type: 'password'
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 {saml_provider.map((provider, i) => {
                                     const initiate_saml_login_helper = () => {
@@ -496,7 +496,7 @@ class LoginForm extends React.Component {
                                     };
                                     return (
                                         <Grid container key={i}>
-                                            <ItemGrid
+                                            <GridItem
                                                 xs={4}
                                                 sm={4}
                                                 md={4}
@@ -534,13 +534,13 @@ class LoginForm extends React.Component {
                                                         }
                                                     />
                                                 </Button>
-                                            </ItemGrid>
+                                            </GridItem>
                                         </Grid>
                                     );
                                 })}
 
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <Checkbox
                                             tabIndex={1}
                                             checked={this.state.remember_me}
@@ -564,10 +564,10 @@ class LoginForm extends React.Component {
                                             }}
                                         />{' '}
                                         {t('REMEMBER_USERNAME_AND_SERVER')}
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <Checkbox
                                             tabIndex={2}
                                             checked={this.state.trust_device}
@@ -591,10 +591,10 @@ class LoginForm extends React.Component {
                                             }}
                                         />{' '}
                                         {t('TRUST_DEVICE')}
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container style={regular_login_style}>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={4}
                                         sm={4}
                                         md={4}
@@ -627,11 +627,11 @@ class LoginForm extends React.Component {
                                                 }
                                             />
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                                 <Grid container style={server_style}>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('SERVER')}
                                             id="server"
@@ -643,7 +643,7 @@ class LoginForm extends React.Component {
                                                 onChange: this.onChangeServer
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                             </form>
                         }
@@ -665,7 +665,7 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('FINGERPRINT')}
                                             id="server_fingerprint"
@@ -686,10 +686,10 @@ class LoginForm extends React.Component {
                                             close
                                             color="info"
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={12}
                                         sm={4}
                                         md={12}
@@ -708,7 +708,7 @@ class LoginForm extends React.Component {
                                         >
                                             Cancel
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                             </form>
@@ -732,7 +732,7 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('YUBIKEY')}
                                             id="yubikey_otp"
@@ -745,10 +745,10 @@ class LoginForm extends React.Component {
                                                     .onChangeYubikeyOTP
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={12}
                                         sm={4}
                                         md={12}
@@ -767,7 +767,7 @@ class LoginForm extends React.Component {
                                         >
                                             Cancel
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                             </form>
@@ -791,7 +791,7 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t(
                                                 'GOOGLE_AUTHENTICATOR'
@@ -807,10 +807,10 @@ class LoginForm extends React.Component {
                                                     .onChangeGoogleAuthentication
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={12}
                                         sm={4}
                                         md={12}
@@ -831,7 +831,7 @@ class LoginForm extends React.Component {
                                         >
                                             Cancel
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                             </form>
@@ -857,7 +857,7 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
                                             labelText={t('DUO_CODE')}
                                             id="duo"
@@ -869,10 +869,10 @@ class LoginForm extends React.Component {
                                                 onChange: this.onChangeDuo
                                             }}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={12}
                                         sm={4}
                                         md={12}
@@ -891,7 +891,7 @@ class LoginForm extends React.Component {
                                         >
                                             {t('CANCEL')}
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                             </form>
@@ -917,17 +917,17 @@ class LoginForm extends React.Component {
                                 autoComplete="off"
                             >
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12}>
                                         <SnackbarContent
                                             color="warning"
                                             message={t(
                                                 'ACCEPTING_THIS_WILL_SEND_YOUR_PLAIN_PASSWORD'
                                             )}
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>
-                                    <ItemGrid
+                                    <GridItem
                                         xs={12}
                                         sm={4}
                                         md={12}
@@ -946,7 +946,7 @@ class LoginForm extends React.Component {
                                         >
                                             {t('DISAPPROVE_UNSAFE')}
                                         </Button>
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
                                 <Grid container>{errors}</Grid>
                             </form>

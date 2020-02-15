@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 
 const style = {
     grid: {
@@ -7,7 +7,7 @@ const style = {
     }
 };
 
-class ItemGrid extends React.Component {
+class GridItem extends React.Component {
     render() {
         const { classes, children, ...rest } = this.props;
         return (
@@ -18,4 +18,4 @@ class ItemGrid extends React.Component {
     }
 }
 
-export default withStyles(style)(ItemGrid);
+export default withStyles(style)(GridItem);

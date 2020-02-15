@@ -1,6 +1,6 @@
 import LDAP from '../views/LDAP/Index';
 
-import { Business } from 'material-ui-icons';
+import { Business } from '@material-ui/icons';
 
 let routes = [
     {

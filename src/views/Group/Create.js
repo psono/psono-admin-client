@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, withStyles } from 'material-ui';
+import { Grid, withStyles } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import { Redirect } from 'react-router-dom';
@@ -7,11 +7,11 @@ import { Redirect } from 'react-router-dom';
 import {
     RegularCard,
     CustomInput,
-    ItemGrid,
+    GridItem,
     Button
 } from '../../components/index';
 import psono_server from '../../services/api-server';
-import { customInputStyle } from '../../variables/styles';
+import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
 class User extends React.Component {
     state = {
@@ -71,14 +71,14 @@ class User extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <RegularCard
                             cardTitle={t('CREATE_GROUP')}
                             cardSubtitle={t('ADD_NECESSARY_DETAILS_BELOW')}
                             content={
                                 <div>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={7}>
+                                        <GridItem xs={12} sm={12} md={7}>
                                             <CustomInput
                                                 labelText={t('GROUP_NAME')}
                                                 id="groupname"
@@ -101,7 +101,7 @@ class User extends React.Component {
                                                     'name'
                                                 )}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                 </div>
                             }
@@ -115,7 +115,7 @@ class User extends React.Component {
                                 </Button>
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

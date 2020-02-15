@@ -1,18 +1,18 @@
 import React from 'react';
-import { Grid, withStyles, Checkbox } from 'material-ui';
+import { Grid, withStyles, Checkbox } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
-import { Check } from 'material-ui-icons';
+import { Check } from '@material-ui/icons';
 
 import {
     RegularCard,
     CustomInput,
-    ItemGrid,
+    GridItem,
     GroupCard
 } from '../../components/index';
 import psono_server from '../../services/api-server';
-import { customInputStyle } from '../../variables/styles';
+import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import helper from '../../services/helper';
 
 class User extends React.Component {
@@ -522,14 +522,14 @@ class User extends React.Component {
             return (
                 <div>
                     <Grid container>
-                        <ItemGrid xs={12} sm={12} md={12}>
+                        <GridItem xs={12} sm={12} md={12}>
                             <RegularCard
                                 cardTitle={t('EDIT_GROUP')}
                                 cardSubtitle={t('UPDATE_GROUP_DETAILS')}
                                 content={
                                     <div>
                                         <Grid container>
-                                            <ItemGrid xs={12} sm={12} md={12}>
+                                            <GridItem xs={12} sm={12} md={12}>
                                                 <CustomInput
                                                     labelText={t('NAME')}
                                                     id="name"
@@ -542,10 +542,10 @@ class User extends React.Component {
                                                         readOnly: true
                                                     }}
                                                 />
-                                            </ItemGrid>
+                                            </GridItem>
                                         </Grid>
                                         <Grid container>
-                                            <ItemGrid xs={12} sm={12} md={12}>
+                                            <GridItem xs={12} sm={12} md={12}>
                                                 <CustomInput
                                                     labelText={t('PUBLIC_KEY')}
                                                     id="public_key"
@@ -558,10 +558,10 @@ class User extends React.Component {
                                                         readOnly: true
                                                     }}
                                                 />
-                                            </ItemGrid>
+                                            </GridItem>
                                         </Grid>
                                         <Grid container>
-                                            <ItemGrid xs={12} sm={12} md={4}>
+                                            <GridItem xs={12} sm={12} md={4}>
                                                 <CustomInput
                                                     labelText={t(
                                                         'CREATION_DATE'
@@ -580,7 +580,7 @@ class User extends React.Component {
                                                         readOnly: true
                                                     }}
                                                 />
-                                            </ItemGrid>
+                                            </GridItem>
                                         </Grid>
                                     </div>
                                 }
@@ -588,10 +588,10 @@ class User extends React.Component {
                                 //     <Button color="primary">Update User</Button>
                                 // }
                             />
-                        </ItemGrid>
+                        </GridItem>
                     </Grid>
                     <Grid container>
-                        <ItemGrid xs={12} sm={12} md={12}>
+                        <GridItem xs={12} sm={12} md={12}>
                             <GroupCard
                                 memberships={group.memberships}
                                 onDeleteMemberships={selected_memberships =>
@@ -602,7 +602,7 @@ class User extends React.Component {
                                 ldap_groups={ldap_groups}
                                 saml_groups={saml_groups}
                             />
-                        </ItemGrid>
+                        </GridItem>
                     </Grid>
                 </div>
             );

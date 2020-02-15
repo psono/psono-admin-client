@@ -1,7 +1,7 @@
 import React from 'react';
 import matchPath from 'react-router/matchPath';
 import PropTypes from 'prop-types';
-import { Menu } from 'material-ui-icons';
+import { Menu } from '@material-ui/icons';
 import {
     withStyles,
     AppBar,
@@ -9,11 +9,11 @@ import {
     IconButton,
     Hidden,
     Button
-} from 'material-ui';
+} from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 
-import { headerStyle } from '../../variables/styles';
+import headerStyle from '../../assets/jss/material-dashboard-react/headerStyle';
 import user from '../../services/user';
 
 import HeaderLinks from './HeaderLinks';

@@ -7,7 +7,7 @@ import {
     Typography,
     Tabs,
     Tab
-} from 'material-ui';
+} from '@material-ui/core';
 import {
     Person,
     DevicesOther,
@@ -16,14 +16,15 @@ import {
     DoNotDisturb,
     CheckBox,
     Edit
-} from 'material-ui-icons';
+} from '@material-ui/icons';
+//import MUIDataTable from "mui-datatables";
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
 import { CustomTable, Button } from '../../components';
 
-import { tasksCardStyle } from '../../variables/styles';
+import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class UsersCard extends React.Component {
     state = {
@@ -33,6 +34,53 @@ class UsersCard extends React.Component {
         this.setState({ value });
     };
     render() {
+        //
+        // const columns2 = [
+        //     {
+        //         name: "name",
+        //         label: "Name",
+        //         options: {
+        //             filter: true,
+        //             sort: true,
+        //         }
+        //     },
+        //     {
+        //         name: "company",
+        //         label: "Company",
+        //         options: {
+        //             filter: true,
+        //             sort: false,
+        //         }
+        //     },
+        //     {
+        //         name: "city",
+        //         label: "City",
+        //         options: {
+        //             filter: true,
+        //             sort: false,
+        //         }
+        //     },
+        //     {
+        //         name: "state",
+        //         label: "State",
+        //         options: {
+        //             filter: true,
+        //             sort: false,
+        //         }
+        //     },
+        // ];
+        //
+        // const data2 = [
+        //     { name: "Joe James", company: "Test Corp", city: "Yonkers", state: "NY" },
+        //     { name: "John Walsh", company: "Test Corp", city: "Hartford", state: "CT" },
+        //     { name: "Bob Herm", company: "Test Corp", city: "Tampa", state: "FL" },
+        //     { name: "James Houston", company: "Test Corp", city: "Dallas", state: "TX" },
+        // ];
+        //
+        // const options2 = {
+        //     filterType: 'checkbox',
+        // };
+
         const {
             classes,
             t,
@@ -65,16 +113,12 @@ class UsersCard extends React.Component {
                             }}
                             value={this.state.value}
                             onChange={this.handleChange}
-                            indicatorClassName={classes.displayNone}
                             textColor="inherit"
                         >
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Person className={classes.tabIcon} />}
                                 label={t('USERS')}
@@ -82,10 +126,7 @@ class UsersCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={
                                     <DevicesOther className={classes.tabIcon} />
@@ -95,10 +136,7 @@ class UsersCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('GROUPS')}
@@ -109,6 +147,13 @@ class UsersCard extends React.Component {
                 <CardContent>
                     {this.state.value === 0 && (
                         <Typography component="div">
+                            {/*<MUIDataTable*/}
+                            {/*    title={t('USERS')}*/}
+                            {/*    data={data2}*/}
+                            {/*    columns={columns2}*/}
+                            {/*    options={options2}*/}
+                            {/*/>*/}
+
                             <CustomTable
                                 title={t('USERS')}
                                 headerFunctions={[

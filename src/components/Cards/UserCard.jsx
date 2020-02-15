@@ -7,15 +7,15 @@ import {
     Typography,
     Tabs,
     Tab
-} from 'material-ui';
-import { DevicesOther, Group, Delete } from 'material-ui-icons';
+} from '@material-ui/core';
+import { DevicesOther, Group, Delete } from '@material-ui/icons';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
 import { CustomTable } from '../../components';
 
-import { tasksCardStyle } from '../../variables/styles';
+import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class UserCard extends React.Component {
     state = {
@@ -59,16 +59,12 @@ class UserCard extends React.Component {
                             }}
                             value={this.state.value}
                             onChange={this.handleChange}
-                            indicatorClassName={classes.displayNone}
                             textColor="inherit"
                         >
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={
                                     <DevicesOther className={classes.tabIcon} />
@@ -78,10 +74,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('MEMBERSHIPS')}
@@ -89,10 +82,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('DUOS')}
@@ -100,10 +90,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('YUBIKEYS')}
@@ -111,10 +98,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('GOOGLE_AUTHS')}
@@ -122,10 +106,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('RECOVERY_CODES')}
@@ -133,10 +114,7 @@ class UserCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('EMERGENCY_CODES')}

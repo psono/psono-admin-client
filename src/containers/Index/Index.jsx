@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 // creates a beautiful scrollbar
 import PerfectScrollbar from 'perfect-scrollbar';
@@ -13,7 +13,7 @@ import sidebarLinks from '../../routes/sidebar';
 import ldapLinks from '../../routes/ldap';
 import samlLinks from '../../routes/saml';
 
-import { appStyle } from '../../variables/styles';
+import appStyle from '../../assets/jss/material-dashboard-react/appStyle';
 
 import image from '../../assets/img/background.jpg';
 import logo from '../../assets/img/logo.png';

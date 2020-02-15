@@ -1,8 +1,8 @@
 import React from 'react';
-import { withStyles, Button } from 'material-ui';
+import { withStyles, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-import { buttonStyle } from '../../variables/styles';
+import buttonStyle from '../../assets/jss/material-dashboard-react/buttonStyle';
 
 class RegularButton extends React.Component {
     render() {

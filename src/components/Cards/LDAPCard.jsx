@@ -7,15 +7,15 @@ import {
     Typography,
     Tabs,
     Tab
-} from 'material-ui';
+} from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
-import { Person, Group } from 'material-ui-icons';
+import { Person, Group } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
 import { CustomTable, Button } from '../../components';
 
-import { tasksCardStyle } from '../../variables/styles';
+import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class LDAPCard extends React.Component {
     state = {
@@ -48,16 +48,12 @@ class LDAPCard extends React.Component {
                             }}
                             value={this.state.value}
                             onChange={this.handleChange}
-                            indicatorClassName={classes.displayNone}
                             textColor="inherit"
                         >
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Person className={classes.tabIcon} />}
                                 label={t('USERS')}
@@ -65,10 +61,7 @@ class LDAPCard extends React.Component {
                             <Tab
                                 classes={{
                                     wrapper: classes.tabWrapper,
-                                    rootLabelIcon: classes.labelIcon,
-                                    label: classes.label,
-                                    rootInheritSelected:
-                                        classes.rootInheritSelected
+                                    label: classes.label
                                 }}
                                 icon={<Group className={classes.tabIcon} />}
                                 label={t('GROUPS')}

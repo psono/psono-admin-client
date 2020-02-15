@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Checkbox, withStyles } from 'material-ui';
+import { Grid, Checkbox, withStyles } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
@@ -8,12 +8,12 @@ import {
     Button,
     RegularCard,
     CustomInput,
-    ItemGrid,
+    GridItem,
     UserCard,
     SnackbarContent
 } from '../../components';
 import psono_server from '../../services/api-server';
-import { customInputStyle } from '../../variables/styles';
+import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import helper from '../../services/helper';
 
 class User extends React.Component {
@@ -326,7 +326,7 @@ class User extends React.Component {
             this.authentication = 'UNKNOWN';
         }
         const errors = (
-            <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
+            <GridItem xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
                 {this.state.errors.map((prop, index) => {
                     return (
                         <SnackbarContent
@@ -336,10 +336,10 @@ class User extends React.Component {
                         />
                     );
                 })}
-            </ItemGrid>
+            </GridItem>
         );
         const msgs = (
-            <ItemGrid xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
+            <GridItem xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
                 {this.state.msgs.map((prop, index) => {
                     return (
                         <SnackbarContent
@@ -349,20 +349,20 @@ class User extends React.Component {
                         />
                     );
                 })}
-            </ItemGrid>
+            </GridItem>
         );
 
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <RegularCard
                             cardTitle={t('EDIT_USER')}
                             cardSubtitle={t('UPDATE_USER_DETAILS')}
                             content={
                                 <div>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={7}>
+                                        <GridItem xs={12} sm={12} md={7}>
                                             <CustomInput
                                                 labelText={t('USERNAME')}
                                                 id="username"
@@ -375,8 +375,8 @@ class User extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={5}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={5}>
                                             <CustomInput
                                                 labelText={t('AUTHENTICATION')}
                                                 id="authentication"
@@ -389,10 +389,10 @@ class User extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={12}>
+                                        <GridItem xs={12} sm={12} md={12}>
                                             <CustomInput
                                                 labelText={t('PUBLIC_KEY')}
                                                 id="public_key"
@@ -405,10 +405,10 @@ class User extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText={t(
                                                     'REGISTRATION_DATE'
@@ -427,8 +427,8 @@ class User extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={8}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={8}>
                                             <CustomInput
                                                 labelText={t('EMAIL')}
                                                 id="email"
@@ -441,10 +441,10 @@ class User extends React.Component {
                                                         .onChangeEmailChange
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -455,8 +455,8 @@ class User extends React.Component {
                                                 />{' '}
                                                 {t('ACTIVE')}
                                             </div>
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -469,8 +469,8 @@ class User extends React.Component {
                                                 />{' '}
                                                 {t('EMAIL_VERIFIED')}
                                             </div>
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -481,7 +481,7 @@ class User extends React.Component {
                                                 />{' '}
                                                 {t('SUPERUSER')}
                                             </div>
-                                        </ItemGrid>
+                                        </GridItem>
                                         {errors}
                                         {msgs}
                                     </Grid>
@@ -493,10 +493,10 @@ class User extends React.Component {
                                 </Button>
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <UserCard
                             sessions={user.sessions}
                             memberships={user.memberships}
@@ -533,7 +533,7 @@ class User extends React.Component {
                                 )
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

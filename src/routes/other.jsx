@@ -3,7 +3,7 @@ import UserEdit from '../views/User/Edit';
 import GroupEdit from '../views/Group/Edit';
 import GroupCreate from '../views/Group/Create';
 
-import { Person, Group, Timeline } from 'material-ui-icons';
+import { Person, Group, Timeline } from '@material-ui/icons';
 
 let routes = [
     {

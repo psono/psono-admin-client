@@ -1,13 +1,13 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { UsersCard, ChartCard, ItemGrid } from '../../components';
-import { dashboardStyle } from '../../variables/styles';
+import { UsersCard, ChartCard, GridItem } from '../../components';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 import helper from '../../services/helper';
 
@@ -336,7 +336,7 @@ class Users extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -380,8 +380,8 @@ class Users extends React.Component {
                             fontAwesomeStatsIcon="linux"
                             statText={t('DISTRIBUTION_BY_OPERATION_SYSTEM')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -425,8 +425,8 @@ class Users extends React.Component {
                             fontAwesomeStatsIcon="tablet"
                             statText={t('DISTRIBUTION_BY_DEVICE')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -470,8 +470,8 @@ class Users extends React.Component {
                             fontAwesomeStatsIcon="chrome"
                             statText={t('DISTRIBUTION_BY_BROWSER')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -515,10 +515,10 @@ class Users extends React.Component {
                             fontAwesomeStatsIcon="angellist"
                             statText={t('DISTRIBUTION_BY_TWO_FACTOR')}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <UsersCard
                             users={this.state.users}
                             sessions={this.state.sessions}
@@ -547,7 +547,7 @@ class Users extends React.Component {
                                 this.props.state.server.type === 'EE'
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

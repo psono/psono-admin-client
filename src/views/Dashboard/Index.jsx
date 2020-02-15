@@ -1,9 +1,9 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import { withTranslation, Trans } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
-import { ArrowUpward, ArrowDownward, AccessTime } from 'material-ui-icons';
+import { ArrowUpward, ArrowDownward, AccessTime } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 // react plugin for creating charts
@@ -18,13 +18,13 @@ import {
     ReleaseCard,
     FileserverCard,
     RegularCard,
-    ItemGrid,
+    GridItem,
     CustomTable
 } from '../../components';
 
 import { dailySalesChart } from '../../variables/charts';
 
-import { dashboardStyle } from '../../variables/styles';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import api_static from '../../services/api-static';
 import psono_server from '../../services/api-server';
 import psono_client from '../../services/api-client';
@@ -321,15 +321,15 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    <GridItem xs={12} sm={4} md={4}>
                         <HealthcheckCard
                             title={t('DB_ACCESSIBILITY')}
                             sub_title_success={t('IS_DB_REACHABLE')}
                             sub_title_error={t('DB_CONNECTION_BROKEN')}
                             healthcheck={this.state.healthcheck.db_read.healthy}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <HealthcheckCard
                             title={t('DB_SYNCHRONIZED')}
                             sub_title_success={t(
@@ -340,8 +340,8 @@ class Dashboard extends React.Component {
                             )}
                             healthcheck={this.state.healthcheck.db_sync.healthy}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <HealthcheckCard
                             title={t('TIME_SYNC')}
                             sub_title_success={t('IS_SERVER_TIME_CORRECT')}
@@ -350,10 +350,10 @@ class Dashboard extends React.Component {
                                 this.state.healthcheck.time_sync.healthy
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    <GridItem xs={12} sm={12} md={6}>
                         {this.state.data_day_total !== undefined ? (
                             <ChartCard
                                 chart={
@@ -437,8 +437,8 @@ class Dashboard extends React.Component {
                                 }
                             />
                         ) : null}
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
                         {this.state.data_month_total !== undefined ? (
                             <ChartCard
                                 chart={
@@ -506,10 +506,10 @@ class Dashboard extends React.Component {
                                 statText={t('LAST_REGISRATION')}
                             />
                         ) : null}
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <LicenseCard
                             active={this.state.server_user_count_active}
                             total={this.state.server_user_count_total}
@@ -517,29 +517,29 @@ class Dashboard extends React.Component {
                             valid_from={this.state.server_license_valid_from}
                             valid_till={this.state.server_license_valid_till}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <Sessions
                             users={this.state.server_token_count_user}
                             devices={this.state.server_token_count_device}
                             total={this.state.server_token_count_total}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={4} lg={2}>
                         <VersionCard
                             used_version={this.state.client_used_version}
                             latest_version={this.state.client_latest_version}
                             title={t('CLIENT_VERSION')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={4} lg={2}>
                         <VersionCard
                             used_version={this.state.server_used_version}
                             latest_version={this.state.server_latest_version}
                             title={t('SERVER_VERSION')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={4} lg={2}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={4} lg={2}>
                         <VersionCard
                             used_version={this.state.admin_client_used_version}
                             latest_version={
@@ -547,10 +547,10 @@ class Dashboard extends React.Component {
                             }
                             title={t('PORTAL_VERSION')}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    <GridItem xs={12} sm={12} md={6}>
                         {files && (
                             <FileserverCard
                                 fileserver={this.state.fileserver}
@@ -565,8 +565,8 @@ class Dashboard extends React.Component {
                             admin_client_releases={this.state.admin_client_tags}
                             fileserver_releases={this.state.fileserver_tags}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
                         {this.state.registrations !== undefined ? (
                             <RegularCard
                                 headerColor="orange"
@@ -587,7 +587,7 @@ class Dashboard extends React.Component {
                                 }
                             />
                         ) : null}
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

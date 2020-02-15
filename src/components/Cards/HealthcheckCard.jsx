@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 
-import { Warning, Done, Update, Favorite } from 'material-ui-icons';
+import { Warning, Done, Update, Favorite } from '@material-ui/icons';
 
 import StatsCard from './StatsCard';
 

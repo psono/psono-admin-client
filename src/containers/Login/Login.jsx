@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import { LoginForm, Notification } from '../../components';

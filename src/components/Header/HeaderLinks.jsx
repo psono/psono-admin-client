@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Person //, Notifications, Dashboard, Search,
-} from 'material-ui-icons';
+} from '@material-ui/icons';
 import classNames from 'classnames';
 import {
     withStyles,
@@ -12,13 +12,13 @@ import {
     Paper,
     ClickAwayListener,
     Hidden
-} from 'material-ui';
+} from '@material-ui/core';
 import { Manager, Target, Popper } from 'react-popper';
 
 // import { Snackbar CustomInput, IconButton as SearchButton } from '../../components';
 import { Notification } from '../../components';
 
-import { headerLinksStyle } from '../../variables/styles';
+import headerLinksStyle from '../../assets/jss/material-dashboard-react/headerLinksStyle';
 
 class HeaderLinks extends React.Component {
     state = {
