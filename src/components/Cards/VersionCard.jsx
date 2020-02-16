@@ -4,7 +4,7 @@ import { withTranslation, Trans } from 'react-i18next';
 import { compose } from 'redux';
 
 import {
-    InfoOutline,
+    InfoOutlined,
     Warning,
     Done,
     Update,
@@ -42,7 +42,7 @@ class VersionCard extends React.Component {
         } else {
             return (
                 <StatsCard
-                    icon={InfoOutline}
+                    icon={InfoOutlined}
                     iconColor="red"
                     title={title}
                     description={used_version}

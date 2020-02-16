@@ -9,8 +9,8 @@
   "license": "Apache-2.0",
   "homepage": "/portal",
   "dependencies": {
-    "@material-ui/core": "^1.5.1",
-    "@material-ui/icons": "^1.1.1",
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "axios": "^0.19.2",
     "chartist": "^0.10.1",
     "chartist-plugin-axistitle": "^0.0.4",

@@ -8,15 +8,13 @@ import {
     Tabs,
     Tab
 } from '@material-ui/core';
-import {
-    Person,
-    DevicesOther,
-    Group,
-    Delete,
-    DoNotDisturb,
-    CheckBox,
-    Edit
-} from '@material-ui/icons';
+import Person from '@material-ui/icons/Person';
+import DevicesOther from '@material-ui/icons/DevicesOther';
+import Group from '@material-ui/icons/Group';
+import Delete from '@material-ui/icons/Delete';
+import NotInterested from '@material-ui/icons/NotInterested';
+import CheckBox from '@material-ui/icons/CheckBox';
+import Edit from '@material-ui/icons/Edit';
 //import MUIDataTable from "mui-datatables";
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
@@ -171,7 +169,7 @@ class UsersCard extends React.Component {
                                     {
                                         title: t('DEACTIVATE_USER_S'),
                                         onClick: onDeactivate,
-                                        icon: <DoNotDisturb />
+                                        icon: <NotInterested />
                                     },
                                     {
                                         title: t('DELETE_USER_S'),
