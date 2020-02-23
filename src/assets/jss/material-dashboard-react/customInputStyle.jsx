@@ -7,7 +7,7 @@ import {
     dangerColor,
     successColor,
     defaultFont
-} from '../material-dashboard-react.jsx';
+} from '../material-dashboard-react.js';
 
 const customInputStyle = {
     disabled: {
@@ -21,17 +21,17 @@ const customInputStyle = {
             height: '1px !important'
         },
         '&:after': {
-            backgroundColor: primaryColor
+            backgroundColor: primaryColor[0]
         }
     },
     underlineError: {
         '&:after': {
-            backgroundColor: dangerColor
+            backgroundColor: dangerColor[0]
         }
     },
     underlineSuccess: {
         '&:after': {
-            backgroundColor: successColor
+            backgroundColor: successColor[0]
         }
     },
     labelRoot: {
@@ -42,10 +42,10 @@ const customInputStyle = {
         lineHeight: '1.42857'
     },
     labelRootError: {
-        color: dangerColor
+        color: dangerColor[0]
     },
     labelRootSuccess: {
-        color: successColor
+        color: successColor[0]
     },
     feedback: {
         position: 'absolute',

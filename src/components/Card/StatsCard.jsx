@@ -39,7 +39,7 @@ function StatsCard({ ...props }) {
                     {title}
                 </Typography>
                 <Typography
-                    variant="headline"
+                    variant="h2"
                     component="h2"
                     className={classes.cardTitle}
                 >
@@ -83,12 +83,12 @@ StatsCard.defaultProps = {
 
 StatsCard.propTypes = {
     classes: PropTypes.object.isRequired,
-    icon: PropTypes.func.isRequired,
+    icon: PropTypes.object.isRequired,
     iconColor: PropTypes.oneOf(['orange', 'green', 'red', 'blue', 'purple']),
     title: PropTypes.node,
     description: PropTypes.node,
     small: PropTypes.node,
-    statIcon: PropTypes.func.isRequired,
+    statIcon: PropTypes.object.isRequired,
     statIconColor: PropTypes.oneOf([
         'warning',
         'primary',

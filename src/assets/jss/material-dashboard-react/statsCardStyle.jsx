@@ -19,7 +19,7 @@ import {
     infoColor,
     primaryColor,
     roseColor
-} from '../material-dashboard-react.jsx';
+} from '../material-dashboard-react.js';
 
 const statsCardStyle = {
     card: {
@@ -42,16 +42,16 @@ const statsCardStyle = {
         padding: '15px 20px'
     },
     cardIcon: {
-        width: '40px',
-        height: '36px',
-        fill: '#fff'
+        width: '40px!important',
+        height: '36px!important',
+        fill: '#fff!important'
     },
     cardAvatar: {
         margin: '8px'
     },
     cardCategory: {
         marginBottom: '0',
-        color: grayColor,
+        color: grayColor[0],
         margin: '0 0 10px',
         ...defaultFont
     },
@@ -72,7 +72,7 @@ const statsCardStyle = {
     },
     cardStats: {
         lineHeight: '22px',
-        color: grayColor,
+        color: grayColor[0],
         fontSize: '12px',
         display: 'inline-block',
         margin: '0!important'
@@ -84,28 +84,28 @@ const statsCardStyle = {
         height: '16px'
     },
     warningCardStatsIcon: {
-        color: warningColor
+        color: warningColor[0]
     },
     primaryCardStatsIcon: {
-        color: primaryColor
+        color: primaryColor[0]
     },
     dangerCardStatsIcon: {
-        color: dangerColor
+        color: dangerColor[0]
     },
     successCardStatsIcon: {
-        color: successColor
+        color: successColor[0]
     },
     infoCardStatsIcon: {
-        color: infoColor
+        color: infoColor[0]
     },
     roseCardStatsIcon: {
-        color: roseColor
+        color: roseColor[0]
     },
     grayCardStatsIcon: {
-        color: grayColor
+        color: grayColor[0]
     },
     cardStatsLink: {
-        color: primaryColor,
+        color: primaryColor[0],
         textDecoration: 'none',
         ...defaultFont
     }

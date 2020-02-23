@@ -1,7 +1,3 @@
-// ##############################
-// // // Sidebar styles
-// #############################
-
 import {
     drawerWidth,
     transition,
@@ -12,8 +8,12 @@ import {
     infoColor,
     successColor,
     warningColor,
-    dangerColor
-} from '../material-dashboard-react.jsx';
+    dangerColor,
+    whiteColor,
+    grayColor,
+    blackColor,
+    hexToRgb
+} from '../material-dashboard-react.js';
 
 const sidebarStyle = theme => ({
     drawerPaper: {
@@ -23,7 +23,6 @@ const sidebarStyle = theme => ({
         bottom: '0',
         left: '0',
         zIndex: '1',
-        // overflow: 'auto',
         ...boxShadow,
         width: drawerWidth,
         [theme.breakpoints.up('md')]: {
@@ -51,6 +50,16 @@ const sidebarStyle = theme => ({
             ...transition
         }
     },
+    drawerPaperRTL: {
+        [theme.breakpoints.up('md')]: {
+            left: 'auto !important',
+            right: '0 !important'
+        },
+        [theme.breakpoints.down('sm')]: {
+            left: '0  !important',
+            right: 'auto !important'
+        }
+    },
     logo: {
         position: 'relative',
         padding: '15px 15px',
@@ -63,7 +72,7 @@ const sidebarStyle = theme => ({
             height: '1px',
             right: '15px',
             width: 'calc(100% - 30px)',
-            backgroundColor: 'rgba(180, 180, 180, 0.3)'
+            backgroundColor: 'rgba(' + hexToRgb(grayColor[6]) + ', 0.3)'
         }
     },
     logoLink: {
@@ -78,8 +87,11 @@ const sidebarStyle = theme => ({
         textDecoration: 'none',
         backgroundColor: 'transparent',
         '&,&:hover': {
-            color: '#FFFFFF'
+            color: whiteColor
         }
+    },
+    logoLinkRTL: {
+        textAlign: 'right'
     },
     logoImage: {
         width: '100px',
@@ -112,7 +124,7 @@ const sidebarStyle = theme => ({
             height: '100%',
             content: '""',
             display: 'block',
-            background: '#000',
+            background: blackColor,
             opacity: '.8'
         }
     },
@@ -122,12 +134,16 @@ const sidebarStyle = theme => ({
         paddingTop: '0',
         paddingBottom: '0',
         marginBottom: '0',
-        listStyle: 'none'
+        listStyle: 'none',
+        position: 'unset'
     },
     item: {
         position: 'relative',
         display: 'block',
-        textDecoration: 'none'
+        textDecoration: 'none',
+        '&:hover,&:focus,&:visited,&': {
+            color: whiteColor
+        }
     },
     itemLink: {
         width: 'auto',
@@ -143,68 +159,126 @@ const sidebarStyle = theme => ({
     itemIcon: {
         width: '24px',
         height: '30px',
+        fontSize: '24px',
+        lineHeight: '30px',
         float: 'left',
         marginRight: '15px',
         textAlign: 'center',
         verticalAlign: 'middle',
-        color: 'rgba(255, 255, 255, 0.8)'
+        color: 'rgba(' + hexToRgb(whiteColor) + ', 0.8)'
+    },
+    itemIconRTL: {
+        marginRight: '3px',
+        marginLeft: '15px',
+        float: 'right'
     },
     itemText: {
         ...defaultFont,
         margin: '0',
         lineHeight: '30px',
         fontSize: '14px',
-        color: '#FFFFFF'
+        color: whiteColor
+    },
+    itemTextRTL: {
+        textAlign: 'right'
     },
     whiteFont: {
-        color: '#FFFFFF'
+        color: whiteColor
     },
     purple: {
-        backgroundColor: primaryColor,
+        backgroundColor: primaryColor[0],
         ...primaryBoxShadow,
-        '&:hover': {
-            backgroundColor: primaryColor,
+        '&:hover,&:focus': {
+            backgroundColor: primaryColor[0],
             ...primaryBoxShadow
         }
     },
     blue: {
-        backgroundColor: infoColor,
+        backgroundColor: infoColor[0],
         boxShadow:
-            '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)',
-        '&:hover': {
-            backgroundColor: infoColor,
+            '0 12px 20px -10px rgba(' +
+            hexToRgb(infoColor[0]) +
+            ',.28), 0 4px 20px 0 rgba(' +
+            hexToRgb(blackColor) +
+            ',.12), 0 7px 8px -5px rgba(' +
+            hexToRgb(infoColor[0]) +
+            ',.2)',
+        '&:hover,&:focus': {
+            backgroundColor: infoColor[0],
             boxShadow:
-                '0 12px 20px -10px rgba(0,188,212,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(0,188,212,.2)'
+                '0 12px 20px -10px rgba(' +
+                hexToRgb(infoColor[0]) +
+                ',.28), 0 4px 20px 0 rgba(' +
+                hexToRgb(blackColor) +
+                ',.12), 0 7px 8px -5px rgba(' +
+                hexToRgb(infoColor[0]) +
+                ',.2)'
         }
     },
     green: {
-        backgroundColor: successColor,
+        backgroundColor: successColor[0],
         boxShadow:
-            '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)',
-        '&:hover': {
-            backgroundColor: successColor,
+            '0 12px 20px -10px rgba(' +
+            hexToRgb(successColor[0]) +
+            ',.28), 0 4px 20px 0 rgba(' +
+            hexToRgb(blackColor) +
+            ',.12), 0 7px 8px -5px rgba(' +
+            hexToRgb(successColor[0]) +
+            ',.2)',
+        '&:hover,&:focus': {
+            backgroundColor: successColor[0],
             boxShadow:
-                '0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2)'
+                '0 12px 20px -10px rgba(' +
+                hexToRgb(successColor[0]) +
+                ',.28), 0 4px 20px 0 rgba(' +
+                hexToRgb(blackColor) +
+                ',.12), 0 7px 8px -5px rgba(' +
+                hexToRgb(successColor[0]) +
+                ',.2)'
         }
     },
     orange: {
-        backgroundColor: warningColor,
+        backgroundColor: warningColor[0],
         boxShadow:
-            '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)',
-        '&:hover': {
-            backgroundColor: warningColor,
+            '0 12px 20px -10px rgba(' +
+            hexToRgb(warningColor[0]) +
+            ',.28), 0 4px 20px 0 rgba(' +
+            hexToRgb(blackColor) +
+            ',.12), 0 7px 8px -5px rgba(' +
+            hexToRgb(warningColor[0]) +
+            ',.2)',
+        '&:hover,&:focus': {
+            backgroundColor: warningColor[0],
             boxShadow:
-                '0 12px 20px -10px rgba(255,152,0,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(255,152,0,.2)'
+                '0 12px 20px -10px rgba(' +
+                hexToRgb(warningColor[0]) +
+                ',.28), 0 4px 20px 0 rgba(' +
+                hexToRgb(blackColor) +
+                ',.12), 0 7px 8px -5px rgba(' +
+                hexToRgb(warningColor[0]) +
+                ',.2)'
         }
     },
     red: {
-        backgroundColor: dangerColor,
+        backgroundColor: dangerColor[0],
         boxShadow:
-            '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)',
-        '&:hover': {
-            backgroundColor: dangerColor,
+            '0 12px 20px -10px rgba(' +
+            hexToRgb(dangerColor[0]) +
+            ',.28), 0 4px 20px 0 rgba(' +
+            hexToRgb(blackColor) +
+            ',.12), 0 7px 8px -5px rgba(' +
+            hexToRgb(dangerColor[0]) +
+            ',.2)',
+        '&:hover,&:focus': {
+            backgroundColor: dangerColor[0],
             boxShadow:
-                '0 12px 20px -10px rgba(244,67,54,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(244,67,54,.2)'
+                '0 12px 20px -10px rgba(' +
+                hexToRgb(dangerColor[0]) +
+                ',.28), 0 4px 20px 0 rgba(' +
+                hexToRgb(blackColor) +
+                ',.12), 0 7px 8px -5px rgba(' +
+                hexToRgb(dangerColor[0]) +
+                ',.2)'
         }
     },
     sidebarWrapper: {
@@ -214,6 +288,13 @@ const sidebarStyle = theme => ({
         width: '260px',
         zIndex: '4',
         overflowScrolling: 'touch'
+    },
+    activePro: {
+        [theme.breakpoints.up('md')]: {
+            position: 'absolute',
+            width: '100%',
+            bottom: '13px'
+        }
     }
 });
 

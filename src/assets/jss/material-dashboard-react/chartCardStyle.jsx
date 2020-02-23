@@ -19,7 +19,7 @@ import {
     infoColor,
     primaryColor,
     roseColor
-} from '../material-dashboard-react.jsx';
+} from '../material-dashboard-react.js';
 
 const chartCardStyle = {
     card: {
@@ -48,7 +48,7 @@ const chartCardStyle = {
     },
     cardCategory: {
         marginBottom: '0',
-        color: grayColor,
+        color: grayColor[0],
         ...defaultFont,
         fontSize: '0.9em'
     },
@@ -58,7 +58,7 @@ const chartCardStyle = {
     },
     cardStats: {
         lineHeight: '22px',
-        color: grayColor,
+        color: grayColor[0],
         fontSize: '12px',
         display: 'inline-block',
         margin: '0!important'
@@ -70,28 +70,28 @@ const chartCardStyle = {
         height: '16px'
     },
     warningCardStatsIcon: {
-        color: warningColor
+        color: warningColor[0]
     },
     primaryCardStatsIcon: {
-        color: primaryColor
+        color: primaryColor[0]
     },
     dangerCardStatsIcon: {
-        color: dangerColor
+        color: dangerColor[0]
     },
     successCardStatsIcon: {
-        color: successColor
+        color: successColor[0]
     },
     infoCardStatsIcon: {
-        color: infoColor
+        color: infoColor[0]
     },
     roseCardStatsIcon: {
-        color: roseColor
+        color: roseColor[0]
     },
     grayCardStatsIcon: {
-        color: grayColor
+        color: grayColor[0]
     },
     cardStatsLink: {
-        color: primaryColor,
+        color: primaryColor[0],
         textDecoration: 'none',
         ...defaultFont
     }

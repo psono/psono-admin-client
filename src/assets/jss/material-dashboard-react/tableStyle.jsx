@@ -11,29 +11,29 @@ import {
     roseColor,
     grayColor,
     defaultFont
-} from '../material-dashboard-react.jsx';
+} from '../material-dashboard-react.js';
 
 const tableStyle = theme => ({
     warningTableHeader: {
-        color: warningColor
+        color: warningColor[0]
     },
     primaryTableHeader: {
-        color: primaryColor
+        color: primaryColor[0]
     },
     dangerTableHeader: {
-        color: dangerColor
+        color: dangerColor[0]
     },
     successTableHeader: {
-        color: successColor
+        color: successColor[0]
     },
     infoTableHeader: {
-        color: infoColor
+        color: infoColor[0]
     },
     roseTableHeader: {
-        color: roseColor
+        color: roseColor[0]
     },
     grayTableHeader: {
-        color: grayColor
+        color: grayColor[0]
     },
     table: {
         marginBottom: '0',
@@ -56,7 +56,7 @@ const tableStyle = theme => ({
     },
     tableResponsive: {
         width: '100%',
-        marginTop: theme.spacing.unit * 3,
+        marginTop: theme.spacing(3),
         overflowX: 'auto'
     }
 });

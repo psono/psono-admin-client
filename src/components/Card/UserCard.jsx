@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-    withStyles,
-    Card,
-    CardContent,
-    CardHeader,
-    Typography,
-    Tabs,
-    Tab
-} from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
+import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
 import { DevicesOther, Group, Delete } from '@material-ui/icons';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
@@ -18,15 +11,8 @@ import { CustomTable } from '../../components';
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class UserCard extends React.Component {
-    state = {
-        value: 0
-    };
-    handleChange = (event, value) => {
-        this.setState({ value });
-    };
     render() {
         const {
-            classes,
             t,
             sessions,
             memberships,
@@ -44,87 +30,14 @@ class UserCard extends React.Component {
             onDeleteEmergencyCodes
         } = this.props;
         return (
-            <Card className={classes.card}>
-                <CardHeader
-                    classes={{
-                        root: classes.cardHeader,
-                        title: classes.cardTitle,
-                        content: classes.cardHeaderContent
-                    }}
-                    title={t('USER_DETAILS')}
-                    action={
-                        <Tabs
-                            classes={{
-                                flexContainer: classes.tabsContainer
-                            }}
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                            textColor="inherit"
-                        >
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={
-                                    <DevicesOther className={classes.tabIcon} />
-                                }
-                                label={t('SESSIONS')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('MEMBERSHIPS')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('DUOS')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('YUBIKEYS')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('GOOGLE_AUTHS')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('RECOVERY_CODES')}
-                            />
-                            <Tab
-                                classes={{
-                                    wrapper: classes.tabWrapper,
-                                    label: classes.label
-                                }}
-                                icon={<Group className={classes.tabIcon} />}
-                                label={t('EMERGENCY_CODES')}
-                            />
-                        </Tabs>
-                    }
-                />
-                <CardContent>
-                    {this.state.value === 0 && (
-                        <Typography component="div">
+            <CustomTabs
+                title={t('USER_DETAILS')}
+                headerColor="primary"
+                tabs={[
+                    {
+                        tabName: t('SESSIONS'),
+                        tabIcon: DevicesOther,
+                        tabContent: (
                             <CustomTable
                                 title={t('SESSIONS')}
                                 headerFunctions={[
@@ -155,10 +68,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={sessions}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 1 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('MEMBERSHIPS'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('MEMBERSHIPS')}
                                 headerFunctions={[
@@ -179,10 +94,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={memberships}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 2 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('DUOS'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('DUOS')}
                                 headerFunctions={[
@@ -202,10 +119,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={duos}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 3 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('YUBIKEYS'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('YUBIKEYS')}
                                 headerFunctions={[
@@ -225,10 +144,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={yubikey_otps}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 4 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('GOOGLE_AUTHS'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('GOOGLE_AUTHENTICATORS')}
                                 headerFunctions={[
@@ -248,10 +169,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={google_authenticators}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 5 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('RECOVERY_CODES'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('RECOVERY_CODES')}
                                 headerFunctions={[
@@ -269,10 +192,12 @@ class UserCard extends React.Component {
                                 ]}
                                 data={recovery_codes}
                             />
-                        </Typography>
-                    )}
-                    {this.state.value === 6 && (
-                        <Typography component="div">
+                        )
+                    },
+                    {
+                        tabName: t('EMERGENCY_CODES'),
+                        tabIcon: Group,
+                        tabContent: (
                             <CustomTable
                                 title={t('EMERGENCY_CODES')}
                                 headerFunctions={[
@@ -294,10 +219,10 @@ class UserCard extends React.Component {
                                 ]}
                                 data={emergency_codes}
                             />
-                        </Typography>
-                    )}
-                </CardContent>
-            </Card>
+                        )
+                    }
+                ]}
+            />
         );
     }
 }

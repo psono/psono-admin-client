@@ -1,7 +1,3 @@
-// ##############################
-// // // Header styles
-// #############################
-
 import {
     container,
     defaultFont,
@@ -10,10 +6,12 @@ import {
     infoColor,
     successColor,
     warningColor,
-    dangerColor
-} from '../material-dashboard-react.jsx';
+    dangerColor,
+    whiteColor,
+    grayColor
+} from '../material-dashboard-react.js';
 
-const headerStyle = theme => ({
+const headerStyle = () => ({
     appBar: {
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -23,7 +21,7 @@ const headerStyle = theme => ({
         width: '100%',
         paddingTop: '10px',
         zIndex: '1029',
-        color: '#555555',
+        color: grayColor[7],
         border: '0',
         borderRadius: '3px',
         padding: '10px 0',
@@ -40,11 +38,13 @@ const headerStyle = theme => ({
     },
     title: {
         ...defaultFont,
+        letterSpacing: 'unset',
         lineHeight: '30px',
         fontSize: '18px',
         borderRadius: '3px',
         textTransform: 'none',
         color: 'inherit',
+        margin: '0',
         '&:hover,&:focus': {
             background: 'transparent'
         }
@@ -53,28 +53,28 @@ const headerStyle = theme => ({
         top: '8px'
     },
     primary: {
-        backgroundColor: primaryColor,
-        color: '#FFFFFF',
+        backgroundColor: primaryColor[0],
+        color: whiteColor,
         ...defaultBoxShadow
     },
     info: {
-        backgroundColor: infoColor,
-        color: '#FFFFFF',
+        backgroundColor: infoColor[0],
+        color: whiteColor,
         ...defaultBoxShadow
     },
     success: {
-        backgroundColor: successColor,
-        color: '#FFFFFF',
+        backgroundColor: successColor[0],
+        color: whiteColor,
         ...defaultBoxShadow
     },
     warning: {
-        backgroundColor: warningColor,
-        color: '#FFFFFF',
+        backgroundColor: warningColor[0],
+        color: whiteColor,
         ...defaultBoxShadow
     },
     danger: {
-        backgroundColor: dangerColor,
-        color: '#FFFFFF',
+        backgroundColor: dangerColor[0],
+        color: whiteColor,
         ...defaultBoxShadow
     }
 });

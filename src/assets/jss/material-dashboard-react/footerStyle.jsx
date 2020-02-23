@@ -1,12 +1,9 @@
-// ##############################
-// // // Footer styles
-// #############################
-
 import {
     defaultFont,
     container,
-    primaryColor
-} from '../material-dashboard-react.jsx';
+    primaryColor,
+    grayColor
+} from '../material-dashboard-react.js';
 
 const footerStyle = {
     block: {
@@ -33,7 +30,7 @@ const footerStyle = {
     },
     footer: {
         bottom: '0',
-        borderTop: '1px solid #e7e7e7',
+        borderTop: '1px solid ' + grayColor[11],
         padding: '15px 0',
         ...defaultFont
     },
@@ -50,7 +47,7 @@ const footerStyle = {
     },
     inlineBlock: {
         display: 'inline-block',
-        paddingTop: '0px',
+        padding: '0px',
         width: 'auto'
     }
 };

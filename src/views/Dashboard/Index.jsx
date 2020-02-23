@@ -9,18 +9,18 @@ import axios from 'axios';
 // react plugin for creating charts
 import ChartistGraph from 'react-chartist';
 
-import {
-    Sessions,
-    VersionCard,
-    LicenseCard,
-    HealthcheckCard,
-    ChartCard,
-    ReleaseCard,
-    FileserverCard,
-    RegularCard,
-    GridItem,
-    CustomTable
-} from '../../components';
+import { Sessions } from '../../components';
+import { VersionCard } from '../../components';
+import { LicenseCard } from '../../components';
+import { HealthcheckCard } from '../../components';
+import { ChartCard } from '../../components';
+import { ReleaseCard } from '../../components';
+import { FileserverCard } from '../../components';
+import { GridItem } from '../../components';
+import { CustomTable } from '../../components';
+import Card from '../../components/Card/Card.js';
+import CardHeader from '../../components/Card/CardHeader.js';
+import CardBody from '../../components/Card/CardBody.js';
 
 import { dailySalesChart } from '../../variables/charts';
 
@@ -33,7 +33,6 @@ const Chartist = require('chartist');
 
 class Dashboard extends React.Component {
     state = {
-        value: 0,
         admin_client_tags: [],
         admin_client_latest_version: '',
         admin_client_used_version: '',
@@ -64,14 +63,6 @@ class Dashboard extends React.Component {
             time_sync: {}
         },
         tr: true
-    };
-
-    handleChange = (event, value) => {
-        this.setState({ value });
-    };
-
-    handleChangeIndex = index => {
-        this.setState({ value: index });
     };
 
     convert_tags_to_releases(tags) {
@@ -568,11 +559,24 @@ class Dashboard extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
                         {this.state.registrations !== undefined ? (
-                            <RegularCard
-                                headerColor="orange"
-                                cardTitle={t('REGISTRATIONS')}
-                                cardSubtitle={t('LAST_JOINED_USERS')}
-                                content={
+                            <Card>
+                                <CardHeader color="warning">
+                                    <h4
+                                        className={
+                                            this.props.classes.cardTitleWhite
+                                        }
+                                    >
+                                        {t('REGISTRATIONS')}
+                                    </h4>
+                                    <p
+                                        className={
+                                            this.props.classes.cardCategoryWhite
+                                        }
+                                    >
+                                        {t('LAST_JOINED_USERS')}
+                                    </p>
+                                </CardHeader>
+                                <CardBody>
                                     <CustomTable
                                         head={[
                                             { id: 'date', label: t('DATE') },
@@ -584,8 +588,8 @@ class Dashboard extends React.Component {
                                         ]}
                                         data={this.state.registrations}
                                     />
-                                }
-                            />
+                                </CardBody>
+                            </Card>
                         ) : null}
                     </GridItem>
                 </Grid>

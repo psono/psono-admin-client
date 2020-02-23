@@ -6,7 +6,7 @@ import {
     defaultFont,
     primaryColor,
     dangerColor
-} from '../material-dashboard-react.jsx';
+} from '../material-dashboard-react.js';
 
 const tasksStyle = {
     table: {

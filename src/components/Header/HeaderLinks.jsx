@@ -5,7 +5,6 @@ import {
 import classNames from 'classnames';
 import {
     withStyles,
-    IconButton,
     MenuItem,
     MenuList,
     Grow,
@@ -13,142 +12,108 @@ import {
     ClickAwayListener,
     Hidden
 } from '@material-ui/core';
-import { Manager, Target, Popper } from 'react-popper';
-
-// import { Snackbar CustomInput, IconButton as SearchButton } from '../../components';
-import { Notification } from '../../components';
+import Button from '../CustomButtons/Button.jsx';
 
 import headerLinksStyle from '../../assets/jss/material-dashboard-react/headerLinksStyle';
+import Poppers from '@material-ui/core/Popper';
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 class HeaderLinks extends React.Component {
-    state = {
-        open: false
-    };
-    handleClick = () => {
-        this.setState({ open: !this.state.open });
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            openProfile: null
+        };
+    }
 
-    handleClose = () => {
-        this.setState({ open: false });
-    };
-
-    logout = () => {
-        this.props.logout();
-        this.setState({ open: false });
-    };
     render() {
-        const { classes } = this.props;
-        const { open } = this.state;
+        const { classes, t } = this.props;
+        const { openProfile } = this.state;
+
+        const handleClickProfile = event => {
+            if (openProfile && openProfile.contains(event.target)) {
+                this.setState({ openProfile: null });
+            } else {
+                this.setState({ openProfile: event.currentTarget });
+            }
+        };
+        const handleCloseProfile = () => {
+            this.setState({ openProfile: null });
+        };
+
+        const logout = () => {
+            this.props.logout();
+            this.setState({ openProfile: null });
+        };
         return (
             <div>
-                {/*<CustomInput*/}
-                {/*formControlProps={{*/}
-                {/*className: classes.top + " " + classes.search*/}
-                {/*}}*/}
-                {/*inputProps={{*/}
-                {/*placeholder:"Search",*/}
-                {/*inputProps:{*/}
-                {/*'aria-label': 'Search',*/}
-                {/*}*/}
-                {/*}}/>*/}
-                {/*<SearchButton color="white" aria-label="edit" customClass={classes.top + " " + classes.searchButton}>*/}
-                {/*<Search className={classes.searchIcon}/>*/}
-                {/*</SearchButton>*/}
-                {/*<IconButton color="inherit" aria-label="Dashboard" className={classes.buttonLink}>*/}
-                {/*<Dashboard className={classes.links}/>*/}
-                {/*<Hidden mdUp>*/}
-                {/*<p className={classes.linkText}>Dashboard</p>*/}
-                {/*</Hidden>*/}
-                {/*</IconButton>*/}
-                {/*<Manager style={{display:"inline-block"}}>*/}
-                {/*<Target>*/}
-                {/*<IconButton*/}
-                {/*color="inherit"*/}
-                {/*aria-label="Notifications"*/}
-                {/*aria-owns={open ? 'menu-list' : null}*/}
-                {/*aria-haspopup="true"*/}
-                {/*onClick={this.handleClick} className={classes.buttonLink}>*/}
-                {/*<Notifications className={classes.links}/>*/}
-                {/*<span className={classes.notifications}>5</span>*/}
-                {/*<Hidden mdUp>*/}
-                {/*<p onClick={this.handleClick} className={classes.linkText}>Notification</p>*/}
-                {/*</Hidden>*/}
-                {/*</IconButton>*/}
-                {/*</Target>*/}
-                {/*<Popper*/}
-                {/*placement="bottom-start"*/}
-                {/*eventsEnabled={open}*/}
-                {/*className={classNames({ [classes.popperClose]: !open })+ " " + classes.pooperResponsive}>*/}
-                {/*<ClickAwayListener onClickAway={this.handleClose}>*/}
-                {/*<Grow in={open} id="menu-list" style={{ transformOrigin: '0 0 0' }}>*/}
-                {/*<Paper className={classes.dropdown}>*/}
-                {/*<MenuList role="menu">*/}
-                {/*<MenuItem onClick={this.handleClose} className={classes.dropdownItem}>Mike John responded to your email</MenuItem>*/}
-                {/*<MenuItem onClick={this.handleClose} className={classes.dropdownItem}>You have 5 new tasks</MenuItem>*/}
-                {/*<MenuItem onClick={this.handleClose} className={classes.dropdownItem}>You're now friend with Andrew</MenuItem>*/}
-                {/*<MenuItem onClick={this.handleClose} className={classes.dropdownItem}>Another Notification</MenuItem>*/}
-                {/*<MenuItem onClick={this.handleClose} className={classes.dropdownItem}>Another One</MenuItem>*/}
-                {/*</MenuList>*/}
-                {/*</Paper>*/}
-                {/*</Grow>*/}
-                {/*</ClickAwayListener>*/}
-                {/*</Popper>*/}
-                {/*</Manager>*/}
-                <Notification state={this.props.state} />
-
-                <Manager style={{ display: 'inline-block', marginTop: '40px' }}>
-                    <Target>
-                        <IconButton
-                            color="inherit"
-                            aria-label="Person"
-                            aria-owns={open ? 'menu-list-person' : null}
-                            aria-haspopup="true"
-                            onClick={this.handleClick}
-                            className={classes.buttonLink}
-                        >
-                            <Person className={classes.links} />
-                            <Hidden mdUp>
-                                <p
-                                    onClick={this.handleClick}
-                                    className={classes.linkText}
-                                >
-                                    Profile
-                                </p>
-                            </Hidden>
-                        </IconButton>
-                    </Target>
-                    <Popper
-                        placement="bottom-start"
-                        eventsEnabled={open}
+                <div className={classes.manager}>
+                    <Button
+                        color={
+                            window.innerWidth > 959 ? 'transparent' : 'white'
+                        }
+                        justIcon={window.innerWidth > 959}
+                        simple={!(window.innerWidth > 959)}
+                        aria-owns={
+                            openProfile ? 'profile-menu-list-grow' : null
+                        }
+                        aria-haspopup="true"
+                        onClick={handleClickProfile}
+                        className={classes.buttonLink}
+                    >
+                        <Person className={classes.icons} />
+                        <Hidden mdUp implementation="css">
+                            <p className={classes.linkText}>{t('PROFILE')}</p>
+                        </Hidden>
+                    </Button>
+                    <Poppers
+                        open={Boolean(openProfile)}
+                        anchorEl={openProfile}
+                        transition
+                        disablePortal
                         className={
-                            classNames({ [classes.popperClose]: !open }) +
+                            classNames({
+                                [classes.popperClose]: !openProfile
+                            }) +
                             ' ' +
-                            classes.pooperResponsive
+                            classes.popperNav
                         }
                     >
-                        <ClickAwayListener onClickAway={this.handleClose}>
+                        {({ TransitionProps, placement }) => (
                             <Grow
-                                in={open}
-                                id="menu-list-person"
-                                style={{ transformOrigin: '0 0 0' }}
+                                {...TransitionProps}
+                                id="profile-menu-list-grow"
+                                style={{
+                                    transformOrigin:
+                                        placement === 'bottom'
+                                            ? 'center top'
+                                            : 'center bottom'
+                                }}
                             >
-                                <Paper className={classes.dropdown}>
-                                    <MenuList role="menu">
-                                        <MenuItem
-                                            onClick={this.logout}
-                                            className={classes.dropdownItem}
-                                        >
-                                            Logout
-                                        </MenuItem>
-                                    </MenuList>
+                                <Paper>
+                                    <ClickAwayListener
+                                        onClickAway={handleCloseProfile}
+                                    >
+                                        <MenuList role="menu">
+                                            <MenuItem
+                                                onClick={logout}
+                                                className={classes.dropdownItem}
+                                            >
+                                                {t('LOGOUT')}
+                                            </MenuItem>
+                                        </MenuList>
+                                    </ClickAwayListener>
                                 </Paper>
                             </Grow>
-                        </ClickAwayListener>
-                    </Popper>
-                </Manager>
+                        )}
+                    </Poppers>
+                </div>
             </div>
         );
     }
 }
 
-export default withStyles(headerLinksStyle)(HeaderLinks);
+export default compose(withTranslation(), withStyles(headerLinksStyle))(
+    HeaderLinks
+);

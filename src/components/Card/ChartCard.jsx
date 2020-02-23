@@ -88,7 +88,7 @@ ChartCard.propTypes = {
     chart: PropTypes.object.isRequired,
     title: PropTypes.node,
     text: PropTypes.node,
-    statIcon: PropTypes.func,
+    statIcon: PropTypes.object,
     fontAwesomeStatsIcon: PropTypes.node,
     statIconColor: PropTypes.oneOf([
         'warning',
