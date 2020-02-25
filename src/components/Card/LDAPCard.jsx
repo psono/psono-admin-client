@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { Person, Group } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable, Button } from '../../components';
+import { CustomMaterialTable, Button } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
@@ -22,19 +22,21 @@ class LDAPCard extends React.Component {
                         tabName: t('USERS'),
                         tabIcon: Person,
                         tabContent: (
-                            <CustomTable
-                                title="LDAP Users"
-                                headerFunctions={[]}
-                                head={[
-                                    { id: 'username', label: t('USERNAME') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'username', title: t('USERNAME') },
                                     {
-                                        id: 'create_date',
-                                        label: t('IMPORTED')
+                                        field: 'create_date',
+                                        title: t('IMPORTED')
                                     },
-                                    { id: 'email', label: t('EMAIL') },
-                                    { id: 'dn', label: t('DN') }
+                                    { field: 'email', title: t('EMAIL') },
+                                    { field: 'dn', title: t('DN') }
                                 ]}
                                 data={ldap_users}
+                                title={t('LDAP_USERS')}
+                                options={{
+                                    pageSize: 10
+                                }}
                             />
                         )
                     },
@@ -51,15 +53,20 @@ class LDAPCard extends React.Component {
                                 >
                                     {t('SYNC_WITH_LDAP')}
                                 </Button>
-                                <CustomTable
-                                    title={t('LDAP_GROUPS')}
-                                    headerFunctions={[]}
-                                    head={[
-                                        { id: 'dn', label: 'DN' },
-                                        { id: 'domain', label: 'Domain' },
-                                        { id: 'groups', label: 'Mapped Groups' }
+                                <CustomMaterialTable
+                                    columns={[
+                                        { field: 'dn', title: 'DN' },
+                                        { field: 'domain', title: 'Domain' },
+                                        {
+                                            field: 'groups',
+                                            title: 'Mapped Groups'
+                                        }
                                     ]}
                                     data={ldap_groups}
+                                    title={t('LDAP_GROUPS')}
+                                    options={{
+                                        pageSize: 10
+                                    }}
                                 />
                             </div>
                         )

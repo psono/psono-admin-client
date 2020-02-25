@@ -8,7 +8,7 @@ import {
     RegularCard,
     CustomInput,
     GridItem,
-    CustomTable,
+    CustomMaterialTable,
     ChartCard
 } from '../../components';
 import psono_server from '../../services/api-server';
@@ -304,28 +304,28 @@ class SecurityReport extends React.Component {
                         cardTitle={t('ENTRIES')}
                         cardSubtitle={t('LIST_OF_SECURITY_REPORT_ENTRIES')}
                         content={
-                            <CustomTable
-                                head={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        id: 'name',
-                                        label: t('NAME')
+                                        field: 'master_password',
+                                        title: t('MASTER_PASSWORD')
                                     },
                                     {
-                                        id: 'master_password',
-                                        label: t('MASTER_PASSWORD')
+                                        field: 'password_length',
+                                        title: t('PASSWORD_LENGTH')
                                     },
                                     {
-                                        id: 'password_length',
-                                        label: t('PASSWORD_LENGTH')
+                                        field: 'variation_count',
+                                        title: t('PASSWORD_CHARACTER_GROUPS')
                                     },
+                                    { field: 'breached', title: t('BREACHED') },
                                     {
-                                        id: 'variation_count',
-                                        label: t('PASSWORD_CHARACTER_GROUPS')
-                                    },
-                                    { id: 'breached', label: t('BREACHED') },
-                                    { id: 'duplicate', label: t('DUPLICATE') }
+                                        field: 'duplicate',
+                                        title: t('DUPLICATE')
+                                    }
                                 ]}
                                 data={this.state.security_report.entries}
+                                title={''}
                             />
                         }
                     />

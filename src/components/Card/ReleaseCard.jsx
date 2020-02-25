@@ -6,11 +6,27 @@ import { compose } from 'redux';
 import { Domain, DevicesOther, Web } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class ReleaseCard extends React.Component {
+    renderDescription(rowData) {
+        return rowData.description.split('\n').map((item, key) => {
+            if (item.startsWith('# ') || item.trim() === '') {
+                return null;
+            } else {
+                return (
+                    <span key={key}>
+                        {' '}
+                        {item}
+                        <br />
+                    </span>
+                );
+            }
+        });
+    }
+
     render() {
         const {
             headerColor,
@@ -20,6 +36,7 @@ class ReleaseCard extends React.Component {
             admin_client_releases,
             fileserver_releases
         } = this.props;
+
         return (
             <CustomTabs
                 title={t('RELEASES')}
@@ -29,17 +46,21 @@ class ReleaseCard extends React.Component {
                         tabName: t('SERVER'),
                         tabIcon: Domain,
                         tabContent: (
-                            <CustomTable
-                                head={[
-                                    { id: 'name', label: t('VERSION') },
-                                    { id: 'created_at', label: t('DATE') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'name', title: t('VERSION') },
+                                    { field: 'created_at', title: t('DATE') },
                                     {
-                                        id: 'description',
-                                        label: t('RELEASE_NOTES')
+                                        field: 'description',
+                                        title: t('RELEASE_NOTES'),
+                                        render: this.renderDescription
                                     }
                                 ]}
-                                rowsPerPage={10}
                                 data={server_releases}
+                                title={''}
+                                options={{
+                                    pageSize: 5
+                                }}
                             />
                         )
                     },
@@ -47,17 +68,21 @@ class ReleaseCard extends React.Component {
                         tabName: t('CLIENT'),
                         tabIcon: DevicesOther,
                         tabContent: (
-                            <CustomTable
-                                head={[
-                                    { id: 'name', label: t('VERSION') },
-                                    { id: 'created_at', label: t('DATE') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'name', title: t('VERSION') },
+                                    { field: 'created_at', title: t('DATE') },
                                     {
-                                        id: 'description',
-                                        label: t('RELEASE_NOTES')
+                                        field: 'description',
+                                        title: t('RELEASE_NOTES'),
+                                        render: this.renderDescription
                                     }
                                 ]}
-                                rowsPerPage={10}
                                 data={client_releases}
+                                title={''}
+                                options={{
+                                    pageSize: 5
+                                }}
                             />
                         )
                     },
@@ -65,17 +90,21 @@ class ReleaseCard extends React.Component {
                         tabName: t('PORTAL'),
                         tabIcon: Web,
                         tabContent: (
-                            <CustomTable
-                                head={[
-                                    { id: 'name', label: t('VERSION') },
-                                    { id: 'created_at', label: t('DATE') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'name', title: t('VERSION') },
+                                    { field: 'created_at', title: t('DATE') },
                                     {
-                                        id: 'description',
-                                        label: t('RELEASE_NOTES')
+                                        field: 'description',
+                                        title: t('RELEASE_NOTES'),
+                                        render: this.renderDescription
                                     }
                                 ]}
-                                rowsPerPage={10}
                                 data={admin_client_releases}
+                                title={''}
+                                options={{
+                                    pageSize: 5
+                                }}
                             />
                         )
                     },
@@ -83,17 +112,21 @@ class ReleaseCard extends React.Component {
                         tabName: t('FILESERVER'),
                         tabIcon: Domain,
                         tabContent: (
-                            <CustomTable
-                                head={[
-                                    { id: 'name', label: t('VERSION') },
-                                    { id: 'created_at', label: t('DATE') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'name', title: t('VERSION') },
+                                    { field: 'created_at', title: t('DATE') },
                                     {
-                                        id: 'description',
-                                        label: t('RELEASE_NOTES')
+                                        field: 'description',
+                                        title: t('RELEASE_NOTES'),
+                                        render: this.renderDescription
                                     }
                                 ]}
                                 data={fileserver_releases}
-                                rowsPerPage={10}
+                                title={''}
+                                options={{
+                                    pageSize: 5
+                                }}
                             />
                         )
                     }

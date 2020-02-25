@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { Group, Delete } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
@@ -28,29 +28,30 @@ class GroupCard extends React.Component {
                 tabName: t('MEMBERSHIPS'),
                 tabIcon: Group,
                 tabContent: (
-                    <CustomTable
-                        title={t('USERS')}
-                        headerFunctions={[
+                    <CustomMaterialTable
+                        columns={[
+                            { field: 'username', title: t('USERNAME') },
                             {
-                                title: t('DELETE_MEMBERSHIP_S'),
-                                onClick: onDeleteMemberships,
-                                icon: <Delete />
-                            }
-                        ]}
-                        head={[
-                            { id: 'username', label: t('USERNAME') },
-                            {
-                                id: 'create_date',
-                                label: t('JOINED')
+                                field: 'create_date',
+                                title: t('JOINED')
                             },
-                            { id: 'accepted', label: t('ACCEPTED') },
-                            { id: 'admin', label: t('GROUP_ADMIN') },
+                            { field: 'accepted', title: t('ACCEPTED') },
+                            { field: 'admin', title: t('GROUP_ADMIN') },
                             {
-                                id: 'share_admin',
-                                label: t('SHARE_ADMIN')
+                                field: 'share_admin',
+                                title: t('SHARE_ADMIN')
                             }
                         ]}
                         data={memberships}
+                        title={t('USERS')}
+                        actions={[
+                            {
+                                tooltip: t('DELETE_MEMBERSHIP_S'),
+                                icon: Delete,
+                                onClick: (evt, data) =>
+                                    onDeleteMemberships([data])
+                            }
+                        ]}
                     />
                 )
             }
@@ -61,18 +62,18 @@ class GroupCard extends React.Component {
                 tabName: t('LDAP_GROUPS'),
                 tabIcon: Group,
                 tabContent: (
-                    <CustomTable
-                        title={t('MAPPED_LDAP_GROUPS')}
-                        head={[
-                            { id: 'mapped', label: t('MAPPED') },
-                            { id: 'dn', label: t('DN') },
+                    <CustomMaterialTable
+                        columns={[
+                            { field: 'mapped', title: t('MAPPED') },
+                            { field: 'dn', title: t('DN') },
                             {
-                                id: 'has_share_admin',
-                                label: t('SHARE_ADMIN')
+                                field: 'has_share_admin',
+                                title: t('SHARE_ADMIN')
                             },
-                            { id: 'domain', label: t('DOMAIN') }
+                            { field: 'domain', title: t('DOMAIN') }
                         ]}
                         data={ldap_groups}
+                        title={t('MAPPED_LDAP_GROUPS')}
                     />
                 )
             });
@@ -83,21 +84,21 @@ class GroupCard extends React.Component {
                 tabName: t('SAML_GROUPS'),
                 tabIcon: Group,
                 tabContent: (
-                    <CustomTable
-                        title={t('MAPPED_SAML_GROUPS')}
-                        head={[
-                            { id: 'mapped', label: t('MAPPED') },
-                            { id: 'saml_name', label: t('NAME') },
+                    <CustomMaterialTable
+                        columns={[
+                            { field: 'mapped', title: t('MAPPED') },
+                            { field: 'saml_name', title: t('NAME') },
                             {
-                                id: 'has_share_admin',
-                                label: t('SHARE_ADMIN')
+                                field: 'has_share_admin',
+                                title: t('SHARE_ADMIN')
                             },
                             {
-                                id: 'saml_provider_id',
-                                label: t('POVIDER_ID')
+                                field: 'saml_provider_id',
+                                title: t('POVIDER_ID')
                             }
                         ]}
                         data={saml_groups}
+                        title={t('MAPPED_SAML_GROUPS')}
                     />
                 )
             });

@@ -366,6 +366,7 @@ class User extends React.Component {
             saml_groups,
             mapped_saml_group_index
         } = this.state;
+
         const { classes, t } = this.props;
         if (ldap_groups) {
             ldap_groups.forEach(ldap_group => {
@@ -377,7 +378,7 @@ class User extends React.Component {
                             ) &&
                             mapped_ldap_group_index[ldap_group.id][
                                 'ldap_group_map_id'
-                            ]
+                            ] !== ''
                         }
                         tabIndex={-1}
                         onClick={() => {
@@ -452,7 +453,7 @@ class User extends React.Component {
                             ) &&
                             mapped_saml_group_index[saml_group.id][
                                 'saml_group_map_id'
-                            ]
+                            ] !== ''
                         }
                         tabIndex={-1}
                         onClick={() => {

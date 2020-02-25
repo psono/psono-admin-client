@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { Domain } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
@@ -22,20 +22,23 @@ class FileserverCard extends React.Component {
                         tabName: t('FILESERVER'),
                         tabIcon: Domain,
                         tabContent: (
-                            <CustomTable
-                                head={[
-                                    { id: 'hostname', label: t('HOSTNAME') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'hostname', title: t('HOSTNAME') },
                                     {
-                                        id: 'fileserver_cluster_title',
-                                        label: t('CLUSTER')
+                                        field: 'fileserver_cluster_title',
+                                        title: t('CLUSTER')
                                     },
                                     {
-                                        id: 'version',
-                                        label: t('VERSION')
+                                        field: 'version',
+                                        title: t('VERSION')
                                     }
                                 ]}
-                                rowsPerPage={10}
+                                options={{
+                                    pageSize: 5
+                                }}
                                 data={fileserver}
+                                title={''}
                             />
                         )
                     }

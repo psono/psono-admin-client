@@ -9,6 +9,7 @@
   "license": "Apache-2.0",
   "homepage": "/portal",
   "dependencies": {
+    "@date-io/date-fns": "^2.4.0",
     "@material-ui/core": "^4.9.2",
     "@material-ui/icons": "^4.9.1",
     "axios": "^0.19.2",
@@ -27,6 +28,7 @@
     "js-sha256": "^0.9.0",
     "js-sha512": "^0.7.1",
     "lint-staged": "^7.3.0",
+    "material-table": "^1.57.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.25",
     "npm-run-all": "^4.1.1",

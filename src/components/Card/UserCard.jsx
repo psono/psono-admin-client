@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
@@ -38,35 +38,36 @@ class UserCard extends React.Component {
                         tabName: t('SESSIONS'),
                         tabIcon: DevicesOther,
                         tabContent: (
-                            <CustomTable
-                                title={t('SESSIONS')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        title: t('DELETE_SESSION_S'),
-                                        onClick: onDeleteSessions,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    {
-                                        id: 'create_date',
-                                        label: t('LOGGED_IN_AT')
+                                        field: 'create_date',
+                                        title: t('LOGGED_IN_AT')
                                     },
                                     {
-                                        id: 'valid_till',
-                                        label: t('VALID_TILL')
+                                        field: 'valid_till',
+                                        title: t('VALID_TILL')
                                     },
                                     {
-                                        id: 'device_description',
-                                        label: t('DEVICE_DESCRIPTION')
+                                        field: 'device_description',
+                                        title: t('DEVICE_DESCRIPTION')
                                     },
                                     {
-                                        id: 'device_fingerprint',
-                                        label: t('DEVICE')
+                                        field: 'device_fingerprint',
+                                        title: t('DEVICE')
                                     },
-                                    { id: 'active', label: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') }
                                 ]}
                                 data={sessions}
+                                title={t('SESSIONS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_SESSION_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteSessions([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -74,25 +75,26 @@ class UserCard extends React.Component {
                         tabName: t('MEMBERSHIPS'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('MEMBERSHIPS')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'group_name', title: t('GROUP') },
                                     {
-                                        title: t('DELETE_MEMBERSHIP_S'),
-                                        onClick: onDeleteMemberships,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    { id: 'group_name', label: t('GROUP') },
-                                    {
-                                        id: 'create_date',
-                                        label: t('JOINED_AT')
+                                        field: 'create_date',
+                                        title: t('JOINED_AT')
                                     },
-                                    { id: 'accepted', label: t('ACCEPTED') },
-                                    { id: 'admin', label: t('GROUP_ADMIN') }
+                                    { field: 'accepted', title: t('ACCEPTED') },
+                                    { field: 'admin', title: t('GROUP_ADMIN') }
                                 ]}
                                 data={memberships}
+                                title={t('MEMBERSHIPS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_MEMBERSHIP_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteMemberships([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -100,24 +102,25 @@ class UserCard extends React.Component {
                         tabName: t('DUOS'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('DUOS')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'title', title: t('TITLE') },
                                     {
-                                        title: t('DELETE_DUO_S'),
-                                        onClick: onDeleteDuos,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    { id: 'title', label: t('TITLE') },
-                                    {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') }
                                 ]}
                                 data={duos}
+                                title={t('DUOS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_DUO_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteDuos([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -125,24 +128,25 @@ class UserCard extends React.Component {
                         tabName: t('YUBIKEYS'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('YUBIKEYS')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'title', title: t('TITLE') },
                                     {
-                                        title: t('DELETE_YUBIKEY_S'),
-                                        onClick: onDeleteYubikeyOtps,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    { id: 'title', label: t('TITLE') },
-                                    {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') }
                                 ]}
                                 data={yubikey_otps}
+                                title={t('YUBIKEYS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_YUBIKEY_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteYubikeyOtps([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -150,24 +154,25 @@ class UserCard extends React.Component {
                         tabName: t('GOOGLE_AUTHS'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('GOOGLE_AUTHENTICATORS')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'title', title: t('TITLE') },
                                     {
-                                        title: t('DELETE_GOOGLE_AUTH_S'),
-                                        onClick: onDeleteGoogleAuthenticators,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    { id: 'title', label: t('TITLE') },
-                                    {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     },
-                                    { id: 'active', label: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') }
                                 ]}
                                 data={google_authenticators}
+                                title={t('GOOGLE_AUTHENTICATORS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_GOOGLE_AUTH_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteGoogleAuthenticators([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -175,22 +180,23 @@ class UserCard extends React.Component {
                         tabName: t('RECOVERY_CODES'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('RECOVERY_CODES')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        title: t('DELETE_RECOVERY_CODE_S'),
-                                        onClick: onDeleteRecoveryCodes,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     }
                                 ]}
                                 data={recovery_codes}
+                                title={t('RECOVERY_CODES')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_RECOVERY_CODE_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteRecoveryCodes([data])
+                                    }
+                                ]}
                             />
                         )
                     },
@@ -198,26 +204,27 @@ class UserCard extends React.Component {
                         tabName: t('EMERGENCY_CODES'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('EMERGENCY_CODES')}
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        title: t('DELETE_NOTFALL_CODE_S'),
-                                        onClick: onDeleteEmergencyCodes,
-                                        icon: <Delete />
-                                    }
-                                ]}
-                                head={[
-                                    {
-                                        id: 'description',
-                                        label: t('DESCRIPTION')
+                                        field: 'description',
+                                        title: t('DESCRIPTION')
                                     },
                                     {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     }
                                 ]}
                                 data={emergency_codes}
+                                title={t('EMERGENCY_CODES')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_NOTFALL_CODE_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteEmergencyCodes([data])
+                                    }
+                                ]}
                             />
                         )
                     }

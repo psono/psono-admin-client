@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import PropTypes from 'prop-types';
 
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
@@ -22,18 +22,23 @@ class SAMLCard extends React.Component {
                         tabName: t('GROUPS'),
                         tabIcon: Group,
                         tabContent: (
-                            <CustomTable
-                                title={t('SAML_GROUPS')}
-                                headerFunctions={[]}
-                                head={[
-                                    { id: 'saml_name', label: t('NAME') },
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'saml_name', title: t('NAME') },
                                     {
-                                        id: 'saml_provider_id',
-                                        label: t('POVIDER_ID')
+                                        field: 'saml_provider_id',
+                                        title: t('POVIDER_ID')
                                     },
-                                    { id: 'groups', label: t('MAPPED_GROUPS') }
+                                    {
+                                        field: 'groups',
+                                        title: t('MAPPED_GROUPS')
+                                    }
                                 ]}
                                 data={saml_groups}
+                                title={t('SAML_GROUPS')}
+                                options={{
+                                    pageSize: 10
+                                }}
                             />
                         )
                     }

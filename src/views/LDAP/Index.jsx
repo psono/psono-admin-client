@@ -7,6 +7,9 @@ import { Redirect } from 'react-router-dom';
 import { LDAPCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 
 class Users extends React.Component {
     state = {
@@ -56,9 +59,13 @@ class Users extends React.Component {
                 const { ldap_users } = response.data;
 
                 ldap_users.forEach(u => {
-                    u.create_date = moment(u.create_date).format(
-                        'YYYY-MM-DD HH:mm:ss'
-                    );
+                    if (u.create_date === '') {
+                        u.create_date = i18n.t('NEVER');
+                    } else {
+                        u.create_date = moment(u.create_date).format(
+                            'YYYY-MM-DD HH:mm:ss'
+                        );
+                    }
                 });
                 this.setState({
                     ldap_users
@@ -106,4 +113,4 @@ Users.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Users);
+export default compose(withTranslation(), withStyles(dashboardStyle))(Users);

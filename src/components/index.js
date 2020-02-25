@@ -75,6 +75,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 
 import Table from './Table/Table.jsx';
 import CustomTable from './Table/CustomTable.jsx';
+import CustomMaterialTable from './Table/CustomMaterialTable.jsx';
 import CustomMUIDataTable from './Table/CustomMUIDataTable.jsx';
 
 // ##############################
@@ -143,6 +144,7 @@ export {
     // Table
     Table,
     CustomTable,
+    CustomMaterialTable,
     CustomMUIDataTable,
     // Tasks
     Tasks,

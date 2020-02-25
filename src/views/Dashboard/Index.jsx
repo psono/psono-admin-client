@@ -17,7 +17,7 @@ import { ChartCard } from '../../components';
 import { ReleaseCard } from '../../components';
 import { FileserverCard } from '../../components';
 import { GridItem } from '../../components';
-import { CustomTable } from '../../components';
+import { CustomMaterialTable } from '../../components';
 import Card from '../../components/Card/Card.js';
 import CardHeader from '../../components/Card/CardHeader.js';
 import CardBody from '../../components/Card/CardBody.js';
@@ -75,18 +75,18 @@ class Dashboard extends React.Component {
                 r[key] = r.release[key];
             });
             r.created_at = moment(r.created_at).format('YYYY-MM-DD HH:mm:ss');
-            r.description = r.description.split('\n').map((item, key) => {
-                if (item.startsWith('# ') || item.trim() === '') {
-                    return null;
-                } else {
-                    return (
-                        <span key={key}>
-                            {item}
-                            <br />
-                        </span>
-                    );
-                }
-            });
+            // r.description = r.description.split('\n').map((item, key) => {
+            //     if (item.startsWith('# ') || item.trim() === '') {
+            //         return null;
+            //     } else {
+            //         return (
+            //             <span key={key}>
+            //                 {item}
+            //                 <br />
+            //             </span>
+            //         );
+            //     }
+            // });
             delete r.commit;
             delete r.release;
         });
@@ -577,16 +577,20 @@ class Dashboard extends React.Component {
                                     </p>
                                 </CardHeader>
                                 <CardBody>
-                                    <CustomTable
-                                        head={[
-                                            { id: 'date', label: t('DATE') },
+                                    <CustomMaterialTable
+                                        columns={[
+                                            { field: 'date', title: t('DATE') },
                                             {
-                                                id: 'username',
-                                                label: t('USERNAME')
+                                                field: 'username',
+                                                title: t('USERNAME')
                                             },
-                                            { id: 'active', label: t('ACTIVE') }
+                                            {
+                                                field: 'active',
+                                                title: t('ACTIVE')
+                                            }
                                         ]}
                                         data={this.state.registrations}
+                                        title={''}
                                     />
                                 </CardBody>
                             </Card>
