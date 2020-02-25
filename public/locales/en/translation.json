@@ -1,4 +1,6 @@
 {
+  "SESSION_EXPIRED": "Session expired",
+  "PERMISSION_DENIED": "Permission denied",
   "PROFILE": "Profile",
   "LOGOUT": "Logout",
   "NEVER": "Never",

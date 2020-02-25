@@ -1,5 +1,5 @@
 import React from 'react';
-import { AddAlert } from '@material-ui/icons';
+import AddAlert from '@material-ui/icons/AddAlert';
 
 import notification from '../../services/notification';
 

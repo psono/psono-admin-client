@@ -55,7 +55,7 @@ class Snackbar extends React.Component {
                     </div>
                 }
                 action={action}
-                SnackbarContentProps={{
+                ContentProps={{
                     classes: {
                         root: classes.root + ' ' + classes[color],
                         message: classes.message
@@ -69,9 +69,16 @@ class Snackbar extends React.Component {
 Snackbar.propTypes = {
     classes: PropTypes.object.isRequired,
     message: PropTypes.node.isRequired,
-    color: PropTypes.oneOf(['info', 'success', 'warning', 'danger', 'primary']),
+    color: PropTypes.oneOf([
+        'warning',
+        'success',
+        'danger',
+        'info',
+        'primary',
+        'rose'
+    ]),
     close: PropTypes.bool,
-    icon: PropTypes.func,
+    icon: PropTypes.object,
     place: PropTypes.oneOf(['tl', 'tr', 'tc', 'br', 'bl', 'bc']),
     open: PropTypes.bool
 };

@@ -7,6 +7,7 @@ import store from './store';
 import cryptoLibrary from './cryptoLibrary';
 import user from './user';
 import device from './device';
+import i18n from '../i18n';
 
 /**
  * Decrypts data with a secret
@@ -88,11 +89,11 @@ function call(method, endpoint, data, headers, session_secret_key) {
                     // that falls out of the range of 2xx
                     if (error.response.status === 403 && user.is_logged_in()) {
                         // User did not have permission
-                        user.logout('Permission denied.');
+                        user.logout(i18n.t('PERMISSION_DENIED'));
                     }
                     if (error.response.status === 401 && user.is_logged_in()) {
                         // session expired, lets log the user out
-                        user.logout('Session expired.');
+                        user.logout(i18n.t('SESSION_EXPIRED'));
                     }
                     console.log(error.response);
                     return reject(
