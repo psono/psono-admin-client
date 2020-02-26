@@ -1,7 +1,7 @@
 import React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 
-import RegularCard from '../../components/Cards/RegularCard';
+import RegularCard from '../../components/Card/RegularCard';
 
 import {
     P,

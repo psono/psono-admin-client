@@ -1,9 +1,13 @@
 import React from 'react';
-import { withStyles, SnackbarContent as Snack, IconButton } from 'material-ui';
-import { Close } from 'material-ui-icons';
+import {
+    withStyles,
+    SnackbarContent as Snack,
+    IconButton
+} from '@material-ui/core';
+import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { snackbarContentStyle } from '../../variables/styles';
+import snackbarContentStyle from '../../assets/jss/material-dashboard-react/snackbarContentStyle';
 
 class SnackbarContent extends React.Component {
     render() {

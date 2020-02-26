@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import matchPath from 'react-router/matchPath';
 import sidebarRoutes from '../../routes/sidebar';
 import ldapRoutes from '../../routes/ldap';
 import samlRoutes from '../../routes/saml';
 import otherRoutes from '../../routes/other';
-import { appStyle } from '../../variables/styles';
+import appStyle from '../../assets/jss/material-dashboard-react/appStyle';
 
 class switchRoutes extends React.Component {
     render() {

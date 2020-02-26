@@ -1,10 +1,10 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { SAMLCard, ItemGrid } from '../../components';
-import { dashboardStyle } from '../../variables/styles';
+import { SAMLCard, GridItem } from '../../components';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 
 class Users extends React.Component {
@@ -53,9 +53,9 @@ class Users extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <SAMLCard saml_groups={this.state.saml_groups} />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

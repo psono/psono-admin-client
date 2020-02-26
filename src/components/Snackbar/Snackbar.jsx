@@ -1,9 +1,9 @@
 import React from 'react';
-import { withStyles, Snackbar as Snack, IconButton } from 'material-ui';
-import { Close } from 'material-ui-icons';
+import { withStyles, Snackbar as Snack, IconButton } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { snackbarContentStyle } from '../../variables/styles';
+import snackbarContentStyle from '../../assets/jss/material-dashboard-react/snackbarContentStyle';
 
 class Snackbar extends React.Component {
     render() {
@@ -55,7 +55,7 @@ class Snackbar extends React.Component {
                     </div>
                 }
                 action={action}
-                SnackbarContentProps={{
+                ContentProps={{
                     classes: {
                         root: classes.root + ' ' + classes[color],
                         message: classes.message
@@ -69,9 +69,16 @@ class Snackbar extends React.Component {
 Snackbar.propTypes = {
     classes: PropTypes.object.isRequired,
     message: PropTypes.node.isRequired,
-    color: PropTypes.oneOf(['info', 'success', 'warning', 'danger', 'primary']),
+    color: PropTypes.oneOf([
+        'warning',
+        'success',
+        'danger',
+        'info',
+        'primary',
+        'rose'
+    ]),
     close: PropTypes.bool,
-    icon: PropTypes.func,
+    icon: PropTypes.object,
     place: PropTypes.oneOf(['tl', 'tr', 'tc', 'br', 'bl', 'bc']),
     open: PropTypes.bool
 };

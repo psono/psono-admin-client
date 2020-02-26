@@ -8,11 +8,11 @@ import {
     TableCell,
     TableRow,
     Tooltip
-} from 'material-ui';
-import { Edit, Close, Check } from 'material-ui-icons';
+} from '@material-ui/core';
+import { Edit, Close, Check } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { tasksStyle } from '../../variables/styles';
+import tasksStyle from '../../assets/jss/material-dashboard-react/tasksStyle';
 
 class Tasks extends React.Component {
     state = {

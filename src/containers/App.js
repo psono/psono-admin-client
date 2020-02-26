@@ -3,7 +3,7 @@ import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { HashLoader } from 'react-spinners';
 import { createBrowserHistory } from 'history';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import { Router, Route, Switch } from 'react-router-dom';
 import matchPath from 'react-router/matchPath';
 import { compose } from 'redux';

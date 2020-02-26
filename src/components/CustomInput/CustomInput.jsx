@@ -5,11 +5,11 @@ import {
     InputLabel,
     Input,
     FormHelperText
-} from 'material-ui';
-import { Clear, Check } from 'material-ui-icons';
+} from '@material-ui/core';
+import { Clear, Check } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 
-import { customInputStyle } from '../../variables/styles';
+import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
 class CustomInput extends React.Component {
     render() {

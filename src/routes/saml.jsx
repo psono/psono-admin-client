@@ -1,6 +1,6 @@
 import SAML from '../views/SAML/Index';
 
-import { Business } from 'material-ui-icons';
+import { Business } from '@material-ui/icons';
 
 let routes = [
     {

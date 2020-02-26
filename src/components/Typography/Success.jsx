@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 
-import { typographyStyle } from '../../variables/styles';
+import typographyStyle from '../../assets/jss/material-dashboard-react/typographyStyle';
 
 class Success extends React.Component {
     render() {

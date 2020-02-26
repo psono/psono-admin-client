@@ -2,22 +2,21 @@
 // // // Cards
 // #############################
 
-import ChartCard from './Cards/ChartCard.jsx';
-import ProfileCard from './Cards/ProfileCard.jsx';
-import RegularCard from './Cards/RegularCard.jsx';
-import StatsCard from './Cards/StatsCard.jsx';
-import VersionCard from './Cards/VersionCard.jsx';
-import LicenseCard from './Cards/LicenseCard.jsx';
-import HealthcheckCard from './Cards/HealthcheckCard.jsx';
-import Sessions from './Cards/Sessions.jsx';
-import TasksCard from './Cards/TasksCard.jsx';
-import ReleaseCard from './Cards/ReleaseCard.jsx';
-import FileserverCard from './Cards/FileserverCard.jsx';
-import UsersCard from './Cards/UsersCard.jsx';
-import LDAPCard from './Cards/LDAPCard.jsx';
-import SAMLCard from './Cards/SAMLCard.jsx';
-import UserCard from './Cards/UserCard.jsx';
-import GroupCard from './Cards/GroupCard.jsx';
+import ChartCard from './Card/ChartCard.jsx';
+import ProfileCard from './Card/ProfileCard.jsx';
+import RegularCard from './Card/RegularCard.jsx';
+import StatsCard from './Card/StatsCard.jsx';
+import VersionCard from './Card/VersionCard.jsx';
+import LicenseCard from './Card/LicenseCard.jsx';
+import HealthcheckCard from './Card/HealthcheckCard.jsx';
+import Sessions from './Card/Sessions.jsx';
+import ReleaseCard from './Card/ReleaseCard.jsx';
+import FileserverCard from './Card/FileserverCard.jsx';
+import UsersCard from './Card/UsersCard.jsx';
+import LDAPCard from './Card/LDAPCard.jsx';
+import SAMLCard from './Card/SAMLCard.jsx';
+import UserCard from './Card/UserCard.jsx';
+import GroupCard from './Card/GroupCard.jsx';
 
 // ##############################
 // // // CustomButtons
@@ -42,7 +41,7 @@ import Footer from './Footer/Footer.jsx';
 // // // Grid
 // #############################
 
-import ItemGrid from './Grid/ItemGrid.jsx';
+import GridItem from './Grid/GridItem.jsx';
 
 // ##############################
 // // // Header
@@ -75,7 +74,7 @@ import SnackbarContent from './Snackbar/SnackbarContent.jsx';
 // #############################
 
 import Table from './Table/Table.jsx';
-import CustomTable from './Table/CustomTable.jsx';
+import CustomMaterialTable from './Table/CustomMaterialTable.jsx';
 
 // ##############################
 // // // Tasks
@@ -114,7 +113,6 @@ export {
     LicenseCard,
     HealthcheckCard,
     Sessions,
-    TasksCard,
     ReleaseCard,
     FileserverCard,
     UsersCard,
@@ -130,7 +128,7 @@ export {
     // Footer
     Footer,
     // Grid
-    ItemGrid,
+    GridItem,
     // Header
     Header,
     HeaderLinks,
@@ -143,7 +141,7 @@ export {
     SnackbarContent,
     // Table
     Table,
-    CustomTable,
+    CustomMaterialTable,
     // Tasks
     Tasks,
     // Typography

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Grid, InputLabel } from 'material-ui';
+import { Grid, InputLabel } from '@material-ui/core';
 
 import {
     ProfileCard,
     RegularCard,
     Button,
     CustomInput,
-    ItemGrid
+    GridItem
 } from '../../components';
 
 import avatar from '../../assets/img/faces/marc.jpg';
@@ -16,14 +16,14 @@ class UserProfile extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={8}>
+                    <GridItem xs={12} sm={12} md={8}>
                         <RegularCard
                             cardTitle="Edit Profile"
                             cardSubtitle="Complete your profile"
                             content={
                                 <div>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={5}>
+                                        <GridItem xs={12} sm={12} md={5}>
                                             <CustomInput
                                                 labelText="Company (disabled)"
                                                 id="company-disabled"
@@ -34,8 +34,8 @@ class UserProfile extends React.Component {
                                                     disabled: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={3}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={3}>
                                             <CustomInput
                                                 labelText="Username"
                                                 id="username"
@@ -43,8 +43,8 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText="Email address"
                                                 id="email-address"
@@ -52,10 +52,10 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={6}>
+                                        <GridItem xs={12} sm={12} md={6}>
                                             <CustomInput
                                                 labelText="First Name"
                                                 id="first-name"
@@ -63,8 +63,8 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={6}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={6}>
                                             <CustomInput
                                                 labelText="Last Name"
                                                 id="last-name"
@@ -72,10 +72,10 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText="City"
                                                 id="city"
@@ -83,8 +83,8 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText="Country"
                                                 id="country"
@@ -92,8 +92,8 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText="Postal Code"
                                                 id="postal-code"
@@ -101,10 +101,10 @@ class UserProfile extends React.Component {
                                                     fullWidth: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={12}>
+                                        <GridItem xs={12} sm={12} md={12}>
                                             <InputLabel
                                                 style={{ color: '#AAAAAA' }}
                                             >
@@ -121,7 +121,7 @@ class UserProfile extends React.Component {
                                                     rows: 5
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                 </div>
                             }
@@ -129,8 +129,8 @@ class UserProfile extends React.Component {
                                 <Button color="primary">Update Profile</Button>
                             }
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={12} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
                         <ProfileCard
                             avatar={avatar}
                             subtitle="CEO / CO-FOUNDER"
@@ -142,7 +142,7 @@ class UserProfile extends React.Component {
                                 </Button>
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
             </div>
         );

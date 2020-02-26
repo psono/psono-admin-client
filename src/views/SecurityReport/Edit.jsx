@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Checkbox, withStyles } from 'material-ui';
+import { Grid, Checkbox, withStyles } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
@@ -7,12 +7,12 @@ import moment from 'moment';
 import {
     RegularCard,
     CustomInput,
-    ItemGrid,
-    CustomTable,
+    GridItem,
+    CustomMaterialTable,
     ChartCard
 } from '../../components';
 import psono_server from '../../services/api-server';
-import { customInputStyle } from '../../variables/styles';
+import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import ChartistGraph from 'react-chartist';
 
 class SecurityReport extends React.Component {
@@ -114,7 +114,7 @@ class SecurityReport extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={12}>
                         <RegularCard
                             cardTitle={t('SECURITY_REPORT_DETAILS')}
                             cardSubtitle={t(
@@ -123,7 +123,7 @@ class SecurityReport extends React.Component {
                             content={
                                 <div>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={12} md={4}>
+                                        <GridItem xs={12} sm={12} md={4}>
                                             <CustomInput
                                                 labelText={t('CREATED_AT')}
                                                 id="create_date"
@@ -140,8 +140,8 @@ class SecurityReport extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={12} md={8}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={8}>
                                             <CustomInput
                                                 labelText={t('USERNAME')}
                                                 id="username"
@@ -155,10 +155,10 @@ class SecurityReport extends React.Component {
                                                     readOnly: true
                                                 }}
                                             />
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -169,8 +169,8 @@ class SecurityReport extends React.Component {
                                                 />{' '}
                                                 {t('TWO_FACTOR')}
                                             </div>
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -181,8 +181,8 @@ class SecurityReport extends React.Component {
                                                 />{' '}
                                                 {t('RECOVERY_CODE')}
                                             </div>
-                                        </ItemGrid>
-                                        <ItemGrid xs={12} sm={6} md={4}>
+                                        </GridItem>
+                                        <GridItem xs={12} sm={6} md={4}>
                                             <div className={classes.checkbox}>
                                                 <Checkbox
                                                     tabIndex={1}
@@ -193,15 +193,15 @@ class SecurityReport extends React.Component {
                                                 />{' '}
                                                 {t('BREACH_DETECTION')}
                                             </div>
-                                        </ItemGrid>
+                                        </GridItem>
                                     </Grid>
                                 </div>
                             }
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6}>
+                    <GridItem xs={12} sm={6} md={6}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -247,8 +247,8 @@ class SecurityReport extends React.Component {
                             fontAwesomeStatsIcon="flag"
                             statText={t('HOW_MANY_PASSWORDS_HAVE_WHICH_LENGTH')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -296,7 +296,7 @@ class SecurityReport extends React.Component {
                                 'HOW_MANY_PASSWORDS_HAVE_HOW_MANY_CHARACTER_GROUPS'
                             )}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
                     <RegularCard
@@ -304,28 +304,28 @@ class SecurityReport extends React.Component {
                         cardTitle={t('ENTRIES')}
                         cardSubtitle={t('LIST_OF_SECURITY_REPORT_ENTRIES')}
                         content={
-                            <CustomTable
-                                head={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        id: 'name',
-                                        label: t('NAME')
+                                        field: 'master_password',
+                                        title: t('MASTER_PASSWORD')
                                     },
                                     {
-                                        id: 'master_password',
-                                        label: t('MASTER_PASSWORD')
+                                        field: 'password_length',
+                                        title: t('PASSWORD_LENGTH')
                                     },
                                     {
-                                        id: 'password_length',
-                                        label: t('PASSWORD_LENGTH')
+                                        field: 'variation_count',
+                                        title: t('PASSWORD_CHARACTER_GROUPS')
                                     },
+                                    { field: 'breached', title: t('BREACHED') },
                                     {
-                                        id: 'variation_count',
-                                        label: t('PASSWORD_CHARACTER_GROUPS')
-                                    },
-                                    { id: 'breached', label: t('BREACHED') },
-                                    { id: 'duplicate', label: t('DUPLICATE') }
+                                        field: 'duplicate',
+                                        title: t('DUPLICATE')
+                                    }
                                 ]}
                                 data={this.state.security_report.entries}
+                                title={''}
                             />
                         }
                     />

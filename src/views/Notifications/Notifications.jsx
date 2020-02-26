@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid } from 'material-ui';
-import { AddAlert } from 'material-ui-icons';
+import { Grid } from '@material-ui/core';
+import { AddAlert } from '@material-ui/icons';
 
 import {
     RegularCard,
@@ -10,7 +10,7 @@ import {
     Button,
     SnackbarContent,
     Snackbar,
-    ItemGrid
+    GridItem
 } from '../../components';
 
 class Notifications extends React.Component {
@@ -56,7 +56,7 @@ class Notifications extends React.Component {
                 content={
                     <div>
                         <Grid container>
-                            <ItemGrid xs={12} sm={12} md={6}>
+                            <GridItem xs={12} sm={12} md={6}>
                                 <h5>Notifications Style</h5>
                                 <br />
                                 <SnackbarContent
@@ -86,8 +86,8 @@ class Notifications extends React.Component {
                                     icon={AddAlert}
                                 />
                                 <br />
-                            </ItemGrid>
-                            <ItemGrid xs={12} sm={12} md={6}>
+                            </GridItem>
+                            <GridItem xs={12} sm={12} md={6}>
                                 <h5>Notifications States</h5>
                                 <br />
                                 <SnackbarContent
@@ -130,12 +130,12 @@ class Notifications extends React.Component {
                                     color="primary"
                                 />
                                 <br />
-                            </ItemGrid>
+                            </GridItem>
                         </Grid>
                         <br />
                         <br />
                         <Grid container justify="center">
-                            <ItemGrid
+                            <GridItem
                                 xs={12}
                                 sm={12}
                                 md={6}
@@ -145,12 +145,12 @@ class Notifications extends React.Component {
                                     Notifications Places
                                     <Small>Click to view notifications</Small>
                                 </h5>
-                            </ItemGrid>
+                            </GridItem>
                         </Grid>
                         <Grid container justify="center">
-                            <ItemGrid xs={12} sm={12} md={10} lg={8}>
+                            <GridItem xs={12} sm={12} md={10} lg={8}>
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -171,8 +171,8 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -193,8 +193,8 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -215,14 +215,14 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
-                            </ItemGrid>
+                            </GridItem>
                         </Grid>
                         <Grid container justify={'center'}>
-                            <ItemGrid xs={12} sm={12} md={10} lg={8}>
+                            <GridItem xs={12} sm={12} md={10} lg={8}>
                                 <Grid container>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -243,8 +243,8 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -265,8 +265,8 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
-                                    <ItemGrid xs={12} sm={12} md={4}>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <Button
                                             fullWidth
                                             color="primary"
@@ -287,9 +287,9 @@ class Notifications extends React.Component {
                                             }
                                             close
                                         />
-                                    </ItemGrid>
+                                    </GridItem>
                                 </Grid>
-                            </ItemGrid>
+                            </GridItem>
                         </Grid>
                     </div>
                 }

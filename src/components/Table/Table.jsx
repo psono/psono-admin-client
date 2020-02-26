@@ -6,10 +6,10 @@ import {
     TableRow,
     TableBody,
     TableCell
-} from 'material-ui';
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-import { tableStyle } from '../../variables/styles';
+import tableStyle from '../../assets/jss/material-dashboard-react/tableStyle';
 
 class CustomTable extends React.Component {
     render() {

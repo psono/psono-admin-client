@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { List, ListItem, withStyles } from 'material-ui';
+import { List, ListItem, withStyles } from '@material-ui/core';
 
-import { footerStyle } from '../../variables/styles';
+import footerStyle from '../../assets/jss/material-dashboard-react/footerStyle';
 
 class Footer extends React.Component {
     render() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
@@ -8,15 +8,15 @@ import { Redirect } from 'react-router-dom';
 
 import {
     ChartCard,
-    ItemGrid,
+    GridItem,
     RegularCard,
-    CustomTable
+    CustomMaterialTable
 } from '../../components';
-import { dashboardStyle } from '../../variables/styles';
+import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 
 import ChartistGraph from 'react-chartist';
-import { Search } from 'material-ui-icons';
+import { Search } from '@material-ui/icons';
 
 class SecurityReports extends React.Component {
     state = {
@@ -190,7 +190,7 @@ class SecurityReports extends React.Component {
         return (
             <div>
                 <Grid container>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -255,8 +255,8 @@ class SecurityReports extends React.Component {
                             fontAwesomeStatsIcon="flag"
                             statText={t('HOW_MANY_USERS_SENT_A_REPORT')}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -327,8 +327,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_USERS_ARE_MISSING_A_SECOND_FACTOR'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={4} md={4}>
+                    </GridItem>
+                    <GridItem xs={12} sm={4} md={4}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -399,10 +399,10 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_USERS_ARE_MISSING_A_RECOVERY_CODE'
                             )}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -487,8 +487,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_MASTER_PASSWORDS_HAVE_BEEN_BREACHED'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -559,8 +559,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_MASTER_PASSWORDS_HAVE_BEEN_USED_MULTIPLE_TIMES'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -645,8 +645,8 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_PASSWORDS_HAVE_BEEN_BREACHED'
                             )}
                         />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6} md={6} lg={3}>
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={6} lg={3}>
                         <ChartCard
                             chart={
                                 <ChartistGraph
@@ -717,7 +717,7 @@ class SecurityReports extends React.Component {
                                 'HOW_MANY_PASSWORDS_HAVE_BEEN_USED_MULTIPLE_TIMES'
                             )}
                         />
-                    </ItemGrid>
+                    </GridItem>
                 </Grid>
                 <Grid container>
                     <RegularCard
@@ -725,67 +725,68 @@ class SecurityReports extends React.Component {
                         cardTitle={t('SECURITY_REPORTS')}
                         cardSubtitle={t('SECURITY_REPORT_LIST_INFO')}
                         content={
-                            <CustomTable
-                                headerFunctions={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        title: t('SHOW_DETAILS'),
-                                        onClick: selected_reports =>
-                                            this.onShowDetails(
-                                                selected_reports
-                                            ),
-                                        icon: <Search />,
-                                        max_selected: 1
-                                    }
-                                ]}
-                                head={[
-                                    {
-                                        id: 'create_date',
-                                        label: t('CREATED_AT')
+                                        field: 'create_date',
+                                        title: t('CREATED_AT')
                                     },
                                     {
-                                        id: 'username',
-                                        label: t('USERNAME')
+                                        field: 'username',
+                                        title: t('USERNAME')
                                     },
                                     {
-                                        id: 'two_factor_exists',
-                                        label: t('TWO_FACTOR')
+                                        field: 'two_factor_exists',
+                                        title: t('TWO_FACTOR')
                                     },
                                     {
-                                        id: 'website_password_count',
-                                        label: t('PASSWORDS')
+                                        field: 'website_password_count',
+                                        title: t('PASSWORDS')
                                     },
                                     {
-                                        id: 'breached_password_count',
-                                        label: t('BREACHED')
+                                        field: 'breached_password_count',
+                                        title: t('BREACHED')
                                     },
                                     {
-                                        id: 'duplicate_password_count',
-                                        label: t('DUPLICATES')
+                                        field: 'duplicate_password_count',
+                                        title: t('DUPLICATES')
                                     },
                                     {
-                                        id: 'master_password_breached',
-                                        label: t('MASTER_PASSWORD_BREACHED')
+                                        field: 'master_password_breached',
+                                        title: t('MASTER_PASSWORD_BREACHED')
                                     },
                                     {
-                                        id: 'master_password_duplicate',
-                                        label: t('MASTER_PASSWORD_REUSED')
+                                        field: 'master_password_duplicate',
+                                        title: t('MASTER_PASSWORD_REUSED')
                                     },
                                     {
-                                        id: 'master_password_length',
-                                        label: t('MASTER_PASSWORD_LENGTH')
+                                        field: 'master_password_length',
+                                        title: t('MASTER_PASSWORD_LENGTH')
                                     },
                                     {
-                                        id: 'master_password_variation_count',
-                                        label: t(
+                                        field:
+                                            'master_password_variation_count',
+                                        title: t(
                                             'MASTER_PASSWORD_CHARACTER_GROUPS'
                                         )
                                     },
                                     {
-                                        id: 'recovery_code_exists',
-                                        label: t('RECOVERY_CODE')
+                                        field: 'recovery_code_exists',
+                                        title: t('RECOVERY_CODE')
                                     }
                                 ]}
                                 data={this.state.security_reports}
+                                title={''}
+                                actions={[
+                                    {
+                                        tooltip: t('SHOW_DETAILS'),
+                                        icon: Search,
+                                        onClick: (evt, selected_report) =>
+                                            this.onShowDetails([
+                                                selected_report
+                                            ])
+                                    }
+                                ]}
                             />
                         }
                     />
@@ -798,18 +799,19 @@ class SecurityReports extends React.Component {
                             'LIST_OF_USERS_WITHOUT_SECURITY_REPORT'
                         )}
                         content={
-                            <CustomTable
-                                head={[
+                            <CustomMaterialTable
+                                columns={[
                                     {
-                                        id: 'create_date',
-                                        label: t('JOINED_AT')
+                                        field: 'create_date',
+                                        title: t('JOINED_AT')
                                     },
                                     {
-                                        id: 'username',
-                                        label: t('USERNAME')
+                                        field: 'username',
+                                        title: t('USERNAME')
                                     }
                                 ]}
                                 data={this.state.users_missing_reports}
+                                title={''}
                             />
                         }
                     />

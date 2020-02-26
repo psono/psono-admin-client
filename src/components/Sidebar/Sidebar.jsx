@@ -1,19 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    withStyles,
-    Drawer,
-    Hidden,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText
-} from 'material-ui';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import { NavLink } from 'react-router-dom';
 
-import { sidebarStyle } from '../../variables/styles';
+import sidebarStyle from '../../assets/jss/material-dashboard-react/sidebarStyle';
 
 import { HeaderLinks } from '../../components';
 
@@ -86,7 +84,7 @@ class Sidebar extends React.Component {
             <div>
                 <Hidden mdUp>
                     <Drawer
-                        type="temporary"
+                        variant="temporary"
                         anchor="right"
                         open={this.props.open}
                         classes={{
@@ -115,7 +113,7 @@ class Sidebar extends React.Component {
                 <Hidden smDown>
                     <Drawer
                         anchor="left"
-                        type="permanent"
+                        variant="permanent"
                         open
                         classes={{
                             paper: classes.drawerPaper
