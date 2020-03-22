@@ -1,4 +1,8 @@
 {
+  "DELETE_USER_CONFIRM_DIALOG": "Sie sind dabei Benutzer zu löschen. Sind sie sich sicher?",
+  "DELETE_GROUP_CONFIRM_DIALOG": "Sie sind dabei Gruppen zu löschen. Sind sie sich sicher?",
+  "ABORT": "Abbrechen",
+  "CONFIRM": "Bestätigen",
   "SESSION_EXPIRED": "Session abgelaufen",
   "PERMISSION_DENIED": "Zugriff verweigert",
   "PROFILE": "Profil",

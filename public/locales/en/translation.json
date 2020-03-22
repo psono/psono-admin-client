@@ -1,4 +1,8 @@
 {
+  "DELETE_USER_CONFIRM_DIALOG": "You are about to delete users. Are you sure?",
+  "DELETE_GROUP_CONFIRM_DIALOG": "You are about to delete groups. Are you sure?",
+  "ABORT": "Abort",
+  "CONFIRM": "Confirm",
   "SESSION_EXPIRED": "Session expired",
   "PERMISSION_DENIED": "Permission denied",
   "PROFILE": "Profile",
