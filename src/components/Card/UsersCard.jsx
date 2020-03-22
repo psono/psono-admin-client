@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
+import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog.js';
 import Add from '@material-ui/icons/Add';
 import Person from '@material-ui/icons/Person';
 import DevicesOther from '@material-ui/icons/DevicesOther';
@@ -18,6 +19,11 @@ import { CustomMaterialTable } from '../../components';
 import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardStyle';
 
 class UsersCard extends React.Component {
+    state = {
+        deleteUsers: [],
+        deleteGroups: []
+    };
+
     render() {
         const {
             t,
@@ -35,156 +41,209 @@ class UsersCard extends React.Component {
             show_create_group_button
         } = this.props;
         return (
-            <CustomTabs
-                title={t('USER_MANAGEMENT')}
-                headerColor="primary"
-                tabs={[
-                    {
-                        tabName: t('USERS'),
-                        tabIcon: Person,
-                        tabContent: (
-                            <CustomMaterialTable
-                                columns={[
-                                    { field: 'username', title: t('USERNAME') },
-                                    {
-                                        field: 'create_date',
-                                        title: t('CREATED_AT')
-                                    },
-                                    { field: 'is_active', title: t('ACTIVE') },
-                                    {
-                                        field: 'is_email_active',
-                                        title: t('EMAIL_ACTIVE')
-                                    },
-                                    {
-                                        field: 'yubikey_2fa',
-                                        title: t('YUBIKEY')
-                                    },
-                                    {
-                                        field: 'ga_2fa',
-                                        title: t('GOOGLE_AUTHENTICATOR')
-                                    },
-                                    {
-                                        field: 'duo_2fa',
-                                        title: t('DUO_AUTHENTICATION')
-                                    }
-                                ]}
-                                data={users}
-                                title={''}
-                                actions={[
-                                    {
-                                        tooltip: t('EDIT_USER_S'),
-                                        icon: Edit,
-                                        onClick: (evt, data) =>
-                                            onEditUser([data])
-                                    },
-                                    {
-                                        tooltip: t('ACTIVATE_USER_S'),
-                                        icon: CheckBox,
-                                        onClick: (evt, data) =>
-                                            onActivate([data])
-                                    },
-                                    {
-                                        tooltip: t('DEACTIVATE_USER_S'),
-                                        icon: NotInterested,
-                                        onClick: (evt, data) =>
-                                            onDeactivate([data])
-                                    },
-                                    {
-                                        tooltip: t('DELETE_USER_S'),
-                                        icon: Delete,
-                                        onClick: (evt, data) =>
-                                            onDeleteUsers([data])
-                                    }
-                                ]}
-                            />
-                        )
-                    },
-                    {
-                        tabName: t('SESSIONS'),
-                        tabIcon: DevicesOther,
-                        tabContent: (
-                            <CustomMaterialTable
-                                columns={[
-                                    { field: 'username', title: t('USERNAME') },
-                                    {
-                                        field: 'create_date',
-                                        title: t('LOGGED_IN_AT')
-                                    },
-                                    {
-                                        field: 'valid_till',
-                                        title: t('VALID_TILL')
-                                    },
-                                    {
-                                        field: 'device_description',
-                                        title: t('DEVICE_DESCRIPTION')
-                                    },
-                                    {
-                                        field: 'device_fingerprint',
-                                        title: t('DEVICE')
-                                    },
-                                    { field: 'active', title: t('ACTIVE') }
-                                ]}
-                                data={sessions}
-                                title={''}
-                                actions={[
-                                    {
-                                        tooltip: t('DELETE_SESSION_S'),
-                                        icon: Delete,
-                                        onClick: (evt, data) =>
-                                            onDeleteSessions([data])
-                                    }
-                                ]}
-                            />
-                        )
-                    },
-                    {
-                        tabName: t('GROUPS'),
-                        tabIcon: Group,
-                        tabContent: (
-                            <CustomMaterialTable
-                                columns={[
-                                    { field: 'name', title: t('NAME') },
-                                    {
-                                        field: 'create_date',
-                                        title: t('CREATED_AT')
-                                    },
-                                    {
-                                        field: 'member_count',
-                                        title: t('MEMBERS')
-                                    },
-                                    {
-                                        field: 'is_managed',
-                                        title: t('MANAGED')
-                                    }
-                                ]}
-                                data={groups}
-                                title={''}
-                                actions={[
-                                    {
-                                        tooltip: t('EDIT_GROUP'),
-                                        icon: Edit,
-                                        onClick: (evt, data) =>
-                                            onEditGroup([data])
-                                    },
-                                    {
-                                        tooltip: t('DELETE_GROUP_S'),
-                                        icon: Delete,
-                                        onClick: (evt, data) =>
-                                            onDeleteGroups([data])
-                                    },
-                                    {
-                                        tooltip: t('CREATE_GROUP'),
-                                        isFreeAction: true,
-                                        icon: Add,
-                                        hidden: !show_create_group_button,
-                                        onClick: evt => onCreateGroup()
-                                    }
-                                ]}
-                            />
-                        )
-                    }
-                ]}
-            />
+            <div>
+                {this.state.deleteUsers.length > 0 && (
+                    <DeleteConfirmDialog
+                        title={t('DELETE_USER_S')}
+                        onConfirm={() => {
+                            onDeleteUsers(this.state.deleteUsers);
+                            this.setState({
+                                deleteUsers: []
+                            });
+                        }}
+                        onAbort={() => {
+                            this.setState({
+                                deleteUsers: []
+                            });
+                        }}
+                    >
+                        {t('DELETE_USER_CONFIRM_DIALOG')}
+                    </DeleteConfirmDialog>
+                )}
+                {this.state.deleteGroups.length > 0 && (
+                    <DeleteConfirmDialog
+                        title={t('DELETE_GROUP_S')}
+                        onConfirm={() => {
+                            onDeleteGroups(this.state.deleteGroups);
+                            this.setState({
+                                deleteGroups: []
+                            });
+                        }}
+                        onAbort={() => {
+                            this.setState({
+                                deleteGroups: []
+                            });
+                        }}
+                    >
+                        {t('DELETE_GROUP_CONFIRM_DIALOG')}
+                    </DeleteConfirmDialog>
+                )}
+                <CustomTabs
+                    title={t('USER_MANAGEMENT')}
+                    headerColor="primary"
+                    tabs={[
+                        {
+                            tabName: t('USERS'),
+                            tabIcon: Person,
+                            tabContent: (
+                                <CustomMaterialTable
+                                    columns={[
+                                        {
+                                            field: 'username',
+                                            title: t('USERNAME')
+                                        },
+                                        {
+                                            field: 'create_date',
+                                            title: t('CREATED_AT')
+                                        },
+                                        {
+                                            field: 'is_active',
+                                            title: t('ACTIVE')
+                                        },
+                                        {
+                                            field: 'is_email_active',
+                                            title: t('EMAIL_ACTIVE')
+                                        },
+                                        {
+                                            field: 'yubikey_2fa',
+                                            title: t('YUBIKEY')
+                                        },
+                                        {
+                                            field: 'ga_2fa',
+                                            title: t('GOOGLE_AUTHENTICATOR')
+                                        },
+                                        {
+                                            field: 'duo_2fa',
+                                            title: t('DUO_AUTHENTICATION')
+                                        }
+                                    ]}
+                                    data={users}
+                                    title={''}
+                                    actions={[
+                                        {
+                                            tooltip: t('EDIT_USER_S'),
+                                            icon: Edit,
+                                            onClick: (evt, data) =>
+                                                onEditUser([data])
+                                        },
+                                        {
+                                            tooltip: t('ACTIVATE_USER_S'),
+                                            icon: CheckBox,
+                                            onClick: (evt, data) =>
+                                                onActivate([data])
+                                        },
+                                        {
+                                            tooltip: t('DEACTIVATE_USER_S'),
+                                            icon: NotInterested,
+                                            onClick: (evt, data) =>
+                                                onDeactivate([data])
+                                        },
+                                        {
+                                            tooltip: t('DELETE_USER_S'),
+                                            icon: Delete,
+                                            onClick: (evt, data) => {
+                                                this.setState({
+                                                    deleteUsers: [data]
+                                                });
+                                            }
+                                        }
+                                    ]}
+                                />
+                            )
+                        },
+                        {
+                            tabName: t('SESSIONS'),
+                            tabIcon: DevicesOther,
+                            tabContent: (
+                                <CustomMaterialTable
+                                    columns={[
+                                        {
+                                            field: 'username',
+                                            title: t('USERNAME')
+                                        },
+                                        {
+                                            field: 'create_date',
+                                            title: t('LOGGED_IN_AT')
+                                        },
+                                        {
+                                            field: 'valid_till',
+                                            title: t('VALID_TILL')
+                                        },
+                                        {
+                                            field: 'device_description',
+                                            title: t('DEVICE_DESCRIPTION')
+                                        },
+                                        {
+                                            field: 'device_fingerprint',
+                                            title: t('DEVICE')
+                                        },
+                                        { field: 'active', title: t('ACTIVE') }
+                                    ]}
+                                    data={sessions}
+                                    title={''}
+                                    actions={[
+                                        {
+                                            tooltip: t('DELETE_SESSION_S'),
+                                            icon: Delete,
+                                            onClick: (evt, data) =>
+                                                onDeleteSessions([data])
+                                        }
+                                    ]}
+                                />
+                            )
+                        },
+                        {
+                            tabName: t('GROUPS'),
+                            tabIcon: Group,
+                            tabContent: (
+                                <CustomMaterialTable
+                                    columns={[
+                                        { field: 'name', title: t('NAME') },
+                                        {
+                                            field: 'create_date',
+                                            title: t('CREATED_AT')
+                                        },
+                                        {
+                                            field: 'member_count',
+                                            title: t('MEMBERS')
+                                        },
+                                        {
+                                            field: 'is_managed',
+                                            title: t('MANAGED')
+                                        }
+                                    ]}
+                                    data={groups}
+                                    title={''}
+                                    actions={[
+                                        {
+                                            tooltip: t('EDIT_GROUP'),
+                                            icon: Edit,
+                                            onClick: (evt, data) =>
+                                                onEditGroup([data])
+                                        },
+                                        {
+                                            tooltip: t('DELETE_GROUP_S'),
+                                            icon: Delete,
+                                            onClick: (evt, data) => {
+                                                this.setState({
+                                                    deleteGroups: [data]
+                                                });
+                                            }
+                                        },
+                                        {
+                                            tooltip: t('CREATE_GROUP'),
+                                            isFreeAction: true,
+                                            icon: Add,
+                                            hidden: !show_create_group_button,
+                                            onClick: evt => onCreateGroup()
+                                        }
+                                    ]}
+                                />
+                            )
+                        }
+                    ]}
+                />
+            </div>
         );
     }
 }

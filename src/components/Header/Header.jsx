@@ -1,5 +1,5 @@
 import React from 'react';
-import matchPath from 'react-router/matchPath';
+import { matchPath } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Menu } from '@material-ui/icons';
 import {
