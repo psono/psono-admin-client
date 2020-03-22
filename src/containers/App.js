@@ -5,7 +5,7 @@ import { HashLoader } from 'react-spinners';
 import { createBrowserHistory } from 'history';
 import { withStyles } from '@material-ui/core';
 import { Router, Route, Switch } from 'react-router-dom';
-import matchPath from 'react-router/matchPath';
+import { matchPath } from 'react-router-dom';
 import { compose } from 'redux';
 
 import store from '../services/store';
