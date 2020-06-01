@@ -510,6 +510,38 @@ function admin_saml_delete_group_map(
 }
 
 /**
+ * POST: Creates a user (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {string} username The name of the user to create
+ * @param {string} email The email of the user to create
+ * @param {string} password The password of the user to create
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_create_user(
+    token,
+    session_secret_key,
+    username,
+    password,
+    email
+) {
+    const endpoint = '/admin/user/';
+    const connection_type = 'POST';
+    const data = {
+        username: username,
+        email: email,
+        password: password
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -561,7 +593,7 @@ function admin_delete_session(token, session_secret_key, session_id) {
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} name The name of the group to create
+ * @param {string} name The name of the group to create
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
@@ -2572,6 +2604,7 @@ const service = {
     admin_session,
     admin_group,
     admin_security_report,
+    admin_create_user,
     admin_delete_user,
     admin_delete_session,
     admin_create_group,

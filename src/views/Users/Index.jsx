@@ -136,6 +136,12 @@ class Users extends React.Component {
         });
     }
 
+    onCreateUser() {
+        this.setState({
+            redirect_to: '/users/create/'
+        });
+    }
+
     analyze(data, storage, labels) {
         let found = false;
         labels.some((bl, index) => {
@@ -543,6 +549,7 @@ class Users extends React.Component {
                                 this.onDeleteGroups(selected_groups)
                             }
                             onCreateGroup={() => this.onCreateGroup()}
+                            onCreateUser={() => this.onCreateUser()}
                             show_create_group_button={
                                 this.props.state.server.type === 'EE'
                             }
