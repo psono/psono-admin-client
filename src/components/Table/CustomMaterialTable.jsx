@@ -72,66 +72,74 @@ class CustomMaterialTable extends React.Component {
         const mergedOptions = { ...defaultOptions, ...options };
 
         return (
-            <MaterialTable
-                icons={tableIcons}
-                title={title}
-                columns={columns}
-                data={data}
-                options={mergedOptions}
-                actions={actions}
-                localization={{
-                    body: {
-                        emptyDataSourceMessage: t(
-                            'MATERIAL_TABLE_NO_RECORD_TO_DISPLAY'
-                        ),
-                        addTooltip: t('MATERIAL_TABLE_ADD'),
-                        deleteTooltip: t('MATERIAL_TABLE_DELETE'),
-                        editTooltip: t('MATERIAL_TABLE_EDIT'),
-                        filterRow: {
-                            filterTooltip: t('MATERIAL_TABLE_FILTER')
-                        },
-                        editRow: {
-                            deleteText: t(
-                                'MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW'
+            <div>
+                <MaterialTable
+                    icons={tableIcons}
+                    title={title}
+                    columns={columns}
+                    data={data}
+                    options={mergedOptions}
+                    actions={actions}
+                    localization={{
+                        body: {
+                            emptyDataSourceMessage: t(
+                                'MATERIAL_TABLE_NO_RECORD_TO_DISPLAY'
                             ),
-                            cancelTooltip: t('MATERIAL_TABLE_CANCEL'),
-                            saveTooltip: t('MATERIAL_TABLE_SAVE')
+                            addTooltip: t('MATERIAL_TABLE_ADD'),
+                            deleteTooltip: t('MATERIAL_TABLE_DELETE'),
+                            editTooltip: t('MATERIAL_TABLE_EDIT'),
+                            filterRow: {
+                                filterTooltip: t('MATERIAL_TABLE_FILTER')
+                            },
+                            editRow: {
+                                deleteText: t(
+                                    'MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW'
+                                ),
+                                cancelTooltip: t('MATERIAL_TABLE_CANCEL'),
+                                saveTooltip: t('MATERIAL_TABLE_SAVE')
+                            }
+                        },
+                        grouping: {
+                            placeholder: t('MATERIAL_TABLE_DRAG_HEADERS')
+                        },
+                        header: {
+                            actions: t('MATERIAL_TABLE_ACTIONS')
+                        },
+                        pagination: {
+                            labelDisplayedRows: t(
+                                'MATERIAL_TABLE_FROM_TO_COUNT'
+                            ),
+                            labelRowsSelect: t('MATERIAL_TABLE_ROWS'),
+                            labelRowsPerPage: t('MATERIAL_TABLE_ROWS_PER_PAGE'),
+                            firstAriaLabel: t('MATERIAL_TABLE_FIRST_PAGE'),
+                            firstTooltip: t('MATERIAL_TABLE_FIRST_PAGE'),
+                            previousAriaLabel: t(
+                                'MATERIAL_TABLE_PREVIOUS_PAGE'
+                            ),
+                            previousTooltip: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
+                            nextAriaLabel: t('MATERIAL_TABLE_NEXT_PAGE'),
+                            nextTooltip: t('MATERIAL_TABLE_NEXT_PAGE'),
+                            lastAriaLabel: t('MATERIAL_TABLE_LAST_PAGE'),
+                            lastTooltip: t('MATERIAL_TABLE_LAST_PAGE')
+                        },
+                        toolbar: {
+                            addRemoveColumns: t(
+                                'MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS'
+                            ),
+                            nRowsSelected: t('MATERIAL_TABLE_N_ROWS_SELECTED'),
+                            showColumnsTitle: t('MATERIAL_TABLE_SHOW_COLUMNS'),
+                            showColumnsAriaLabel: t(
+                                'MATERIAL_TABLE_SHOW_COLUMNS'
+                            ),
+                            exportTitle: t('MATERIAL_TABLE_EXPORT'),
+                            exportAriaLabel: t('MATERIAL_TABLE_EXPORT'),
+                            exportName: t('MATERIAL_TABLE_EXPORT_AS_CSV'),
+                            searchTooltip: t('MATERIAL_TABLE_SEARCH'),
+                            searchPlaceholder: t('MATERIAL_TABLE_SEARCH')
                         }
-                    },
-                    grouping: {
-                        placeholder: t('MATERIAL_TABLE_DRAG_HEADERS')
-                    },
-                    header: {
-                        actions: t('MATERIAL_TABLE_ACTIONS')
-                    },
-                    pagination: {
-                        labelDisplayedRows: t('MATERIAL_TABLE_FROM_TO_COUNT'),
-                        labelRowsSelect: t('MATERIAL_TABLE_ROWS'),
-                        labelRowsPerPage: t('MATERIAL_TABLE_ROWS_PER_PAGE'),
-                        firstAriaLabel: t('MATERIAL_TABLE_FIRST_PAGE'),
-                        firstTooltip: t('MATERIAL_TABLE_FIRST_PAGE'),
-                        previousAriaLabel: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
-                        previousTooltip: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
-                        nextAriaLabel: t('MATERIAL_TABLE_NEXT_PAGE'),
-                        nextTooltip: t('MATERIAL_TABLE_NEXT_PAGE'),
-                        lastAriaLabel: t('MATERIAL_TABLE_LAST_PAGE'),
-                        lastTooltip: t('MATERIAL_TABLE_LAST_PAGE')
-                    },
-                    toolbar: {
-                        addRemoveColumns: t(
-                            'MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS'
-                        ),
-                        nRowsSelected: t('MATERIAL_TABLE_N_ROWS_SELECTED'),
-                        showColumnsTitle: t('MATERIAL_TABLE_SHOW_COLUMNS'),
-                        showColumnsAriaLabel: t('MATERIAL_TABLE_SHOW_COLUMNS'),
-                        exportTitle: t('MATERIAL_TABLE_EXPORT'),
-                        exportAriaLabel: t('MATERIAL_TABLE_EXPORT'),
-                        exportName: t('MATERIAL_TABLE_EXPORT_AS_CSV'),
-                        searchTooltip: t('MATERIAL_TABLE_SEARCH'),
-                        searchPlaceholder: t('MATERIAL_TABLE_SEARCH')
-                    }
-                }}
-            />
+                    }}
+                />
+            </div>
         );
     }
 }

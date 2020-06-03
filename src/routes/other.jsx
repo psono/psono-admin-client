@@ -2,6 +2,7 @@ import SecurityReportEdit from '../views/SecurityReport/Edit';
 import UserEdit from '../views/User/Edit';
 import GroupEdit from '../views/Group/Edit';
 import GroupCreate from '../views/Group/Create';
+import UserCreate from '../views/User/Create';
 
 import { Person, Group, Timeline } from '@material-ui/icons';
 
@@ -31,8 +32,15 @@ let routes = [
         path: '/groups/create',
         sidebarName: 'CREATE_GROUP',
         navbarName: 'CREATE_GROUP',
-        icon: Person,
+        icon: Group,
         component: GroupCreate
+    },
+    {
+        path: '/users/create',
+        sidebarName: 'CREATE_USER',
+        navbarName: 'CREATE_USER',
+        icon: Person,
+        component: UserCreate
     }
 ];
 

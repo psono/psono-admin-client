@@ -38,6 +38,7 @@ class UsersCard extends React.Component {
             onDeleteSessions,
             onDeleteGroups,
             onCreateGroup,
+            onCreateUser,
             show_create_group_button
         } = this.props;
         return (
@@ -146,6 +147,12 @@ class UsersCard extends React.Component {
                                                     deleteUsers: [data]
                                                 });
                                             }
+                                        },
+                                        {
+                                            tooltip: t('CREATE_USER'),
+                                            isFreeAction: true,
+                                            icon: Add,
+                                            onClick: evt => onCreateUser()
                                         }
                                     ]}
                                 />

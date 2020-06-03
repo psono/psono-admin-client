@@ -8,12 +8,13 @@ import {
     RegularCard,
     CustomInput,
     GridItem,
-    Button
+    Button,
+    SnackbarContent
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
-class User extends React.Component {
+class Group extends React.Component {
     state = {
         errors_list: [],
         errors_dict: {},
@@ -106,13 +107,29 @@ class User extends React.Component {
                                 </div>
                             }
                             footer={
-                                <Button
-                                    color="primary"
-                                    onClick={this.createGroup}
-                                    disabled={!this.state.createGroupPossible}
-                                >
-                                    {t('CREATE_GROUP')}
-                                </Button>
+                                <div>
+                                    <Button
+                                        color="primary"
+                                        onClick={this.createGroup}
+                                        disabled={
+                                            !this.state.createGroupPossible
+                                        }
+                                    >
+                                        {t('CREATE_GROUP')}
+                                    </Button>
+                                    {errors_dict.hasOwnProperty(
+                                        'non_field_errors'
+                                    ) ? (
+                                        <SnackbarContent
+                                            message={t(
+                                                errors_dict['non_field_errors']
+                                            )}
+                                            color="danger"
+                                        />
+                                    ) : (
+                                        ''
+                                    )}
+                                </div>
                             }
                         />
                     </GridItem>
@@ -122,4 +139,4 @@ class User extends React.Component {
     }
 }
 
-export default compose(withTranslation(), withStyles(customInputStyle))(User);
+export default compose(withTranslation(), withStyles(customInputStyle))(Group);
