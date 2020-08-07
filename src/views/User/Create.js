@@ -26,16 +26,6 @@ class User extends React.Component {
         createUserPossible: false
     };
 
-    componentDidMount() {
-        const is_ee_server = this.props.state.server.type === 'EE';
-
-        if (!is_ee_server) {
-            this.setState({
-                redirect_to: '/dashboard'
-            });
-        }
-    }
-
     isCreateUserPossible(username, email, password1, password2) {
         const usernameValid =
             username.length > 2 && username.indexOf('@') !== -1;
