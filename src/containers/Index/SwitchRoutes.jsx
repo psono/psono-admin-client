@@ -5,6 +5,7 @@ import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import sidebarRoutes from '../../routes/sidebar';
 import ldapRoutes from '../../routes/ldap';
 import samlRoutes from '../../routes/saml';
+import oidcRoutes from '../../routes/oidc';
 import otherRoutes from '../../routes/other';
 import appStyle from '../../assets/jss/material-dashboard-react/appStyle';
 
@@ -20,6 +21,11 @@ class switchRoutes extends React.Component {
         }
         if (state.server.authentication_methods.indexOf('SAML') !== -1) {
             samlRoutes.forEach(function(route) {
+                variableLinks.push(route);
+            });
+        }
+        if (state.server.authentication_methods.indexOf('OIDC') !== -1) {
+            oidcRoutes.forEach(function(route) {
                 variableLinks.push(route);
             });
         }

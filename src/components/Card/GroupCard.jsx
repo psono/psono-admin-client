@@ -17,11 +17,13 @@ class GroupCard extends React.Component {
             memberships,
             ldap_groups,
             saml_groups,
+            oidc_groups,
             onDeleteMemberships
         } = this.props;
 
         const has_ldap_groups = ldap_groups && ldap_groups.length > 0;
         const has_saml_groups = saml_groups && saml_groups.length > 0;
+        const has_oidc_groups = oidc_groups && oidc_groups.length > 0;
 
         const tabs = [
             {
@@ -99,6 +101,31 @@ class GroupCard extends React.Component {
                         ]}
                         data={saml_groups}
                         title={t('MAPPED_SAML_GROUPS')}
+                    />
+                )
+            });
+        }
+
+        if (has_oidc_groups) {
+            tabs.push({
+                tabName: t('OIDC_GROUPS'),
+                tabIcon: Group,
+                tabContent: (
+                    <CustomMaterialTable
+                        columns={[
+                            { field: 'mapped', title: t('MAPPED') },
+                            { field: 'oidc_name', title: t('NAME') },
+                            {
+                                field: 'has_share_admin',
+                                title: t('SHARE_ADMIN')
+                            },
+                            {
+                                field: 'oidc_provider_id',
+                                title: t('POVIDER_ID')
+                            }
+                        ]}
+                        data={oidc_groups}
+                        title={t('MAPPED_OIDC_GROUPS')}
                     />
                 )
             });

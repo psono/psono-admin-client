@@ -15,6 +15,7 @@ import FileserverCard from './Card/FileserverCard.jsx';
 import UsersCard from './Card/UsersCard.jsx';
 import LDAPCard from './Card/LDAPCard.jsx';
 import SAMLCard from './Card/SAMLCard.jsx';
+import OIDCCard from './Card/OIDCCard.jsx';
 import UserCard from './Card/UserCard.jsx';
 import GroupCard from './Card/GroupCard.jsx';
 
@@ -118,6 +119,7 @@ export {
     UsersCard,
     LDAPCard,
     SAMLCard,
+    OIDCCard,
     UserCard,
     GroupCard,
     // CustomButtons

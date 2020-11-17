@@ -8,5 +8,6 @@
   "allow_registration": true,
   "allow_lost_password": true,
   "authentication_methods": ["AUTHKEY", "LDAP"],
-  "saml_provider": []
+  "saml_provider": [],
+  "oidc_provider": []
 }

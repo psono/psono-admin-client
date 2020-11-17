@@ -47,6 +47,9 @@ class Login extends React.Component {
                     saml_login={user.saml_login}
                     initiate_saml_login={user.initiate_saml_login}
                     get_saml_redirect_url={user.get_saml_redirect_url}
+                    oidc_login={user.oidc_login}
+                    initiate_oidc_login={user.initiate_oidc_login}
+                    get_oidc_redirect_url={user.get_oidc_redirect_url}
                     login={user.login}
                     activate_token={user.activate_token}
                     logout={user.logout}
