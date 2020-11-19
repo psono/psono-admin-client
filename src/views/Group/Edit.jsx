@@ -58,6 +58,17 @@ class User extends React.Component {
                         };
                     });
                 }
+                const mapped_oidc_group_index = {};
+                if (group.hasOwnProperty('oidc_groups')) {
+                    group.oidc_groups.forEach(oidc_group => {
+                        mapped_oidc_group_index[oidc_group.oidc_group_id] = {
+                            oidc_group_id: oidc_group.oidc_group_id,
+                            oidc_group_map_id: oidc_group.oidc_group_map_id,
+                            share_admin: oidc_group.share_admin,
+                            group_admin: oidc_group.group_admin
+                        };
+                    });
+                }
 
                 if (
                     this.props.state.server.authentication_methods.indexOf(
@@ -144,6 +155,49 @@ class User extends React.Component {
                         mapped_saml_group_index: mapped_saml_group_index
                     });
                 }
+
+                if (
+                    this.props.state.server.authentication_methods.indexOf(
+                        'OIDC'
+                    ) !== -1 &&
+                    group.is_managed
+                ) {
+                    psono_server
+                        .admin_oidc_group(
+                            this.props.state.user.token,
+                            this.props.state.user.session_secret_key
+                        )
+                        .then(response => {
+                            const oidc_groups = response.data.oidc_groups;
+
+                            oidc_groups.forEach(oidc_group => {
+                                if (
+                                    mapped_oidc_group_index.hasOwnProperty(
+                                        oidc_group.id
+                                    )
+                                ) {
+                                    return;
+                                }
+                                mapped_oidc_group_index[oidc_group.id] = {
+                                    oidc_group_id: oidc_group.id,
+                                    oidc_group_map_id: '',
+                                    share_admin: false,
+                                    group_admin: false
+                                };
+                            });
+
+                            this.setState({
+                                group: group,
+                                mapped_oidc_group_index: mapped_oidc_group_index,
+                                oidc_groups: oidc_groups
+                            });
+                        });
+                } else {
+                    this.setState({
+                        group: group,
+                        mapped_oidc_group_index: mapped_oidc_group_index
+                    });
+                }
             });
     }
 
@@ -192,6 +246,19 @@ class User extends React.Component {
         }
     }
 
+    handleToggleOIDC(group) {
+        const { mapped_oidc_group_index } = this.state;
+        const is_mapped =
+            mapped_oidc_group_index.hasOwnProperty(group.id) &&
+            mapped_oidc_group_index[group.id]['oidc_group_map_id'];
+
+        if (is_mapped) {
+            this.removeMappingOIDC(group);
+        } else {
+            this.addMappingOIDC(group);
+        }
+    }
+
     addMappingLDAP(group) {
         psono_server
             .admin_ldap_create_group_map(
@@ -228,6 +295,24 @@ class User extends React.Component {
             });
     }
 
+    addMappingOIDC(group) {
+        psono_server
+            .admin_oidc_create_group_map(
+                this.props.state.user.token,
+                this.props.state.user.session_secret_key,
+                this.state.group.id,
+                group.id
+            )
+            .then(response => {
+                const { mapped_oidc_group_index } = this.state;
+                mapped_oidc_group_index[group.id]['oidc_group_map_id'] =
+                    response.data.id;
+                this.setState({
+                    mapped_oidc_group_index
+                });
+            });
+    }
+
     removeMappingLDAP(group) {
         const { mapped_ldap_group_index } = this.state;
         mapped_ldap_group_index[group.id]['ldap_group_map_id'] = '';
@@ -249,6 +334,20 @@ class User extends React.Component {
             mapped_saml_group_index
         });
         psono_server.admin_saml_delete_group_map(
+            this.props.state.user.token,
+            this.props.state.user.session_secret_key,
+            this.state.group.id,
+            group.id
+        );
+    }
+
+    removeMappingOIDC(group) {
+        const { mapped_oidc_group_index } = this.state;
+        mapped_oidc_group_index[group.id]['oidc_group_map_id'] = '';
+        this.setState({
+            mapped_oidc_group_index
+        });
+        psono_server.admin_oidc_delete_group_map(
             this.props.state.user.token,
             this.props.state.user.session_secret_key,
             this.state.group.id,
@@ -358,13 +457,66 @@ class User extends React.Component {
         }
     }
 
+    handleToggleAdminOIDC(group, type) {
+        const { mapped_oidc_group_index } = this.state;
+        const is_mapped =
+            mapped_oidc_group_index.hasOwnProperty(group.id) &&
+            mapped_oidc_group_index[group.id]['oidc_group_map_id'];
+        if (!is_mapped) {
+            return;
+        }
+
+        let group_admin = mapped_oidc_group_index[group.id]['group_admin'];
+        let share_admin = mapped_oidc_group_index[group.id]['share_admin'];
+
+        if (type === 'group') {
+            psono_server
+                .admin_oidc_update_group_map(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    mapped_oidc_group_index[group.id]['oidc_group_map_id'],
+                    !group_admin,
+                    share_admin
+                )
+                .then(response => {
+                    const { mapped_oidc_group_index } = this.state;
+                    mapped_oidc_group_index[group.id][
+                        'group_admin'
+                    ] = !group_admin;
+                    this.setState({
+                        mapped_oidc_group_index
+                    });
+                });
+        } else {
+            psono_server
+                .admin_oidc_update_group_map(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    mapped_oidc_group_index[group.id]['oidc_group_map_id'],
+                    group_admin,
+                    !share_admin
+                )
+                .then(response => {
+                    const { mapped_oidc_group_index } = this.state;
+                    mapped_oidc_group_index[group.id][
+                        'share_admin'
+                    ] = !share_admin;
+                    this.setState({
+                        mapped_oidc_group_index
+                    });
+                });
+        }
+    }
+
     render() {
         const {
             group,
             ldap_groups,
             mapped_ldap_group_index,
             saml_groups,
-            mapped_saml_group_index
+            mapped_saml_group_index,
+            oidc_groups,
+            mapped_oidc_group_index
         } = this.state;
 
         const { classes, t } = this.props;
@@ -518,6 +670,81 @@ class User extends React.Component {
                 );
             });
         }
+        if (oidc_groups) {
+            oidc_groups.forEach(oidc_group => {
+                oidc_group.mapped = (
+                    <Checkbox
+                        checked={
+                            mapped_oidc_group_index.hasOwnProperty(
+                                oidc_group.id
+                            ) &&
+                            mapped_oidc_group_index[oidc_group.id][
+                                'oidc_group_map_id'
+                            ] !== ''
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleOIDC(oidc_group);
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+                oidc_group.has_group_admin = (
+                    <Checkbox
+                        checked={
+                            mapped_oidc_group_index.hasOwnProperty(
+                                oidc_group.id
+                            ) &&
+                            mapped_oidc_group_index[oidc_group.id][
+                                'group_admin'
+                            ]
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleAdminOIDC(
+                                oidc_group,
+                                'group',
+                                'OIDC'
+                            );
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+                oidc_group.has_share_admin = (
+                    <Checkbox
+                        checked={
+                            mapped_oidc_group_index.hasOwnProperty(
+                                oidc_group.id
+                            ) &&
+                            mapped_oidc_group_index[oidc_group.id][
+                                'share_admin'
+                            ]
+                        }
+                        tabIndex={-1}
+                        onClick={() => {
+                            this.handleToggleAdminOIDC(
+                                oidc_group,
+                                'share',
+                                'OIDC'
+                            );
+                        }}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                            checked: classes.checked
+                        }}
+                    />
+                );
+            });
+        }
 
         if (group) {
             return (
@@ -602,6 +829,7 @@ class User extends React.Component {
                                 }
                                 ldap_groups={ldap_groups}
                                 saml_groups={saml_groups}
+                                oidc_groups={oidc_groups}
                             />
                         </GridItem>
                     </Grid>

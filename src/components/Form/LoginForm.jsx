@@ -332,6 +332,47 @@ class LoginForm extends React.Component {
             });
     };
 
+    initiate_oidc_login = provider_id => {
+        this.setState({ loginLoading: true });
+        this.setState({ errors: [] });
+        return this.props
+            .initiate_oidc_login(
+                this.state.server,
+                this.state.remember_me,
+                this.state.trust_device
+            )
+            .then(
+                result => {
+                    this.setState({ server_info: result });
+                    this.props.actions.set_server_info(result.info);
+                    if (result.status !== 'matched') {
+                        this.setState({ view: result.status });
+                    } else {
+                        this.props
+                            .get_oidc_redirect_url(provider_id)
+                            .then(result => {
+                                window.location = result.oidc_redirect_url;
+                            });
+                    }
+                },
+                result => {
+                    if (result.hasOwnProperty('errors')) {
+                        let errors = result.errors;
+                        this.setState({ errors, loginLoading: false });
+                    } else {
+                        this.setState({
+                            errors: [result],
+                            loginLoading: false
+                        });
+                    }
+                }
+            )
+            .catch(result => {
+                this.setState({ loginLoading: false });
+                return Promise.reject(result);
+            });
+    };
+
     approve_host = () => {
         this.props.approve_host(
             this.state.server_info.server_url,
@@ -405,6 +446,36 @@ class LoginForm extends React.Component {
                     }
                 );
             }
+
+            if (this.props.location.pathname.startsWith('/oidc/token/')) {
+                const oidc_token_id = this.props.location.pathname.replace(
+                    '/oidc/token/',
+                    ''
+                );
+                this.props.oidc_login(oidc_token_id).then(
+                    required_multifactors => {
+                        this.setState({
+                            multifactors: required_multifactors
+                        });
+                        this.requirement_check_mfa();
+                    },
+                    result => {
+                        this.setState({ loginLoading: false });
+                        if (result.hasOwnProperty('non_field_errors')) {
+                            let errors = result.non_field_errors;
+                            this.setState({
+                                view: 'default',
+                                errors
+                            });
+                        } else {
+                            this.setState({
+                                view: 'default',
+                                errors: [result]
+                            });
+                        }
+                    }
+                );
+            }
         });
     }
 
@@ -431,6 +502,8 @@ class LoginForm extends React.Component {
         if (this.state.view === 'default') {
             const saml_provider =
                 this.state.admin_client_config.saml_provider || [];
+            const oidc_provider =
+                this.state.admin_client_config.oidc_provider || [];
             const authentication_methods =
                 this.state.admin_client_config.authentication_methods || [];
             const server_style = this.state.admin_client_config
@@ -507,6 +580,56 @@ class LoginForm extends React.Component {
                                                     color="primary"
                                                     onClick={
                                                         initiate_saml_login_helper
+                                                    }
+                                                    type="submit"
+                                                    id="sad"
+                                                >
+                                                    <span
+                                                        style={
+                                                            !this.state
+                                                                .loginLoading
+                                                                ? {}
+                                                                : {
+                                                                      display:
+                                                                          'none'
+                                                                  }
+                                                        }
+                                                    >
+                                                        {provider.button_name}
+                                                    </span>
+                                                    <BarLoader
+                                                        color={'#FFF'}
+                                                        height={17}
+                                                        width={37}
+                                                        loading={
+                                                            this.state
+                                                                .loginLoading
+                                                        }
+                                                    />
+                                                </Button>
+                                            </GridItem>
+                                        </Grid>
+                                    );
+                                })}
+                                {oidc_provider.map((provider, i) => {
+                                    const initiate_oidc_login_helper = () => {
+                                        return this.initiate_oidc_login(
+                                            provider.provider_id
+                                        );
+                                    };
+                                    return (
+                                        <Grid container key={i}>
+                                            <GridItem
+                                                xs={4}
+                                                sm={4}
+                                                md={4}
+                                                style={{ marginTop: '20px' }}
+                                            >
+                                                {provider.title}
+                                                <Button
+                                                    color="primary"
+                                                    onClick={
+                                                        initiate_oidc_login_helper
                                                     }
                                                     type="submit"
                                                     id="sad"

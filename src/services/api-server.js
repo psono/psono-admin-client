@@ -510,6 +510,117 @@ function admin_saml_delete_group_map(
 }
 
 /**
+ * GET: Returns a list of all OIDC groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_oidc_group(token, session_secret_key) {
+    const endpoint = '/admin/oidc/group/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a OIDC group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} oidc_group_id The oidc group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_oidc_create_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    oidc_group_id
+) {
+    const endpoint = '/admin/oidc/group/map/';
+    const connection_type = 'POST';
+    const data = {
+        group_id: group_id,
+        oidc_group_id: oidc_group_id
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a OIDC group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} oidc_group_map_id The group map id
+ * @param {uuid} group_admin The group admin privilege
+ * @param {uuid} share_admin The share admin privilege
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_oidc_update_group_map(
+    token,
+    session_secret_key,
+    oidc_group_map_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/oidc/group/map/';
+    const connection_type = 'PUT';
+    const data = {
+        oidc_group_map_id: oidc_group_map_id,
+        group_admin: group_admin,
+        share_admin: share_admin
+    };
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a OIDC group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} oidc_group_id The oidc group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_oidc_delete_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    oidc_group_id
+) {
+    const endpoint = '/admin/oidc/group/map/';
+    const connection_type = 'DELETE';
+    const data = {
+        group_id: group_id,
+        oidc_group_id: oidc_group_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * POST: Creates a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -884,6 +995,56 @@ function saml_login(
     session_duration
 ) {
     const endpoint = '/saml/login/';
+    const connection_type = 'POST';
+    const data = {
+        login_info: login_info,
+        login_info_nonce: login_info_nonce,
+        public_key: public_key,
+        session_duration: session_duration
+    };
+    const headers = null;
+
+    return call(connection_type, endpoint, data, headers);
+}
+
+/**
+ * Ajax POST request to the backend with oidc_provider_id and return_to_url. Will return an url where we have
+ * to redirect the user to.
+ *
+ * @param {int} oidc_provider_id The oidc provider id
+ * @param {string} return_to_url The url to index.html
+ *
+ * @returns {promise} Returns a promise with the login status
+ */
+function oidc_initiate_login(oidc_provider_id, return_to_url) {
+    const endpoint = '/oidc/' + oidc_provider_id + '/initiate-login/';
+    const connection_type = 'POST';
+    const data = {
+        return_to_url: return_to_url
+    };
+    const headers = null;
+
+    return call(connection_type, endpoint, data, headers);
+}
+
+/**
+ * Ajax POST request to the backend with email and authkey for login, saves a token together with user_id
+ * and all the different keys of a user in the apidata storage
+ *
+ * @param {string} login_info The encrypted login info (username, authkey, device fingerprint, device description)
+ * @param {string} login_info_nonce The nonce of the login info
+ * @param {string} public_key The session public key
+ * @param {int} session_duration The time the session should be valid for in seconds
+ *
+ * @returns {promise} Returns a promise with the login status
+ */
+function oidc_login(
+    login_info,
+    login_info_nonce,
+    public_key,
+    session_duration
+) {
+    const endpoint = '/oidc/login/';
     const connection_type = 'POST';
     const data = {
         login_info: login_info,
@@ -2625,10 +2786,16 @@ const service = {
     admin_saml_create_group_map,
     admin_saml_update_group_map,
     admin_saml_delete_group_map,
+    admin_oidc_group,
+    admin_oidc_create_group_map,
+    admin_oidc_update_group_map,
+    admin_oidc_delete_group_map,
     admin_update_user,
     login,
     saml_initiate_login,
     saml_login,
+    oidc_initiate_login,
+    oidc_login,
     ga_verify,
     duo_verify,
     yubikey_otp_verify,

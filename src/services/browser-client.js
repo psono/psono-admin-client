@@ -50,11 +50,15 @@ function get_config(key) {
                     admin_client_config['authentication_methods'] = [
                         'AUTHKEY',
                         'LDAP',
-                        'SAML'
+                        'SAML',
+                        'OIDC'
                     ];
                 }
                 if (!admin_client_config.hasOwnProperty('saml_provider')) {
                     admin_client_config['saml_provider'] = [];
+                }
+                if (!admin_client_config.hasOwnProperty('oidc_provider')) {
+                    admin_client_config['oidc_provider'] = [];
                 }
                 _admin_client_config = admin_client_config;
                 action.set_admin_client_config(admin_client_config);
@@ -75,8 +79,18 @@ function get_saml_return_to_url() {
     );
 }
 
+function get_oidc_return_to_url() {
+    return (
+        window.location.href
+            .split('/portal')
+            .slice(0, 1)
+            .join('/') + '/portal/oidc/token/'
+    );
+}
+
 const service = {
     get_saml_return_to_url,
+    get_oidc_return_to_url,
     load_config,
     get_config
 };

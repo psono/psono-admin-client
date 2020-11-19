@@ -12,6 +12,7 @@ import otherLinks from '../../routes/other';
 import sidebarLinks from '../../routes/sidebar';
 import ldapLinks from '../../routes/ldap';
 import samlLinks from '../../routes/saml';
+import oidcLinks from '../../routes/oidc';
 
 import appStyle from '../../assets/jss/material-dashboard-react/appStyle';
 
@@ -68,6 +69,14 @@ class App extends React.Component {
             -1
         ) {
             samlLinks.forEach(function(link) {
+                variableLinks.push(link);
+            });
+        }
+        if (
+            this.props.state.server.authentication_methods.indexOf('OIDC') !==
+            -1
+        ) {
+            oidcLinks.forEach(function(link) {
                 variableLinks.push(link);
             });
         }
