@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/psono/psono-admin-client/badges/gpa.svg)](https://codeclimate.com/github/psono/psono-admin-client)
 [![build status](https://img.shields.io/docker/pulls/psono/psono-admin-client.svg)](https://hub.docker.com/r/psono/psono-admin-client/)
 [![Discord](https://img.shields.io/badge/Discord-join%20chat-738bd7.svg)](https://discord.gg/RuSvEjj)
-[![POEditor](https://img.shields.io/badge/POEditor-Help%20translate-brightgreen.svg)](https://poeditor.com/join/project?hash=Aiea8D0WIr)
+[![POEditor](https://img.shields.io/badge/POEditor-Help%20translate-brightgreen.svg)](https://poeditor.com/join/project?hash=xwGlVVPZbM)
 
 # Canonical source
 
