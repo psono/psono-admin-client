@@ -1,4 +1,5 @@
 {
+  "USER": "Benutzer",
   "NECESSARY_SECRET_DOES_NOT_EXIST": "Das notwendige Secret existiert nicht.",
   "MAPPING_ALREADY_EXISTS": "Das Zuordnung existiert bereits.",
   "USER_LIMIT_REACHED": "Benutzer Limit erreicht",

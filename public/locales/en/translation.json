@@ -1,4 +1,5 @@
 {
+  "USER": "User",
   "NECESSARY_SECRET_DOES_NOT_EXIST": "The necessary secret does not exist.",
   "MAPPING_ALREADY_EXISTS": "The mapping already exists.",
   "USER_LIMIT_REACHED": "User limit reached",
