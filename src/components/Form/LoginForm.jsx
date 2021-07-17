@@ -90,11 +90,13 @@ class LoginForm extends React.Component {
     };
     onChangeUsername = event => {
         this.setState({ username: event.target.value });
-        this.manageButtonState();
+        // wrapping manageButtonState in timeout so that psono's autofill works
+        setTimeout(() => this.manageButtonState(), 0);
     };
     onChangePassword = event => {
         this.setState({ password: event.target.value });
-        this.manageButtonState();
+        // wrapping manageButtonState in timeout so that psono's autofill works
+        setTimeout(() => this.manageButtonState(), 0);
     };
     onChangeServer = event => {
         this.setState({ server: event.target.value });
