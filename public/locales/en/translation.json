@@ -1,4 +1,7 @@
 {
+  "APPROVE": "Approve",
+  "SECOND_FACTOR": "Second factor",
+  "PICK_SECOND_FACTOR": "Pick one of the following second factor options",
   "USER": "User",
   "NECESSARY_SECRET_DOES_NOT_EXIST": "The necessary secret does not exist.",
   "MAPPING_ALREADY_EXISTS": "The mapping already exists.",

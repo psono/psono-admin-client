@@ -123,7 +123,11 @@ class LoginForm extends React.Component {
 
         this.props.yubikey_otp_verify(this.state.yubikey_otp).then(
             () => {
-                helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -138,10 +142,14 @@ class LoginForm extends React.Component {
 
         this.props.ga_verify(this.state.google_authenticator).then(
             () => {
-                helper.remove_from_array(
-                    multifactors,
-                    'google_authenticator_2fa'
-                );
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(
+                        multifactors,
+                        'google_authenticator_2fa'
+                    );
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -160,7 +168,11 @@ class LoginForm extends React.Component {
 
         this.props.duo_verify(duo_code).then(
             () => {
-                helper.remove_from_array(multifactors, 'duo_2fa');
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(multifactors, 'duo_2fa');
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -170,24 +182,45 @@ class LoginForm extends React.Component {
         );
     };
 
+    show_ga_2fa_form = () => {
+        this.setState({
+            view: 'google_authenticator',
+            loginLoading: false
+        });
+    };
+
+    show_yubikey_otp_2fa_form = () => {
+        this.setState({
+            view: 'yubikey_otp',
+            loginLoading: false
+        });
+    };
+
+    show_duo_2fa_form = () => {
+        this.setState({
+            view: 'duo',
+            loginLoading: false
+        });
+        this.verify_duo();
+    };
+
     handle_mfa = () => {
         let multifactors = this.state.multifactors;
-        if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
+        if (
+            this.state.server_info.info.multifactor_enabled === false &&
+            multifactors.length > 1
+        ) {
+            // show choose multifactor screen as only one is required to be solved
             this.setState({
-                view: 'yubikey_otp',
+                view: 'pick_second_factor',
                 loginLoading: false
             });
+        } else if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
+            this.show_yubikey_otp_2fa_form();
         } else if (multifactors.indexOf('google_authenticator_2fa') !== -1) {
-            this.setState({
-                view: 'google_authenticator',
-                loginLoading: false
-            });
+            this.show_ga_2fa_form();
         } else if (multifactors.indexOf('duo_2fa') !== -1) {
-            this.setState({
-                view: 'duo',
-                loginLoading: false
-            });
-            this.verify_duo();
+            this.show_duo_2fa_form();
         } else {
             this.setState({
                 view: 'default',
@@ -823,13 +856,113 @@ class LoginForm extends React.Component {
                                             onClick={this.approve_host}
                                             type="submit"
                                         >
-                                            Approve
+                                            {t('APPROVE')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'pick_second_factor') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('SECOND_FACTOR')}
+                        cardSubtitle={t('PICK_SECOND_FACTOR')}
+                        content={
+                            <form
+                                onSubmit={e => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    {this.state.multifactors.indexOf(
+                                        'google_authenticator_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={this.show_ga_2fa_form}
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('GOOGLE_AUTHENTICATOR')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                    {this.state.multifactors.indexOf(
+                                        'yubikey_otp_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={
+                                                    this
+                                                        .show_yubikey_otp_2fa_form
+                                                }
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('YUBIKEY')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                    {this.state.multifactors.indexOf(
+                                        'duo_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={this.show_duo_2fa_form}
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('DUO')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                </Grid>
+
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="transparent"
+                                            onClick={this.cancel}
+                                            fullWidth
+                                        >
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>
@@ -882,13 +1015,13 @@ class LoginForm extends React.Component {
                                             onClick={this.verify_yubikey_otp}
                                             type="submit"
                                         >
-                                            Send
+                                            {t('SEND')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>
@@ -946,13 +1079,13 @@ class LoginForm extends React.Component {
                                             }
                                             type="submit"
                                         >
-                                            Send
+                                            {t('SEND')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>

@@ -1,4 +1,7 @@
 {
+  "APPROVE": "Genehmigen",
+  "SECOND_FACTOR": "Zweiter Faktor",
+  "PICK_SECOND_FACTOR": "Wählen sie eine der folgenden Zwei Faktor Optionen aus",
   "USER": "Benutzer",
   "NECESSARY_SECRET_DOES_NOT_EXIST": "Das notwendige Secret existiert nicht.",
   "MAPPING_ALREADY_EXISTS": "Das Zuordnung existiert bereits.",
@@ -6,8 +9,8 @@
   "LICENSE_EXPIRED": "Lizenz abgelaufen",
   "USER_WITH_EMAIL_ALREADY_EXISTS": "Email bereits vergeben",
   "USER_WITH_USERNAME_ALREADY_EXISTS": "Benutzername bereits vergeben",
-  "DELETE_USER_CONFIRM_DIALOG": "Sie sind dabei Benutzer zu löschen. Sind Sie sich sicher?",
-  "DELETE_GROUP_CONFIRM_DIALOG": "Sie sind dabei Gruppen zu löschen. Sind Sie sich sicher?",
+  "DELETE_USER_CONFIRM_DIALOG": "Sie sind dabei Benutzer zu löschen. Sind sie sich sicher?",
+  "DELETE_GROUP_CONFIRM_DIALOG": "Sie sind dabei Gruppen zu löschen. Sind sie sich sicher?",
   "ABORT": "Abbrechen",
   "CONFIRM": "Bestätigen",
   "SESSION_EXPIRED": "Session abgelaufen",
