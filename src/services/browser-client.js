@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 import action from '../actions/boundActionCreators';
+import helper from './helper';
 
 let _admin_client_config = {};
 
@@ -42,6 +43,29 @@ function get_config(key) {
     return new Promise((resolve, reject) => {
         if (Object.keys(_admin_client_config).length === 0) {
             load_config().then(admin_client_config => {
+                const parsed_url = helper.parse_url(window.location.href);
+                if (!admin_client_config.hasOwnProperty('base_url')) {
+                    admin_client_config['base_url'] =
+                        parsed_url['base_url'] + '/';
+                }
+                if (admin_client_config.hasOwnProperty('backend_servers')) {
+                    for (
+                        let i = 0;
+                        i < admin_client_config['backend_servers'].length;
+                        i++
+                    ) {
+                        if (
+                            admin_client_config['backend_servers'][
+                                i
+                            ].hasOwnProperty('url')
+                        ) {
+                            continue;
+                        }
+                        admin_client_config['backend_servers'][i]['url'] =
+                            parsed_url['base_url'] + '/server';
+                    }
+                }
+
                 if (
                     !admin_client_config.hasOwnProperty(
                         'authentication_methods'
@@ -54,6 +78,7 @@ function get_config(key) {
                         'OIDC'
                     ];
                 }
+
                 if (!admin_client_config.hasOwnProperty('saml_provider')) {
                     admin_client_config['saml_provider'] = [];
                 }
