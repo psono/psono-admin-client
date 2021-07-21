@@ -1,4 +1,7 @@
 {
+  "LOGIN_INFO_CANNOT_BE_DECRYPTED": "Login information could not be decrypted by the server.",
+  "USER_DISABLED_ASK_ADMIN_TO_ENABLE": "User has been disabled. Contact an administrator to activate it.",
+  "ACCOUNT_NOT_VERIFIED": "Account not verified",
   "APPROVE": "Approve",
   "SECOND_FACTOR": "Second factor",
   "PICK_SECOND_FACTOR": "Pick one of the following second factor options",

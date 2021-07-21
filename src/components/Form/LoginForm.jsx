@@ -47,6 +47,8 @@ const style = {
 class LoginForm extends React.Component {
     state = {
         view: 'default',
+        providerId: 0,
+        loginType: '',
         username: this.props.state.user.username,
         password: '',
         server: this.props.state.server.url,
@@ -284,8 +286,11 @@ class LoginForm extends React.Component {
     };
 
     initiate_login = () => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: ''
+        });
         return this.props
             .initiate_login(
                 this.state.username,
@@ -326,9 +331,13 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_saml_login = provider_id => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+    initiate_saml_login = providerId => {
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: 'SAML',
+            providerId
+        });
         return this.props
             .initiate_saml_login(
                 this.state.server,
@@ -343,7 +352,7 @@ class LoginForm extends React.Component {
                         this.setState({ view: result.status });
                     } else {
                         this.props
-                            .get_saml_redirect_url(provider_id)
+                            .get_saml_redirect_url(providerId)
                             .then(result => {
                                 window.location = result.saml_redirect_url;
                             });
@@ -367,9 +376,13 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_oidc_login = provider_id => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+    initiate_oidc_login = providerId => {
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: 'OIDC',
+            providerId
+        });
         return this.props
             .initiate_oidc_login(
                 this.state.server,
@@ -384,7 +397,7 @@ class LoginForm extends React.Component {
                         this.setState({ view: result.status });
                     } else {
                         this.props
-                            .get_oidc_redirect_url(provider_id)
+                            .get_oidc_redirect_url(providerId)
                             .then(result => {
                                 window.location = result.oidc_redirect_url;
                             });
@@ -413,25 +426,33 @@ class LoginForm extends React.Component {
             this.state.server_info.server_url,
             this.state.server_info.verify_key
         );
-        let password = this.state.password;
-        this.setState({ password: '' });
-        this.props.login(password, this.state.server_info).then(
-            required_multifactors => {
-                this.setState({ multifactors: required_multifactors });
-                this.requirement_check_mfa();
-            },
-            result => {
-                this.setState({ loginLoading: false });
-                if (result.hasOwnProperty('non_field_errors')) {
-                    let errors = result.non_field_errors;
-                    this.setState({ errors: errors });
-                } else {
-                    console.log(result);
-                    this.setState({ errors: [result] });
+
+        if (this.state.loginType === 'SAML') {
+            this.initiate_saml_login(this.state.providerId);
+        } else if (this.state.loginType === 'OIDC') {
+            this.initiate_oidc_login(this.state.providerId);
+        } else {
+            let password = this.state.password;
+            this.setState({ password: '' });
+
+            this.props.login(password, this.state.server_info).then(
+                required_multifactors => {
+                    this.setState({ multifactors: required_multifactors });
+                    this.requirement_check_mfa();
+                },
+                result => {
+                    this.setState({ loginLoading: false });
+                    if (result.hasOwnProperty('non_field_errors')) {
+                        let errors = result.non_field_errors;
+                        this.setState({ errors: errors });
+                    } else {
+                        console.log(result);
+                        this.setState({ errors: [result] });
+                    }
                 }
-            }
-        );
-        this.setState({ password: '' });
+            );
+            this.setState({ password: '' });
+        }
     };
 
     cancel = () => {

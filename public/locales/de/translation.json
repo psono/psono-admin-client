@@ -1,4 +1,7 @@
 {
+  "LOGIN_INFO_CANNOT_BE_DECRYPTED": "Login Informationen konnten vom Server nicht entschlüsselt werden.",
+  "USER_DISABLED_ASK_ADMIN_TO_ENABLE": "Benutzer wurde deaktiviert. Fragen sie einen Admininistrator um ihn zu aktivieren.",
+  "ACCOUNT_NOT_VERIFIED": "Account nicht verifiziert",
   "APPROVE": "Genehmigen",
   "SECOND_FACTOR": "Zweiter Faktor",
   "PICK_SECOND_FACTOR": "Wählen sie eine der folgenden Zwei Faktor Optionen aus",
