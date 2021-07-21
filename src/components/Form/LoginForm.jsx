@@ -15,6 +15,8 @@ import {
 } from '../../components';
 
 import helper from '../../services/helper';
+import store from '../../services/store';
+import host from '../../services/host';
 
 const style = {
     wrapper: {
@@ -478,29 +480,35 @@ class LoginForm extends React.Component {
                     '/saml/token/',
                     ''
                 );
-                this.props.saml_login(saml_token_id).then(
-                    required_multifactors => {
-                        this.setState({
-                            multifactors: required_multifactors
-                        });
-                        this.requirement_check_mfa();
-                    },
-                    result => {
-                        this.setState({ loginLoading: false });
-                        if (result.hasOwnProperty('non_field_errors')) {
-                            let errors = result.non_field_errors;
-                            this.setState({
-                                view: 'default',
-                                errors
-                            });
-                        } else {
-                            this.setState({
-                                view: 'default',
-                                errors: [result]
-                            });
-                        }
-                    }
-                );
+                this.props
+                    .check_host(store.getState().server.url)
+                    .then(result => {
+                        this.setState({ server_info: result });
+                        this.props.actions.set_server_info(result.info);
+                        this.props.saml_login(saml_token_id).then(
+                            required_multifactors => {
+                                this.setState({
+                                    multifactors: required_multifactors
+                                });
+                                this.requirement_check_mfa();
+                            },
+                            result => {
+                                this.setState({ loginLoading: false });
+                                if (result.hasOwnProperty('non_field_errors')) {
+                                    let errors = result.non_field_errors;
+                                    this.setState({
+                                        view: 'default',
+                                        errors
+                                    });
+                                } else {
+                                    this.setState({
+                                        view: 'default',
+                                        errors: [result]
+                                    });
+                                }
+                            }
+                        );
+                    });
             }
 
             if (this.props.location.pathname.startsWith('/oidc/token/')) {
@@ -508,29 +516,35 @@ class LoginForm extends React.Component {
                     '/oidc/token/',
                     ''
                 );
-                this.props.oidc_login(oidc_token_id).then(
-                    required_multifactors => {
-                        this.setState({
-                            multifactors: required_multifactors
-                        });
-                        this.requirement_check_mfa();
-                    },
-                    result => {
-                        this.setState({ loginLoading: false });
-                        if (result.hasOwnProperty('non_field_errors')) {
-                            let errors = result.non_field_errors;
-                            this.setState({
-                                view: 'default',
-                                errors
-                            });
-                        } else {
-                            this.setState({
-                                view: 'default',
-                                errors: [result]
-                            });
-                        }
-                    }
-                );
+                this.props
+                    .check_host(store.getState().server.url)
+                    .then(result => {
+                        this.setState({ server_info: result });
+                        this.props.actions.set_server_info(result.info);
+                        this.props.oidc_login(oidc_token_id).then(
+                            required_multifactors => {
+                                this.setState({
+                                    multifactors: required_multifactors
+                                });
+                                this.requirement_check_mfa();
+                            },
+                            result => {
+                                this.setState({ loginLoading: false });
+                                if (result.hasOwnProperty('non_field_errors')) {
+                                    let errors = result.non_field_errors;
+                                    this.setState({
+                                        view: 'default',
+                                        errors
+                                    });
+                                } else {
+                                    this.setState({
+                                        view: 'default',
+                                        errors: [result]
+                                    });
+                                }
+                            }
+                        );
+                    });
             }
         });
     }
