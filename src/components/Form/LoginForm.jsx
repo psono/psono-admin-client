@@ -16,7 +16,6 @@ import {
 
 import helper from '../../services/helper';
 import store from '../../services/store';
-import host from '../../services/host';
 
 const style = {
     wrapper: {
