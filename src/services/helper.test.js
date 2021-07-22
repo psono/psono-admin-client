@@ -12,6 +12,7 @@ describe('Service: helper test suite', function() {
         ).toEqual({
             scheme: 'https',
             authority: 'example.com',
+            base_url: 'https://www.example.com',
             full_domain: 'example.com',
             top_domain: 'example.com',
             port: null,
@@ -27,6 +28,7 @@ describe('Service: helper test suite', function() {
         ).toEqual({
             scheme: 'https',
             authority: 'example.com',
+            base_url: 'https://example.com',
             full_domain: 'example.com',
             top_domain: 'example.com',
             port: null,
@@ -42,6 +44,7 @@ describe('Service: helper test suite', function() {
         ).toEqual({
             scheme: 'http',
             authority: 'test.example.com',
+            base_url: 'http://test.example.com',
             full_domain: 'test.example.com',
             top_domain: 'example.com',
             port: null,
@@ -51,7 +54,7 @@ describe('Service: helper test suite', function() {
         });
     });
 
-    it('parse_url sub domain', function() {
+    it('parse_url sub domain with port', function() {
         expect(
             helper.parse_url(
                 'http://test.example.com:6000/url-part/#is-not-part'
@@ -59,6 +62,7 @@ describe('Service: helper test suite', function() {
         ).toEqual({
             scheme: 'http',
             authority: 'test.example.com:6000',
+            base_url: 'http://test.example.com:6000',
             full_domain: 'test.example.com',
             top_domain: 'example.com',
             port: '6000',

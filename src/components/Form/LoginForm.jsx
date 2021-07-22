@@ -15,6 +15,7 @@ import {
 } from '../../components';
 
 import helper from '../../services/helper';
+import store from '../../services/store';
 
 const style = {
     wrapper: {
@@ -47,6 +48,8 @@ const style = {
 class LoginForm extends React.Component {
     state = {
         view: 'default',
+        providerId: 0,
+        loginType: '',
         username: this.props.state.user.username,
         password: '',
         server: this.props.state.server.url,
@@ -90,11 +93,13 @@ class LoginForm extends React.Component {
     };
     onChangeUsername = event => {
         this.setState({ username: event.target.value });
-        this.manageButtonState();
+        // wrapping manageButtonState in timeout so that psono's autofill works
+        setTimeout(() => this.manageButtonState(), 0);
     };
     onChangePassword = event => {
         this.setState({ password: event.target.value });
-        this.manageButtonState();
+        // wrapping manageButtonState in timeout so that psono's autofill works
+        setTimeout(() => this.manageButtonState(), 0);
     };
     onChangeServer = event => {
         this.setState({ server: event.target.value });
@@ -123,7 +128,11 @@ class LoginForm extends React.Component {
 
         this.props.yubikey_otp_verify(this.state.yubikey_otp).then(
             () => {
-                helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -138,10 +147,14 @@ class LoginForm extends React.Component {
 
         this.props.ga_verify(this.state.google_authenticator).then(
             () => {
-                helper.remove_from_array(
-                    multifactors,
-                    'google_authenticator_2fa'
-                );
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(
+                        multifactors,
+                        'google_authenticator_2fa'
+                    );
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -160,7 +173,11 @@ class LoginForm extends React.Component {
 
         this.props.duo_verify(duo_code).then(
             () => {
-                helper.remove_from_array(multifactors, 'duo_2fa');
+                if (this.state.server_info.info.multifactor_enabled === false) {
+                    multifactors = [];
+                } else {
+                    helper.remove_from_array(multifactors, 'duo_2fa');
+                }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
@@ -170,24 +187,45 @@ class LoginForm extends React.Component {
         );
     };
 
+    show_ga_2fa_form = () => {
+        this.setState({
+            view: 'google_authenticator',
+            loginLoading: false
+        });
+    };
+
+    show_yubikey_otp_2fa_form = () => {
+        this.setState({
+            view: 'yubikey_otp',
+            loginLoading: false
+        });
+    };
+
+    show_duo_2fa_form = () => {
+        this.setState({
+            view: 'duo',
+            loginLoading: false
+        });
+        this.verify_duo();
+    };
+
     handle_mfa = () => {
         let multifactors = this.state.multifactors;
-        if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
+        if (
+            this.state.server_info.info.multifactor_enabled === false &&
+            multifactors.length > 1
+        ) {
+            // show choose multifactor screen as only one is required to be solved
             this.setState({
-                view: 'yubikey_otp',
+                view: 'pick_second_factor',
                 loginLoading: false
             });
+        } else if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
+            this.show_yubikey_otp_2fa_form();
         } else if (multifactors.indexOf('google_authenticator_2fa') !== -1) {
-            this.setState({
-                view: 'google_authenticator',
-                loginLoading: false
-            });
+            this.show_ga_2fa_form();
         } else if (multifactors.indexOf('duo_2fa') !== -1) {
-            this.setState({
-                view: 'duo',
-                loginLoading: false
-            });
-            this.verify_duo();
+            this.show_duo_2fa_form();
         } else {
             this.setState({
                 view: 'default',
@@ -249,8 +287,11 @@ class LoginForm extends React.Component {
     };
 
     initiate_login = () => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: ''
+        });
         return this.props
             .initiate_login(
                 this.state.username,
@@ -291,9 +332,13 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_saml_login = provider_id => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+    initiate_saml_login = providerId => {
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: 'SAML',
+            providerId
+        });
         return this.props
             .initiate_saml_login(
                 this.state.server,
@@ -308,7 +353,7 @@ class LoginForm extends React.Component {
                         this.setState({ view: result.status });
                     } else {
                         this.props
-                            .get_saml_redirect_url(provider_id)
+                            .get_saml_redirect_url(providerId)
                             .then(result => {
                                 window.location = result.saml_redirect_url;
                             });
@@ -332,9 +377,13 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_oidc_login = provider_id => {
-        this.setState({ loginLoading: true });
-        this.setState({ errors: [] });
+    initiate_oidc_login = providerId => {
+        this.setState({
+            loginLoading: true,
+            errors: [],
+            loginType: 'OIDC',
+            providerId
+        });
         return this.props
             .initiate_oidc_login(
                 this.state.server,
@@ -349,7 +398,7 @@ class LoginForm extends React.Component {
                         this.setState({ view: result.status });
                     } else {
                         this.props
-                            .get_oidc_redirect_url(provider_id)
+                            .get_oidc_redirect_url(providerId)
                             .then(result => {
                                 window.location = result.oidc_redirect_url;
                             });
@@ -378,25 +427,33 @@ class LoginForm extends React.Component {
             this.state.server_info.server_url,
             this.state.server_info.verify_key
         );
-        let password = this.state.password;
-        this.setState({ password: '' });
-        this.props.login(password, this.state.server_info).then(
-            required_multifactors => {
-                this.setState({ multifactors: required_multifactors });
-                this.requirement_check_mfa();
-            },
-            result => {
-                this.setState({ loginLoading: false });
-                if (result.hasOwnProperty('non_field_errors')) {
-                    let errors = result.non_field_errors;
-                    this.setState({ errors: errors });
-                } else {
-                    console.log(result);
-                    this.setState({ errors: [result] });
+
+        if (this.state.loginType === 'SAML') {
+            this.initiate_saml_login(this.state.providerId);
+        } else if (this.state.loginType === 'OIDC') {
+            this.initiate_oidc_login(this.state.providerId);
+        } else {
+            let password = this.state.password;
+            this.setState({ password: '' });
+
+            this.props.login(password, this.state.server_info).then(
+                required_multifactors => {
+                    this.setState({ multifactors: required_multifactors });
+                    this.requirement_check_mfa();
+                },
+                result => {
+                    this.setState({ loginLoading: false });
+                    if (result.hasOwnProperty('non_field_errors')) {
+                        let errors = result.non_field_errors;
+                        this.setState({ errors: errors });
+                    } else {
+                        console.log(result);
+                        this.setState({ errors: [result] });
+                    }
                 }
-            }
-        );
-        this.setState({ password: '' });
+            );
+            this.setState({ password: '' });
+        }
     };
 
     cancel = () => {
@@ -422,29 +479,35 @@ class LoginForm extends React.Component {
                     '/saml/token/',
                     ''
                 );
-                this.props.saml_login(saml_token_id).then(
-                    required_multifactors => {
-                        this.setState({
-                            multifactors: required_multifactors
-                        });
-                        this.requirement_check_mfa();
-                    },
-                    result => {
-                        this.setState({ loginLoading: false });
-                        if (result.hasOwnProperty('non_field_errors')) {
-                            let errors = result.non_field_errors;
-                            this.setState({
-                                view: 'default',
-                                errors
-                            });
-                        } else {
-                            this.setState({
-                                view: 'default',
-                                errors: [result]
-                            });
-                        }
-                    }
-                );
+                this.props
+                    .check_host(store.getState().server.url)
+                    .then(result => {
+                        this.setState({ server_info: result });
+                        this.props.actions.set_server_info(result.info);
+                        this.props.saml_login(saml_token_id).then(
+                            required_multifactors => {
+                                this.setState({
+                                    multifactors: required_multifactors
+                                });
+                                this.requirement_check_mfa();
+                            },
+                            result => {
+                                this.setState({ loginLoading: false });
+                                if (result.hasOwnProperty('non_field_errors')) {
+                                    let errors = result.non_field_errors;
+                                    this.setState({
+                                        view: 'default',
+                                        errors
+                                    });
+                                } else {
+                                    this.setState({
+                                        view: 'default',
+                                        errors: [result]
+                                    });
+                                }
+                            }
+                        );
+                    });
             }
 
             if (this.props.location.pathname.startsWith('/oidc/token/')) {
@@ -452,29 +515,35 @@ class LoginForm extends React.Component {
                     '/oidc/token/',
                     ''
                 );
-                this.props.oidc_login(oidc_token_id).then(
-                    required_multifactors => {
-                        this.setState({
-                            multifactors: required_multifactors
-                        });
-                        this.requirement_check_mfa();
-                    },
-                    result => {
-                        this.setState({ loginLoading: false });
-                        if (result.hasOwnProperty('non_field_errors')) {
-                            let errors = result.non_field_errors;
-                            this.setState({
-                                view: 'default',
-                                errors
-                            });
-                        } else {
-                            this.setState({
-                                view: 'default',
-                                errors: [result]
-                            });
-                        }
-                    }
-                );
+                this.props
+                    .check_host(store.getState().server.url)
+                    .then(result => {
+                        this.setState({ server_info: result });
+                        this.props.actions.set_server_info(result.info);
+                        this.props.oidc_login(oidc_token_id).then(
+                            required_multifactors => {
+                                this.setState({
+                                    multifactors: required_multifactors
+                                });
+                                this.requirement_check_mfa();
+                            },
+                            result => {
+                                this.setState({ loginLoading: false });
+                                if (result.hasOwnProperty('non_field_errors')) {
+                                    let errors = result.non_field_errors;
+                                    this.setState({
+                                        view: 'default',
+                                        errors
+                                    });
+                                } else {
+                                    this.setState({
+                                        view: 'default',
+                                        errors: [result]
+                                    });
+                                }
+                            }
+                        );
+                    });
             }
         });
     }
@@ -823,13 +892,113 @@ class LoginForm extends React.Component {
                                             onClick={this.approve_host}
                                             type="submit"
                                         >
-                                            Approve
+                                            {t('APPROVE')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+
+        if (this.state.view === 'pick_second_factor') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('SECOND_FACTOR')}
+                        cardSubtitle={t('PICK_SECOND_FACTOR')}
+                        content={
+                            <form
+                                onSubmit={e => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    {this.state.multifactors.indexOf(
+                                        'google_authenticator_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={this.show_ga_2fa_form}
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('GOOGLE_AUTHENTICATOR')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                    {this.state.multifactors.indexOf(
+                                        'yubikey_otp_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={
+                                                    this
+                                                        .show_yubikey_otp_2fa_form
+                                                }
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('YUBIKEY')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                    {this.state.multifactors.indexOf(
+                                        'duo_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={this.show_duo_2fa_form}
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('DUO')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                </Grid>
+
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="transparent"
+                                            onClick={this.cancel}
+                                            fullWidth
+                                        >
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>
@@ -882,13 +1051,13 @@ class LoginForm extends React.Component {
                                             onClick={this.verify_yubikey_otp}
                                             type="submit"
                                         >
-                                            Send
+                                            {t('SEND')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>
@@ -946,13 +1115,13 @@ class LoginForm extends React.Component {
                                             }
                                             type="submit"
                                         >
-                                            Send
+                                            {t('SEND')}
                                         </Button>
                                         <Button
                                             color="transparent"
                                             onClick={this.cancel}
                                         >
-                                            Cancel
+                                            {t('CANCEL')}
                                         </Button>
                                     </GridItem>
                                 </Grid>

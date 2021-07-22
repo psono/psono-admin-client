@@ -12,7 +12,7 @@
     "@date-io/date-fns": "^2.4.0",
     "@material-ui/core": "^4.9.2",
     "@material-ui/icons": "^4.9.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chartist": "^0.10.1",
     "chartist-plugin-axistitle": "^0.0.4",
     "classnames": "^2.2.6",

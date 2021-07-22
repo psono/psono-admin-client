@@ -26,15 +26,21 @@ function parse_url(url) {
     let splitted_domain;
     let full_domain;
     let top_domain;
+    let base_url;
+    let schema;
     let port = null;
 
     // According to RFC http://www.ietf.org/rfc/rfc3986.txt Appendix B
-    const pattern = new RegExp(
+    let pattern = new RegExp(
         '^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?'
     );
-    const matches = url.match(pattern);
+    let matches = url.match(pattern);
+
+    schema = matches[2];
+    base_url = matches[2] + '://';
 
     if (typeof matches[4] !== 'undefined') {
+        base_url = base_url + matches[4];
         authority = matches[4].replace(/^(www\.)/, '');
         splitted_authority = authority.split(':');
     }
@@ -56,14 +62,19 @@ function parse_url(url) {
     ) {
         top_domain = full_domain;
     } else if (typeof splitted_domain !== 'undefined') {
-        top_domain =
-            splitted_domain[splitted_domain.length - 2] +
-            '.' +
-            splitted_domain[splitted_domain.length - 1];
+        if (splitted_domain.length > 1) {
+            top_domain =
+                splitted_domain[splitted_domain.length - 2] +
+                '.' +
+                splitted_domain[splitted_domain.length - 1];
+        } else {
+            top_domain = splitted_domain[splitted_domain.length - 1];
+        }
     }
 
     return {
-        scheme: matches[2],
+        scheme: schema,
+        base_url: base_url,
         authority: authority, //remove leading www.
         full_domain: full_domain,
         top_domain: top_domain,
