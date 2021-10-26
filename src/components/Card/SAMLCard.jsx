@@ -15,7 +15,7 @@ class SAMLCard extends React.Component {
         const { t, saml_groups } = this.props;
         return (
             <CustomTabs
-                title={t('LDAP_MANAGEMENT')}
+                title={t('SAML_MANAGEMENT')}
                 headerColor="primary"
                 tabs={[
                     {

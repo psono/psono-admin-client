@@ -15,7 +15,7 @@ class OIDCCard extends React.Component {
         const { t, oidc_groups } = this.props;
         return (
             <CustomTabs
-                title={t('LDAP_MANAGEMENT')}
+                title={t('OIDC_MANAGEMENT')}
                 headerColor="primary"
                 tabs={[
                     {
