@@ -3,7 +3,7 @@ import { Grid, withStyles, Checkbox } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import moment from 'moment';
-import { Check } from '@material-ui/icons';
+import { CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
 
 import {
     RegularCard,
@@ -536,8 +536,14 @@ class User extends React.Component {
                         onClick={() => {
                             this.handleToggleLDAP(ldap_group);
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -561,8 +567,14 @@ class User extends React.Component {
                                 'LDAP'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -586,8 +598,14 @@ class User extends React.Component {
                                 'LDAP'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -611,8 +629,14 @@ class User extends React.Component {
                         onClick={() => {
                             this.handleToggleSAML(saml_group);
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -636,8 +660,14 @@ class User extends React.Component {
                                 'SAML'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -661,8 +691,14 @@ class User extends React.Component {
                                 'SAML'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -686,8 +722,14 @@ class User extends React.Component {
                         onClick={() => {
                             this.handleToggleOIDC(oidc_group);
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -711,8 +753,14 @@ class User extends React.Component {
                                 'OIDC'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}
@@ -736,8 +784,14 @@ class User extends React.Component {
                                 'OIDC'
                             );
                         }}
-                        checkedIcon={<Check className={classes.checkedIcon} />}
-                        icon={<Check className={classes.uncheckedIcon} />}
+                        checkedIcon={
+                            <CheckBox className={classes.checkedIcon} />
+                        }
+                        icon={
+                            <CheckBoxOutlineBlank
+                                className={classes.uncheckedIcon}
+                            />
+                        }
                         classes={{
                             checked: classes.checked
                         }}

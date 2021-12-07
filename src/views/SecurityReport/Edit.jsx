@@ -307,6 +307,10 @@ class SecurityReport extends React.Component {
                             <CustomMaterialTable
                                 columns={[
                                     {
+                                        field: 'name',
+                                        title: t('TITLE')
+                                    },
+                                    {
                                         field: 'master_password',
                                         title: t('MASTER_PASSWORD')
                                     },
