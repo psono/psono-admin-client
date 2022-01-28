@@ -10,10 +10,8 @@ const OsChartCard = () => {
     const { t } = useTranslation();
     const [series, setSeries] = useState([0, 0, 0, 0, 0, 0]);
 
-    let isSubscribed = true;
     React.useEffect(() => {
         loadStats();
-        return () => (isSubscribed = false);
     }, []);
 
     const loadStats = () => {
@@ -23,9 +21,6 @@ const OsChartCard = () => {
                 store.getState().user.session_secret_key
             )
             .then(response => {
-                if (!isSubscribed) {
-                    return;
-                }
                 setSeries([
                     response.data.other,
                     response.data.linux,

@@ -256,7 +256,6 @@ class Users extends React.Component {
     }
 
     render() {
-        const { t } = this.props;
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
         }
