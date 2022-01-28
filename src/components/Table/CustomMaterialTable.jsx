@@ -55,10 +55,15 @@ const tableIcons = {
 };
 
 class CustomMaterialTable extends React.Component {
+    state = {
+        pageSize: 5
+    };
     render() {
         const { t, title, columns, data, options, actions } = this.props;
+        const { pageSize } = this.state;
 
         const defaultOptions = {
+            pageSize,
             headerStyle: {
                 fontSize: '12px',
                 color: 'rgba(0, 0, 0, 0.54)'
@@ -74,6 +79,10 @@ class CustomMaterialTable extends React.Component {
         return (
             <div>
                 <MaterialTable
+                    onChangeRowsPerPage={newPageSize =>
+                        this.setState({ pageSize: newPageSize })
+                    }
+                    tableRef={this.props.tableRef}
                     icons={tableIcons}
                     title={title}
                     columns={columns}
@@ -147,9 +156,13 @@ class CustomMaterialTable extends React.Component {
 CustomMaterialTable.propTypes = {
     title: PropTypes.string,
     columns: PropTypes.arrayOf(PropTypes.object),
-    data: PropTypes.arrayOf(PropTypes.object),
+    data: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.object),
+        PropTypes.func
+    ]),
     actions: PropTypes.arrayOf(PropTypes.object),
-    options: PropTypes.object
+    options: PropTypes.object,
+    tableRef: PropTypes.object
 };
 
 export default compose(withTranslation(), withStyles(tableStyle))(

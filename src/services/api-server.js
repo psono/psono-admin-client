@@ -143,6 +143,86 @@ function healthcheck() {
 }
 
 /**
+ * GET: Returns the statistics for browser
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_stats_browser(token, session_secret_key) {
+    const endpoint = '/admin/stats/browser/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns the statistics for devices
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_stats_device(token, session_secret_key) {
+    const endpoint = '/admin/stats/device/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns the statistics for the OS
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_stats_os(token, session_secret_key) {
+    const endpoint = '/admin/stats/os/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * GET: Returns the statistics for two factor
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_stats_two_factor(token, session_secret_key) {
+    const endpoint = '/admin/stats/two-factor/';
+    const connection_type = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * GET: Returns the server info (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -167,20 +247,32 @@ function admin_info(token, session_secret_key) {
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} {user_id} (optional) The user id
+ * @param {uuid} [user_id] (optional) The user id
+ * @param {object} [params] (optional) Other search params
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_user(token, session_secret_key, user_id) {
+function admin_user(token, session_secret_key, user_id, params) {
     const endpoint = '/admin/user/' + (!user_id ? '' : user_id + '/');
     const connection_type = 'GET';
     const data = null;
+
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
 
     const headers = {
         Authorization: 'Token ' + token
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(
+        connection_type,
+        endpoint + queryParams,
+        data,
+        headers,
+        session_secret_key
+    );
 }
 
 /**
@@ -188,19 +280,31 @@ function admin_user(token, session_secret_key, user_id) {
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
+ * @param {object} [params] (optional) Other search params
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_session(token, session_secret_key) {
+function admin_session(token, session_secret_key, params) {
     const endpoint = '/admin/session/';
     const connection_type = 'GET';
     const data = null;
+
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
 
     const headers = {
         Authorization: 'Token ' + token
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(
+        connection_type,
+        endpoint + queryParams,
+        data,
+        headers,
+        session_secret_key
+    );
 }
 
 /**
@@ -208,20 +312,32 @@ function admin_session(token, session_secret_key) {
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} {group_id} (optional) The group id
+ * @param {uuid} [group_id] (optional) The group id
+ * @param {object} [params] (optional) Other search params
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_group(token, session_secret_key, group_id) {
+function admin_group(token, session_secret_key, group_id, params) {
     const endpoint = '/admin/group/' + (!group_id ? '' : group_id + '/');
     const connection_type = 'GET';
     const data = null;
+
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
 
     const headers = {
         Authorization: 'Token ' + token
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(
+        connection_type,
+        endpoint + queryParams,
+        data,
+        headers,
+        session_secret_key
+    );
 }
 
 /**
@@ -2760,6 +2876,10 @@ function delete_account(token, session_secret_key, authkey) {
 const service = {
     info,
     healthcheck,
+    admin_stats_browser,
+    admin_stats_device,
+    admin_stats_os,
+    admin_stats_two_factor,
     admin_info,
     admin_user,
     admin_session,
