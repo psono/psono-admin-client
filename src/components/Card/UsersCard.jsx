@@ -27,9 +27,9 @@ class UsersCard extends React.Component {
     render() {
         const {
             t,
-            users,
-            sessions,
-            groups,
+            loadUsers,
+            loadSessions,
+            loadGroups,
             onDeleteUsers,
             onEditUser,
             onEditGroup,
@@ -88,6 +88,7 @@ class UsersCard extends React.Component {
                             tabIcon: Person,
                             tabContent: (
                                 <CustomMaterialTable
+                                    tableRef={this.props.userTableRef}
                                     columns={[
                                         {
                                             field: 'username',
@@ -106,19 +107,20 @@ class UsersCard extends React.Component {
                                             title: t('EMAIL_ACTIVE')
                                         },
                                         {
-                                            field: 'yubikey_2fa',
+                                            field: 'yubikey_otp_enabled',
                                             title: t('YUBIKEY')
                                         },
                                         {
-                                            field: 'ga_2fa',
+                                            field:
+                                                'google_authenticator_enabled',
                                             title: t('GOOGLE_AUTHENTICATOR')
                                         },
                                         {
-                                            field: 'duo_2fa',
+                                            field: 'duo_enabled',
                                             title: t('DUO_AUTHENTICATION')
                                         }
                                     ]}
-                                    data={users}
+                                    data={loadUsers}
                                     title={''}
                                     actions={[
                                         {
@@ -163,6 +165,7 @@ class UsersCard extends React.Component {
                             tabIcon: DevicesOther,
                             tabContent: (
                                 <CustomMaterialTable
+                                    tableRef={this.props.sessionTableRef}
                                     columns={[
                                         {
                                             field: 'username',
@@ -186,7 +189,7 @@ class UsersCard extends React.Component {
                                         },
                                         { field: 'active', title: t('ACTIVE') }
                                     ]}
-                                    data={sessions}
+                                    data={loadSessions}
                                     title={''}
                                     actions={[
                                         {
@@ -204,6 +207,7 @@ class UsersCard extends React.Component {
                             tabIcon: Group,
                             tabContent: (
                                 <CustomMaterialTable
+                                    tableRef={this.props.groupTableRef}
                                     columns={[
                                         { field: 'name', title: t('NAME') },
                                         {
@@ -216,10 +220,11 @@ class UsersCard extends React.Component {
                                         },
                                         {
                                             field: 'is_managed',
-                                            title: t('MANAGED')
+                                            title: t('MANAGED'),
+                                            sorting: false
                                         }
                                     ]}
-                                    data={groups}
+                                    data={loadGroups}
                                     title={''}
                                     actions={[
                                         {
@@ -257,9 +262,12 @@ class UsersCard extends React.Component {
 
 UsersCard.propTypes = {
     classes: PropTypes.object.isRequired,
-    users: PropTypes.array,
-    sessions: PropTypes.array,
-    groups: PropTypes.array
+    loadUsers: PropTypes.func,
+    loadSessions: PropTypes.func,
+    loadGroups: PropTypes.func,
+    userTableRef: PropTypes.object,
+    groupTableRef: PropTypes.object,
+    sessionTableRef: PropTypes.object
 };
 
 export default compose(withTranslation(), withStyles(tasksCardStyle))(

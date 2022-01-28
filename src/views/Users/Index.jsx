@@ -6,70 +6,57 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
-import { UsersCard, ChartCard, GridItem } from '../../components';
+import { UsersCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
-import helper from '../../services/helper';
+import i18n from '../../i18n';
+import store from '../../services/store';
 
-import ChartistGraph from 'react-chartist';
+import TwoFactorChartCard from '../../containers/ChartCard/two_factor';
+import BrowserChartCard from '../../containers/ChartCard/browser';
+import OsChartCard from '../../containers/ChartCard/os';
+import DeviceChartCard from '../../containers/ChartCard/device';
 
 class Users extends React.Component {
+    userTableRef = React.createRef();
+    groupTableRef = React.createRef();
+    sessionTableRef = React.createRef();
     state = {
-        redirect_to: '',
-        users: [],
-        sessions: [],
-        groups: [],
-        os_data: [],
-        os_labels: [],
-        device_data: [],
-        device_labels: [],
-        browser_data: [],
-        browser_labels: [],
-        twofa_data: [],
-        twofa_labels: []
+        redirect_to: ''
     };
 
     onDeleteUsers(selected_users) {
         selected_users.forEach(user => {
-            psono_server.admin_delete_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                user.id
-            );
+            psono_server
+                .admin_delete_user(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    user.id
+                )
+                .then(() => {
+                    this.userTableRef.current &&
+                        this.userTableRef.current.onQueryChange();
+                });
         });
-
-        let { users } = this.state;
-        selected_users.forEach(user => {
-            helper.remove_from_array(users, user, function(a, b) {
-                return a.id === b.id;
-            });
-        });
-
-        this.setState({ users: users });
     }
 
     update_users(selected_users, is_active) {
-        const { t } = this.props;
-        let { users } = this.state;
         selected_users.forEach(user => {
-            psono_server.admin_update_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                user.id,
-                undefined,
-                is_active,
-                undefined,
-                undefined
-            );
-
-            users.forEach(u => {
-                if (u.id === user.id) {
-                    u.is_active = is_active ? t('YES') : t('NO');
-                }
-            });
+            psono_server
+                .admin_update_user(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    user.id,
+                    undefined,
+                    is_active,
+                    undefined,
+                    undefined
+                )
+                .then(() => {
+                    this.userTableRef.current &&
+                        this.userTableRef.current.onQueryChange();
+                });
         });
-
-        this.setState({ users: users });
     }
 
     onActivateUsers(selected_users) {
@@ -94,40 +81,32 @@ class Users extends React.Component {
 
     onDeleteSessions(selected_sessions) {
         selected_sessions.forEach(session => {
-            psono_server.admin_delete_session(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                session.id
-            );
+            psono_server
+                .admin_delete_session(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    session.id
+                )
+                .then(() => {
+                    this.sessionTableRef.current &&
+                        this.sessionTableRef.current.onQueryChange();
+                });
         });
-
-        let { sessions } = this.state;
-        selected_sessions.forEach(session => {
-            helper.remove_from_array(sessions, session, function(a, b) {
-                return a.id === b.id;
-            });
-        });
-
-        this.setState({ sessions: sessions });
     }
 
     onDeleteGroups(selected_groups) {
         selected_groups.forEach(group => {
-            psono_server.admin_delete_group(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                group.id
-            );
+            psono_server
+                .admin_delete_group(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    group.id
+                )
+                .then(() => {
+                    this.groupTableRef.current &&
+                        this.groupTableRef.current.onQueryChange();
+                });
         });
-
-        let { groups } = this.state;
-        selected_groups.forEach(group => {
-            helper.remove_from_array(groups, group, function(a, b) {
-                return a.id === b.id;
-            });
-        });
-
-        this.setState({ groups: groups });
     }
 
     onCreateGroup() {
@@ -142,129 +121,82 @@ class Users extends React.Component {
         });
     }
 
-    analyze(data, storage, labels) {
-        let found = false;
-        labels.some((bl, index) => {
-            if (data.includes(bl)) {
-                storage[index] = storage[index] + 1;
-                found = true;
-                return true;
+    loadUsers(query) {
+        const params = {
+            page_size: query.pageSize,
+            search: query.search,
+            page: query.page
+        };
+        if (query.orderBy) {
+            if (query.orderDirection === 'asc') {
+                params['ordering'] = query.orderBy.field;
+            } else {
+                params['ordering'] = '-' + query.orderBy.field;
             }
-            return false;
-        });
-        if (!found) {
-            storage[0] = storage[0] + 1;
         }
-    }
 
-    cleanup(storage, labels) {
-        for (let i = storage.length; i--; i > -1) {
-            if (storage[i] !== 0) {
-                continue;
-            }
-            labels.splice(i, 1);
-            storage.splice(i, 1);
-        }
-    }
-    merge(mergers, new_title, storage, labels) {
-        let new_value = 0;
-        for (let i = labels.length; i--; i > -1) {
-            if (mergers.indexOf(labels[i]) === -1) {
-                continue;
-            }
-            new_value = new_value + storage[i];
-
-            labels.splice(i, 1);
-            storage.splice(i, 1);
-        }
-        storage.push(new_value);
-        labels.push(new_title);
-    }
-
-    componentDidMount() {
-        const { t } = this.props;
-        psono_server
+        return psono_server
             .admin_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
+                undefined,
+                params
             )
             .then(response => {
                 const { users } = response.data;
-
-                let twofa_data = [0, 0, 0, 0];
-                let twofa_labels = [
-                    'None',
-                    'Yubikey',
-                    'Google Authenticator',
-                    'Duo'
-                ];
 
                 users.forEach(u => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
-                    u.is_active = u.is_active ? t('YES') : t('NO');
-                    u.is_email_active = u.is_email_active ? t('YES') : t('NO');
+                    u.is_active = u.is_active ? i18n.t('YES') : i18n.t('NO');
+                    u.is_email_active = u.is_email_active
+                        ? i18n.t('YES')
+                        : i18n.t('NO');
 
-                    if (!u.yubikey_2fa && !u.ga_2fa && !u.duo_2fa) {
-                        twofa_data[0] = twofa_data[0] + 1;
-                    }
-                    if (u.yubikey_2fa) {
-                        twofa_data[1] = twofa_data[1] + 1;
-                    }
-                    if (u.ga_2fa) {
-                        twofa_data[2] = twofa_data[2] + 1;
-                    }
-                    if (u.duo_2fa) {
-                        twofa_data[3] = twofa_data[3] + 1;
-                    }
-
-                    u.yubikey_2fa = u.yubikey_2fa ? t('YES') : t('NO');
-                    u.ga_2fa = u.ga_2fa ? t('YES') : t('NO');
-                    u.duo_2fa = u.duo_2fa ? t('YES') : t('NO');
+                    u.yubikey_otp_enabled = u.yubikey_otp_enabled
+                        ? i18n.t('YES')
+                        : i18n.t('NO');
+                    u.google_authenticator_enabled = u.google_authenticator_enabled
+                        ? i18n.t('YES')
+                        : i18n.t('NO');
+                    u.duo_enabled = u.duo_enabled
+                        ? i18n.t('YES')
+                        : i18n.t('NO');
                 });
-                this.cleanup(twofa_data, twofa_labels);
-
-                this.setState({
-                    users,
-                    twofa_data,
-                    twofa_labels
-                });
+                return {
+                    data: users,
+                    page: query.page,
+                    pageSize: query.pageSize,
+                    totalCount: response.data.count
+                };
             });
-        psono_server
+    }
+
+    loadSessions(query) {
+        const params = {
+            page_size: query.pageSize,
+            search: query.search,
+            page: query.page
+        };
+        if (query.orderBy) {
+            if (query.orderDirection === 'asc') {
+                params['ordering'] = query.orderBy.field;
+            } else {
+                params['ordering'] = '-' + query.orderBy.field;
+            }
+        }
+
+        const { t } = this.props;
+
+        return psono_server
             .admin_session(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
+                params
             )
             .then(response => {
                 const { sessions } = response.data;
-
-                let os_data = [0, 0, 0, 0, 0, 0];
-                let os_labels = [
-                    'Other',
-                    'Linux',
-                    'Windows',
-                    'Mac OS',
-                    'Android',
-                    'iOS'
-                ];
-                let browser_data = [0, 0, 0, 0, 0];
-                let browser_labels = [
-                    'Other',
-                    'Firefox',
-                    'Chrome',
-                    'Safari',
-                    'Vivaldi'
-                ];
-                let device_data = [0, 0, 0, 0, 0, 0];
-                let device_labels = [
-                    'Other',
-                    'Android',
-                    'iPhone',
-                    'Linux',
-                    'Mac',
-                    'Windows'
-                ];
 
                 sessions.forEach(u => {
                     u.create_date = moment(u.create_date).format(
@@ -274,51 +206,37 @@ class Users extends React.Component {
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.active = u.active ? t('YES') : t('NO');
-
-                    this.analyze(u.device_description, os_data, os_labels);
-                    this.analyze(
-                        u.device_description,
-                        browser_data,
-                        browser_labels
-                    );
-                    this.analyze(
-                        u.device_description,
-                        device_data,
-                        device_labels
-                    );
                 });
-
-                this.cleanup(os_data, os_labels);
-                this.cleanup(browser_data, browser_labels);
-                //merge device data
-                this.merge(
-                    ['Android', 'iPhone'],
-                    'Mobile',
-                    device_data,
-                    device_labels
-                );
-                this.merge(
-                    ['Linux', 'Windows'],
-                    'PC',
-                    device_data,
-                    device_labels
-                );
-                this.cleanup(device_data, device_labels);
-
-                this.setState({
-                    sessions,
-                    browser_data,
-                    browser_labels,
-                    os_data,
-                    os_labels,
-                    device_data,
-                    device_labels
-                });
+                return {
+                    data: sessions,
+                    page: query.page,
+                    pageSize: query.pageSize,
+                    totalCount: response.data.count
+                };
             });
-        psono_server
+    }
+
+    loadGroups(query) {
+        const params = {
+            page_size: query.pageSize,
+            search: query.search,
+            page: query.page
+        };
+        if (query.orderBy) {
+            if (query.orderDirection === 'asc') {
+                params['ordering'] = query.orderBy.field;
+            } else {
+                params['ordering'] = '-' + query.orderBy.field;
+            }
+        }
+        const { t } = this.props;
+
+        return psono_server
             .admin_group(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
+                undefined,
+                params
             )
             .then(response => {
                 const { groups } = response.data;
@@ -328,14 +246,16 @@ class Users extends React.Component {
                     );
                     g.is_managed = g.is_managed ? t('YES') : t('NO');
                 });
-                this.setState({
-                    groups
-                });
+                return {
+                    data: groups,
+                    page: query.page,
+                    pageSize: query.pageSize,
+                    totalCount: response.data.count
+                };
             });
     }
 
     render() {
-        const { t } = this.props;
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
         }
@@ -343,192 +263,27 @@ class Users extends React.Component {
             <div>
                 <Grid container>
                     <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <ChartCard
-                            chart={
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: this.state.os_labels,
-                                        series: this.state.os_data
-                                    }}
-                                    type="Pie"
-                                    options={{
-                                        labelInterpolationFnc: function(value) {
-                                            return value[0];
-                                        }
-                                    }}
-                                    responsiveOptions={[
-                                        [
-                                            'screen and (min-width: 640px)',
-                                            {
-                                                chartPadding: 20,
-                                                labelOffset: 40,
-                                                labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
-                                        ],
-                                        [
-                                            'screen and (min-width: 1024px)',
-                                            {
-                                                labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
-                                    ]}
-                                />
-                            }
-                            chartColor="green"
-                            title={t('OPERATION_SYSTEMS')}
-                            fontAwesomeStatsIcon="linux"
-                            statText={t('DISTRIBUTION_BY_OPERATION_SYSTEM')}
-                        />
+                        <OsChartCard />
                     </GridItem>
                     <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <ChartCard
-                            chart={
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: this.state.device_labels,
-                                        series: this.state.device_data
-                                    }}
-                                    type="Pie"
-                                    options={{
-                                        labelInterpolationFnc: function(value) {
-                                            return value[0];
-                                        }
-                                    }}
-                                    responsiveOptions={[
-                                        [
-                                            'screen and (min-width: 640px)',
-                                            {
-                                                chartPadding: 20,
-                                                labelOffset: 40,
-                                                labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
-                                        ],
-                                        [
-                                            'screen and (min-width: 1024px)',
-                                            {
-                                                labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
-                                    ]}
-                                />
-                            }
-                            chartColor="blue"
-                            title={t('DEVICES')}
-                            fontAwesomeStatsIcon="tablet"
-                            statText={t('DISTRIBUTION_BY_DEVICE')}
-                        />
+                        <DeviceChartCard />
                     </GridItem>
                     <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <ChartCard
-                            chart={
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: this.state.browser_labels,
-                                        series: this.state.browser_data
-                                    }}
-                                    type="Pie"
-                                    options={{
-                                        labelInterpolationFnc: function(value) {
-                                            return value[0];
-                                        }
-                                    }}
-                                    responsiveOptions={[
-                                        [
-                                            'screen and (min-width: 640px)',
-                                            {
-                                                chartPadding: 20,
-                                                labelOffset: 40,
-                                                labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
-                                        ],
-                                        [
-                                            'screen and (min-width: 1024px)',
-                                            {
-                                                labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
-                                    ]}
-                                />
-                            }
-                            chartColor="purple"
-                            title={t('BROWSER')}
-                            fontAwesomeStatsIcon="chrome"
-                            statText={t('DISTRIBUTION_BY_BROWSER')}
-                        />
+                        <BrowserChartCard />
                     </GridItem>
                     <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <ChartCard
-                            chart={
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={{
-                                        labels: this.state.twofa_labels,
-                                        series: this.state.twofa_data
-                                    }}
-                                    type="Pie"
-                                    options={{
-                                        labelInterpolationFnc: function(value) {
-                                            return value[0];
-                                        }
-                                    }}
-                                    responsiveOptions={[
-                                        [
-                                            'screen and (min-width: 640px)',
-                                            {
-                                                chartPadding: 20,
-                                                labelOffset: 40,
-                                                labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
-                                        ],
-                                        [
-                                            'screen and (min-width: 1024px)',
-                                            {
-                                                labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
-                                    ]}
-                                />
-                            }
-                            chartColor="blue"
-                            title={t('TWO_FACTOR')}
-                            fontAwesomeStatsIcon="angellist"
-                            statText={t('DISTRIBUTION_BY_TWO_FACTOR')}
-                        />
+                        <TwoFactorChartCard />
                     </GridItem>
                 </Grid>
                 <Grid container>
                     <GridItem xs={12} sm={12} md={12}>
                         <UsersCard
-                            users={this.state.users}
-                            sessions={this.state.sessions}
-                            groups={this.state.groups}
+                            loadUsers={query => this.loadUsers(query)}
+                            loadSessions={query => this.loadSessions(query)}
+                            loadGroups={query => this.loadGroups(query)}
+                            userTableRef={this.userTableRef}
+                            groupTableRef={this.groupTableRef}
+                            sessionTableRef={this.sessionTableRef}
                             onDeleteUsers={user_ids =>
                                 this.onDeleteUsers(user_ids)
                             }
@@ -551,7 +306,7 @@ class Users extends React.Component {
                             onCreateGroup={() => this.onCreateGroup()}
                             onCreateUser={() => this.onCreateUser()}
                             show_create_group_button={
-                                this.props.state.server.type === 'EE'
+                                store.getState().server.type === 'EE'
                             }
                         />
                     </GridItem>
