@@ -522,16 +522,14 @@ class User extends React.Component {
         const { classes, t } = this.props;
         if (ldap_groups) {
             ldap_groups.forEach(ldap_group => {
+                ldap_group.mapped_raw =
+                    mapped_ldap_group_index.hasOwnProperty(ldap_group.id) &&
+                    mapped_ldap_group_index[ldap_group.id][
+                        'ldap_group_map_id'
+                    ] !== '';
                 ldap_group.mapped = (
                     <Checkbox
-                        checked={
-                            mapped_ldap_group_index.hasOwnProperty(
-                                ldap_group.id
-                            ) &&
-                            mapped_ldap_group_index[ldap_group.id][
-                                'ldap_group_map_id'
-                            ] !== ''
-                        }
+                        checked={ldap_group.mapped_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleLDAP(ldap_group);
@@ -549,16 +547,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                ldap_group.has_group_admin_raw =
+                    mapped_ldap_group_index.hasOwnProperty(ldap_group.id) &&
+                    mapped_ldap_group_index[ldap_group.id]['group_admin'];
                 ldap_group.has_group_admin = (
                     <Checkbox
-                        checked={
-                            mapped_ldap_group_index.hasOwnProperty(
-                                ldap_group.id
-                            ) &&
-                            mapped_ldap_group_index[ldap_group.id][
-                                'group_admin'
-                            ]
-                        }
+                        checked={ldap_group.has_group_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminLDAP(
@@ -580,16 +574,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                ldap_group.has_share_admin_raw =
+                    mapped_ldap_group_index.hasOwnProperty(ldap_group.id) &&
+                    mapped_ldap_group_index[ldap_group.id]['share_admin'];
                 ldap_group.has_share_admin = (
                     <Checkbox
-                        checked={
-                            mapped_ldap_group_index.hasOwnProperty(
-                                ldap_group.id
-                            ) &&
-                            mapped_ldap_group_index[ldap_group.id][
-                                'share_admin'
-                            ]
-                        }
+                        checked={ldap_group.has_share_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminLDAP(
@@ -615,16 +605,14 @@ class User extends React.Component {
         }
         if (saml_groups) {
             saml_groups.forEach(saml_group => {
+                saml_group.mapped_raw =
+                    mapped_saml_group_index.hasOwnProperty(saml_group.id) &&
+                    mapped_saml_group_index[saml_group.id][
+                        'saml_group_map_id'
+                    ] !== '';
                 saml_group.mapped = (
                     <Checkbox
-                        checked={
-                            mapped_saml_group_index.hasOwnProperty(
-                                saml_group.id
-                            ) &&
-                            mapped_saml_group_index[saml_group.id][
-                                'saml_group_map_id'
-                            ] !== ''
-                        }
+                        checked={saml_group.mapped_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleSAML(saml_group);
@@ -642,16 +630,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                saml_group.has_group_admin_raw =
+                    mapped_saml_group_index.hasOwnProperty(saml_group.id) &&
+                    mapped_saml_group_index[saml_group.id]['group_admin'];
                 saml_group.has_group_admin = (
                     <Checkbox
-                        checked={
-                            mapped_saml_group_index.hasOwnProperty(
-                                saml_group.id
-                            ) &&
-                            mapped_saml_group_index[saml_group.id][
-                                'group_admin'
-                            ]
-                        }
+                        checked={saml_group.has_group_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminSAML(
@@ -673,16 +657,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                saml_group.has_share_admin_raw =
+                    mapped_saml_group_index.hasOwnProperty(saml_group.id) &&
+                    mapped_saml_group_index[saml_group.id]['share_admin'];
                 saml_group.has_share_admin = (
                     <Checkbox
-                        checked={
-                            mapped_saml_group_index.hasOwnProperty(
-                                saml_group.id
-                            ) &&
-                            mapped_saml_group_index[saml_group.id][
-                                'share_admin'
-                            ]
-                        }
+                        checked={saml_group.has_share_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminSAML(
@@ -708,16 +688,14 @@ class User extends React.Component {
         }
         if (oidc_groups) {
             oidc_groups.forEach(oidc_group => {
+                oidc_group.mapped_raw =
+                    mapped_oidc_group_index.hasOwnProperty(oidc_group.id) &&
+                    mapped_oidc_group_index[oidc_group.id][
+                        'oidc_group_map_id'
+                    ] !== '';
                 oidc_group.mapped = (
                     <Checkbox
-                        checked={
-                            mapped_oidc_group_index.hasOwnProperty(
-                                oidc_group.id
-                            ) &&
-                            mapped_oidc_group_index[oidc_group.id][
-                                'oidc_group_map_id'
-                            ] !== ''
-                        }
+                        checked={oidc_group.mapped_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleOIDC(oidc_group);
@@ -735,16 +713,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                oidc_group.has_group_admin_raw =
+                    mapped_oidc_group_index.hasOwnProperty(oidc_group.id) &&
+                    mapped_oidc_group_index[oidc_group.id]['group_admin'];
                 oidc_group.has_group_admin = (
                     <Checkbox
-                        checked={
-                            mapped_oidc_group_index.hasOwnProperty(
-                                oidc_group.id
-                            ) &&
-                            mapped_oidc_group_index[oidc_group.id][
-                                'group_admin'
-                            ]
-                        }
+                        checked={oidc_group.has_group_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminOIDC(
@@ -766,16 +740,12 @@ class User extends React.Component {
                         }}
                     />
                 );
+                oidc_group.has_share_admin_raw =
+                    mapped_oidc_group_index.hasOwnProperty(oidc_group.id) &&
+                    mapped_oidc_group_index[oidc_group.id]['share_admin'];
                 oidc_group.has_share_admin = (
                     <Checkbox
-                        checked={
-                            mapped_oidc_group_index.hasOwnProperty(
-                                oidc_group.id
-                            ) &&
-                            mapped_oidc_group_index[oidc_group.id][
-                                'share_admin'
-                            ]
-                        }
+                        checked={oidc_group.has_share_admin_raw}
                         tabIndex={-1}
                         onClick={() => {
                             this.handleToggleAdminOIDC(
