@@ -3,13 +3,14 @@ import { withStyles, Grid } from '@material-ui/core';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { LDAPCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
-import { compose } from 'redux';
-import { withTranslation } from 'react-i18next';
 import i18n from '../../i18n';
+import notification from '../../services/notification';
 
 class Users extends React.Component {
     state = {
@@ -38,15 +39,21 @@ class Users extends React.Component {
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
-                const { ldap_groups } = response.data;
-                ldap_groups.forEach(ldap_group => {
-                    this.createGroupsNode(ldap_group);
-                });
-                this.setState({
-                    ldap_groups
-                });
-            });
+            .then(
+                response => {
+                    const { ldap_groups } = response.data;
+                    ldap_groups.forEach(ldap_group => {
+                        this.createGroupsNode(ldap_group);
+                    });
+                    this.setState({
+                        ldap_groups
+                    });
+                },
+                response => {
+                    const { non_field_errors } = response.data;
+                    notification.error_send(non_field_errors[0]);
+                }
+            );
     }
 
     componentDidMount() {

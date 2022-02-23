@@ -1,4 +1,6 @@
 {
+  "LDAP_GATEWAY_CONNECTION_ISSUE": "LDAP Gateway Verbindungsprobleme",
+  "LDAP_SERVER_CONNECTION_ISSUE": "LDAP Server Verbindungsprobleme",
   "LOGIN_INFO_CANNOT_BE_DECRYPTED": "Login Informationen konnten vom Server nicht entschlüsselt werden.",
   "USER_DISABLED_ASK_ADMIN_TO_ENABLE": "Benutzer wurde deaktiviert. Fragen sie einen Admininistrator um ihn zu aktivieren.",
   "ACCOUNT_NOT_VERIFIED": "Account nicht verifiziert",

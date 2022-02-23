@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
 import 'moment-timezone';
 
 import i18n from './i18n';
 
 import App from './containers/App';
 import worker from './services/worker';
+import store from './services/store';
 
 /**
  * @typedef {Object} PublicPrivateKeyPair
@@ -50,9 +52,11 @@ import worker from './services/worker';
 import './assets/css/material-dashboard-react.css';
 
 ReactDOM.render(
-    <I18nextProvider i18n={i18n}>
-        <App />
-    </I18nextProvider>,
+    <Provider store={store}>
+        <I18nextProvider i18n={i18n}>
+            <App />
+        </I18nextProvider>
+    </Provider>,
     document.getElementById('root')
 );
 worker.register();

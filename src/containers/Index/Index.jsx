@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
-import { Header, Footer, Sidebar } from '../../components';
+import { Header, Footer, Sidebar, Notification } from '../../components';
 
 import otherLinks from '../../routes/other';
 import sidebarLinks from '../../routes/sidebar';
@@ -85,6 +85,7 @@ class App extends React.Component {
 
         return (
             <div className={classes.wrapper}>
+                <Notification />
                 <Sidebar
                     routes={sidebarLinks.concat(variableLinks)}
                     logoText={'Admin'}
