@@ -66,11 +66,21 @@ class GroupCard extends React.Component {
                 tabContent: (
                     <CustomMaterialTable
                         columns={[
-                            { field: 'mapped', title: t('MAPPED') },
+                            {
+                                field: 'mapped',
+                                title: t('MAPPED'),
+                                customSort: (a, b) => {
+                                    console.log(a, b);
+                                    return a.mapped_raw - b.mapped_raw;
+                                }
+                            },
                             { field: 'dn', title: t('DN') },
                             {
                                 field: 'has_share_admin',
-                                title: t('SHARE_ADMIN')
+                                title: t('SHARE_ADMIN'),
+                                customSort: (a, b) =>
+                                    a.has_share_admin_raw -
+                                    b.has_share_admin_raw
                             },
                             { field: 'domain', title: t('DOMAIN') }
                         ]}
@@ -88,11 +98,19 @@ class GroupCard extends React.Component {
                 tabContent: (
                     <CustomMaterialTable
                         columns={[
-                            { field: 'mapped', title: t('MAPPED') },
+                            {
+                                field: 'mapped',
+                                title: t('MAPPED'),
+                                customSort: (a, b) =>
+                                    a.mapped_raw - b.mapped_raw
+                            },
                             { field: 'saml_name', title: t('NAME') },
                             {
                                 field: 'has_share_admin',
-                                title: t('SHARE_ADMIN')
+                                title: t('SHARE_ADMIN'),
+                                customSort: (a, b) =>
+                                    a.has_share_admin_raw -
+                                    b.has_share_admin_raw
                             },
                             {
                                 field: 'saml_provider_id',
@@ -113,11 +131,19 @@ class GroupCard extends React.Component {
                 tabContent: (
                     <CustomMaterialTable
                         columns={[
-                            { field: 'mapped', title: t('MAPPED') },
+                            {
+                                field: 'mapped',
+                                title: t('MAPPED'),
+                                customSort: (a, b) =>
+                                    a.mapped_raw - b.mapped_raw
+                            },
                             { field: 'oidc_name', title: t('NAME') },
                             {
                                 field: 'has_share_admin',
-                                title: t('SHARE_ADMIN')
+                                title: t('SHARE_ADMIN'),
+                                customSort: (a, b) =>
+                                    a.has_share_admin_raw -
+                                    b.has_share_admin_raw
                             },
                             {
                                 field: 'oidc_provider_id',

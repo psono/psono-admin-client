@@ -40,7 +40,7 @@ class Login extends React.Component {
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content} />
-                <Notification state={this.props.state} />
+                <Notification />
                 <LoginForm
                     {...rest}
                     initiate_login={user.initiate_login}
