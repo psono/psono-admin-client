@@ -53,8 +53,8 @@ WEBHOOKS = {
 }
 
 FILE_PATHS = {
-    'de': 'public/locales/de/translations.json',
-    'en': 'public/locales/en/translations.json',
+    'de': 'public/locales/de/translation.json',
+    'en': 'public/locales/en/translation.json',
 }
 
 
