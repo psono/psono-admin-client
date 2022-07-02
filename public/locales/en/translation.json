@@ -1,4 +1,5 @@
 {
+  "PASSWORDS_DONT_MATCH": "Passwords don't match.",
   "LDAP_GATEWAY_CONNECTION_ISSUE": "LDAP gateway connection issue",
   "LDAP_SERVER_CONNECTION_ISSUE": "LDAP server connection issue",
   "LOGIN_INFO_CANNOT_BE_DECRYPTED": "Login information could not be decrypted by the server.",
