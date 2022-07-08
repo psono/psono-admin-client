@@ -5,13 +5,12 @@ import SecurityReports from '../views/SecurityReports/Index';
 // import TableList from '../views/TableList/TableList.jsx';
 // import Typography from '../views/Typography/Typography.jsx';
 // import Icons from '../views/Icons/Icons.jsx';
-// import Maps from '../views/Maps/Maps.jsx';
 // import NotificationsPage from '../views/Notifications/Notifications.jsx';
 
 import {
     Dashboard,
     Person,
-    Timeline
+    Timeline,
     // ContentPaste,
     // LibraryBooks,
     // BubbleChart,
@@ -25,22 +24,22 @@ let routes = [
         sidebarName: 'DASHBOARD',
         navbarName: 'DASHBOARD',
         icon: Dashboard,
-        component: DashboardPage
+        component: DashboardPage,
     },
     {
         path: '/users',
         sidebarName: 'USERS',
         navbarName: 'USERS',
         icon: Person,
-        component: Users
+        component: Users,
     },
     {
         path: '/security-reports',
         sidebarName: 'SECURITY_REPORTS',
         navbarName: 'SECURITY_REPORTS',
         icon: Timeline,
-        component: SecurityReports
-    }
+        component: SecurityReports,
+    },
 ];
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -95,7 +94,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 }
 
 routes = routes.concat([
-    { redirect: true, path: '/', to: '/dashboard', navbarName: 'Redirect' }
+    { redirect: true, path: '/', to: '/dashboard', navbarName: 'Redirect' },
 ]);
 
 export default routes;
