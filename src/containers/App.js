@@ -22,7 +22,7 @@ import logo from '../assets/img/logo.png';
 import image from '../assets/img/background.jpg';
 
 const hist = createBrowserHistory({
-    basename: '/portal'
+    basename: '/portal',
 });
 
 let persistor = persistStore(store);
@@ -36,7 +36,7 @@ const style = {
         backgroundSize: 'cover',
         display: 'flex',
         'justify-content': 'center',
-        'align-items': 'center'
+        'align-items': 'center',
     },
     content: {
         width: '100%',
@@ -45,8 +45,8 @@ const style = {
         content: '',
         opacity: '.8',
         position: 'absolute',
-        background: '#000'
-    }
+        background: '#000',
+    },
 };
 
 class LoaderClass extends Component {
@@ -55,7 +55,7 @@ class LoaderClass extends Component {
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content} />
-                <img src={logo} className="App-logo" alt="logo" />
+                <img src={logo} alt="logo" />
                 <div>loading...</div>
             </div>
         );
