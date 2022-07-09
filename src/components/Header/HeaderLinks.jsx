@@ -26,11 +26,16 @@ const useStyles = makeStyles((theme) => ({
     },
     topMenuButton: {
         textTransform: 'none',
-        padding: '8px',
+        position: 'absolute',
+        bottom: '8px',
+        right: '8px',
     },
     signInText: {
         marginRight: '10px',
         display: 'inline',
+    },
+    accountCircleIcon: {
+        color: '#FFF',
     },
 }));
 
@@ -57,10 +62,11 @@ const HeaderLinks = (props) => {
                     <IconButton
                         variant="contained"
                         onClick={openTopMenu}
-                        color="primary"
                         className={classes.topMenuButton}
                     >
-                        <AccountCircleIcon />
+                        <AccountCircleIcon
+                            className={classes.accountCircleIcon}
+                        />
                     </IconButton>
                 </Hidden>
                 <Hidden smDown>
