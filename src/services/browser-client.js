@@ -9,9 +9,11 @@ import helper from './helper';
 let _admin_client_config = {};
 
 function load_config() {
-    return axios.get(process.env.PUBLIC_URL + '/config.json').then(response => {
-        return response.data;
-    });
+    return axios
+        .get(process.env.PUBLIC_URL + '/config.json')
+        .then((response) => {
+            return response.data;
+        });
 }
 
 /**
@@ -42,7 +44,7 @@ function _get_config(config, key) {
 function get_config(key) {
     return new Promise((resolve, reject) => {
         if (Object.keys(_admin_client_config).length === 0) {
-            load_config().then(admin_client_config => {
+            load_config().then((admin_client_config) => {
                 const parsed_url = helper.parse_url(window.location.href);
                 if (!admin_client_config.hasOwnProperty('base_url')) {
                     admin_client_config['base_url'] =
@@ -55,14 +57,24 @@ function get_config(key) {
                         i++
                     ) {
                         if (
-                            admin_client_config['backend_servers'][
+                            !admin_client_config['backend_servers'][
                                 i
                             ].hasOwnProperty('url')
                         ) {
-                            continue;
+                            admin_client_config['backend_servers'][i]['url'] =
+                                parsed_url['base_url'] + '/server';
                         }
-                        admin_client_config['backend_servers'][i]['url'] =
-                            parsed_url['base_url'] + '/server';
+                        if (
+                            !admin_client_config['backend_servers'][
+                                i
+                            ].hasOwnProperty('domain')
+                        ) {
+                            admin_client_config['backend_servers'][i][
+                                'domain'
+                            ] = helper.get_domain(
+                                admin_client_config['backend_servers'][i]['url']
+                            );
+                        }
                     }
                 }
 
@@ -75,7 +87,7 @@ function get_config(key) {
                         'AUTHKEY',
                         'LDAP',
                         'SAML',
-                        'OIDC'
+                        'OIDC',
                     ];
                 }
 
@@ -97,19 +109,15 @@ function get_config(key) {
 
 function get_saml_return_to_url() {
     return (
-        window.location.href
-            .split('/portal')
-            .slice(0, 1)
-            .join('/') + '/portal/saml/token/'
+        window.location.href.split('/portal').slice(0, 1).join('/') +
+        '/portal/saml/token/'
     );
 }
 
 function get_oidc_return_to_url() {
     return (
-        window.location.href
-            .split('/portal')
-            .slice(0, 1)
-            .join('/') + '/portal/oidc/token/'
+        window.location.href.split('/portal').slice(0, 1).join('/') +
+        '/portal/oidc/token/'
     );
 }
 
@@ -117,7 +125,7 @@ const service = {
     get_saml_return_to_url,
     get_oidc_return_to_url,
     load_config,
-    get_config
+    get_config,
 };
 
 export default service;
