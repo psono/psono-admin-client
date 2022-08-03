@@ -150,6 +150,7 @@
   "LIST_OF_SECURITY_REPORT_ENTRIES": "Liste aller Einträge des Security Reports",
   "LDAP_MANAGEMENT": "LDAP Management",
   "SYNC_WITH_LDAP": "Sync mit LDAP",
+  "SYNC_WITH_SAML_IDP": "Sync mit SAML IDP",
   "MEMBERS": "Mitglieder",
   "MANAGED": "Managed",
   "EMAIL_ACTIVE": "E-Mail Aktiv",

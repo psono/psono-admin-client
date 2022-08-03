@@ -10,13 +10,13 @@ import psono_server from '../../services/api-server';
 class Users extends React.Component {
     state = {
         redirect_to: '',
-        oidc_groups: []
+        oidc_groups: [],
     };
 
     createGroupsNode(oidc_group) {
         oidc_group.groups = (
             <div>
-                {oidc_group.groups.map(function(group, key) {
+                {oidc_group.groups.map(function (group, key) {
                     return (
                         <a href={'/portal/group/' + group.id} key={key}>
                             {group.name}
@@ -28,20 +28,26 @@ class Users extends React.Component {
     }
 
     componentDidMount() {
+        this.loadOidcGroups();
+    }
+
+    loadOidcGroups() {
         psono_server
             .admin_oidc_group(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 const { oidc_groups } = response.data;
 
-                oidc_groups.forEach(oidc_group => {
+                oidc_groups.forEach((oidc_group) => {
+                    oidc_group['name'] =
+                        oidc_group['display_name'] || oidc_group['oidc_name'];
                     this.createGroupsNode(oidc_group);
                 });
 
                 this.setState({
-                    oidc_groups
+                    oidc_groups,
                 });
             });
     }
@@ -63,7 +69,7 @@ class Users extends React.Component {
 }
 
 Users.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(dashboardStyle)(Users);

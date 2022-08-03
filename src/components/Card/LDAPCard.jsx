@@ -27,30 +27,25 @@ class LDAPCard extends React.Component {
                                     { field: 'username', title: t('USERNAME') },
                                     {
                                         field: 'create_date',
-                                        title: t('IMPORTED')
+                                        title: t('IMPORTED'),
                                     },
                                     { field: 'email', title: t('EMAIL') },
-                                    { field: 'dn', title: t('DN') }
+                                    { field: 'dn', title: t('DN') },
                                 ]}
                                 data={ldap_users}
                                 title={t('LDAP_USERS')}
                                 options={{
-                                    pageSize: 10
+                                    pageSize: 10,
                                 }}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('GROUPS'),
                         tabIcon: Group,
                         tabContent: (
                             <div>
-                                <Button
-                                    color="info"
-                                    onClick={() => {
-                                        onSyncGroupsLdap();
-                                    }}
-                                >
+                                <Button color="info" onClick={onSyncGroupsLdap}>
                                     {t('SYNC_WITH_LDAP')}
                                 </Button>
                                 <CustomMaterialTable
@@ -59,18 +54,18 @@ class LDAPCard extends React.Component {
                                         { field: 'domain', title: 'Domain' },
                                         {
                                             field: 'groups',
-                                            title: 'Mapped Groups'
-                                        }
+                                            title: 'Mapped Groups',
+                                        },
                                     ]}
                                     data={ldap_groups}
                                     title={t('LDAP_GROUPS')}
                                     options={{
-                                        pageSize: 10
+                                        pageSize: 10,
                                     }}
                                 />
                             </div>
-                        )
-                    }
+                        ),
+                    },
                 ]}
             />
         );
@@ -81,7 +76,7 @@ LDAPCard.propTypes = {
     classes: PropTypes.object.isRequired,
     ldap_users: PropTypes.array,
     sessions: PropTypes.array,
-    ldap_groups: PropTypes.array
+    ldap_groups: PropTypes.array,
 };
 
 export default compose(withTranslation(), withStyles(tasksCardStyle))(LDAPCard);
