@@ -444,6 +444,11 @@ class LoginForm extends React.Component {
             this.initiate_saml_login(this.state.providerId);
         } else if (this.state.loginType === 'OIDC') {
             this.initiate_oidc_login(this.state.providerId);
+        } else if (this.has_ldap_auth(this.state.server_info)) {
+            this.setState({
+                view: 'ask_send_plain',
+                loginLoading: false,
+            });
         } else {
             let password = this.state.password;
             this.setState({ password: '' });
