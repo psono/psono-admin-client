@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom';
 import { OIDCCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
+import store from '../../services/store';
 
 class Users extends React.Component {
     state = {
@@ -52,6 +53,20 @@ class Users extends React.Component {
             });
     }
 
+    onDeleteOidcGroups(selectedGroups) {
+        selectedGroups.forEach((group) => {
+            psono_server
+                .admin_delete_oidc_group(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    group.id
+                )
+                .then(() => {
+                    this.loadOidcGroups();
+                });
+        });
+    }
+
     render() {
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
@@ -60,7 +75,12 @@ class Users extends React.Component {
             <div>
                 <Grid container>
                     <GridItem xs={12} sm={12} md={12}>
-                        <OIDCCard oidc_groups={this.state.oidc_groups} />
+                        <OIDCCard
+                            oidc_groups={this.state.oidc_groups}
+                            onDeleteOidcGroups={(groups) =>
+                                this.onDeleteOidcGroups(groups)
+                            }
+                        />
                     </GridItem>
                 </Grid>
             </div>

@@ -535,6 +535,75 @@ function admin_saml_group(token, session_secret_key) {
 }
 
 /**
+ * DELETE: Deletes a SAML group (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} saml_group_id The id of the SAML group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
+    const endpoint = '/admin/saml/group/';
+    const connection_type = 'DELETE';
+    const data = {
+        saml_group_id: saml_group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a OIDC group (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} oidc_group_id The id of the OIDC group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
+    const endpoint = '/admin/oidc/group/';
+    const connection_type = 'DELETE';
+    const data = {
+        oidc_group_id: oidc_group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a LDAP group (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} ldap_group_id The id of the LDAP group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
+    const endpoint = '/admin/ldap/group/';
+    const connection_type = 'DELETE';
+    const data = {
+        ldap_group_id: ldap_group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * POST: Triggers a sync of the servers SAML groups and the actual SAML groups and returns a list of them (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -2923,6 +2992,9 @@ const service = {
     admin_ldap_delete_group_map,
     admin_ldap_group_sync,
     admin_saml_group,
+    admin_delete_saml_group,
+    admin_delete_oidc_group,
+    admin_delete_ldap_group,
     admin_saml_group_sync,
     admin_saml_create_group_map,
     admin_saml_update_group_map,

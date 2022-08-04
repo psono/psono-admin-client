@@ -7,6 +7,7 @@ import { SAMLCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 import notification from '../../services/notification';
+import store from '../../services/store';
 
 class Users extends React.Component {
     state = {
@@ -70,6 +71,20 @@ class Users extends React.Component {
             );
     }
 
+    onDeleteSamlGroups(selectedGroups) {
+        selectedGroups.forEach((group) => {
+            psono_server
+                .admin_delete_saml_group(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    group.id
+                )
+                .then(() => {
+                    this.loadSamlGroups();
+                });
+        });
+    }
+
     render() {
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
@@ -81,6 +96,9 @@ class Users extends React.Component {
                         <SAMLCard
                             saml_groups={this.state.saml_groups}
                             onSyncGroupsSaml={() => this.onSyncGroupsSaml()}
+                            onDeleteSamlGroups={(groups) =>
+                                this.onDeleteSamlGroups(groups)
+                            }
                         />
                     </GridItem>
                 </Grid>
