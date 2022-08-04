@@ -15,10 +15,11 @@ class GroupCard extends React.Component {
         const {
             t,
             memberships,
+            share_rights,
             ldap_groups,
             saml_groups,
             oidc_groups,
-            onDeleteMemberships
+            onDeleteMemberships,
         } = this.props;
 
         const has_ldap_groups = ldap_groups && ldap_groups.length > 0;
@@ -35,14 +36,14 @@ class GroupCard extends React.Component {
                             { field: 'username', title: t('USERNAME') },
                             {
                                 field: 'create_date',
-                                title: t('JOINED')
+                                title: t('JOINED'),
                             },
                             { field: 'accepted', title: t('ACCEPTED') },
                             { field: 'admin', title: t('GROUP_ADMIN') },
                             {
                                 field: 'share_admin',
-                                title: t('SHARE_ADMIN')
-                            }
+                                title: t('SHARE_ADMIN'),
+                            },
                         ]}
                         data={memberships}
                         title={t('USERS')}
@@ -51,12 +52,35 @@ class GroupCard extends React.Component {
                                 tooltip: t('DELETE_MEMBERSHIP_S'),
                                 icon: Delete,
                                 onClick: (evt, data) =>
-                                    onDeleteMemberships([data])
-                            }
+                                    onDeleteMemberships([data]),
+                            },
                         ]}
                     />
-                )
-            }
+                ),
+            },
+            {
+                tabName: t('SHARE_RIGHTS'),
+                tabIcon: Group,
+                tabContent: (
+                    <CustomMaterialTable
+                        columns={[
+                            { field: 'share_id', title: t('SHARE_ID') },
+                            {
+                                field: 'create_date',
+                                title: t('SHARE_DATE'),
+                            },
+                            { field: 'read', title: t('READ') },
+                            { field: 'write', title: t('WRITE') },
+                            {
+                                field: 'grant',
+                                title: t('ADMIN'),
+                            },
+                        ]}
+                        data={share_rights}
+                        title={t('SHARES')}
+                    />
+                ),
+            },
         ];
 
         if (has_ldap_groups) {
@@ -72,7 +96,7 @@ class GroupCard extends React.Component {
                                 customSort: (a, b) => {
                                     console.log(a, b);
                                     return a.mapped_raw - b.mapped_raw;
-                                }
+                                },
                             },
                             { field: 'dn', title: t('DN') },
                             {
@@ -80,14 +104,14 @@ class GroupCard extends React.Component {
                                 title: t('SHARE_ADMIN'),
                                 customSort: (a, b) =>
                                     a.has_share_admin_raw -
-                                    b.has_share_admin_raw
+                                    b.has_share_admin_raw,
                             },
-                            { field: 'domain', title: t('DOMAIN') }
+                            { field: 'domain', title: t('DOMAIN') },
                         ]}
                         data={ldap_groups}
                         title={t('MAPPED_LDAP_GROUPS')}
                     />
-                )
+                ),
             });
         }
 
@@ -102,7 +126,7 @@ class GroupCard extends React.Component {
                                 field: 'mapped',
                                 title: t('MAPPED'),
                                 customSort: (a, b) =>
-                                    a.mapped_raw - b.mapped_raw
+                                    a.mapped_raw - b.mapped_raw,
                             },
                             { field: 'saml_name', title: t('NAME') },
                             {
@@ -110,17 +134,17 @@ class GroupCard extends React.Component {
                                 title: t('SHARE_ADMIN'),
                                 customSort: (a, b) =>
                                     a.has_share_admin_raw -
-                                    b.has_share_admin_raw
+                                    b.has_share_admin_raw,
                             },
                             {
                                 field: 'saml_provider_id',
-                                title: t('POVIDER_ID')
-                            }
+                                title: t('POVIDER_ID'),
+                            },
                         ]}
                         data={saml_groups}
                         title={t('MAPPED_SAML_GROUPS')}
                     />
-                )
+                ),
             });
         }
 
@@ -135,7 +159,7 @@ class GroupCard extends React.Component {
                                 field: 'mapped',
                                 title: t('MAPPED'),
                                 customSort: (a, b) =>
-                                    a.mapped_raw - b.mapped_raw
+                                    a.mapped_raw - b.mapped_raw,
                             },
                             { field: 'oidc_name', title: t('NAME') },
                             {
@@ -143,17 +167,17 @@ class GroupCard extends React.Component {
                                 title: t('SHARE_ADMIN'),
                                 customSort: (a, b) =>
                                     a.has_share_admin_raw -
-                                    b.has_share_admin_raw
+                                    b.has_share_admin_raw,
                             },
                             {
                                 field: 'oidc_provider_id',
-                                title: t('POVIDER_ID')
-                            }
+                                title: t('POVIDER_ID'),
+                            },
                         ]}
                         data={oidc_groups}
                         title={t('MAPPED_OIDC_GROUPS')}
                     />
-                )
+                ),
             });
         }
 
@@ -170,9 +194,10 @@ class GroupCard extends React.Component {
 GroupCard.propTypes = {
     classes: PropTypes.object.isRequired,
     sessions: PropTypes.array,
-    groups: PropTypes.array
+    groups: PropTypes.array,
 };
 
-export default compose(withTranslation(), withStyles(tasksCardStyle))(
-    GroupCard
-);
+export default compose(
+    withTranslation(),
+    withStyles(tasksCardStyle)
+)(GroupCard);

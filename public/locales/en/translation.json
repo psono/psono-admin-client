@@ -1,4 +1,10 @@
 {
+  "READ": "Read",
+  "WRITE": "Write",
+  "ADMIN": "Admin",
+  "SHARES": "Shares",
+  "SHARE_DATE": "Share date",
+  "SHARE_ID": "Share ID",
   "SIGNED_IN_AS": "Signed in as",
   "PASSWORDS_DONT_MATCH": "Passwords don't match.",
   "LDAP_GATEWAY_CONNECTION_ISSUE": "LDAP gateway connection issue",

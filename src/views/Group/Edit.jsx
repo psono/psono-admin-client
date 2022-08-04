@@ -9,7 +9,7 @@ import {
     RegularCard,
     CustomInput,
     GridItem,
-    GroupCard
+    GroupCard,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
@@ -26,10 +26,16 @@ class User extends React.Component {
                 this.props.state.user.session_secret_key,
                 this.props.match.params.group_id
             )
-            .then(response => {
+            .then((response) => {
                 const group = response.data;
 
-                group.memberships.forEach(u => {
+                group.share_rights.forEach((u) => {
+                    u.read = u.read ? t('YES') : t('NO');
+                    u.write = u.write ? t('YES') : t('NO');
+                    u.grant = u.grant ? t('YES') : t('NO');
+                });
+
+                group.memberships.forEach((u) => {
                     u.accepted = u.accepted ? t('YES') : t('NO');
                     u.admin = u.admin ? t('YES') : t('NO');
                     u.share_admin = u.share_admin ? t('YES') : t('NO');
@@ -37,35 +43,35 @@ class User extends React.Component {
 
                 const mapped_ldap_group_index = {};
                 if (group.hasOwnProperty('ldap_groups')) {
-                    group.ldap_groups.forEach(ldap_group => {
+                    group.ldap_groups.forEach((ldap_group) => {
                         mapped_ldap_group_index[ldap_group.ldap_group_id] = {
                             ldap_group_id: ldap_group.ldap_group_id,
                             ldap_group_map_id: ldap_group.ldap_group_map_id,
                             share_admin: ldap_group.share_admin,
-                            group_admin: ldap_group.group_admin
+                            group_admin: ldap_group.group_admin,
                         };
                     });
                 }
 
                 const mapped_saml_group_index = {};
                 if (group.hasOwnProperty('saml_groups')) {
-                    group.saml_groups.forEach(saml_group => {
+                    group.saml_groups.forEach((saml_group) => {
                         mapped_saml_group_index[saml_group.saml_group_id] = {
                             saml_group_id: saml_group.saml_group_id,
                             saml_group_map_id: saml_group.saml_group_map_id,
                             share_admin: saml_group.share_admin,
-                            group_admin: saml_group.group_admin
+                            group_admin: saml_group.group_admin,
                         };
                     });
                 }
                 const mapped_oidc_group_index = {};
                 if (group.hasOwnProperty('oidc_groups')) {
-                    group.oidc_groups.forEach(oidc_group => {
+                    group.oidc_groups.forEach((oidc_group) => {
                         mapped_oidc_group_index[oidc_group.oidc_group_id] = {
                             oidc_group_id: oidc_group.oidc_group_id,
                             oidc_group_map_id: oidc_group.oidc_group_map_id,
                             share_admin: oidc_group.share_admin,
-                            group_admin: oidc_group.group_admin
+                            group_admin: oidc_group.group_admin,
                         };
                     });
                 }
@@ -81,10 +87,10 @@ class User extends React.Component {
                             this.props.state.user.token,
                             this.props.state.user.session_secret_key
                         )
-                        .then(response => {
+                        .then((response) => {
                             const ldap_groups = response.data.ldap_groups;
 
-                            ldap_groups.forEach(ldap_group => {
+                            ldap_groups.forEach((ldap_group) => {
                                 if (
                                     mapped_ldap_group_index.hasOwnProperty(
                                         ldap_group.id
@@ -96,20 +102,21 @@ class User extends React.Component {
                                     ldap_group_id: ldap_group.id,
                                     ldap_group_map_id: '',
                                     share_admin: false,
-                                    group_admin: false
+                                    group_admin: false,
                                 };
                             });
 
                             this.setState({
                                 group: group,
-                                mapped_ldap_group_index: mapped_ldap_group_index,
-                                ldap_groups: ldap_groups
+                                mapped_ldap_group_index:
+                                    mapped_ldap_group_index,
+                                ldap_groups: ldap_groups,
                             });
                         });
                 } else {
                     this.setState({
                         group: group,
-                        mapped_ldap_group_index: mapped_ldap_group_index
+                        mapped_ldap_group_index: mapped_ldap_group_index,
                     });
                 }
 
@@ -124,10 +131,10 @@ class User extends React.Component {
                             this.props.state.user.token,
                             this.props.state.user.session_secret_key
                         )
-                        .then(response => {
+                        .then((response) => {
                             const saml_groups = response.data.saml_groups;
 
-                            saml_groups.forEach(saml_group => {
+                            saml_groups.forEach((saml_group) => {
                                 if (
                                     mapped_saml_group_index.hasOwnProperty(
                                         saml_group.id
@@ -139,20 +146,21 @@ class User extends React.Component {
                                     saml_group_id: saml_group.id,
                                     saml_group_map_id: '',
                                     share_admin: false,
-                                    group_admin: false
+                                    group_admin: false,
                                 };
                             });
 
                             this.setState({
                                 group: group,
-                                mapped_saml_group_index: mapped_saml_group_index,
-                                saml_groups: saml_groups
+                                mapped_saml_group_index:
+                                    mapped_saml_group_index,
+                                saml_groups: saml_groups,
                             });
                         });
                 } else {
                     this.setState({
                         group: group,
-                        mapped_saml_group_index: mapped_saml_group_index
+                        mapped_saml_group_index: mapped_saml_group_index,
                     });
                 }
 
@@ -167,10 +175,10 @@ class User extends React.Component {
                             this.props.state.user.token,
                             this.props.state.user.session_secret_key
                         )
-                        .then(response => {
+                        .then((response) => {
                             const oidc_groups = response.data.oidc_groups;
 
-                            oidc_groups.forEach(oidc_group => {
+                            oidc_groups.forEach((oidc_group) => {
                                 if (
                                     mapped_oidc_group_index.hasOwnProperty(
                                         oidc_group.id
@@ -182,27 +190,28 @@ class User extends React.Component {
                                     oidc_group_id: oidc_group.id,
                                     oidc_group_map_id: '',
                                     share_admin: false,
-                                    group_admin: false
+                                    group_admin: false,
                                 };
                             });
 
                             this.setState({
                                 group: group,
-                                mapped_oidc_group_index: mapped_oidc_group_index,
-                                oidc_groups: oidc_groups
+                                mapped_oidc_group_index:
+                                    mapped_oidc_group_index,
+                                oidc_groups: oidc_groups,
                             });
                         });
                 } else {
                     this.setState({
                         group: group,
-                        mapped_oidc_group_index: mapped_oidc_group_index
+                        mapped_oidc_group_index: mapped_oidc_group_index,
                     });
                 }
             });
     }
 
     onDeleteMemberships(selected_memberships) {
-        selected_memberships.forEach(membership => {
+        selected_memberships.forEach((membership) => {
             psono_server.admin_delete_membership(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -211,8 +220,8 @@ class User extends React.Component {
         });
 
         let { memberships } = this.state.group;
-        selected_memberships.forEach(membership => {
-            helper.remove_from_array(memberships, membership, function(a, b) {
+        selected_memberships.forEach((membership) => {
+            helper.remove_from_array(memberships, membership, function (a, b) {
                 return a.id === b.id;
             });
         });
@@ -267,12 +276,12 @@ class User extends React.Component {
                 this.state.group.id,
                 group.id
             )
-            .then(response => {
+            .then((response) => {
                 const { mapped_ldap_group_index } = this.state;
                 mapped_ldap_group_index[group.id]['ldap_group_map_id'] =
                     response.data.id;
                 this.setState({
-                    mapped_ldap_group_index
+                    mapped_ldap_group_index,
                 });
             });
     }
@@ -285,12 +294,12 @@ class User extends React.Component {
                 this.state.group.id,
                 group.id
             )
-            .then(response => {
+            .then((response) => {
                 const { mapped_saml_group_index } = this.state;
                 mapped_saml_group_index[group.id]['saml_group_map_id'] =
                     response.data.id;
                 this.setState({
-                    mapped_saml_group_index
+                    mapped_saml_group_index,
                 });
             });
     }
@@ -303,12 +312,12 @@ class User extends React.Component {
                 this.state.group.id,
                 group.id
             )
-            .then(response => {
+            .then((response) => {
                 const { mapped_oidc_group_index } = this.state;
                 mapped_oidc_group_index[group.id]['oidc_group_map_id'] =
                     response.data.id;
                 this.setState({
-                    mapped_oidc_group_index
+                    mapped_oidc_group_index,
                 });
             });
     }
@@ -317,7 +326,7 @@ class User extends React.Component {
         const { mapped_ldap_group_index } = this.state;
         mapped_ldap_group_index[group.id]['ldap_group_map_id'] = '';
         this.setState({
-            mapped_ldap_group_index
+            mapped_ldap_group_index,
         });
         psono_server.admin_ldap_delete_group_map(
             this.props.state.user.token,
@@ -331,7 +340,7 @@ class User extends React.Component {
         const { mapped_saml_group_index } = this.state;
         mapped_saml_group_index[group.id]['saml_group_map_id'] = '';
         this.setState({
-            mapped_saml_group_index
+            mapped_saml_group_index,
         });
         psono_server.admin_saml_delete_group_map(
             this.props.state.user.token,
@@ -345,7 +354,7 @@ class User extends React.Component {
         const { mapped_oidc_group_index } = this.state;
         mapped_oidc_group_index[group.id]['oidc_group_map_id'] = '';
         this.setState({
-            mapped_oidc_group_index
+            mapped_oidc_group_index,
         });
         psono_server.admin_oidc_delete_group_map(
             this.props.state.user.token,
@@ -376,13 +385,12 @@ class User extends React.Component {
                     !group_admin,
                     share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_ldap_group_index } = this.state;
-                    mapped_ldap_group_index[group.id][
-                        'group_admin'
-                    ] = !group_admin;
+                    mapped_ldap_group_index[group.id]['group_admin'] =
+                        !group_admin;
                     this.setState({
-                        mapped_ldap_group_index
+                        mapped_ldap_group_index,
                     });
                 });
         } else {
@@ -394,13 +402,12 @@ class User extends React.Component {
                     group_admin,
                     !share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_ldap_group_index } = this.state;
-                    mapped_ldap_group_index[group.id][
-                        'share_admin'
-                    ] = !share_admin;
+                    mapped_ldap_group_index[group.id]['share_admin'] =
+                        !share_admin;
                     this.setState({
-                        mapped_ldap_group_index
+                        mapped_ldap_group_index,
                     });
                 });
         }
@@ -427,13 +434,12 @@ class User extends React.Component {
                     !group_admin,
                     share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_saml_group_index } = this.state;
-                    mapped_saml_group_index[group.id][
-                        'group_admin'
-                    ] = !group_admin;
+                    mapped_saml_group_index[group.id]['group_admin'] =
+                        !group_admin;
                     this.setState({
-                        mapped_saml_group_index
+                        mapped_saml_group_index,
                     });
                 });
         } else {
@@ -445,13 +451,12 @@ class User extends React.Component {
                     group_admin,
                     !share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_saml_group_index } = this.state;
-                    mapped_saml_group_index[group.id][
-                        'share_admin'
-                    ] = !share_admin;
+                    mapped_saml_group_index[group.id]['share_admin'] =
+                        !share_admin;
                     this.setState({
-                        mapped_saml_group_index
+                        mapped_saml_group_index,
                     });
                 });
         }
@@ -478,13 +483,12 @@ class User extends React.Component {
                     !group_admin,
                     share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_oidc_group_index } = this.state;
-                    mapped_oidc_group_index[group.id][
-                        'group_admin'
-                    ] = !group_admin;
+                    mapped_oidc_group_index[group.id]['group_admin'] =
+                        !group_admin;
                     this.setState({
-                        mapped_oidc_group_index
+                        mapped_oidc_group_index,
                     });
                 });
         } else {
@@ -496,13 +500,12 @@ class User extends React.Component {
                     group_admin,
                     !share_admin
                 )
-                .then(response => {
+                .then((response) => {
                     const { mapped_oidc_group_index } = this.state;
-                    mapped_oidc_group_index[group.id][
-                        'share_admin'
-                    ] = !share_admin;
+                    mapped_oidc_group_index[group.id]['share_admin'] =
+                        !share_admin;
                     this.setState({
-                        mapped_oidc_group_index
+                        mapped_oidc_group_index,
                     });
                 });
         }
@@ -516,12 +519,12 @@ class User extends React.Component {
             saml_groups,
             mapped_saml_group_index,
             oidc_groups,
-            mapped_oidc_group_index
+            mapped_oidc_group_index,
         } = this.state;
 
         const { classes, t } = this.props;
         if (ldap_groups) {
-            ldap_groups.forEach(ldap_group => {
+            ldap_groups.forEach((ldap_group) => {
                 ldap_group.mapped_raw =
                     mapped_ldap_group_index.hasOwnProperty(ldap_group.id) &&
                     mapped_ldap_group_index[ldap_group.id][
@@ -543,7 +546,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -570,7 +573,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -597,14 +600,14 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
             });
         }
         if (saml_groups) {
-            saml_groups.forEach(saml_group => {
+            saml_groups.forEach((saml_group) => {
                 saml_group.mapped_raw =
                     mapped_saml_group_index.hasOwnProperty(saml_group.id) &&
                     mapped_saml_group_index[saml_group.id][
@@ -626,7 +629,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -653,7 +656,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -680,14 +683,14 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
             });
         }
         if (oidc_groups) {
-            oidc_groups.forEach(oidc_group => {
+            oidc_groups.forEach((oidc_group) => {
                 oidc_group.mapped_raw =
                     mapped_oidc_group_index.hasOwnProperty(oidc_group.id) &&
                     mapped_oidc_group_index[oidc_group.id][
@@ -709,7 +712,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -736,7 +739,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -763,7 +766,7 @@ class User extends React.Component {
                             />
                         }
                         classes={{
-                            checked: classes.checked
+                            checked: classes.checked,
                         }}
                     />
                 );
@@ -786,12 +789,12 @@ class User extends React.Component {
                                                     labelText={t('NAME')}
                                                     id="name"
                                                     formControlProps={{
-                                                        fullWidth: true
+                                                        fullWidth: true,
                                                     }}
                                                     inputProps={{
                                                         value: group.name,
                                                         disabled: true,
-                                                        readOnly: true
+                                                        readOnly: true,
                                                     }}
                                                 />
                                             </GridItem>
@@ -802,12 +805,12 @@ class User extends React.Component {
                                                     labelText={t('PUBLIC_KEY')}
                                                     id="public_key"
                                                     formControlProps={{
-                                                        fullWidth: true
+                                                        fullWidth: true,
                                                     }}
                                                     inputProps={{
                                                         value: group.public_key,
                                                         disabled: true,
-                                                        readOnly: true
+                                                        readOnly: true,
                                                     }}
                                                 />
                                             </GridItem>
@@ -820,7 +823,7 @@ class User extends React.Component {
                                                     )}
                                                     id="create_date"
                                                     formControlProps={{
-                                                        fullWidth: true
+                                                        fullWidth: true,
                                                     }}
                                                     inputProps={{
                                                         value: moment(
@@ -829,7 +832,7 @@ class User extends React.Component {
                                                             'YYYY-MM-DD HH:mm:ss'
                                                         ),
                                                         disabled: true,
-                                                        readOnly: true
+                                                        readOnly: true,
                                                     }}
                                                 />
                                             </GridItem>
@@ -846,11 +849,12 @@ class User extends React.Component {
                         <GridItem xs={12} sm={12} md={12}>
                             <GroupCard
                                 memberships={group.memberships}
-                                onDeleteMemberships={selected_memberships =>
+                                onDeleteMemberships={(selected_memberships) =>
                                     this.onDeleteMemberships(
                                         selected_memberships
                                     )
                                 }
+                                share_rights={group.share_rights}
                                 ldap_groups={ldap_groups}
                                 saml_groups={saml_groups}
                                 oidc_groups={oidc_groups}
