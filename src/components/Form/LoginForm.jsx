@@ -5,13 +5,14 @@ import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import { BarLoader } from 'react-spinners';
 import { Check } from '@material-ui/icons';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import { Redirect } from 'react-router-dom';
 import {
     RegularCard,
     Button,
     CustomInput,
     GridItem,
-    SnackbarContent
+    SnackbarContent,
 } from '../../components';
 
 import helper from '../../services/helper';
@@ -20,29 +21,29 @@ import store from '../../services/store';
 const style = {
     wrapper: {
         width: '340px',
-        'z-index': '4'
+        'z-index': '4',
     },
     '@media (min-width: 960px)': {
         wrapper: {
-            width: '540px'
-        }
+            width: '540px',
+        },
     },
     checked: {
-        color: '#9c27b0'
+        color: '#9c27b0',
     },
     checkedIcon: {
         width: '20px',
         height: '20px',
         border: '1px solid rgba(0, 0, 0, .54)',
-        borderRadius: '3px'
+        borderRadius: '3px',
     },
     uncheckedIcon: {
         width: '0px',
         height: '0px',
         padding: '10px',
         border: '1px solid rgba(0, 0, 0, .54)',
-        borderRadius: '3px'
-    }
+        borderRadius: '3px',
+    },
 };
 
 class LoginForm extends React.Component {
@@ -53,6 +54,7 @@ class LoginForm extends React.Component {
         username: this.props.state.user.username,
         password: '',
         server: this.props.state.server.url,
+        domain: '',
         remember_me: this.props.state.user.remember_me,
         trust_device: this.props.state.user.trust_device,
         loginPossible: false,
@@ -65,7 +67,7 @@ class LoginForm extends React.Component {
         yubikey_otp: '',
         duo: '',
         google_authenticator: '',
-        duo_request: false
+        duo_request: false,
     };
 
     handleToggleRememberMe = () => () => {
@@ -82,27 +84,30 @@ class LoginForm extends React.Component {
             this.setState({ loginPossible: false });
         }
     };
-    onChangeYubikeyOTP = event => {
+    onChangeYubikeyOTP = (event) => {
         this.setState({ yubikey_otp: event.target.value });
     };
-    onChangeDuo = event => {
+    onChangeDuo = (event) => {
         this.setState({ duo: event.target.value });
     };
-    onChangeGoogleAuthentication = event => {
+    onChangeGoogleAuthentication = (event) => {
         this.setState({ google_authenticator: event.target.value });
     };
-    onChangeUsername = event => {
+    onChangeUsername = (event) => {
         this.setState({ username: event.target.value });
         // wrapping manageButtonState in timeout so that psono's autofill works
         setTimeout(() => this.manageButtonState(), 0);
     };
-    onChangePassword = event => {
+    onChangePassword = (event) => {
         this.setState({ password: event.target.value });
         // wrapping manageButtonState in timeout so that psono's autofill works
         setTimeout(() => this.manageButtonState(), 0);
     };
-    onChangeServer = event => {
-        this.setState({ server: event.target.value });
+    onChangeServer = (event) => {
+        this.setState({
+            server: event.target.value,
+            domain: helper.get_domain(event.target.value),
+        });
         this.manageButtonState();
     };
 
@@ -112,12 +117,12 @@ class LoginForm extends React.Component {
             this.props.activate_token().then(() => {
                 this.setState({
                     loggedIn: true,
-                    loginLoading: false
+                    loginLoading: false,
                 });
             });
         } else {
             this.setState({
-                loginLoading: false
+                loginLoading: false,
             });
             this.handle_mfa();
         }
@@ -136,7 +141,7 @@ class LoginForm extends React.Component {
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
-            errors => {
+            (errors) => {
                 this.setState({ errors });
             }
         );
@@ -158,7 +163,7 @@ class LoginForm extends React.Component {
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
-            errors => {
+            (errors) => {
                 this.setState({ errors });
             }
         );
@@ -181,7 +186,7 @@ class LoginForm extends React.Component {
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
             },
-            errors => {
+            (errors) => {
                 this.setState({ errors });
             }
         );
@@ -190,21 +195,21 @@ class LoginForm extends React.Component {
     show_ga_2fa_form = () => {
         this.setState({
             view: 'google_authenticator',
-            loginLoading: false
+            loginLoading: false,
         });
     };
 
     show_yubikey_otp_2fa_form = () => {
         this.setState({
             view: 'yubikey_otp',
-            loginLoading: false
+            loginLoading: false,
         });
     };
 
     show_duo_2fa_form = () => {
         this.setState({
             view: 'duo',
-            loginLoading: false
+            loginLoading: false,
         });
         this.verify_duo();
     };
@@ -218,7 +223,7 @@ class LoginForm extends React.Component {
             // show choose multifactor screen as only one is required to be solved
             this.setState({
                 view: 'pick_second_factor',
-                loginLoading: false
+                loginLoading: false,
             });
         } else if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
             this.show_yubikey_otp_2fa_form();
@@ -230,15 +235,15 @@ class LoginForm extends React.Component {
             this.setState({
                 view: 'default',
                 errors: [
-                    'Unknown multi-factor authentication requested by server.'
+                    'Unknown multi-factor authentication requested by server.',
                 ],
-                loginLoading: false
+                loginLoading: false,
             });
             this.logout();
         }
     };
 
-    has_ldap_auth = server_check => {
+    has_ldap_auth = (server_check) => {
         return (
             server_check.hasOwnProperty('info') &&
             server_check['info'].hasOwnProperty('authentication_methods') &&
@@ -255,31 +260,31 @@ class LoginForm extends React.Component {
         return this.next_login_step(false);
     };
 
-    next_login_step = send_plain => {
+    next_login_step = (send_plain) => {
         let password = this.state.password;
         this.setState({ password: '' });
 
         return this.props
             .login(password, this.state.server_info, send_plain)
             .then(
-                required_multifactors => {
+                (required_multifactors) => {
                     this.setState({
-                        multifactors: required_multifactors
+                        multifactors: required_multifactors,
                     });
                     this.requirement_check_mfa();
                 },
-                result => {
+                (result) => {
                     this.setState({ loginLoading: false });
                     if (result.hasOwnProperty('non_field_errors')) {
                         let errors = result.non_field_errors;
                         this.setState({
                             view: 'default',
-                            errors
+                            errors,
                         });
                     } else {
                         this.setState({
                             view: 'default',
-                            errors: [result]
+                            errors: [result],
                         });
                     }
                 }
@@ -290,17 +295,24 @@ class LoginForm extends React.Component {
         this.setState({
             loginLoading: true,
             errors: [],
-            loginType: ''
+            loginType: '',
         });
+
+        let parsedUrl = helper.parse_url(this.state.server);
+        let fullUsername = helper.form_full_username(
+            this.state.username,
+            this.state.domain || parsedUrl['full_domain']
+        );
+
         return this.props
             .initiate_login(
-                this.state.username,
+                fullUsername,
                 this.state.server,
                 this.state.remember_me,
                 this.state.trust_device
             )
             .then(
-                result => {
+                (result) => {
                     this.setState({ server_info: result });
                     this.props.actions.set_server_info(result.info);
                     if (result.status !== 'matched') {
@@ -308,36 +320,36 @@ class LoginForm extends React.Component {
                     } else if (this.has_ldap_auth(result)) {
                         this.setState({
                             view: 'ask_send_plain',
-                            loginLoading: false
+                            loginLoading: false,
                         });
                     } else {
                         return this.next_login_step(false);
                     }
                 },
-                result => {
+                (result) => {
                     if (result.hasOwnProperty('errors')) {
                         let errors = result.errors;
                         this.setState({ errors, loginLoading: false });
                     } else {
                         this.setState({
                             errors: [result],
-                            loginLoading: false
+                            loginLoading: false,
                         });
                     }
                 }
             )
-            .catch(result => {
+            .catch((result) => {
                 this.setState({ loginLoading: false });
                 return Promise.reject(result);
             });
     };
 
-    initiate_saml_login = providerId => {
+    initiate_saml_login = (providerId) => {
         this.setState({
             loginLoading: true,
             errors: [],
             loginType: 'SAML',
-            providerId
+            providerId,
         });
         return this.props
             .initiate_saml_login(
@@ -346,7 +358,7 @@ class LoginForm extends React.Component {
                 this.state.trust_device
             )
             .then(
-                result => {
+                (result) => {
                     this.setState({ server_info: result });
                     this.props.actions.set_server_info(result.info);
                     if (result.status !== 'matched') {
@@ -354,35 +366,35 @@ class LoginForm extends React.Component {
                     } else {
                         this.props
                             .get_saml_redirect_url(providerId)
-                            .then(result => {
+                            .then((result) => {
                                 window.location = result.saml_redirect_url;
                             });
                     }
                 },
-                result => {
+                (result) => {
                     if (result.hasOwnProperty('errors')) {
                         let errors = result.errors;
                         this.setState({ errors, loginLoading: false });
                     } else {
                         this.setState({
                             errors: [result],
-                            loginLoading: false
+                            loginLoading: false,
                         });
                     }
                 }
             )
-            .catch(result => {
+            .catch((result) => {
                 this.setState({ loginLoading: false });
                 return Promise.reject(result);
             });
     };
 
-    initiate_oidc_login = providerId => {
+    initiate_oidc_login = (providerId) => {
         this.setState({
             loginLoading: true,
             errors: [],
             loginType: 'OIDC',
-            providerId
+            providerId,
         });
         return this.props
             .initiate_oidc_login(
@@ -391,7 +403,7 @@ class LoginForm extends React.Component {
                 this.state.trust_device
             )
             .then(
-                result => {
+                (result) => {
                     this.setState({ server_info: result });
                     this.props.actions.set_server_info(result.info);
                     if (result.status !== 'matched') {
@@ -399,24 +411,24 @@ class LoginForm extends React.Component {
                     } else {
                         this.props
                             .get_oidc_redirect_url(providerId)
-                            .then(result => {
+                            .then((result) => {
                                 window.location = result.oidc_redirect_url;
                             });
                     }
                 },
-                result => {
+                (result) => {
                     if (result.hasOwnProperty('errors')) {
                         let errors = result.errors;
                         this.setState({ errors, loginLoading: false });
                     } else {
                         this.setState({
                             errors: [result],
-                            loginLoading: false
+                            loginLoading: false,
                         });
                     }
                 }
             )
-            .catch(result => {
+            .catch((result) => {
                 this.setState({ loginLoading: false });
                 return Promise.reject(result);
             });
@@ -432,16 +444,21 @@ class LoginForm extends React.Component {
             this.initiate_saml_login(this.state.providerId);
         } else if (this.state.loginType === 'OIDC') {
             this.initiate_oidc_login(this.state.providerId);
+        } else if (this.has_ldap_auth(this.state.server_info)) {
+            this.setState({
+                view: 'ask_send_plain',
+                loginLoading: false,
+            });
         } else {
             let password = this.state.password;
             this.setState({ password: '' });
 
             this.props.login(password, this.state.server_info).then(
-                required_multifactors => {
+                (required_multifactors) => {
                     this.setState({ multifactors: required_multifactors });
                     this.requirement_check_mfa();
                 },
-                result => {
+                (result) => {
                     this.setState({ loginLoading: false });
                     if (result.hasOwnProperty('non_field_errors')) {
                         let errors = result.non_field_errors;
@@ -460,92 +477,94 @@ class LoginForm extends React.Component {
         this.setState({
             view: 'default',
             password: '',
-            errors: []
+            errors: [],
         });
         this.props.logout();
     };
 
-    componentDidMount() {
-        this.props.get_config().then(admin_client_config => {
-            this.setState({
-                server:
-                    this.state.server ||
-                    admin_client_config.backend_servers[0].url,
-                admin_client_config: admin_client_config
-            });
-
-            if (this.props.location.pathname.startsWith('/saml/token/')) {
-                const saml_token_id = this.props.location.pathname.replace(
-                    '/saml/token/',
-                    ''
-                );
-                this.props
-                    .check_host(store.getState().server.url)
-                    .then(result => {
-                        this.setState({ server_info: result });
-                        this.props.actions.set_server_info(result.info);
-                        this.props.saml_login(saml_token_id).then(
-                            required_multifactors => {
-                                this.setState({
-                                    multifactors: required_multifactors
-                                });
-                                this.requirement_check_mfa();
-                            },
-                            result => {
-                                this.setState({ loginLoading: false });
-                                if (result.hasOwnProperty('non_field_errors')) {
-                                    let errors = result.non_field_errors;
-                                    this.setState({
-                                        view: 'default',
-                                        errors
-                                    });
-                                } else {
-                                    this.setState({
-                                        view: 'default',
-                                        errors: [result]
-                                    });
-                                }
-                            }
-                        );
-                    });
-            }
-
-            if (this.props.location.pathname.startsWith('/oidc/token/')) {
-                const oidc_token_id = this.props.location.pathname.replace(
-                    '/oidc/token/',
-                    ''
-                );
-                this.props
-                    .check_host(store.getState().server.url)
-                    .then(result => {
-                        this.setState({ server_info: result });
-                        this.props.actions.set_server_info(result.info);
-                        this.props.oidc_login(oidc_token_id).then(
-                            required_multifactors => {
-                                this.setState({
-                                    multifactors: required_multifactors
-                                });
-                                this.requirement_check_mfa();
-                            },
-                            result => {
-                                this.setState({ loginLoading: false });
-                                if (result.hasOwnProperty('non_field_errors')) {
-                                    let errors = result.non_field_errors;
-                                    this.setState({
-                                        view: 'default',
-                                        errors
-                                    });
-                                } else {
-                                    this.setState({
-                                        view: 'default',
-                                        errors: [result]
-                                    });
-                                }
-                            }
-                        );
-                    });
-            }
+    onNewConfigLoaded = (admin_client_config) => {
+        this.setState({
+            server:
+                this.state.server || admin_client_config.backend_servers[0].url,
+            domain: admin_client_config.backend_servers[0].domain,
+            admin_client_config: admin_client_config,
         });
+
+        if (this.props.location.pathname.startsWith('/saml/token/')) {
+            const saml_token_id = this.props.location.pathname.replace(
+                '/saml/token/',
+                ''
+            );
+            this.props
+                .check_host(store.getState().server.url)
+                .then((result) => {
+                    this.setState({ server_info: result });
+                    this.props.actions.set_server_info(result.info);
+                    this.props.saml_login(saml_token_id).then(
+                        (required_multifactors) => {
+                            this.setState({
+                                multifactors: required_multifactors,
+                            });
+                            this.requirement_check_mfa();
+                        },
+                        (result) => {
+                            this.setState({ loginLoading: false });
+                            if (result.hasOwnProperty('non_field_errors')) {
+                                let errors = result.non_field_errors;
+                                this.setState({
+                                    view: 'default',
+                                    errors,
+                                });
+                            } else {
+                                this.setState({
+                                    view: 'default',
+                                    errors: [result],
+                                });
+                            }
+                        }
+                    );
+                });
+        }
+
+        if (this.props.location.pathname.startsWith('/oidc/token/')) {
+            const oidc_token_id = this.props.location.pathname.replace(
+                '/oidc/token/',
+                ''
+            );
+            this.props
+                .check_host(store.getState().server.url)
+                .then((result) => {
+                    this.setState({ server_info: result });
+                    this.props.actions.set_server_info(result.info);
+                    this.props.oidc_login(oidc_token_id).then(
+                        (required_multifactors) => {
+                            this.setState({
+                                multifactors: required_multifactors,
+                            });
+                            this.requirement_check_mfa();
+                        },
+                        (result) => {
+                            this.setState({ loginLoading: false });
+                            if (result.hasOwnProperty('non_field_errors')) {
+                                let errors = result.non_field_errors;
+                                this.setState({
+                                    view: 'default',
+                                    errors,
+                                });
+                            } else {
+                                this.setState({
+                                    view: 'default',
+                                    errors: [result],
+                                });
+                            }
+                        }
+                    );
+                });
+        }
+    };
+
+    componentDidMount() {
+        this.props.get_config().then(this.onNewConfigLoaded);
     }
 
     render() {
@@ -589,12 +608,10 @@ class LoginForm extends React.Component {
                 <div className={classes.wrapper}>
                     <RegularCard
                         cardTitle={t('LOGIN')}
-                        cardSubtitle={
-                            t('ENTER_YOUR_USERNAME_AND_PASSWORD') + ':'
-                        }
+                        cardSubtitle={t('ENTER_YOUR_USERNAME_AND_PASSWORD')}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -605,11 +622,22 @@ class LoginForm extends React.Component {
                                             labelText={t('USERNAME')}
                                             id="username"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.username,
-                                                onChange: this.onChangeUsername
+                                                onChange: this.onChangeUsername,
+                                                endAdornment:
+                                                    this.state.domain &&
+                                                    !this.state.username.includes(
+                                                        '@'
+                                                    ) ? (
+                                                        <InputAdornment position="end">
+                                                            {'@' +
+                                                                this.state
+                                                                    .domain}
+                                                        </InputAdornment>
+                                                    ) : null,
                                             }}
                                         />
                                     </GridItem>
@@ -620,12 +648,12 @@ class LoginForm extends React.Component {
                                             labelText={t('PASSWORD')}
                                             id="password"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.password,
                                                 onChange: this.onChangePassword,
-                                                type: 'password'
+                                                type: 'password',
                                             }}
                                         />
                                     </GridItem>
@@ -660,7 +688,7 @@ class LoginForm extends React.Component {
                                                                 ? {}
                                                                 : {
                                                                       display:
-                                                                          'none'
+                                                                          'none',
                                                                   }
                                                         }
                                                     >
@@ -710,7 +738,7 @@ class LoginForm extends React.Component {
                                                                 ? {}
                                                                 : {
                                                                       display:
-                                                                          'none'
+                                                                          'none',
                                                                   }
                                                         }
                                                     >
@@ -752,7 +780,7 @@ class LoginForm extends React.Component {
                                                 />
                                             }
                                             classes={{
-                                                checked: classes.checked
+                                                checked: classes.checked,
                                             }}
                                         />{' '}
                                         {t('REMEMBER_USERNAME_AND_SERVER')}
@@ -779,7 +807,7 @@ class LoginForm extends React.Component {
                                                 />
                                             }
                                             classes={{
-                                                checked: classes.checked
+                                                checked: classes.checked,
                                             }}
                                         />{' '}
                                         {t('TRUST_DEVICE')}
@@ -828,11 +856,11 @@ class LoginForm extends React.Component {
                                             labelText={t('SERVER')}
                                             id="server"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.server,
-                                                onChange: this.onChangeServer
+                                                onChange: this.onChangeServer,
                                             }}
                                         />
                                     </GridItem>
@@ -851,7 +879,7 @@ class LoginForm extends React.Component {
                         cardSubtitle={t('VERIFY_FINGERPRINT_AND_APPROVE')}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -862,13 +890,13 @@ class LoginForm extends React.Component {
                                             labelText={t('FINGERPRINT')}
                                             id="server_fingerprint"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.server_info
                                                     .verify_key,
                                                 disabled: true,
-                                                multiline: true
+                                                multiline: true,
                                             }}
                                         />
                                         <SnackbarContent
@@ -918,7 +946,7 @@ class LoginForm extends React.Component {
                         cardSubtitle={t('PICK_SECOND_FACTOR')}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -1018,7 +1046,7 @@ class LoginForm extends React.Component {
                         cardSubtitle={t('ENTER_YUBIKEY_BELOW')}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -1029,12 +1057,12 @@ class LoginForm extends React.Component {
                                             labelText={t('YUBIKEY')}
                                             id="yubikey_otp"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.yubikey_otp,
-                                                onChange: this
-                                                    .onChangeYubikeyOTP
+                                                onChange:
+                                                    this.onChangeYubikeyOTP,
                                             }}
                                         />
                                     </GridItem>
@@ -1077,7 +1105,7 @@ class LoginForm extends React.Component {
                         cardSubtitle={t('ENTER_GOOGLE_AUTHENTICATOR_BELOW')}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -1090,13 +1118,14 @@ class LoginForm extends React.Component {
                                             )}
                                             id="google_authenticator"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state
                                                     .google_authenticator,
-                                                onChange: this
-                                                    .onChangeGoogleAuthentication
+                                                onChange:
+                                                    this
+                                                        .onChangeGoogleAuthentication,
                                             }}
                                         />
                                     </GridItem>
@@ -1143,7 +1172,7 @@ class LoginForm extends React.Component {
                         )}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -1154,11 +1183,11 @@ class LoginForm extends React.Component {
                                             labelText={t('DUO_CODE')}
                                             id="duo"
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: this.state.duo,
-                                                onChange: this.onChangeDuo
+                                                onChange: this.onChangeDuo,
                                             }}
                                         />
                                     </GridItem>
@@ -1203,7 +1232,7 @@ class LoginForm extends React.Component {
                         )}
                         content={
                             <form
-                                onSubmit={e => {
+                                onSubmit={(e) => {
                                     e.preventDefault();
                                 }}
                                 autoComplete="off"
@@ -1251,7 +1280,7 @@ class LoginForm extends React.Component {
 }
 
 LoginForm.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 export default compose(withTranslation(), withStyles(style))(LoginForm);

@@ -6,17 +6,18 @@ import { Redirect } from 'react-router-dom';
 import { OIDCCard, GridItem } from '../../components';
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
+import store from '../../services/store';
 
 class Users extends React.Component {
     state = {
         redirect_to: '',
-        oidc_groups: []
+        oidc_groups: [],
     };
 
     createGroupsNode(oidc_group) {
         oidc_group.groups = (
             <div>
-                {oidc_group.groups.map(function(group, key) {
+                {oidc_group.groups.map(function (group, key) {
                     return (
                         <a href={'/portal/group/' + group.id} key={key}>
                             {group.name}
@@ -28,22 +29,42 @@ class Users extends React.Component {
     }
 
     componentDidMount() {
+        this.loadOidcGroups();
+    }
+
+    loadOidcGroups() {
         psono_server
             .admin_oidc_group(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 const { oidc_groups } = response.data;
 
-                oidc_groups.forEach(oidc_group => {
+                oidc_groups.forEach((oidc_group) => {
+                    oidc_group['name'] =
+                        oidc_group['display_name'] || oidc_group['oidc_name'];
                     this.createGroupsNode(oidc_group);
                 });
 
                 this.setState({
-                    oidc_groups
+                    oidc_groups,
                 });
             });
+    }
+
+    onDeleteOidcGroups(selectedGroups) {
+        selectedGroups.forEach((group) => {
+            psono_server
+                .admin_delete_oidc_group(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    group.id
+                )
+                .then(() => {
+                    this.loadOidcGroups();
+                });
+        });
     }
 
     render() {
@@ -54,7 +75,12 @@ class Users extends React.Component {
             <div>
                 <Grid container>
                     <GridItem xs={12} sm={12} md={12}>
-                        <OIDCCard oidc_groups={this.state.oidc_groups} />
+                        <OIDCCard
+                            oidc_groups={this.state.oidc_groups}
+                            onDeleteOidcGroups={(groups) =>
+                                this.onDeleteOidcGroups(groups)
+                            }
+                        />
                     </GridItem>
                 </Grid>
             </div>
@@ -63,7 +89,7 @@ class Users extends React.Component {
 }
 
 Users.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(dashboardStyle)(Users);

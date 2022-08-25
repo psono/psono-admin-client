@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 apt-get update && \
 apt-get install -y curl apt-transport-https zip && \
-curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
 apt-get update && \
 apt-get -y install nodejs && \
 npm --version && \

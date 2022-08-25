@@ -27,7 +27,7 @@ import SwitchRoutes from './SwitchRoutes';
 
 class App extends React.Component {
     state = {
-        mobileOpen: false
+        mobileOpen: false,
     };
     handleDrawerToggle = () => {
         this.setState({ mobileOpen: !this.state.mobileOpen });
@@ -60,7 +60,7 @@ class App extends React.Component {
             this.props.state.server.authentication_methods.indexOf('LDAP') !==
             -1
         ) {
-            ldapLinks.forEach(function(link) {
+            ldapLinks.forEach(function (link) {
                 variableLinks.push(link);
             });
         }
@@ -68,7 +68,7 @@ class App extends React.Component {
             this.props.state.server.authentication_methods.indexOf('SAML') !==
             -1
         ) {
-            samlLinks.forEach(function(link) {
+            samlLinks.forEach(function (link) {
                 variableLinks.push(link);
             });
         }
@@ -76,7 +76,7 @@ class App extends React.Component {
             this.props.state.server.authentication_methods.indexOf('OIDC') !==
             -1
         ) {
-            oidcLinks.forEach(function(link) {
+            oidcLinks.forEach(function (link) {
                 variableLinks.push(link);
             });
         }
@@ -88,7 +88,6 @@ class App extends React.Component {
                 <Notification />
                 <Sidebar
                     routes={sidebarLinks.concat(variableLinks)}
-                    logoText={'Admin'}
                     logo={logo}
                     image={image}
                     handleDrawerToggle={this.handleDrawerToggle}
@@ -124,7 +123,7 @@ class App extends React.Component {
 App.propTypes = {
     store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
-    theme: PropTypes.object.isRequired
+    theme: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -133,7 +132,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(actionCreators, dispatch)
+        actions: bindActionCreators(actionCreators, dispatch),
     };
 }
 

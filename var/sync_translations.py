@@ -1,6 +1,8 @@
 import requests
 import shutil
 import os
+import json
+import time
 
 POEDITOR_API_KEY = os.environ['POEDITOR_API_KEY']
 POEDITOR_PROJECT_ID = os.environ['POEDITOR_PROJECT_ID']
@@ -25,43 +27,25 @@ LANGUAGE_CODES = [
     "ji", "zu", "ar", "bn"
 ]
 
-WEBHOOKS = {
-    'da': 'https://api.poeditor.com/webhooks/149f094ac6',
-    'sv': 'https://api.poeditor.com/webhooks/cb53bc3005',
-    'no': 'https://api.poeditor.com/webhooks/a44b3853dc',
-    'he': 'https://api.poeditor.com/webhooks/61c796e8a6',
-    'ar': 'https://api.poeditor.com/webhooks/fffae4b374',
-    'hi': 'https://api.poeditor.com/webhooks/85a40635f6',
-    'bn': 'https://api.poeditor.com/webhooks/53ce98d19d',
-    'cs': 'https://api.poeditor.com/webhooks/fed2e677ff',
-    'de': 'https://api.poeditor.com/webhooks/25c8bbdbdf',
-    'en': 'https://api.poeditor.com/webhooks/2cf5b85261',
-    'es': 'https://api.poeditor.com/webhooks/cf0d541a18',
-    'fi': 'https://api.poeditor.com/webhooks/7d25d5f785',
-    'fr': 'https://api.poeditor.com/webhooks/5991571493',
-    'hr': 'https://api.poeditor.com/webhooks/218017a9ee',
-    'it': 'https://api.poeditor.com/webhooks/993bb97003',
-    'ja': 'https://api.poeditor.com/webhooks/29b75b89d5',
-    'ko': 'https://api.poeditor.com/webhooks/386b97cba5',
-    'nl': 'https://api.poeditor.com/webhooks/8c3b5a5b48',
-    'pl': 'https://api.poeditor.com/webhooks/ca5738b9c7',
-    'pt': 'https://api.poeditor.com/webhooks/e591ad33ed',
-    'pt-br': 'https://api.poeditor.com/webhooks/6ecefa4a90',
-    'ru': 'https://api.poeditor.com/webhooks/b5599e4961',
-    'vi': 'https://api.poeditor.com/webhooks/4d4b47eccc',
-    'zh-cn': 'https://api.poeditor.com/webhooks/8ea70c8da9',
+FILE_PATHS = {
+    'de': 'public/locales/de/translation.json',
+    'en': 'public/locales/en/translation.json',
 }
 
 
 def upload_language(lang):
 
-    if lang in WEBHOOKS:
-        params = (
-            ('api_token', POEDITOR_API_KEY),
-            ('id_project', POEDITOR_PROJECT_ID),
-        )
+    if lang in FILE_PATHS:
+        data = {
+            'id': POEDITOR_PROJECT_ID,
+            'api_token': POEDITOR_API_KEY,
+            'updating': 'terms_translations',
+            'language': lang,
+            'overwrite': 1,
+        }
+        with open(FILE_PATHS[lang], 'rb') as file:
+            r = requests.post('https://api.poeditor.com/v2/projects/upload', data=data, files={'file': file})
 
-        r = requests.post(WEBHOOKS[lang], params=params)
     else:
         print("Error: upload_language " + lang + " No webhook configured for this language")
     #     params = (
@@ -72,7 +56,12 @@ def upload_language(lang):
     #     )
     #
     #     r = requests.post('https://poeditor.com/api/webhooks/gitlab', params=params)
-    if not r.ok or r.text != 'Request received':
+    if not r.ok:
+        print("Error: upload_language " + lang)
+        print(r.text)
+        exit(1)
+    content = json.loads(r.content)
+    if "response" not in content or "status" not in content["response"] or content["response"]["status"] != 'success':
         print("Error: upload_language " + lang)
         print(r.text)
         exit(1)
@@ -139,6 +128,12 @@ def get_languages():
 
 
 def main():
+    # Upload
+    for lang in FILE_PATHS:
+        upload_language(lang)
+        time.sleep(20)
+
+    # Download
     languages = get_languages()
     for lang in languages:
         language_code = lang['code'].lower()
@@ -146,7 +141,6 @@ def main():
             print("Error: main")
             print("Invalid Language Code " + language_code)
             exit(1)
-        upload_language(language_code)
         file = download_language(language_code)
         deploy_to_artifactory(ARTIFACTORY_USER, ARTIFACTORY_PASS, ARTIFACTORY_URL, ARTIFACTORY_PATH, language_code, file)
 

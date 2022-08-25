@@ -11,18 +11,19 @@ import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardS
 import psono_server from '../../services/api-server';
 import i18n from '../../i18n';
 import notification from '../../services/notification';
+import store from '../../services/store';
 
 class Users extends React.Component {
     state = {
         redirect_to: '',
         ldap_users: [],
-        ldap_groups: []
+        ldap_groups: [],
     };
 
     createGroupsNode(ldap_group) {
         ldap_group.groups = (
             <div>
-                {ldap_group.groups.map(function(group, key) {
+                {ldap_group.groups.map(function (group, key) {
                     return (
                         <a href={'/portal/group/' + group.id} key={key}>
                             {group.name}
@@ -40,16 +41,16 @@ class Users extends React.Component {
                 this.props.state.user.session_secret_key
             )
             .then(
-                response => {
+                (response) => {
                     const { ldap_groups } = response.data;
-                    ldap_groups.forEach(ldap_group => {
+                    ldap_groups.forEach((ldap_group) => {
                         this.createGroupsNode(ldap_group);
                     });
                     this.setState({
-                        ldap_groups
+                        ldap_groups,
                     });
                 },
-                response => {
+                (response) => {
                     const { non_field_errors } = response.data;
                     notification.error_send(non_field_errors[0]);
                 }
@@ -62,10 +63,10 @@ class Users extends React.Component {
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 const { ldap_users } = response.data;
 
-                ldap_users.forEach(u => {
+                ldap_users.forEach((u) => {
                     if (u.create_date === '') {
                         u.create_date = i18n.t('NEVER');
                     } else {
@@ -75,25 +76,43 @@ class Users extends React.Component {
                     }
                 });
                 this.setState({
-                    ldap_users
+                    ldap_users,
                 });
             });
+        this.loadLdapGroups();
+    }
+
+    loadLdapGroups() {
         psono_server
             .admin_ldap_group(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 const { ldap_groups } = response.data;
 
-                ldap_groups.forEach(ldap_group => {
+                ldap_groups.forEach((ldap_group) => {
                     this.createGroupsNode(ldap_group);
                 });
 
                 this.setState({
-                    ldap_groups
+                    ldap_groups,
                 });
             });
+    }
+
+    onDeleteLdapGroups(selectedGroups) {
+        selectedGroups.forEach((group) => {
+            psono_server
+                .admin_delete_ldap_group(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    group.id
+                )
+                .then(() => {
+                    this.loadLdapGroups();
+                });
+        });
     }
 
     render() {
@@ -108,6 +127,9 @@ class Users extends React.Component {
                             ldap_users={this.state.ldap_users}
                             ldap_groups={this.state.ldap_groups}
                             onSyncGroupsLdap={() => this.onSyncGroupsLdap()}
+                            onDeleteLdapGroups={(groups) =>
+                                this.onDeleteLdapGroups(groups)
+                            }
                         />
                     </GridItem>
                 </Grid>
@@ -117,7 +139,7 @@ class Users extends React.Component {
 }
 
 Users.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 export default compose(withTranslation(), withStyles(dashboardStyle))(Users);

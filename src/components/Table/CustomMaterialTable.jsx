@@ -1,5 +1,5 @@
 import React from 'react';
-import MaterialTable from 'material-table';
+import MaterialTable from '@material-table/core';
 import { withStyles } from '@material-ui/core';
 
 import { withTranslation } from 'react-i18next';
@@ -51,12 +51,12 @@ const tableIcons = {
     ThirdStateCheck: forwardRef((props, ref) => (
         <Remove {...props} ref={ref} />
     )),
-    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
+    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
 class CustomMaterialTable extends React.Component {
     state = {
-        pageSize: 5
+        pageSize: 5,
     };
     render() {
         const { t, title, columns, data, options, actions } = this.props;
@@ -66,12 +66,12 @@ class CustomMaterialTable extends React.Component {
             pageSize,
             headerStyle: {
                 fontSize: '12px',
-                color: 'rgba(0, 0, 0, 0.54)'
+                color: 'rgba(0, 0, 0, 0.54)',
             },
             searchFieldStyle: {
                 fontSize: '12px',
-                color: 'rgba(0, 0, 0, 0.54)'
-            }
+                color: 'rgba(0, 0, 0, 0.54)',
+            },
         };
 
         const mergedOptions = { ...defaultOptions, ...options };
@@ -79,7 +79,7 @@ class CustomMaterialTable extends React.Component {
         return (
             <div>
                 <MaterialTable
-                    onChangeRowsPerPage={newPageSize =>
+                    onChangeRowsPerPage={(newPageSize) =>
                         this.setState({ pageSize: newPageSize })
                     }
                     tableRef={this.props.tableRef}
@@ -98,21 +98,21 @@ class CustomMaterialTable extends React.Component {
                             deleteTooltip: t('MATERIAL_TABLE_DELETE'),
                             editTooltip: t('MATERIAL_TABLE_EDIT'),
                             filterRow: {
-                                filterTooltip: t('MATERIAL_TABLE_FILTER')
+                                filterTooltip: t('MATERIAL_TABLE_FILTER'),
                             },
                             editRow: {
                                 deleteText: t(
                                     'MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW'
                                 ),
                                 cancelTooltip: t('MATERIAL_TABLE_CANCEL'),
-                                saveTooltip: t('MATERIAL_TABLE_SAVE')
-                            }
+                                saveTooltip: t('MATERIAL_TABLE_SAVE'),
+                            },
                         },
                         grouping: {
-                            placeholder: t('MATERIAL_TABLE_DRAG_HEADERS')
+                            placeholder: t('MATERIAL_TABLE_DRAG_HEADERS'),
                         },
                         header: {
-                            actions: t('MATERIAL_TABLE_ACTIONS')
+                            actions: t('MATERIAL_TABLE_ACTIONS'),
                         },
                         pagination: {
                             labelDisplayedRows: t(
@@ -129,7 +129,7 @@ class CustomMaterialTable extends React.Component {
                             nextAriaLabel: t('MATERIAL_TABLE_NEXT_PAGE'),
                             nextTooltip: t('MATERIAL_TABLE_NEXT_PAGE'),
                             lastAriaLabel: t('MATERIAL_TABLE_LAST_PAGE'),
-                            lastTooltip: t('MATERIAL_TABLE_LAST_PAGE')
+                            lastTooltip: t('MATERIAL_TABLE_LAST_PAGE'),
                         },
                         toolbar: {
                             addRemoveColumns: t(
@@ -144,8 +144,8 @@ class CustomMaterialTable extends React.Component {
                             exportAriaLabel: t('MATERIAL_TABLE_EXPORT'),
                             exportName: t('MATERIAL_TABLE_EXPORT_AS_CSV'),
                             searchTooltip: t('MATERIAL_TABLE_SEARCH'),
-                            searchPlaceholder: t('MATERIAL_TABLE_SEARCH')
-                        }
+                            searchPlaceholder: t('MATERIAL_TABLE_SEARCH'),
+                        },
                     }}
                 />
             </div>
@@ -158,13 +158,14 @@ CustomMaterialTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.object),
     data: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.object),
-        PropTypes.func
+        PropTypes.func,
     ]),
     actions: PropTypes.arrayOf(PropTypes.object),
     options: PropTypes.object,
-    tableRef: PropTypes.object
+    tableRef: PropTypes.object,
 };
 
-export default compose(withTranslation(), withStyles(tableStyle))(
-    CustomMaterialTable
-);
+export default compose(
+    withTranslation(),
+    withStyles(tableStyle)
+)(CustomMaterialTable);
