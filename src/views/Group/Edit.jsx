@@ -15,7 +15,7 @@ import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import helper from '../../services/helper';
 
-class User extends React.Component {
+class GroupEdit extends React.Component {
     state = {};
 
     componentDidMount() {
@@ -613,6 +613,8 @@ class User extends React.Component {
                     mapped_saml_group_index[saml_group.id][
                         'saml_group_map_id'
                     ] !== '';
+                saml_group.name =
+                    saml_group.display_name || saml_group.saml_name;
                 saml_group.mapped = (
                     <Checkbox
                         checked={saml_group.mapped_raw}
@@ -696,6 +698,8 @@ class User extends React.Component {
                     mapped_oidc_group_index[oidc_group.id][
                         'oidc_group_map_id'
                     ] !== '';
+                oidc_group.name =
+                    oidc_group.display_name || oidc_group.oidc_name;
                 oidc_group.mapped = (
                     <Checkbox
                         checked={oidc_group.mapped_raw}
@@ -869,4 +873,7 @@ class User extends React.Component {
     }
 }
 
-export default compose(withTranslation(), withStyles(customInputStyle))(User);
+export default compose(
+    withTranslation(),
+    withStyles(customInputStyle)
+)(GroupEdit);
