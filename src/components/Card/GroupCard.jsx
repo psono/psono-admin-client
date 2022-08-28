@@ -128,7 +128,7 @@ class GroupCard extends React.Component {
                                 customSort: (a, b) =>
                                     a.mapped_raw - b.mapped_raw,
                             },
-                            { field: 'saml_name', title: t('NAME') },
+                            { field: 'name', title: t('NAME') },
                             {
                                 field: 'has_share_admin',
                                 title: t('SHARE_ADMIN'),
@@ -161,7 +161,7 @@ class GroupCard extends React.Component {
                                 customSort: (a, b) =>
                                     a.mapped_raw - b.mapped_raw,
                             },
-                            { field: 'oidc_name', title: t('NAME') },
+                            { field: 'name', title: t('NAME') },
                             {
                                 field: 'has_share_admin',
                                 title: t('SHARE_ADMIN'),
