@@ -8,11 +8,11 @@ import {
     CustomInput,
     GridItem,
     Button,
-    SnackbarContent
+    SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 
-const UserCreate = props => {
+const UserCreate = (props) => {
     const { t } = useTranslation();
     const [errorsDict, setErrorsDict] = useState({});
     const [redirectTo, setRedirectTo] = useState('');
@@ -43,7 +43,7 @@ const UserCreate = props => {
         return usernameValid && emailValid && passwordValid;
     };
 
-    const onChangeUsername = event => {
+    const onChangeUsername = (event) => {
         setUsername(event.target.value);
         setCreateUserPossible(
             isCreateUserPossible(
@@ -55,7 +55,7 @@ const UserCreate = props => {
         );
     };
 
-    const onChangeEmail = event => {
+    const onChangeEmail = (event) => {
         setEmail(event.target.value);
         setCreateUserPossible(
             isCreateUserPossible(
@@ -67,14 +67,14 @@ const UserCreate = props => {
         );
     };
 
-    const onChangePassword1 = event => {
+    const onChangePassword1 = (event) => {
         setPassword1(event.target.value);
         setCreateUserPossible(
             isCreateUserPossible(username, email, event.target.value, password2)
         );
     };
 
-    const onChangePassword2 = event => {
+    const onChangePassword2 = (event) => {
         setPassword2(event.target.value);
         setCreateUserPossible(
             isCreateUserPossible(username, email, password1, event.target.value)
@@ -83,17 +83,17 @@ const UserCreate = props => {
 
     const createUser = () => {
         setErrorsDict({});
-        const onSuccess = data => {
+        const onSuccess = (data) => {
             setRedirectTo('/user/' + data.data.id);
         };
-        const onError = data => {
+        const onError = (data) => {
             setErrorsDict(data.data);
         };
 
         psono_server
             .admin_create_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
+                props.state.user.token,
+                props.state.user.session_secret_key,
                 username,
                 password1,
                 email
@@ -126,11 +126,11 @@ const UserCreate = props => {
                                                     : ''
                                             }
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: username,
-                                                onChange: onChangeUsername
+                                                onChange: onChangeUsername,
                                             }}
                                             error={errorsDict.hasOwnProperty(
                                                 'username'
@@ -149,11 +149,11 @@ const UserCreate = props => {
                                                     : ''
                                             }
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: email,
-                                                onChange: onChangeEmail
+                                                onChange: onChangeEmail,
                                             }}
                                             error={errorsDict.hasOwnProperty(
                                                 'email'
@@ -172,12 +172,12 @@ const UserCreate = props => {
                                                     : ''
                                             }
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: password1,
                                                 onChange: onChangePassword1,
-                                                type: 'password'
+                                                type: 'password',
                                             }}
                                             error={errorsDict.hasOwnProperty(
                                                 'password'
@@ -196,12 +196,12 @@ const UserCreate = props => {
                                                     : ''
                                             }
                                             formControlProps={{
-                                                fullWidth: true
+                                                fullWidth: true,
                                             }}
                                             inputProps={{
                                                 value: password2,
                                                 onChange: onChangePassword2,
-                                                type: 'password'
+                                                type: 'password',
                                             }}
                                             error={errorsDict.hasOwnProperty(
                                                 'password2'
