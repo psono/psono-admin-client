@@ -21,7 +21,7 @@ import tasksCardStyle from '../../assets/jss/material-dashboard-react/tasksCardS
 class UsersCard extends React.Component {
     state = {
         deleteUsers: [],
-        deleteGroups: []
+        deleteGroups: [],
     };
 
     render() {
@@ -39,7 +39,7 @@ class UsersCard extends React.Component {
             onDeleteGroups,
             onCreateGroup,
             onCreateUser,
-            show_create_group_button
+            show_create_group_button,
         } = this.props;
         return (
             <div>
@@ -49,12 +49,12 @@ class UsersCard extends React.Component {
                         onConfirm={() => {
                             onDeleteUsers(this.state.deleteUsers);
                             this.setState({
-                                deleteUsers: []
+                                deleteUsers: [],
                             });
                         }}
                         onAbort={() => {
                             this.setState({
-                                deleteUsers: []
+                                deleteUsers: [],
                             });
                         }}
                     >
@@ -67,12 +67,12 @@ class UsersCard extends React.Component {
                         onConfirm={() => {
                             onDeleteGroups(this.state.deleteGroups);
                             this.setState({
-                                deleteGroups: []
+                                deleteGroups: [],
                             });
                         }}
                         onAbort={() => {
                             this.setState({
-                                deleteGroups: []
+                                deleteGroups: [],
                             });
                         }}
                     >
@@ -92,33 +92,32 @@ class UsersCard extends React.Component {
                                     columns={[
                                         {
                                             field: 'username',
-                                            title: t('USERNAME')
+                                            title: t('USERNAME'),
                                         },
                                         {
                                             field: 'create_date',
-                                            title: t('CREATED_AT')
+                                            title: t('CREATED_AT'),
                                         },
                                         {
                                             field: 'is_active',
-                                            title: t('ACTIVE')
+                                            title: t('ACTIVE'),
                                         },
                                         {
                                             field: 'is_email_active',
-                                            title: t('EMAIL_ACTIVE')
+                                            title: t('EMAIL_ACTIVE'),
                                         },
                                         {
                                             field: 'yubikey_otp_enabled',
-                                            title: t('YUBIKEY')
+                                            title: t('YUBIKEY'),
                                         },
                                         {
-                                            field:
-                                                'google_authenticator_enabled',
-                                            title: t('GOOGLE_AUTHENTICATOR')
+                                            field: 'google_authenticator_enabled',
+                                            title: t('GOOGLE_AUTHENTICATOR'),
                                         },
                                         {
                                             field: 'duo_enabled',
-                                            title: t('DUO_AUTHENTICATION')
-                                        }
+                                            title: t('DUO_AUTHENTICATION'),
+                                        },
                                     ]}
                                     data={loadUsers}
                                     title={''}
@@ -127,38 +126,38 @@ class UsersCard extends React.Component {
                                             tooltip: t('EDIT_USER_S'),
                                             icon: Edit,
                                             onClick: (evt, data) =>
-                                                onEditUser([data])
+                                                onEditUser([data]),
                                         },
                                         {
                                             tooltip: t('ACTIVATE_USER_S'),
                                             icon: CheckBox,
                                             onClick: (evt, data) =>
-                                                onActivate([data])
+                                                onActivate([data]),
                                         },
                                         {
                                             tooltip: t('DEACTIVATE_USER_S'),
                                             icon: NotInterested,
                                             onClick: (evt, data) =>
-                                                onDeactivate([data])
+                                                onDeactivate([data]),
                                         },
                                         {
                                             tooltip: t('DELETE_USER_S'),
                                             icon: Delete,
                                             onClick: (evt, data) => {
                                                 this.setState({
-                                                    deleteUsers: [data]
+                                                    deleteUsers: [data],
                                                 });
-                                            }
+                                            },
                                         },
                                         {
                                             tooltip: t('CREATE_USER'),
                                             isFreeAction: true,
                                             icon: Add,
-                                            onClick: evt => onCreateUser()
-                                        }
+                                            onClick: (evt) => onCreateUser(),
+                                        },
                                     ]}
                                 />
-                            )
+                            ),
                         },
                         {
                             tabName: t('SESSIONS'),
@@ -169,25 +168,32 @@ class UsersCard extends React.Component {
                                     columns={[
                                         {
                                             field: 'username',
-                                            title: t('USERNAME')
+                                            title: t('USERNAME'),
                                         },
                                         {
                                             field: 'create_date',
-                                            title: t('LOGGED_IN_AT')
+                                            title: t('LOGGED_IN_AT'),
                                         },
                                         {
                                             field: 'valid_till',
-                                            title: t('VALID_TILL')
+                                            title: t('VALID_TILL'),
                                         },
                                         {
                                             field: 'device_description',
-                                            title: t('DEVICE_DESCRIPTION')
+                                            title: t('DEVICE_DESCRIPTION'),
                                         },
                                         {
                                             field: 'device_fingerprint',
-                                            title: t('DEVICE')
+                                            title: t('DEVICE'),
                                         },
-                                        { field: 'active', title: t('ACTIVE') }
+                                        {
+                                            field: 'completely_activated',
+                                            title: t('ACTIVATED'),
+                                        },
+                                        {
+                                            field: 'active',
+                                            title: t('STILL_ACTIVE'),
+                                        },
                                     ]}
                                     data={loadSessions}
                                     title={''}
@@ -196,11 +202,11 @@ class UsersCard extends React.Component {
                                             tooltip: t('DELETE_SESSION_S'),
                                             icon: Delete,
                                             onClick: (evt, data) =>
-                                                onDeleteSessions([data])
-                                        }
+                                                onDeleteSessions([data]),
+                                        },
                                     ]}
                                 />
-                            )
+                            ),
                         },
                         {
                             tabName: t('GROUPS'),
@@ -212,17 +218,17 @@ class UsersCard extends React.Component {
                                         { field: 'name', title: t('NAME') },
                                         {
                                             field: 'create_date',
-                                            title: t('CREATED_AT')
+                                            title: t('CREATED_AT'),
                                         },
                                         {
                                             field: 'member_count',
-                                            title: t('MEMBERS')
+                                            title: t('MEMBERS'),
                                         },
                                         {
                                             field: 'is_managed',
                                             title: t('MANAGED'),
-                                            sorting: false
-                                        }
+                                            sorting: false,
+                                        },
                                     ]}
                                     data={loadGroups}
                                     title={''}
@@ -231,28 +237,28 @@ class UsersCard extends React.Component {
                                             tooltip: t('EDIT_GROUP'),
                                             icon: Edit,
                                             onClick: (evt, data) =>
-                                                onEditGroup([data])
+                                                onEditGroup([data]),
                                         },
                                         {
                                             tooltip: t('DELETE_GROUP_S'),
                                             icon: Delete,
                                             onClick: (evt, data) => {
                                                 this.setState({
-                                                    deleteGroups: [data]
+                                                    deleteGroups: [data],
                                                 });
-                                            }
+                                            },
                                         },
                                         {
                                             tooltip: t('CREATE_GROUP'),
                                             isFreeAction: true,
                                             icon: Add,
                                             hidden: !show_create_group_button,
-                                            onClick: evt => onCreateGroup()
-                                        }
+                                            onClick: (evt) => onCreateGroup(),
+                                        },
                                     ]}
                                 />
-                            )
-                        }
+                            ),
+                        },
                     ]}
                 />
             </div>
@@ -267,9 +273,10 @@ UsersCard.propTypes = {
     loadGroups: PropTypes.func,
     userTableRef: PropTypes.object,
     groupTableRef: PropTypes.object,
-    sessionTableRef: PropTypes.object
+    sessionTableRef: PropTypes.object,
 };
 
-export default compose(withTranslation(), withStyles(tasksCardStyle))(
-    UsersCard
-);
+export default compose(
+    withTranslation(),
+    withStyles(tasksCardStyle)
+)(UsersCard);

@@ -240,6 +240,8 @@
   "EMERGENCY_CODES": "Notfall Codes",
   "USER_DETAILS": "Benutzer Details",
   "ACTIVE": "Aktiv",
+  "STILL_ACTIVE": "Immernoch aktiv",
+  "ACTIVATED": "Aktiviert",
   "EMAIL_VERIFIED": "Email Bestätigt",
   "SUPERUSER": "Superuser",
   "SAVE": "Speichern",

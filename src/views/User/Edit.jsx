@@ -10,7 +10,7 @@ import {
     CustomInput,
     GridItem,
     UserCard,
-    SnackbarContent
+    SnackbarContent,
 } from '../../components';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
@@ -19,7 +19,7 @@ import helper from '../../services/helper';
 class User extends React.Component {
     state = {
         errors: [],
-        msgs: []
+        msgs: [],
     };
 
     componentDidMount() {
@@ -30,41 +30,45 @@ class User extends React.Component {
                 this.props.state.user.session_secret_key,
                 this.props.match.params.user_id
             )
-            .then(response => {
+            .then((response) => {
                 const user = response.data;
 
-                user.sessions.forEach(u => {
+                user.sessions.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.valid_till = moment(u.valid_till).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
-                    u.active = u.active ? t('YES') : t('NO');
+                    u.active =
+                        u.active && moment(u.valid_till) > moment()
+                            ? t('YES')
+                            : t('NO');
+                    u.completely_activated = u.active ? t('YES') : t('NO');
                 });
 
-                user.duos.forEach(u => {
+                user.duos.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
-                user.yubikey_otps.forEach(u => {
+                user.yubikey_otps.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
-                user.google_authenticators.forEach(u => {
+                user.google_authenticators.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
-                user.memberships.forEach(u => {
+                user.memberships.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
@@ -72,32 +76,32 @@ class User extends React.Component {
                     u.admin = u.admin ? t('YES') : t('NO');
                 });
 
-                user.recovery_codes.forEach(u => {
+                user.recovery_codes.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                 });
 
-                user.emergency_codes.forEach(u => {
+                user.emergency_codes.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                 });
 
-                user.share_rights.forEach(u => {
+                user.share_rights.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                 });
 
                 this.setState({
-                    user: user
+                    user: user,
                 });
             });
     }
 
     onDeleteSessions(selected_sessions) {
-        selected_sessions.forEach(session => {
+        selected_sessions.forEach((session) => {
             psono_server.admin_delete_session(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -106,8 +110,8 @@ class User extends React.Component {
         });
 
         let { sessions } = this.state.user;
-        selected_sessions.forEach(session => {
-            helper.remove_from_array(sessions, session, function(a, b) {
+        selected_sessions.forEach((session) => {
+            helper.remove_from_array(sessions, session, function (a, b) {
                 return a.id === b.id;
             });
         });
@@ -116,7 +120,7 @@ class User extends React.Component {
     }
 
     onDeleteMemberships(selected_memberships) {
-        selected_memberships.forEach(membership => {
+        selected_memberships.forEach((membership) => {
             psono_server.admin_delete_membership(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -125,8 +129,8 @@ class User extends React.Component {
         });
 
         let { memberships } = this.state.user;
-        selected_memberships.forEach(membership => {
-            helper.remove_from_array(memberships, membership, function(a, b) {
+        selected_memberships.forEach((membership) => {
+            helper.remove_from_array(memberships, membership, function (a, b) {
                 return a.id === b.id;
             });
         });
@@ -135,7 +139,7 @@ class User extends React.Component {
     }
 
     onDeleteDuos(selected_duos) {
-        selected_duos.forEach(duo => {
+        selected_duos.forEach((duo) => {
             psono_server.admin_delete_duo(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -144,8 +148,8 @@ class User extends React.Component {
         });
 
         let { duos } = this.state.user;
-        selected_duos.forEach(duo => {
-            helper.remove_from_array(duos, duo, function(a, b) {
+        selected_duos.forEach((duo) => {
+            helper.remove_from_array(duos, duo, function (a, b) {
                 return a.id === b.id;
             });
         });
@@ -154,7 +158,7 @@ class User extends React.Component {
     }
 
     onDeleteYubikeyOtps(selected_yubikey_otps) {
-        selected_yubikey_otps.forEach(yubikey_otp => {
+        selected_yubikey_otps.forEach((yubikey_otp) => {
             psono_server.admin_delete_yubikey_otp(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -163,17 +167,21 @@ class User extends React.Component {
         });
 
         let { yubikey_otps } = this.state.user;
-        selected_yubikey_otps.forEach(yubikey_otp => {
-            helper.remove_from_array(yubikey_otps, yubikey_otp, function(a, b) {
-                return a.id === b.id;
-            });
+        selected_yubikey_otps.forEach((yubikey_otp) => {
+            helper.remove_from_array(
+                yubikey_otps,
+                yubikey_otp,
+                function (a, b) {
+                    return a.id === b.id;
+                }
+            );
         });
 
         this.setState({ yubikey_otps: yubikey_otps });
     }
 
     onDeleteGoogleAuthenticators(selected_google_authenticators) {
-        selected_google_authenticators.forEach(google_authenticator => {
+        selected_google_authenticators.forEach((google_authenticator) => {
             psono_server.admin_delete_google_authenticator(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -182,11 +190,11 @@ class User extends React.Component {
         });
 
         let { google_authenticators } = this.state.user;
-        selected_google_authenticators.forEach(google_authenticator => {
+        selected_google_authenticators.forEach((google_authenticator) => {
             helper.remove_from_array(
                 google_authenticators,
                 google_authenticator,
-                function(a, b) {
+                function (a, b) {
                     return a.id === b.id;
                 }
             );
@@ -196,7 +204,7 @@ class User extends React.Component {
     }
 
     onDeleteRecoveryCodes(selected_recovery_codes) {
-        selected_recovery_codes.forEach(recovery_code => {
+        selected_recovery_codes.forEach((recovery_code) => {
             psono_server.admin_delete_recovery_code(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -205,20 +213,21 @@ class User extends React.Component {
         });
 
         let { recovery_codes } = this.state.user;
-        selected_recovery_codes.forEach(recovery_code => {
-            helper.remove_from_array(recovery_codes, recovery_code, function(
-                a,
-                b
-            ) {
-                return a.id === b.id;
-            });
+        selected_recovery_codes.forEach((recovery_code) => {
+            helper.remove_from_array(
+                recovery_codes,
+                recovery_code,
+                function (a, b) {
+                    return a.id === b.id;
+                }
+            );
         });
 
         this.setState({ recovery_codes: recovery_codes });
     }
 
     onDeleteEmergencyCodes(selected_emergency_codes) {
-        selected_emergency_codes.forEach(emergency_code => {
+        selected_emergency_codes.forEach((emergency_code) => {
             psono_server.admin_delete_emergency_code(
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key,
@@ -227,54 +236,55 @@ class User extends React.Component {
         });
 
         let { emergency_codes } = this.state.user;
-        selected_emergency_codes.forEach(emergency_code => {
-            helper.remove_from_array(emergency_codes, emergency_code, function(
-                a,
-                b
-            ) {
-                return a.id === b.id;
-            });
+        selected_emergency_codes.forEach((emergency_code) => {
+            helper.remove_from_array(
+                emergency_codes,
+                emergency_code,
+                function (a, b) {
+                    return a.id === b.id;
+                }
+            );
         });
 
         this.setState({ emergency_codes: emergency_codes });
     }
 
-    onChangeEmailChange = event => {
+    onChangeEmailChange = (event) => {
         let { user } = this.state;
         user.email = event.target.value;
         this.setState({
-            user
+            user,
         });
     };
 
-    onIsActiveToggle = event => {
+    onIsActiveToggle = (event) => {
         let { user } = this.state;
         user.is_active = !user.is_active;
         this.setState({
-            user
+            user,
         });
     };
 
-    onIsEmailActiveToggle = event => {
+    onIsEmailActiveToggle = (event) => {
         let { user } = this.state;
         user.is_email_active = !user.is_email_active;
         this.setState({
-            user
+            user,
         });
     };
 
-    onIsSuperuserToggle = event => {
+    onIsSuperuserToggle = (event) => {
         let { user } = this.state;
         user.is_superuser = !user.is_superuser;
         this.setState({
-            user
+            user,
         });
     };
 
     save = () => {
         this.setState({
             errors: [],
-            msgs: []
+            msgs: [],
         });
         let { user } = this.state;
         psono_server
@@ -288,11 +298,11 @@ class User extends React.Component {
                 user.is_superuser
             )
             .then(
-                result => {
+                (result) => {
                     let msgs = ['SAVE_SUCCESS'];
                     this.setState({ msgs });
                 },
-                result => {
+                (result) => {
                     if (result.data.hasOwnProperty('email')) {
                         let errors = result.data.email;
                         this.setState({ errors });
@@ -301,7 +311,7 @@ class User extends React.Component {
                         this.setState({ errors });
                     } else {
                         this.setState({
-                            errors: [result.data]
+                            errors: [result.data],
                         });
                     }
                 }
@@ -367,12 +377,12 @@ class User extends React.Component {
                                                 labelText={t('USERNAME')}
                                                 id="username"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: user.username,
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -381,12 +391,12 @@ class User extends React.Component {
                                                 labelText={t('AUTHENTICATION')}
                                                 id="authentication"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: this.authentication,
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -397,12 +407,12 @@ class User extends React.Component {
                                                 labelText={t('PUBLIC_KEY')}
                                                 id="public_key"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: user.public_key,
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -415,7 +425,7 @@ class User extends React.Component {
                                                 )}
                                                 id="create_date"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: moment(
@@ -424,7 +434,7 @@ class User extends React.Component {
                                                         'YYYY-MM-DD HH:mm:ss'
                                                     ),
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -433,12 +443,13 @@ class User extends React.Component {
                                                 labelText={t('EMAIL')}
                                                 id="email"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: user.email,
-                                                    onChange: this
-                                                        .onChangeEmailChange
+                                                    onChange:
+                                                        this
+                                                            .onChangeEmailChange,
                                                 }}
                                             />
                                         </GridItem>
@@ -505,29 +516,33 @@ class User extends React.Component {
                             yubikey_otps={user.yubikey_otps}
                             recovery_codes={user.recovery_codes}
                             emergency_codes={user.emergency_codes}
-                            onDeleteSessions={selected_sessions =>
+                            onDeleteSessions={(selected_sessions) =>
                                 this.onDeleteSessions(selected_sessions)
                             }
-                            onDeleteMemberships={selected_memberships =>
+                            onDeleteMemberships={(selected_memberships) =>
                                 this.onDeleteMemberships(selected_memberships)
                             }
-                            onDeleteDuos={selected_duos =>
+                            onDeleteDuos={(selected_duos) =>
                                 this.onDeleteDuos(selected_duos)
                             }
-                            onDeleteYubikeyOtps={selected_yubikey_otps =>
+                            onDeleteYubikeyOtps={(selected_yubikey_otps) =>
                                 this.onDeleteYubikeyOtps(selected_yubikey_otps)
                             }
-                            onDeleteGoogleAuthenticators={selected_google_authenticators =>
+                            onDeleteGoogleAuthenticators={(
+                                selected_google_authenticators
+                            ) =>
                                 this.onDeleteGoogleAuthenticators(
                                     selected_google_authenticators
                                 )
                             }
-                            onDeleteRecoveryCodes={selected_recovery_codes =>
+                            onDeleteRecoveryCodes={(selected_recovery_codes) =>
                                 this.onDeleteRecoveryCodes(
                                     selected_recovery_codes
                                 )
                             }
-                            onDeleteEmergencyCodes={selected_emergency_codes =>
+                            onDeleteEmergencyCodes={(
+                                selected_emergency_codes
+                            ) =>
                                 this.onDeleteEmergencyCodes(
                                     selected_emergency_codes
                                 )

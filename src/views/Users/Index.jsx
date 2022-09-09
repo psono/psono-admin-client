@@ -22,11 +22,11 @@ class Users extends React.Component {
     groupTableRef = React.createRef();
     sessionTableRef = React.createRef();
     state = {
-        redirect_to: ''
+        redirect_to: '',
     };
 
     onDeleteUsers(selected_users) {
-        selected_users.forEach(user => {
+        selected_users.forEach((user) => {
             psono_server
                 .admin_delete_user(
                     store.getState().user.token,
@@ -41,7 +41,7 @@ class Users extends React.Component {
     }
 
     update_users(selected_users, is_active) {
-        selected_users.forEach(user => {
+        selected_users.forEach((user) => {
             psono_server
                 .admin_update_user(
                     store.getState().user.token,
@@ -69,18 +69,18 @@ class Users extends React.Component {
 
     onEditUser(selected_users) {
         this.setState({
-            redirect_to: '/user/' + selected_users[0].id
+            redirect_to: '/user/' + selected_users[0].id,
         });
     }
 
     onEditGroup(selected_groups) {
         this.setState({
-            redirect_to: '/group/' + selected_groups[0].id
+            redirect_to: '/group/' + selected_groups[0].id,
         });
     }
 
     onDeleteSessions(selected_sessions) {
-        selected_sessions.forEach(session => {
+        selected_sessions.forEach((session) => {
             psono_server
                 .admin_delete_session(
                     store.getState().user.token,
@@ -95,7 +95,7 @@ class Users extends React.Component {
     }
 
     onDeleteGroups(selected_groups) {
-        selected_groups.forEach(group => {
+        selected_groups.forEach((group) => {
             psono_server
                 .admin_delete_group(
                     store.getState().user.token,
@@ -111,13 +111,13 @@ class Users extends React.Component {
 
     onCreateGroup() {
         this.setState({
-            redirect_to: '/groups/create/'
+            redirect_to: '/groups/create/',
         });
     }
 
     onCreateUser() {
         this.setState({
-            redirect_to: '/users/create/'
+            redirect_to: '/users/create/',
         });
     }
 
@@ -125,7 +125,7 @@ class Users extends React.Component {
         const params = {
             page_size: query.pageSize,
             search: query.search,
-            page: query.page
+            page: query.page,
         };
         if (query.orderBy) {
             if (query.orderDirection === 'asc') {
@@ -142,10 +142,10 @@ class Users extends React.Component {
                 undefined,
                 params
             )
-            .then(response => {
+            .then((response) => {
                 const { users } = response.data;
 
-                users.forEach(u => {
+                users.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
@@ -157,9 +157,10 @@ class Users extends React.Component {
                     u.yubikey_otp_enabled = u.yubikey_otp_enabled
                         ? i18n.t('YES')
                         : i18n.t('NO');
-                    u.google_authenticator_enabled = u.google_authenticator_enabled
-                        ? i18n.t('YES')
-                        : i18n.t('NO');
+                    u.google_authenticator_enabled =
+                        u.google_authenticator_enabled
+                            ? i18n.t('YES')
+                            : i18n.t('NO');
                     u.duo_enabled = u.duo_enabled
                         ? i18n.t('YES')
                         : i18n.t('NO');
@@ -168,7 +169,7 @@ class Users extends React.Component {
                     data: users,
                     page: query.page,
                     pageSize: query.pageSize,
-                    totalCount: response.data.count
+                    totalCount: response.data.count,
                 };
             });
     }
@@ -177,7 +178,7 @@ class Users extends React.Component {
         const params = {
             page_size: query.pageSize,
             search: query.search,
-            page: query.page
+            page: query.page,
         };
         if (query.orderBy) {
             if (query.orderDirection === 'asc') {
@@ -195,23 +196,27 @@ class Users extends React.Component {
                 store.getState().user.session_secret_key,
                 params
             )
-            .then(response => {
+            .then((response) => {
                 const { sessions } = response.data;
 
-                sessions.forEach(u => {
+                sessions.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.valid_till = moment(u.valid_till).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
-                    u.active = u.active ? t('YES') : t('NO');
+                    u.active =
+                        u.active && moment(u.valid_till) > moment()
+                            ? t('YES')
+                            : t('NO');
+                    u.completely_activated = u.active ? t('YES') : t('NO');
                 });
                 return {
                     data: sessions,
                     page: query.page,
                     pageSize: query.pageSize,
-                    totalCount: response.data.count
+                    totalCount: response.data.count,
                 };
             });
     }
@@ -220,7 +225,7 @@ class Users extends React.Component {
         const params = {
             page_size: query.pageSize,
             search: query.search,
-            page: query.page
+            page: query.page,
         };
         if (query.orderBy) {
             if (query.orderDirection === 'asc') {
@@ -238,9 +243,9 @@ class Users extends React.Component {
                 undefined,
                 params
             )
-            .then(response => {
+            .then((response) => {
                 const { groups } = response.data;
-                groups.forEach(g => {
+                groups.forEach((g) => {
                     g.create_date = moment(g.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
@@ -250,7 +255,7 @@ class Users extends React.Component {
                     data: groups,
                     page: query.page,
                     pageSize: query.pageSize,
-                    totalCount: response.data.count
+                    totalCount: response.data.count,
                 };
             });
     }
@@ -278,29 +283,29 @@ class Users extends React.Component {
                 <Grid container>
                     <GridItem xs={12} sm={12} md={12}>
                         <UsersCard
-                            loadUsers={query => this.loadUsers(query)}
-                            loadSessions={query => this.loadSessions(query)}
-                            loadGroups={query => this.loadGroups(query)}
+                            loadUsers={(query) => this.loadUsers(query)}
+                            loadSessions={(query) => this.loadSessions(query)}
+                            loadGroups={(query) => this.loadGroups(query)}
                             userTableRef={this.userTableRef}
                             groupTableRef={this.groupTableRef}
                             sessionTableRef={this.sessionTableRef}
-                            onDeleteUsers={user_ids =>
+                            onDeleteUsers={(user_ids) =>
                                 this.onDeleteUsers(user_ids)
                             }
-                            onActivate={user_ids =>
+                            onActivate={(user_ids) =>
                                 this.onActivateUsers(user_ids)
                             }
-                            onDeactivate={user_ids =>
+                            onDeactivate={(user_ids) =>
                                 this.onDeactivateUsers(user_ids)
                             }
-                            onEditUser={user_ids => this.onEditUser(user_ids)}
-                            onEditGroup={group_ids =>
+                            onEditUser={(user_ids) => this.onEditUser(user_ids)}
+                            onEditGroup={(group_ids) =>
                                 this.onEditGroup(group_ids)
                             }
-                            onDeleteSessions={selected_sessions =>
+                            onDeleteSessions={(selected_sessions) =>
                                 this.onDeleteSessions(selected_sessions)
                             }
-                            onDeleteGroups={selected_groups =>
+                            onDeleteGroups={(selected_groups) =>
                                 this.onDeleteGroups(selected_groups)
                             }
                             onCreateGroup={() => this.onCreateGroup()}
@@ -317,7 +322,7 @@ class Users extends React.Component {
 }
 
 Users.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 export default compose(withTranslation(), withStyles(dashboardStyle))(Users);
