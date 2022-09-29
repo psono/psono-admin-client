@@ -23,6 +23,10 @@ class User extends React.Component {
     };
 
     componentDidMount() {
+        this.loadUser();
+    }
+
+    loadUser() {
         const { t } = this.props;
         psono_server
             .admin_user(
@@ -101,152 +105,122 @@ class User extends React.Component {
     }
 
     onDeleteSessions(selected_sessions) {
+        const promises = [];
         selected_sessions.forEach((session) => {
-            psono_server.admin_delete_session(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                session.id
+            promises.push(
+                psono_server.admin_delete_session(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    session.id
+                )
             );
         });
 
-        let { sessions } = this.state.user;
-        selected_sessions.forEach((session) => {
-            helper.remove_from_array(sessions, session, function (a, b) {
-                return a.id === b.id;
-            });
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ sessions: sessions });
     }
 
     onDeleteMemberships(selected_memberships) {
+        const promises = [];
         selected_memberships.forEach((membership) => {
-            psono_server.admin_delete_membership(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                membership.id
+            promises.push(
+                psono_server.admin_delete_membership(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    membership.id
+                )
             );
         });
 
-        let { memberships } = this.state.user;
-        selected_memberships.forEach((membership) => {
-            helper.remove_from_array(memberships, membership, function (a, b) {
-                return a.id === b.id;
-            });
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ memberships: memberships });
     }
 
     onDeleteDuos(selected_duos) {
+        const promises = [];
         selected_duos.forEach((duo) => {
-            psono_server.admin_delete_duo(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                duo.id
+            promises.push(
+                psono_server.admin_delete_duo(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    duo.id
+                )
             );
         });
 
-        let { duos } = this.state.user;
-        selected_duos.forEach((duo) => {
-            helper.remove_from_array(duos, duo, function (a, b) {
-                return a.id === b.id;
-            });
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ duos: duos });
     }
 
     onDeleteYubikeyOtps(selected_yubikey_otps) {
+        const promises = [];
         selected_yubikey_otps.forEach((yubikey_otp) => {
-            psono_server.admin_delete_yubikey_otp(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                yubikey_otp.id
+            promises.push(
+                psono_server.admin_delete_yubikey_otp(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    yubikey_otp.id
+                )
             );
         });
 
-        let { yubikey_otps } = this.state.user;
-        selected_yubikey_otps.forEach((yubikey_otp) => {
-            helper.remove_from_array(
-                yubikey_otps,
-                yubikey_otp,
-                function (a, b) {
-                    return a.id === b.id;
-                }
-            );
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ yubikey_otps: yubikey_otps });
     }
 
     onDeleteGoogleAuthenticators(selected_google_authenticators) {
+        const promises = [];
         selected_google_authenticators.forEach((google_authenticator) => {
-            psono_server.admin_delete_google_authenticator(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                google_authenticator.id
+            promises.push(
+                psono_server.admin_delete_google_authenticator(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    google_authenticator.id
+                )
             );
         });
 
-        let { google_authenticators } = this.state.user;
-        selected_google_authenticators.forEach((google_authenticator) => {
-            helper.remove_from_array(
-                google_authenticators,
-                google_authenticator,
-                function (a, b) {
-                    return a.id === b.id;
-                }
-            );
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ google_authenticators: google_authenticators });
     }
 
     onDeleteRecoveryCodes(selected_recovery_codes) {
+        const promises = [];
         selected_recovery_codes.forEach((recovery_code) => {
-            psono_server.admin_delete_recovery_code(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                recovery_code.id
+            promises.push(
+                psono_server.admin_delete_recovery_code(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    recovery_code.id
+                )
             );
         });
 
-        let { recovery_codes } = this.state.user;
-        selected_recovery_codes.forEach((recovery_code) => {
-            helper.remove_from_array(
-                recovery_codes,
-                recovery_code,
-                function (a, b) {
-                    return a.id === b.id;
-                }
-            );
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ recovery_codes: recovery_codes });
     }
 
     onDeleteEmergencyCodes(selected_emergency_codes) {
+        const promises = [];
         selected_emergency_codes.forEach((emergency_code) => {
-            psono_server.admin_delete_emergency_code(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                emergency_code.id
+            promises.push(
+                psono_server.admin_delete_emergency_code(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    emergency_code.id
+                )
             );
         });
 
-        let { emergency_codes } = this.state.user;
-        selected_emergency_codes.forEach((emergency_code) => {
-            helper.remove_from_array(
-                emergency_codes,
-                emergency_code,
-                function (a, b) {
-                    return a.id === b.id;
-                }
-            );
+        Promise.all(promises).then((values) => {
+            this.loadUser();
         });
-
-        this.setState({ emergency_codes: emergency_codes });
     }
 
     onChangeEmailChange = (event) => {
