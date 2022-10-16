@@ -64,6 +64,13 @@ class User extends React.Component {
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
+                user.webauthns.forEach((u) => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.active = u.active ? t('YES') : t('NO');
+                });
+
                 user.google_authenticators.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
@@ -162,6 +169,23 @@ class User extends React.Component {
                     this.props.state.user.token,
                     this.props.state.user.session_secret_key,
                     yubikey_otp.id
+                )
+            );
+        });
+
+        Promise.all(promises).then((values) => {
+            this.loadUser();
+        });
+    }
+
+    onDeleteWebAuthns(selected_webauthns) {
+        const promises = [];
+        selected_webauthns.forEach((webauthn) => {
+            promises.push(
+                psono_server.admin_delete_webauthn(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    webauthn.id
                 )
             );
         });
@@ -487,6 +511,7 @@ class User extends React.Component {
                             duos={user.duos}
                             google_authenticators={user.google_authenticators}
                             yubikey_otps={user.yubikey_otps}
+                            webauthns={user.webauthns}
                             recovery_codes={user.recovery_codes}
                             emergency_codes={user.emergency_codes}
                             onDeleteSessions={(selected_sessions) =>
@@ -500,6 +525,9 @@ class User extends React.Component {
                             }
                             onDeleteYubikeyOtps={(selected_yubikey_otps) =>
                                 this.onDeleteYubikeyOtps(selected_yubikey_otps)
+                            }
+                            onDeleteWebAuthns={(selected_webauthns) =>
+                                this.onDeleteWebAuthns(selected_webauthns)
                             }
                             onDeleteGoogleAuthenticators={(
                                 selected_google_authenticators

@@ -18,6 +18,7 @@ class UserCard extends React.Component {
             memberships,
             duos,
             yubikey_otps,
+            webauthns,
             google_authenticators,
             recovery_codes,
             emergency_codes,
@@ -25,6 +26,7 @@ class UserCard extends React.Component {
             onDeleteMemberships,
             onDeleteDuos,
             onDeleteYubikeyOtps,
+            onDeleteWebAuthns,
             onDeleteGoogleAuthenticators,
             onDeleteRecoveryCodes,
             onDeleteEmergencyCodes,
@@ -152,6 +154,32 @@ class UserCard extends React.Component {
                                         icon: Delete,
                                         onClick: (evt, data) =>
                                             onDeleteYubikeyOtps([data]),
+                                    },
+                                ]}
+                            />
+                        ),
+                    },
+                    {
+                        tabName: t('WEBAUTHNS'),
+                        tabIcon: Group,
+                        tabContent: (
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'title', title: t('TITLE') },
+                                    {
+                                        field: 'create_date',
+                                        title: t('CREATED_AT'),
+                                    },
+                                    { field: 'active', title: t('ACTIVE') },
+                                ]}
+                                data={webauthns}
+                                title={t('WEBAUTHNS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_WEBAUTHN_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteWebAuthns([data]),
                                     },
                                 ]}
                             />

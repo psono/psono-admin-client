@@ -164,6 +164,9 @@ class Users extends React.Component {
                     u.duo_enabled = u.duo_enabled
                         ? i18n.t('YES')
                         : i18n.t('NO');
+                    u.webauthn_enabled = u.webauthn_enabled
+                        ? i18n.t('YES')
+                        : i18n.t('NO');
                 });
                 return {
                     data: users,

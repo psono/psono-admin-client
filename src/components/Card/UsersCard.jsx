@@ -118,6 +118,10 @@ class UsersCard extends React.Component {
                                             field: 'duo_enabled',
                                             title: t('DUO_AUTHENTICATION'),
                                         },
+                                        {
+                                            field: 'webauthn_enabled',
+                                            title: t('WEBAUTHN'),
+                                        },
                                     ]}
                                     data={loadUsers}
                                     title={''}
