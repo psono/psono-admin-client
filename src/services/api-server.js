@@ -1019,6 +1019,29 @@ function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
 }
 
 /**
+ * DELETE: Deletes a webauthn (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} webauthn_id The id of the webauthn to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
+    const endpoint = '/admin/webautn/';
+    const connection_type = 'DELETE';
+    const data = {
+        webauthn_id: webauthn_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(connection_type, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a google authenticator (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -2982,6 +3005,7 @@ const service = {
     admin_delete_membership,
     admin_delete_duo,
     admin_delete_yubikey_otp,
+    admin_delete_webauthn,
     admin_delete_google_authenticator,
     admin_delete_recovery_code,
     admin_delete_emergency_code,

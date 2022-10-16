@@ -18,6 +18,7 @@ class UserCard extends React.Component {
             memberships,
             duos,
             yubikey_otps,
+            webauthns,
             google_authenticators,
             recovery_codes,
             emergency_codes,
@@ -25,9 +26,10 @@ class UserCard extends React.Component {
             onDeleteMemberships,
             onDeleteDuos,
             onDeleteYubikeyOtps,
+            onDeleteWebAuthns,
             onDeleteGoogleAuthenticators,
             onDeleteRecoveryCodes,
-            onDeleteEmergencyCodes
+            onDeleteEmergencyCodes,
         } = this.props;
         return (
             <CustomTabs
@@ -42,21 +44,28 @@ class UserCard extends React.Component {
                                 columns={[
                                     {
                                         field: 'create_date',
-                                        title: t('LOGGED_IN_AT')
+                                        title: t('LOGGED_IN_AT'),
                                     },
                                     {
                                         field: 'valid_till',
-                                        title: t('VALID_TILL')
+                                        title: t('VALID_TILL'),
                                     },
                                     {
                                         field: 'device_description',
-                                        title: t('DEVICE_DESCRIPTION')
+                                        title: t('DEVICE_DESCRIPTION'),
                                     },
                                     {
                                         field: 'device_fingerprint',
-                                        title: t('DEVICE')
+                                        title: t('DEVICE'),
                                     },
-                                    { field: 'active', title: t('ACTIVE') }
+                                    {
+                                        field: 'completely_activated',
+                                        title: t('ACTIVATED'),
+                                    },
+                                    {
+                                        field: 'active',
+                                        title: t('STILL_ACTIVE'),
+                                    },
                                 ]}
                                 data={sessions}
                                 title={t('SESSIONS')}
@@ -65,11 +74,11 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_SESSION_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteSessions([data])
-                                    }
+                                            onDeleteSessions([data]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('MEMBERSHIPS'),
@@ -80,10 +89,10 @@ class UserCard extends React.Component {
                                     { field: 'group_name', title: t('GROUP') },
                                     {
                                         field: 'create_date',
-                                        title: t('JOINED_AT')
+                                        title: t('JOINED_AT'),
                                     },
                                     { field: 'accepted', title: t('ACCEPTED') },
-                                    { field: 'admin', title: t('GROUP_ADMIN') }
+                                    { field: 'admin', title: t('GROUP_ADMIN') },
                                 ]}
                                 data={memberships}
                                 title={t('MEMBERSHIPS')}
@@ -92,11 +101,11 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_MEMBERSHIP_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteMemberships([data])
-                                    }
+                                            onDeleteMemberships([data]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('DUOS'),
@@ -107,9 +116,9 @@ class UserCard extends React.Component {
                                     { field: 'title', title: t('TITLE') },
                                     {
                                         field: 'create_date',
-                                        title: t('CREATED_AT')
+                                        title: t('CREATED_AT'),
                                     },
-                                    { field: 'active', title: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') },
                                 ]}
                                 data={duos}
                                 title={t('DUOS')}
@@ -118,11 +127,11 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_DUO_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteDuos([data])
-                                    }
+                                            onDeleteDuos([data]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('YUBIKEYS'),
@@ -133,9 +142,9 @@ class UserCard extends React.Component {
                                     { field: 'title', title: t('TITLE') },
                                     {
                                         field: 'create_date',
-                                        title: t('CREATED_AT')
+                                        title: t('CREATED_AT'),
                                     },
-                                    { field: 'active', title: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') },
                                 ]}
                                 data={yubikey_otps}
                                 title={t('YUBIKEYS')}
@@ -144,11 +153,37 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_YUBIKEY_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteYubikeyOtps([data])
-                                    }
+                                            onDeleteYubikeyOtps([data]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
+                    },
+                    {
+                        tabName: t('WEBAUTHNS'),
+                        tabIcon: Group,
+                        tabContent: (
+                            <CustomMaterialTable
+                                columns={[
+                                    { field: 'title', title: t('TITLE') },
+                                    {
+                                        field: 'create_date',
+                                        title: t('CREATED_AT'),
+                                    },
+                                    { field: 'active', title: t('ACTIVE') },
+                                ]}
+                                data={webauthns}
+                                title={t('WEBAUTHNS')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_WEBAUTHN_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteWebAuthns([data]),
+                                    },
+                                ]}
+                            />
+                        ),
                     },
                     {
                         tabName: t('GOOGLE_AUTHS'),
@@ -159,9 +194,9 @@ class UserCard extends React.Component {
                                     { field: 'title', title: t('TITLE') },
                                     {
                                         field: 'create_date',
-                                        title: t('CREATED_AT')
+                                        title: t('CREATED_AT'),
                                     },
-                                    { field: 'active', title: t('ACTIVE') }
+                                    { field: 'active', title: t('ACTIVE') },
                                 ]}
                                 data={google_authenticators}
                                 title={t('GOOGLE_AUTHENTICATORS')}
@@ -170,11 +205,13 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_GOOGLE_AUTH_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteGoogleAuthenticators([data])
-                                    }
+                                            onDeleteGoogleAuthenticators([
+                                                data,
+                                            ]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('RECOVERY_CODES'),
@@ -184,8 +221,8 @@ class UserCard extends React.Component {
                                 columns={[
                                     {
                                         field: 'create_date',
-                                        title: t('CREATED_AT')
-                                    }
+                                        title: t('CREATED_AT'),
+                                    },
                                 ]}
                                 data={recovery_codes}
                                 title={t('RECOVERY_CODES')}
@@ -194,11 +231,11 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_RECOVERY_CODE_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteRecoveryCodes([data])
-                                    }
+                                            onDeleteRecoveryCodes([data]),
+                                    },
                                 ]}
                             />
-                        )
+                        ),
                     },
                     {
                         tabName: t('EMERGENCY_CODES'),
@@ -208,12 +245,12 @@ class UserCard extends React.Component {
                                 columns={[
                                     {
                                         field: 'description',
-                                        title: t('DESCRIPTION')
+                                        title: t('DESCRIPTION'),
                                     },
                                     {
                                         field: 'create_date',
-                                        title: t('CREATED_AT')
-                                    }
+                                        title: t('CREATED_AT'),
+                                    },
                                 ]}
                                 data={emergency_codes}
                                 title={t('EMERGENCY_CODES')}
@@ -222,12 +259,12 @@ class UserCard extends React.Component {
                                         tooltip: t('DELETE_NOTFALL_CODE_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
-                                            onDeleteEmergencyCodes([data])
-                                    }
+                                            onDeleteEmergencyCodes([data]),
+                                    },
                                 ]}
                             />
-                        )
-                    }
+                        ),
+                    },
                 ]}
             />
         );
@@ -237,7 +274,7 @@ class UserCard extends React.Component {
 UserCard.propTypes = {
     classes: PropTypes.object.isRequired,
     sessions: PropTypes.array,
-    groups: PropTypes.array
+    groups: PropTypes.array,
 };
 
 export default compose(withTranslation(), withStyles(tasksCardStyle))(UserCard);

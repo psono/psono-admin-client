@@ -20,20 +20,28 @@ const TwoFactorChartCard = () => {
                 store.getState().user.token,
                 store.getState().user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 setSeries([
                     response.data.users -
                         response.data.user_yubikey_otp_enabled_count -
                         response.data.user_duo_enabled_count -
+                        response.data.user_webauthn_enabled_count -
                         response.data.user_google_authenticator_enabled_count,
                     response.data.user_yubikey_otp_enabled_count,
                     response.data.user_google_authenticator_enabled_count,
-                    response.data.user_duo_enabled_count
+                    response.data.user_duo_enabled_count,
+                    response.data.user_webauthn_enabled_count,
                 ]);
             });
     };
 
-    const labels = ['None', 'Yubikey', 'Google Authenticator', 'Duo'];
+    const labels = [
+        'None',
+        'Yubikey',
+        'Google Authenticator',
+        'Duo',
+        'WebAuthn',
+    ];
 
     return (
         <ChartCard
@@ -42,13 +50,13 @@ const TwoFactorChartCard = () => {
                     className="ct-chart"
                     data={{
                         labels,
-                        series
+                        series,
                     }}
                     type="Pie"
                     options={{
-                        labelInterpolationFnc: function(value) {
+                        labelInterpolationFnc: function (value) {
                             return value[0];
-                        }
+                        },
                     }}
                     responsiveOptions={[
                         [
@@ -57,18 +65,18 @@ const TwoFactorChartCard = () => {
                                 chartPadding: 20,
                                 labelOffset: 40,
                                 labelDirection: 'explode',
-                                labelInterpolationFnc: function(value) {
+                                labelInterpolationFnc: function (value) {
                                     return value;
-                                }
-                            }
+                                },
+                            },
                         ],
                         [
                             'screen and (min-width: 1024px)',
                             {
                                 labelOffset: 40,
-                                chartPadding: 20
-                            }
-                        ]
+                                chartPadding: 20,
+                            },
+                        ],
                     ]}
                 />
             }
