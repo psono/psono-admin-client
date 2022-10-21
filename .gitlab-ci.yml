@@ -258,3 +258,31 @@ deploy-changelog:
     url: https://static.psono.com/gitlab.com/psono/psono-admin-client/changelog.json
   only:
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
+
+
+deploy-nightlyartifacts:
+  except:
+    - schedules
+  stage: release
+  image: psono-docker.jfrog.io/ubuntu:22.04
+  script:
+    - sh ./var/deploy_nightlyartifacts.sh
+  environment:
+    name: static.psono.com
+    url: https://get.psono.com/psono/psono-admin-client/nightly/adminclient.zip
+  only:
+    - develop
+
+
+deploy-releaseartifacts:
+  except:
+    - schedules
+  stage: release
+  image: psono-docker.jfrog.io/ubuntu:22.04
+  script:
+    - sh ./var/deploy_releaseartifacts.sh
+  environment:
+    name: static.psono.com
+    url: https://get.psono.com/psono/psono-admin-client/latest/adminclient.zip
+  only:
+    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
