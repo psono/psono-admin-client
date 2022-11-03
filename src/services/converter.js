@@ -274,6 +274,39 @@ function uuid_to_hex(val) {
 }
 
 /**
+ * Converts an arrayBuffer to Base64
+ *
+ * @param buffer
+ *
+ * @returns {string} The Base64 representation of the buffer
+ */
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+/**
+ * Converts an Base64 encoded string to arrayBuffer
+ *
+ * @param base64
+ *
+ * @returns {string} The buffer representation of the base64 encoded string
+ */
+function base64ToArrayBuffer(base64) {
+    var binary_string = window.atob(base64);
+    var len = binary_string.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+/**
  * hex to uuid converter
  *
  * @param {string} val The hex representation of a uuid one wants to convert
@@ -284,7 +317,7 @@ function hex_to_uuid(val) {
     return uuid.fromBytes(from_hex(val)).toString();
 }
 
-const Mnemonic = (function() {
+const Mnemonic = (function () {
     // Mnemonic.js v. 1.1.0
 
     // (c) 2012-2015 Yiorgis Gozadinos, Crypho AS.
@@ -293,12 +326,12 @@ const Mnemonic = (function() {
 
     // AMD/global registrations
 
-    let Mnemonic = function(args) {
+    let Mnemonic = function (args) {
         this.seed = args;
         return this;
     };
 
-    Mnemonic.prototype.toHex = function() {
+    Mnemonic.prototype.toHex = function () {
         let l = this.seed.length,
             res = '',
             i = 0;
@@ -308,7 +341,7 @@ const Mnemonic = (function() {
         return res;
     };
 
-    Mnemonic.prototype.toWords = function() {
+    Mnemonic.prototype.toWords = function () {
         let i = 0,
             l = this.seed.length,
             n = Mnemonic.wc,
@@ -329,7 +362,7 @@ const Mnemonic = (function() {
         return words;
     };
 
-    Mnemonic.fromWords = function(words) {
+    Mnemonic.fromWords = function (words) {
         let i = 0,
             n = Mnemonic.wc,
             l = words.length / 3,
@@ -351,7 +384,7 @@ const Mnemonic = (function() {
         return new Mnemonic(seed);
     };
 
-    Mnemonic.fromHex = function(hex) {
+    Mnemonic.fromHex = function (hex) {
         let hexParts = hex.match(/.{1,8}/g),
             i = 0,
             l = hex.length / 8,
@@ -372,7 +405,7 @@ const Mnemonic = (function() {
     );
 
     // make modulo arithmetic work as in math, not as in javascript ;)
-    Mnemonic._mod = function(a, b) {
+    Mnemonic._mod = function (a, b) {
         return a - Math.floor(a / b) * b;
     };
 
@@ -417,9 +450,11 @@ const service = {
     hex_to_base58: hex_to_base58,
     base58_to_hex: base58_to_hex,
     uuid_to_hex: uuid_to_hex,
+    arrayBufferToBase64: arrayBufferToBase64,
+    base64ToArrayBuffer: base64ToArrayBuffer,
     hex_to_uuid: hex_to_uuid,
     words_to_hex: words_to_hex,
-    hex_to_words: hex_to_words
+    hex_to_words: hex_to_words,
 };
 
 export default service;
