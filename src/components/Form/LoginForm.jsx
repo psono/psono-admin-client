@@ -16,6 +16,8 @@ import {
 } from '../../components';
 
 import helper from '../../services/helper';
+import webauthnService from '../../services/webauthn';
+import converter from '../../services/converter';
 import store from '../../services/store';
 
 const style = {
@@ -206,6 +208,103 @@ class LoginForm extends React.Component {
         });
     };
 
+    verify_webauthn = () => {
+        let multifactors = this.state.multifactors;
+        webauthnService.verifyWebauthnInit().then(
+            async (webauthn) => {
+                webauthn.options.challenge = Uint8Array.from(
+                    webauthn.options.challenge,
+                    (c) => c.charCodeAt(0)
+                );
+                for (
+                    let i = 0;
+                    i < webauthn.options.allowCredentials.length;
+                    i++
+                ) {
+                    webauthn.options.allowCredentials[i]['id'] =
+                        converter.base64ToArrayBuffer(
+                            webauthn.options.allowCredentials[i]['id']
+                                .replace(/-/g, '+')
+                                .replace(/_/g, '/')
+                        );
+                }
+
+                let credential;
+                try {
+                    credential = await navigator.credentials.get({
+                        publicKey: webauthn.options,
+                    });
+                } catch (error) {
+                    this.setState({
+                        view: 'default',
+                        loginLoading: false,
+                    });
+                    return;
+                }
+
+                const convertedCredential = {
+                    id: credential.id,
+                    rawId: credential.id,
+                    type: credential.type,
+                    authenticatorAttachment: credential.authenticatorAttachment,
+                    response: {
+                        authenticatorData: converter.arrayBufferToBase64(
+                            credential.response.authenticatorData
+                        ),
+                        clientDataJSON: converter.arrayBufferToBase64(
+                            credential.response.clientDataJSON
+                        ),
+                        signature: converter.arrayBufferToBase64(
+                            credential.response.signature
+                        ),
+                        userHandle: converter.arrayBufferToBase64(
+                            credential.response.userHandle
+                        ),
+                    },
+                };
+
+                return webauthnService
+                    .verifyWebauthn(JSON.stringify(convertedCredential))
+                    .then(
+                        (successful) => {
+                            if (
+                                this.state.server_info.info
+                                    .multifactor_enabled === false
+                            ) {
+                                multifactors = [];
+                            } else {
+                                helper.remove_from_array(
+                                    multifactors,
+                                    'webauthn_2fa'
+                                );
+                            }
+                            this.setState({ multifactors: multifactors });
+                            this.requirement_check_mfa();
+                        },
+                        (error) => {
+                            console.log(error);
+                            this.setState({
+                                errors: ['WEBAUTHN_FIDO2_TOKEN_NOT_FOUND'],
+                            });
+                        }
+                    );
+            },
+            (error) => {
+                this.setState({
+                    errors: ['WEBAUTHN_FIDO2_TOKEN_NOT_FOUND_FOR_THIS_ORIGIN'],
+                });
+            }
+        );
+    };
+
+    show_webauthn_2fa_form = () => {
+        this.setState({
+            view: 'webauthn',
+            loginLoading: false,
+        });
+        this.verify_webauthn();
+    };
+
     show_duo_2fa_form = () => {
         this.setState({
             view: 'duo',
@@ -225,6 +324,8 @@ class LoginForm extends React.Component {
                 view: 'pick_second_factor',
                 loginLoading: false,
             });
+        } else if (multifactors.indexOf('webauthn_2fa') !== -1) {
+            this.show_webauthn_2fa_form();
         } else if (multifactors.indexOf('yubikey_otp_2fa') !== -1) {
             this.show_yubikey_otp_2fa_form();
         } else if (multifactors.indexOf('google_authenticator_2fa') !== -1) {
@@ -937,6 +1038,52 @@ class LoginForm extends React.Component {
                 </div>
             );
         }
+        if (this.state.view === 'webauthn') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('WEBAUTHN')}
+                        cardSubtitle={t('SOLVE_THE_WEBAUTHN_CHALLENGE')}
+                        content={
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <SnackbarContent
+                                            message={t(
+                                                'SOLVE_THE_WEBAUTHN_CHALLENGE_EXPLAINED'
+                                            )}
+                                            close
+                                            color="info"
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="transparent"
+                                            onClick={this.cancel}
+                                        >
+                                            {t('CANCEL')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
 
         if (this.state.view === 'pick_second_factor') {
             return (
@@ -990,6 +1137,27 @@ class LoginForm extends React.Component {
                                                 fullWidth
                                             >
                                                 {t('YUBIKEY')}
+                                            </Button>
+                                        </GridItem>
+                                    )}
+                                    {this.state.multifactors.indexOf(
+                                        'webauthn_2fa'
+                                    ) !== -1 && (
+                                        <GridItem
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            <Button
+                                                color="primary"
+                                                onClick={
+                                                    this.show_webauthn_2fa_form
+                                                }
+                                                type="submit"
+                                                fullWidth
+                                            >
+                                                {t('FIDO2_WEBAUTHN')}
                                             </Button>
                                         </GridItem>
                                     )}

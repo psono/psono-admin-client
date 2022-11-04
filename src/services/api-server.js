@@ -121,11 +121,11 @@ function call(method, endpoint, data, headers, session_secret_key) {
  */
 function info() {
     const endpoint = '/info/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -135,11 +135,11 @@ function info() {
  */
 function healthcheck() {
     const endpoint = '/healthcheck/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -152,14 +152,14 @@ function healthcheck() {
  */
 function admin_stats_browser(token, session_secret_key) {
     const endpoint = '/admin/stats/browser/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -172,14 +172,14 @@ function admin_stats_browser(token, session_secret_key) {
  */
 function admin_stats_device(token, session_secret_key) {
     const endpoint = '/admin/stats/device/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -192,14 +192,14 @@ function admin_stats_device(token, session_secret_key) {
  */
 function admin_stats_os(token, session_secret_key) {
     const endpoint = '/admin/stats/os/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -212,14 +212,14 @@ function admin_stats_os(token, session_secret_key) {
  */
 function admin_stats_two_factor(token, session_secret_key) {
     const endpoint = '/admin/stats/two-factor/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -232,14 +232,14 @@ function admin_stats_two_factor(token, session_secret_key) {
  */
 function admin_info(token, session_secret_key) {
     const endpoint = '/admin/info/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -254,7 +254,7 @@ function admin_info(token, session_secret_key) {
  */
 function admin_user(token, session_secret_key, user_id, params) {
     const endpoint = '/admin/user/' + (!user_id ? '' : user_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const queryParams =
@@ -267,7 +267,7 @@ function admin_user(token, session_secret_key, user_id, params) {
     };
 
     return call(
-        connection_type,
+        method,
         endpoint + queryParams,
         data,
         headers,
@@ -286,7 +286,7 @@ function admin_user(token, session_secret_key, user_id, params) {
  */
 function admin_session(token, session_secret_key, params) {
     const endpoint = '/admin/session/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const queryParams =
@@ -299,7 +299,7 @@ function admin_session(token, session_secret_key, params) {
     };
 
     return call(
-        connection_type,
+        method,
         endpoint + queryParams,
         data,
         headers,
@@ -319,7 +319,7 @@ function admin_session(token, session_secret_key, params) {
  */
 function admin_group(token, session_secret_key, group_id, params) {
     const endpoint = '/admin/group/' + (!group_id ? '' : group_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const queryParams =
@@ -332,7 +332,7 @@ function admin_group(token, session_secret_key, group_id, params) {
     };
 
     return call(
-        connection_type,
+        method,
         endpoint + queryParams,
         data,
         headers,
@@ -353,14 +353,14 @@ function admin_security_report(token, session_secret_key, security_report_id) {
     const endpoint =
         '/admin/security-report/' +
         (!security_report_id ? '' : security_report_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -373,14 +373,14 @@ function admin_security_report(token, session_secret_key, security_report_id) {
  */
 function admin_ldap_user(token, session_secret_key) {
     const endpoint = '/admin/ldap/user/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -393,14 +393,14 @@ function admin_ldap_user(token, session_secret_key) {
  */
 function admin_ldap_group(token, session_secret_key) {
     const endpoint = '/admin/ldap/group/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -420,7 +420,7 @@ function admin_ldap_create_group_map(
     ldap_group_id
 ) {
     const endpoint = '/admin/ldap/group/map/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         group_id: group_id,
         ldap_group_id: ldap_group_id,
@@ -429,7 +429,7 @@ function admin_ldap_create_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -451,7 +451,7 @@ function admin_ldap_update_group_map(
     share_admin
 ) {
     const endpoint = '/admin/ldap/group/map/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         ldap_group_map_id: ldap_group_map_id,
         group_admin: group_admin,
@@ -461,7 +461,7 @@ function admin_ldap_update_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -481,7 +481,7 @@ function admin_ldap_delete_group_map(
     ldap_group_id
 ) {
     const endpoint = '/admin/ldap/group/map/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         group_id: group_id,
         ldap_group_id: ldap_group_id,
@@ -491,7 +491,7 @@ function admin_ldap_delete_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -504,14 +504,14 @@ function admin_ldap_delete_group_map(
  */
 function admin_ldap_group_sync(token, session_secret_key) {
     const endpoint = '/admin/ldap/group/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -524,14 +524,14 @@ function admin_ldap_group_sync(token, session_secret_key) {
  */
 function admin_saml_group(token, session_secret_key) {
     const endpoint = '/admin/saml/group/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -545,7 +545,7 @@ function admin_saml_group(token, session_secret_key) {
  */
 function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
     const endpoint = '/admin/saml/group/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         saml_group_id: saml_group_id,
     };
@@ -554,7 +554,7 @@ function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -568,7 +568,7 @@ function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
  */
 function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
     const endpoint = '/admin/oidc/group/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         oidc_group_id: oidc_group_id,
     };
@@ -577,7 +577,7 @@ function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -591,7 +591,7 @@ function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
  */
 function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
     const endpoint = '/admin/ldap/group/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         ldap_group_id: ldap_group_id,
     };
@@ -600,7 +600,7 @@ function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -613,14 +613,14 @@ function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
  */
 function admin_saml_group_sync(token, session_secret_key) {
     const endpoint = '/admin/saml/group/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -640,7 +640,7 @@ function admin_saml_create_group_map(
     saml_group_id
 ) {
     const endpoint = '/admin/saml/group/map/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         group_id: group_id,
         saml_group_id: saml_group_id,
@@ -649,7 +649,7 @@ function admin_saml_create_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -671,7 +671,7 @@ function admin_saml_update_group_map(
     share_admin
 ) {
     const endpoint = '/admin/saml/group/map/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         saml_group_map_id: saml_group_map_id,
         group_admin: group_admin,
@@ -681,7 +681,7 @@ function admin_saml_update_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -701,7 +701,7 @@ function admin_saml_delete_group_map(
     saml_group_id
 ) {
     const endpoint = '/admin/saml/group/map/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         group_id: group_id,
         saml_group_id: saml_group_id,
@@ -711,7 +711,7 @@ function admin_saml_delete_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -724,14 +724,14 @@ function admin_saml_delete_group_map(
  */
 function admin_oidc_group(token, session_secret_key) {
     const endpoint = '/admin/oidc/group/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -751,7 +751,7 @@ function admin_oidc_create_group_map(
     oidc_group_id
 ) {
     const endpoint = '/admin/oidc/group/map/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         group_id: group_id,
         oidc_group_id: oidc_group_id,
@@ -760,7 +760,7 @@ function admin_oidc_create_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -782,7 +782,7 @@ function admin_oidc_update_group_map(
     share_admin
 ) {
     const endpoint = '/admin/oidc/group/map/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         oidc_group_map_id: oidc_group_map_id,
         group_admin: group_admin,
@@ -792,7 +792,7 @@ function admin_oidc_update_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -812,7 +812,7 @@ function admin_oidc_delete_group_map(
     oidc_group_id
 ) {
     const endpoint = '/admin/oidc/group/map/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         group_id: group_id,
         oidc_group_id: oidc_group_id,
@@ -822,7 +822,7 @@ function admin_oidc_delete_group_map(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -844,7 +844,7 @@ function admin_create_user(
     email
 ) {
     const endpoint = '/admin/user/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         username: username,
         email: email,
@@ -854,7 +854,7 @@ function admin_create_user(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -868,7 +868,7 @@ function admin_create_user(
  */
 function admin_delete_user(token, session_secret_key, user_id) {
     const endpoint = '/admin/user/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         user_id: user_id,
     };
@@ -877,7 +877,7 @@ function admin_delete_user(token, session_secret_key, user_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -891,7 +891,7 @@ function admin_delete_user(token, session_secret_key, user_id) {
  */
 function admin_delete_session(token, session_secret_key, session_id) {
     const endpoint = '/admin/session/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         session_id: session_id,
     };
@@ -900,7 +900,7 @@ function admin_delete_session(token, session_secret_key, session_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -915,7 +915,7 @@ function admin_delete_session(token, session_secret_key, session_id) {
  */
 function admin_create_group(token, session_secret_key, name) {
     const endpoint = '/admin/group/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         name: name,
     };
@@ -923,7 +923,7 @@ function admin_create_group(token, session_secret_key, name) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -937,7 +937,7 @@ function admin_create_group(token, session_secret_key, name) {
  */
 function admin_delete_group(token, session_secret_key, group_id) {
     const endpoint = '/admin/group/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         group_id: group_id,
     };
@@ -946,7 +946,7 @@ function admin_delete_group(token, session_secret_key, group_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -960,7 +960,7 @@ function admin_delete_group(token, session_secret_key, group_id) {
  */
 function admin_delete_membership(token, session_secret_key, membership_id) {
     const endpoint = '/admin/membership/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         membership_id: membership_id,
     };
@@ -969,7 +969,7 @@ function admin_delete_membership(token, session_secret_key, membership_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -983,7 +983,7 @@ function admin_delete_membership(token, session_secret_key, membership_id) {
  */
 function admin_delete_duo(token, session_secret_key, duo_id) {
     const endpoint = '/admin/duo/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         duo_id: duo_id,
     };
@@ -992,7 +992,7 @@ function admin_delete_duo(token, session_secret_key, duo_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1006,7 +1006,7 @@ function admin_delete_duo(token, session_secret_key, duo_id) {
  */
 function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
     const endpoint = '/admin/yubikey-otp/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         yubikey_otp_id: yubikey_otp_id,
     };
@@ -1015,7 +1015,7 @@ function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1029,7 +1029,7 @@ function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
  */
 function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
     const endpoint = '/admin/webautn/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         webauthn_id: webauthn_id,
     };
@@ -1038,7 +1038,7 @@ function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1056,7 +1056,7 @@ function admin_delete_google_authenticator(
     google_authenticator_id
 ) {
     const endpoint = '/admin/google-authenticator/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         google_authenticator_id: google_authenticator_id,
     };
@@ -1065,7 +1065,7 @@ function admin_delete_google_authenticator(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1083,7 +1083,7 @@ function admin_delete_recovery_code(
     recovery_code_id
 ) {
     const endpoint = '/admin/recovery-code/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         recovery_code_id: recovery_code_id,
     };
@@ -1092,7 +1092,7 @@ function admin_delete_recovery_code(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1110,7 +1110,7 @@ function admin_delete_emergency_code(
     emergency_code_id
 ) {
     const endpoint = '/admin/emergency-code/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         emergency_code_id: emergency_code_id,
     };
@@ -1119,7 +1119,7 @@ function admin_delete_emergency_code(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1145,7 +1145,7 @@ function admin_update_user(
     is_superuser
 ) {
     const endpoint = '/admin/user/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         user_id: user_id,
         email: email,
@@ -1157,7 +1157,7 @@ function admin_update_user(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1173,7 +1173,7 @@ function admin_update_user(
  */
 function login(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/authentication/login/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         login_info: login_info,
         login_info_nonce: login_info_nonce,
@@ -1182,7 +1182,7 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1196,13 +1196,13 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
  */
 function saml_initiate_login(saml_provider_id, return_to_url) {
     const endpoint = '/saml/' + saml_provider_id + '/initiate-login/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         return_to_url: return_to_url,
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1223,7 +1223,7 @@ function saml_login(
     session_duration
 ) {
     const endpoint = '/saml/login/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         login_info: login_info,
         login_info_nonce: login_info_nonce,
@@ -1232,7 +1232,7 @@ function saml_login(
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1246,13 +1246,13 @@ function saml_login(
  */
 function oidc_initiate_login(oidc_provider_id, return_to_url) {
     const endpoint = '/oidc/' + oidc_provider_id + '/initiate-login/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         return_to_url: return_to_url,
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1273,7 +1273,7 @@ function oidc_login(
     session_duration
 ) {
     const endpoint = '/oidc/login/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         login_info: login_info,
         login_info_nonce: login_info_nonce,
@@ -1282,7 +1282,7 @@ function oidc_login(
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1296,7 +1296,7 @@ function oidc_login(
  */
 function ga_verify(token, ga_token, session_secret_key) {
     const endpoint = '/authentication/ga-verify/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         ga_token: ga_token,
     };
@@ -1304,7 +1304,7 @@ function ga_verify(token, ga_token, session_secret_key) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1318,7 +1318,7 @@ function ga_verify(token, ga_token, session_secret_key) {
  */
 function duo_verify(token, duo_token, session_secret_key) {
     const endpoint = '/authentication/duo-verify/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         duo_token: duo_token,
     };
@@ -1326,7 +1326,7 @@ function duo_verify(token, duo_token, session_secret_key) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1340,7 +1340,7 @@ function duo_verify(token, duo_token, session_secret_key) {
  */
 function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
     const endpoint = '/authentication/yubikey-otp-verify/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         yubikey_otp: yubikey_otp,
     };
@@ -1348,7 +1348,7 @@ function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1368,7 +1368,7 @@ function activate_token(
     session_secret_key
 ) {
     const endpoint = '/authentication/activate-token/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         verification: verification,
         verification_nonce: verification_nonce,
@@ -1377,7 +1377,7 @@ function activate_token(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1390,14 +1390,14 @@ function activate_token(
  */
 function get_sessions(token, session_secret_key) {
     const endpoint = '/authentication/sessions/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1411,7 +1411,7 @@ function get_sessions(token, session_secret_key) {
  */
 function logout(token, session_secret_key, session_id) {
     const endpoint = '/authentication/logout/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         session_id: session_id,
     };
@@ -1419,7 +1419,7 @@ function logout(token, session_secret_key, session_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1452,7 +1452,7 @@ function register(
     base_url
 ) {
     const endpoint = '/authentication/register/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         email: email,
         username: username,
@@ -1467,7 +1467,7 @@ function register(
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1480,13 +1480,13 @@ function register(
  */
 function verify_email(activation_code) {
     const endpoint = '/authentication/verify-email/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         activation_code: activation_code,
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1517,7 +1517,7 @@ function update_user(
     secret_key_nonce
 ) {
     const endpoint = '/user/update/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         email: email,
         authkey: authkey,
@@ -1531,7 +1531,7 @@ function update_user(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1555,7 +1555,7 @@ function write_recoverycode(
     recovery_sauce
 ) {
     const endpoint = '/recoverycode/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         recovery_authkey: recovery_authkey,
         recovery_data: recovery_data,
@@ -1566,7 +1566,7 @@ function write_recoverycode(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1579,14 +1579,14 @@ function write_recoverycode(
  */
 function enable_recoverycode(username, recovery_authkey) {
     const endpoint = '/password/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         username: username,
         recovery_authkey: recovery_authkey,
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1606,7 +1606,7 @@ function set_password(
     update_data_nonce
 ) {
     const endpoint = '/password/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         username: username,
         recovery_authkey: recovery_authkey,
@@ -1615,7 +1615,7 @@ function set_password(
     };
     const headers = null;
 
-    return call(connection_type, endpoint, data, headers);
+    return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1629,13 +1629,13 @@ function set_password(
  */
 function read_datastore(token, session_secret_key, datastore_id) {
     const endpoint = '/datastore/' + (!datastore_id ? '' : datastore_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1666,7 +1666,7 @@ function create_datastore(
     encrypted_data_secret_key_nonce
 ) {
     const endpoint = '/datastore/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         type: type,
         description: description,
@@ -1680,7 +1680,7 @@ function create_datastore(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1695,7 +1695,7 @@ function create_datastore(
  */
 function delete_datastore(token, session_secret_key, datastore_id, authkey) {
     const endpoint = '/datastore/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         datastore_id: datastore_id,
         authkey: authkey,
@@ -1705,7 +1705,7 @@ function delete_datastore(token, session_secret_key, datastore_id, authkey) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1735,7 +1735,7 @@ function write_datastore(
     is_default
 ) {
     const endpoint = '/datastore/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         datastore_id: datastore_id,
         data: encrypted_data,
@@ -1749,7 +1749,7 @@ function write_datastore(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1764,14 +1764,14 @@ function write_datastore(
  */
 function read_secret(token, session_secret_key, secret_id, synchronous) {
     const endpoint = '/secret/' + secret_id + '/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
     return call(
-        connection_type,
+        method,
         endpoint,
         data,
         headers,
@@ -1804,7 +1804,7 @@ function create_secret(
     parent_share_id
 ) {
     const endpoint = '/secret/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         data: encrypted_data,
         data_nonce: encrypted_data_nonce,
@@ -1816,7 +1816,7 @@ function create_secret(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1838,7 +1838,7 @@ function write_secret(
     encrypted_data_nonce
 ) {
     const endpoint = '/secret/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         secret_id: secret_id,
         data: encrypted_data,
@@ -1848,7 +1848,7 @@ function write_secret(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1870,7 +1870,7 @@ function move_secret_link(
     new_parent_datastore_id
 ) {
     const endpoint = '/secret/link/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         link_id: link_id,
         new_parent_share_id: new_parent_share_id,
@@ -1880,7 +1880,7 @@ function move_secret_link(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1894,7 +1894,7 @@ function move_secret_link(
  */
 function delete_secret_link(token, session_secret_key, link_id) {
     const endpoint = '/secret/link/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         link_id: link_id,
     };
@@ -1903,7 +1903,7 @@ function delete_secret_link(token, session_secret_key, link_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1917,13 +1917,13 @@ function delete_secret_link(token, session_secret_key, link_id) {
  */
 function read_share(token, session_secret_key, share_id) {
     const endpoint = '/share/' + share_id + '/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1936,13 +1936,13 @@ function read_share(token, session_secret_key, share_id) {
  */
 function read_shares(token, session_secret_key) {
     const endpoint = '/share/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1973,7 +1973,7 @@ function create_share(
     link_id
 ) {
     const endpoint = '/share/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         data: encrypted_data,
         data_nonce: encrypted_data_nonce,
@@ -1988,7 +1988,7 @@ function create_share(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2010,7 +2010,7 @@ function write_share(
     encrypted_data_nonce
 ) {
     const endpoint = '/share/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         share_id: share_id,
         data: encrypted_data,
@@ -2020,7 +2020,7 @@ function write_share(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2034,13 +2034,13 @@ function write_share(
  */
 function read_share_rights(token, session_secret_key, share_id) {
     const endpoint = '/share/rights/' + share_id + '/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2053,13 +2053,13 @@ function read_share_rights(token, session_secret_key, share_id) {
  */
 function read_share_rights_overview(token, session_secret_key) {
     const endpoint = '/share/right/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2099,7 +2099,7 @@ function create_share_right(
     grant
 ) {
     const endpoint = '/share/right/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         title: encrypted_title,
         title_nonce: encrypted_title_nonce,
@@ -2118,7 +2118,7 @@ function create_share_right(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2146,7 +2146,7 @@ function update_share_right(
     grant
 ) {
     const endpoint = '/share/right/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         share_id: share_id,
         user_id: user_id,
@@ -2159,7 +2159,7 @@ function update_share_right(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2179,7 +2179,7 @@ function delete_share_right(
     group_share_right_id
 ) {
     const endpoint = '/share/right/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         user_share_right_id: user_share_right_id,
         group_share_right_id: group_share_right_id,
@@ -2189,7 +2189,7 @@ function delete_share_right(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2202,13 +2202,13 @@ function delete_share_right(
  */
 function read_share_rights_inherit_overview(token, session_secret_key) {
     const endpoint = '/share/right/inherit/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2233,7 +2233,7 @@ function accept_share_right(
     key_type
 ) {
     const endpoint = '/share/right/accept/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         share_right_id: share_right_id,
         key: key,
@@ -2244,7 +2244,7 @@ function accept_share_right(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2258,7 +2258,7 @@ function accept_share_right(
  */
 function decline_share_right(token, session_secret_key, share_right_id) {
     const endpoint = '/share/right/decline/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         share_right_id: share_right_id,
     };
@@ -2266,7 +2266,7 @@ function decline_share_right(token, session_secret_key, share_right_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2281,7 +2281,7 @@ function decline_share_right(token, session_secret_key, share_right_id) {
  */
 function search_user(token, session_secret_key, user_id, user_username) {
     const endpoint = '/user/search/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         user_id: user_id,
         user_username: user_username,
@@ -2290,7 +2290,7 @@ function search_user(token, session_secret_key, user_id, user_username) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2304,7 +2304,7 @@ function search_user(token, session_secret_key, user_id, user_username) {
  */
 function create_ga(token, session_secret_key, title) {
     const endpoint = '/user/ga/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         title: title,
     };
@@ -2312,7 +2312,7 @@ function create_ga(token, session_secret_key, title) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2325,14 +2325,14 @@ function create_ga(token, session_secret_key, title) {
  */
 function read_ga(token, session_secret_key) {
     const endpoint = '/user/ga/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2352,7 +2352,7 @@ function activate_ga(
     google_authenticator_token
 ) {
     const endpoint = '/user/ga/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         google_authenticator_id: google_authenticator_id,
         google_authenticator_token: google_authenticator_token,
@@ -2362,7 +2362,7 @@ function activate_ga(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2376,7 +2376,7 @@ function activate_ga(
  */
 function delete_ga(token, session_secret_key, google_authenticator_id) {
     const endpoint = '/user/ga/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         google_authenticator_id: google_authenticator_id,
     };
@@ -2386,7 +2386,7 @@ function delete_ga(token, session_secret_key, google_authenticator_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2410,7 +2410,7 @@ function create_duo(
     host
 ) {
     const endpoint = '/user/duo/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         title: title,
         integration_key: integration_key,
@@ -2421,7 +2421,7 @@ function create_duo(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2434,14 +2434,14 @@ function create_duo(
  */
 function read_duo(token, session_secret_key) {
     const endpoint = '/user/duo/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2456,7 +2456,7 @@ function read_duo(token, session_secret_key) {
  */
 function activate_duo(token, session_secret_key, duo_id, duo_token) {
     const endpoint = '/user/duo/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         duo_id: duo_id,
         duo_token: duo_token,
@@ -2466,7 +2466,7 @@ function activate_duo(token, session_secret_key, duo_id, duo_token) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2480,7 +2480,7 @@ function activate_duo(token, session_secret_key, duo_id, duo_token) {
  */
 function delete_duo(token, session_secret_key, duo_id) {
     const endpoint = '/user/duo/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         duo_id: duo_id,
     };
@@ -2490,7 +2490,7 @@ function delete_duo(token, session_secret_key, duo_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2505,7 +2505,7 @@ function delete_duo(token, session_secret_key, duo_id) {
  */
 function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         title: title,
         yubikey_otp: yubikey_otp,
@@ -2514,7 +2514,7 @@ function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2527,14 +2527,14 @@ function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
  */
 function read_yubikey_otp(token, session_secret_key) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
 
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2554,7 +2554,7 @@ function activate_yubikey_otp(
     yubikey_otp
 ) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         yubikey_id: yubikey_id,
         yubikey_otp: yubikey_otp,
@@ -2564,7 +2564,7 @@ function activate_yubikey_otp(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2578,7 +2578,7 @@ function activate_yubikey_otp(
  */
 function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
     const endpoint = '/user/yubikey-otp/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         yubikey_otp_id: yubikey_otp_id,
     };
@@ -2588,7 +2588,7 @@ function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2613,7 +2613,7 @@ function create_share_link(
     parent_datastore_id
 ) {
     const endpoint = '/share/link/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         link_id: link_id,
         share_id: share_id,
@@ -2624,7 +2624,7 @@ function create_share_link(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2647,7 +2647,7 @@ function move_share_link(
     new_parent_datastore_id
 ) {
     const endpoint = '/share/link/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         link_id: link_id,
         new_parent_share_id: new_parent_share_id,
@@ -2657,7 +2657,7 @@ function move_share_link(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2671,7 +2671,7 @@ function move_share_link(
  */
 function delete_share_link(token, session_secret_key, link_id) {
     const endpoint = '/share/link/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         link_id: link_id,
     };
@@ -2680,7 +2680,7 @@ function delete_share_link(token, session_secret_key, link_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2694,13 +2694,13 @@ function delete_share_link(token, session_secret_key, link_id) {
  */
 function read_group(token, session_secret_key, group_id) {
     const endpoint = '/group/' + (!group_id ? '' : group_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2728,7 +2728,7 @@ function create_group(
     public_key
 ) {
     const endpoint = '/group/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         name: name,
         secret_key: secret_key,
@@ -2741,7 +2741,7 @@ function create_group(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2756,7 +2756,7 @@ function create_group(
  */
 function update_group(token, session_secret_key, group_id, name) {
     const endpoint = '/group/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         group_id: group_id,
         name: name,
@@ -2766,7 +2766,7 @@ function update_group(token, session_secret_key, group_id, name) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2780,7 +2780,7 @@ function update_group(token, session_secret_key, group_id, name) {
  */
 function delete_group(token, session_secret_key, group_id) {
     const endpoint = '/group/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         group_id: group_id,
     };
@@ -2790,7 +2790,7 @@ function delete_group(token, session_secret_key, group_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2805,13 +2805,13 @@ function delete_group(token, session_secret_key, group_id) {
  */
 function read_group_rights(token, session_secret_key, group_id) {
     const endpoint = '/group/rights/' + (!group_id ? '' : group_id + '/');
-    const connection_type = 'GET';
+    const method = 'GET';
     const data = null;
     const headers = {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2845,7 +2845,7 @@ function create_membership(
     group_admin
 ) {
     const endpoint = '/membership/';
-    const connection_type = 'PUT';
+    const method = 'PUT';
     const data = {
         group_id: group_id,
         user_id: user_id,
@@ -2861,7 +2861,7 @@ function create_membership(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2881,7 +2881,7 @@ function update_membership(
     group_admin
 ) {
     const endpoint = '/membership/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         membership_id: membership_id,
         group_admin: group_admin,
@@ -2890,7 +2890,7 @@ function update_membership(
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2904,7 +2904,7 @@ function update_membership(
  */
 function delete_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         membership_id: membership_id,
     };
@@ -2914,7 +2914,7 @@ function delete_membership(token, session_secret_key, membership_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2929,7 +2929,7 @@ function delete_membership(token, session_secret_key, membership_id) {
  */
 function accept_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/accept/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         membership_id: membership_id,
     };
@@ -2937,7 +2937,7 @@ function accept_membership(token, session_secret_key, membership_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2951,7 +2951,7 @@ function accept_membership(token, session_secret_key, membership_id) {
  */
 function decline_membership(token, session_secret_key, membership_id) {
     const endpoint = '/membership/decline/';
-    const connection_type = 'POST';
+    const method = 'POST';
     const data = {
         membership_id: membership_id,
     };
@@ -2959,7 +2959,7 @@ function decline_membership(token, session_secret_key, membership_id) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2973,7 +2973,7 @@ function decline_membership(token, session_secret_key, membership_id) {
  */
 function delete_account(token, session_secret_key, authkey) {
     const endpoint = '/user/delete/';
-    const connection_type = 'DELETE';
+    const method = 'DELETE';
     const data = {
         authkey: authkey,
     };
@@ -2982,7 +2982,51 @@ function delete_account(token, session_secret_key, authkey) {
         Authorization: 'Token ' + token,
     };
 
-    return call(connection_type, endpoint, data, headers, session_secret_key);
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * Ajax PUT request to the backend to initiate the second factor authentication with webauthn
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} sessionSecretKey The session secret key
+ * @param {string} origin The current origin e.g. https://example.com
+ *
+ * @returns {Promise} Returns a promise with the verification status
+ */
+function webauthnVerifyInit(token, sessionSecretKey, origin) {
+    const endpoint = '/authentication/webauthn-verify/';
+    const method = 'PUT';
+    const data = {
+        origin: origin,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, sessionSecretKey);
+}
+
+/**
+ * Ajax POST request to the backend with the response from the browser to solve the webauthn challenge
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} sessionSecretKey The session secret key
+ * @param {string} credential The credentials passed by the browser
+ *
+ * @returns {Promise} Returns a promise with the verification status
+ */
+function webauthnVerify(token, sessionSecretKey, credential) {
+    const endpoint = '/authentication/webauthn-verify/';
+    const method = 'POST';
+    const data = {
+        credential: credential,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
 const service = {
@@ -3093,6 +3137,8 @@ const service = {
     accept_membership,
     decline_membership,
     delete_account,
+    webauthnVerifyInit,
+    webauthnVerify,
 };
 
 export default service;
