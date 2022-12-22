@@ -60,18 +60,18 @@ class Dashboard extends React.Component {
         healthcheck: {
             db_read: {},
             db_sync: {},
-            time_sync: {}
+            time_sync: {},
         },
-        tr: true
+        tr: true,
     };
 
     convert_tags_to_releases(tags) {
-        tags.forEach(r => {
-            Object.keys(r.commit).forEach(function(key) {
+        tags.forEach((r) => {
+            Object.keys(r.commit).forEach(function (key) {
                 r[key] = r.commit[key];
             });
 
-            Object.keys(r.release).forEach(function(key) {
+            Object.keys(r.release).forEach(function (key) {
                 r[key] = r.release[key];
             });
             r.created_at = moment(r.created_at).format('YYYY-MM-DD HH:mm:ss');
@@ -97,65 +97,65 @@ class Dashboard extends React.Component {
         if (this.props.state.server.type === 'CE') {
             api_static
                 .get('/gitlab.com/psono/psono-server/changelog.json')
-                .then(response => {
+                .then((response) => {
                     this.convert_tags_to_releases(response.data);
                     this.setState({
                         server_tags: response.data,
-                        server_latest_version: response.data[0].name
+                        server_latest_version: response.data[0].name,
                     });
                 });
         } else {
             api_static
                 .get('/gitlab.com/psono-enterprise/psono-server/changelog.json')
-                .then(response => {
+                .then((response) => {
                     this.convert_tags_to_releases(response.data);
                     this.setState({
                         server_tags: response.data,
-                        server_latest_version: response.data[0].name
+                        server_latest_version: response.data[0].name,
                     });
                 });
         }
         api_static
             .get('/gitlab.com/psono/psono-client/changelog.json')
-            .then(response => {
+            .then((response) => {
                 this.convert_tags_to_releases(response.data);
                 this.setState({
                     client_tags: response.data,
-                    client_latest_version: response.data[0].name
+                    client_latest_version: response.data[0].name,
                 });
             });
         api_static
             .get('/gitlab.com/psono/psono-admin-client/changelog.json')
-            .then(response => {
+            .then((response) => {
                 this.convert_tags_to_releases(response.data);
                 this.setState({
                     admin_client_tags: response.data,
-                    admin_client_latest_version: response.data[0].name
+                    admin_client_latest_version: response.data[0].name,
                 });
             });
         api_static
             .get('/gitlab.com/psono/psono-fileserver/changelog.json')
-            .then(response => {
+            .then((response) => {
                 this.convert_tags_to_releases(response.data);
                 this.setState({
                     fileserver_tags: response.data,
-                    fileserver_latest_version: response.data[0].name
+                    fileserver_latest_version: response.data[0].name,
                 });
             });
 
         psono_server.healthcheck().then(
-            response => {
+            (response) => {
                 //healthy is reported as 200
                 this.setState({
-                    healthcheck: response.data
+                    healthcheck: response.data,
                 });
             },
-            response => {
+            (response) => {
                 //error occured, could mean unhealthy...
                 if (response.status === 400) {
                     //unhealthy is reported as 400
                     this.setState({
-                        healthcheck: response.data
+                        healthcheck: response.data,
                     });
                 }
             }
@@ -165,7 +165,7 @@ class Dashboard extends React.Component {
                 this.props.state.user.token,
                 this.props.state.user.session_secret_key
             )
-            .then(response => {
+            .then((response) => {
                 response.data.info = JSON.parse(response.data.info);
 
                 let label_day = [];
@@ -176,7 +176,7 @@ class Dashboard extends React.Component {
 
                 let count_registrations_first_week = 0;
                 let count_registrations_second_week = 0;
-                response.data.registrations_over_day.forEach(function(r) {
+                response.data.registrations_over_day.forEach(function (r) {
                     count = count - 1;
                     if (count > 13) {
                         return;
@@ -196,18 +196,18 @@ class Dashboard extends React.Component {
                 let label_month = [];
                 let data_month_new = [];
                 let data_month_total = [];
-                response.data.registrations_over_month.forEach(function(r) {
+                response.data.registrations_over_month.forEach(function (r) {
                     label_month.push(r.month);
                     data_month_new.push(r.count_new);
                     data_month_total.push(r.count_total);
                 });
 
                 let registrations = [];
-                response.data.registrations.forEach(function(r) {
+                response.data.registrations.forEach(function (r) {
                     registrations.push({
                         date: moment(r.date).format('YYYY-MM-DD HH:mm:ss'),
                         username: r.username,
-                        active: r.active ? t('YES') : t('NO')
+                        active: r.active ? t('YES') : t('NO'),
                     });
                 });
 
@@ -234,35 +234,38 @@ class Dashboard extends React.Component {
                     label_month,
                     data_month_new,
                     data_month_total,
-                    registrations
+                    registrations,
                 });
                 psono_client.set_url(response.data.info.web_client);
-                return psono_client.get_version().then(response => {
+                return psono_client.get_version().then((response) => {
                     this.setState({
-                        client_used_version: 'v' + response.data.split(' ')[0]
+                        client_used_version: 'v' + response.data.split(' ')[0],
                     });
                 });
             });
 
-        axios.get('/portal/VERSION.txt').then(response => {
-            this.setState({
-                admin_client_used_version: 'v' + response.data.split(' ')[0]
+        axios
+            .get('/portal/VERSION.txt?t=' + new Date().getTime())
+            .then((response) => {
+                this.setState({
+                    admin_client_used_version:
+                        'v' + response.data.split(' ')[0],
+                });
             });
-        });
     }
 
     render() {
         const { t } = this.props;
         const {
             count_registrations_second_week,
-            count_registrations_first_week
+            count_registrations_first_week,
         } = this.state;
         const { files } = this.props.state.server;
         let registration_text;
         if (this.state.count_registrations_second_week) {
             let percentage = Math.round(
-                this.state.count_registrations_second_week /
-                    this.state.count_registrations_first_week *
+                (this.state.count_registrations_second_week /
+                    this.state.count_registrations_first_week) *
                     100 -
                     100
             );
@@ -354,16 +357,17 @@ class Dashboard extends React.Component {
                                             labels: this.state.label_day,
                                             series: [
                                                 this.state.data_day_total,
-                                                this.state.data_day_new
-                                            ]
+                                                this.state.data_day_new,
+                                            ],
                                         }}
                                         type="Line"
                                         options={{
-                                            lineSmooth: Chartist.Interpolation.cardinal(
-                                                {
-                                                    tension: 0
-                                                }
-                                            ),
+                                            lineSmooth:
+                                                Chartist.Interpolation.cardinal(
+                                                    {
+                                                        tension: 0,
+                                                    }
+                                                ),
                                             low: 0,
                                             high:
                                                 Math.max(
@@ -375,7 +379,7 @@ class Dashboard extends React.Component {
                                                 top: 0,
                                                 right: 0,
                                                 bottom: 10,
-                                                left: 10
+                                                left: 10,
                                             },
                                             plugins: [
                                                 Chartist.plugins.ctAxisTitle({
@@ -386,21 +390,21 @@ class Dashboard extends React.Component {
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 0,
-                                                            y: 35
+                                                            y: 35,
                                                         },
-                                                        textAnchor: 'middle'
+                                                        textAnchor: 'middle',
                                                     },
                                                     axisY: {
                                                         axisTitle: t('USERS'),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 10,
-                                                            y: -10
+                                                            y: -10,
                                                         },
-                                                        flipTitle: false
-                                                    }
-                                                })
-                                            ]
+                                                        flipTitle: false,
+                                                    },
+                                                }),
+                                            ],
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
@@ -439,16 +443,17 @@ class Dashboard extends React.Component {
                                             labels: this.state.label_month,
                                             series: [
                                                 this.state.data_month_total,
-                                                this.state.data_month_new
-                                            ]
+                                                this.state.data_month_new,
+                                            ],
                                         }}
                                         type="Line"
                                         options={{
-                                            lineSmooth: Chartist.Interpolation.cardinal(
-                                                {
-                                                    tension: 0
-                                                }
-                                            ),
+                                            lineSmooth:
+                                                Chartist.Interpolation.cardinal(
+                                                    {
+                                                        tension: 0,
+                                                    }
+                                                ),
                                             low: 0,
                                             high:
                                                 Math.max(
@@ -460,7 +465,7 @@ class Dashboard extends React.Component {
                                                 top: 0,
                                                 right: 0,
                                                 bottom: 10,
-                                                left: 10
+                                                left: 10,
                                             },
                                             plugins: [
                                                 Chartist.plugins.ctAxisTitle({
@@ -471,21 +476,21 @@ class Dashboard extends React.Component {
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 0,
-                                                            y: 35
+                                                            y: 35,
                                                         },
-                                                        textAnchor: 'middle'
+                                                        textAnchor: 'middle',
                                                     },
                                                     axisY: {
                                                         axisTitle: t('USERS'),
                                                         axisClass: 'ct-label',
                                                         offset: {
                                                             x: 10,
-                                                            y: -10
+                                                            y: -10,
                                                         },
-                                                        flipTitle: false
-                                                    }
-                                                })
-                                            ]
+                                                        flipTitle: false,
+                                                    },
+                                                }),
+                                            ],
                                         }}
                                         listener={dailySalesChart.animation}
                                     />
@@ -582,12 +587,12 @@ class Dashboard extends React.Component {
                                             { field: 'date', title: t('DATE') },
                                             {
                                                 field: 'username',
-                                                title: t('USERNAME')
+                                                title: t('USERNAME'),
                                             },
                                             {
                                                 field: 'active',
-                                                title: t('ACTIVE')
-                                            }
+                                                title: t('ACTIVE'),
+                                            },
                                         ]}
                                         data={this.state.registrations}
                                         title={''}
@@ -603,9 +608,10 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
-export default compose(withTranslation(), withStyles(dashboardStyle))(
-    Dashboard
-);
+export default compose(
+    withTranslation(),
+    withStyles(dashboardStyle)
+)(Dashboard);
