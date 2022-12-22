@@ -8,7 +8,7 @@ import store from './store';
 
 function get_version() {
     const client_url = store.getState().client.url;
-    return axios.get(client_url + '/VERSION.txt');
+    return axios.get(client_url + '/VERSION.txt?t=' + new Date().getTime());
 }
 
 function set_url(url) {
@@ -17,7 +17,7 @@ function set_url(url) {
 
 const service = {
     get_version,
-    set_url
+    set_url,
 };
 
 export default service;
