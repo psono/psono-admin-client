@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
-import { DevicesOther, Group, Delete } from '@material-ui/icons';
+import { DevicesOther, Group, Delete, Link } from '@material-ui/icons';
 import { withTranslation } from 'react-i18next';
 import { compose } from 'redux';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ class UserCard extends React.Component {
             google_authenticators,
             recovery_codes,
             emergency_codes,
+            link_shares,
             onDeleteSessions,
             onDeleteMemberships,
             onDeleteDuos,
@@ -30,6 +31,7 @@ class UserCard extends React.Component {
             onDeleteGoogleAuthenticators,
             onDeleteRecoveryCodes,
             onDeleteEmergencyCodes,
+            onDeleteLinkShares,
         } = this.props;
         return (
             <CustomTabs
@@ -256,10 +258,50 @@ class UserCard extends React.Component {
                                 title={t('EMERGENCY_CODES')}
                                 actions={[
                                     {
-                                        tooltip: t('DELETE_NOTFALL_CODE_S'),
+                                        tooltip: t('DELETE_EMERGENCY_CODE_S'),
                                         icon: Delete,
                                         onClick: (evt, data) =>
                                             onDeleteEmergencyCodes([data]),
+                                    },
+                                ]}
+                            />
+                        ),
+                    },
+                    {
+                        tabName: t('LINK_SHARES'),
+                        tabIcon: Link,
+                        tabContent: (
+                            <CustomMaterialTable
+                                columns={[
+                                    {
+                                        field: 'public_title',
+                                        title: t('TITLE'),
+                                    },
+                                    {
+                                        field: 'valid_till',
+                                        title: t('VALID_TILL'),
+                                    },
+                                    {
+                                        field: 'allowed_reads',
+                                        title: t('ALLOWED_USAGE'),
+                                    },
+                                    {
+                                        field: 'has_passphrase',
+                                        title: t('PASSPHRASE'),
+                                    },
+                                    {
+                                        field: 'create_date',
+                                        title: t('CREATED_AT'),
+                                    },
+                                ]}
+                                data={link_shares}
+                                title={t('LINK_SHARES')}
+                                actions={[
+                                    {
+                                        tooltip: t('DELETE_LINK_SHARE_S'),
+                                        icon: Delete,
+                                        onClick: (evt, data) =>
+                                            onDeleteLinkShares([data]),
                                     },
                                 ]}
                             />

@@ -99,6 +99,10 @@ class UsersCard extends React.Component {
                                             title: t('CREATED_AT'),
                                         },
                                         {
+                                            field: 'last_login',
+                                            title: t('LAST_LOGIN'),
+                                        },
+                                        {
                                             field: 'is_active',
                                             title: t('ACTIVE'),
                                         },
