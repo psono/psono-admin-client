@@ -1123,6 +1123,29 @@ function admin_delete_emergency_code(
 }
 
 /**
+ * DELETE: Deletes a link share (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} link_share_id The id of the link share to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_link_share(token, session_secret_key, link_share_id) {
+    const endpoint = '/admin/link-share/';
+    const method = 'DELETE';
+    const data = {
+        link_share_id: link_share_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * PUT: Update a user (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -3053,6 +3076,7 @@ const service = {
     admin_delete_google_authenticator,
     admin_delete_recovery_code,
     admin_delete_emergency_code,
+    admin_delete_link_share,
     admin_ldap_user,
     admin_ldap_group,
     admin_ldap_create_group_map,

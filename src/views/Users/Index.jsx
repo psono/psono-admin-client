@@ -149,6 +149,9 @@ class Users extends React.Component {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
                     );
+                    u.last_login = moment(u.last_login).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
                     u.is_active = u.is_active ? i18n.t('YES') : i18n.t('NO');
                     u.is_email_active = u.is_email_active
                         ? i18n.t('YES')

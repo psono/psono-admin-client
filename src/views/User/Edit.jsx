@@ -104,6 +104,16 @@ class User extends React.Component {
                     );
                 });
 
+                user.link_shares.forEach((u) => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.valid_till = u.valid_till
+                        ? moment(u.valid_till).format('YYYY-MM-DD HH:mm:ss')
+                        : '';
+                    u.has_passphrase = u.has_passphrase ? t('YES') : t('NO');
+                });
+
                 this.setState({
                     user: user,
                 });
@@ -237,6 +247,23 @@ class User extends React.Component {
                     this.props.state.user.token,
                     this.props.state.user.session_secret_key,
                     emergency_code.id
+                )
+            );
+        });
+
+        Promise.all(promises).then((values) => {
+            this.loadUser();
+        });
+    }
+
+    onDeleteLinkShares(selected_link_shares) {
+        const promises = [];
+        selected_link_shares.forEach((link_share) => {
+            promises.push(
+                psono_server.admin_delete_link_share(
+                    this.props.state.user.token,
+                    this.props.state.user.session_secret_key,
+                    link_share.id
                 )
             );
         });
@@ -514,6 +541,7 @@ class User extends React.Component {
                             webauthns={user.webauthns}
                             recovery_codes={user.recovery_codes}
                             emergency_codes={user.emergency_codes}
+                            link_shares={user.link_shares}
                             onDeleteSessions={(selected_sessions) =>
                                 this.onDeleteSessions(selected_sessions)
                             }
@@ -547,6 +575,9 @@ class User extends React.Component {
                                 this.onDeleteEmergencyCodes(
                                     selected_emergency_codes
                                 )
+                            }
+                            onDeleteLinkShares={(selected_link_shares) =>
+                                this.onDeleteLinkShares(selected_link_shares)
                             }
                         />
                     </GridItem>
