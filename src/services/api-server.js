@@ -950,6 +950,38 @@ function admin_delete_group(token, session_secret_key, group_id) {
 }
 
 /**
+ * Ajax POST request to update a group membership with the token as authentication (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} membership_id The membership id to update
+ * @param {boolean} group_admin Weather the users should have group admin rights or not
+ * @param {boolean} share_admin Weather the users should have share admin rights or not
+ *
+ * @returns {Promise<AxiosResponse<any>>} promise
+ */
+function admin_update_membership(
+    token,
+    session_secret_key,
+    membership_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/membership/';
+    const method = 'PUT';
+    const data = {
+        membership_id: membership_id,
+        group_admin: group_admin,
+        share_admin: share_admin,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a group membership (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -3069,6 +3101,7 @@ const service = {
     admin_delete_session,
     admin_create_group,
     admin_delete_group,
+    admin_update_membership,
     admin_delete_membership,
     admin_delete_duo,
     admin_delete_yubikey_otp,

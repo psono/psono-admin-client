@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
+
+import { Grid } from '@material-ui/core';
 
 import {
     RegularCard,
