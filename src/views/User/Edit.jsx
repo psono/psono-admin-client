@@ -1,8 +1,11 @@
-import React from 'react';
-import { Grid, Checkbox, withStyles } from '@material-ui/core';
-import { withTranslation } from 'react-i18next';
-import { compose } from 'redux';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import moment from 'moment';
+
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Checkbox } from '@material-ui/core';
+import { CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
 
 import {
     Button,
@@ -15,23 +18,26 @@ import {
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
-class User extends React.Component {
-    state = {
-        errors: [],
-        msgs: [],
-    };
+const useStyles = makeStyles(customInputStyle);
+const UserEdit = (props) => {
+    const classes = useStyles();
+    const { t } = useTranslation();
+    const { user_id } = useParams();
+    const [user, setUser] = useState(null);
+    const [errors, setErrors] = useState([]);
+    const [msgs, setMsgs] = useState([]);
 
-    componentDidMount() {
-        this.loadUser();
-    }
+    React.useEffect(() => {
+        loadUser();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    loadUser() {
-        const { t } = this.props;
+    function loadUser() {
         psono_server
             .admin_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                this.props.match.params.user_id
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                user_id
             )
             .then((response) => {
                 const user = response.data;
@@ -83,7 +89,50 @@ class User extends React.Component {
                         'YYYY-MM-DD HH:mm:ss'
                     );
                     u.accepted = u.accepted ? t('YES') : t('NO');
-                    u.admin = u.admin ? t('YES') : t('NO');
+
+                    u.admin_raw = u.admin;
+                    u.admin = (
+                        <Checkbox
+                            checked={u.admin_raw}
+                            tabIndex={-1}
+                            onClick={() => {
+                                handleToggleGroupAdmin(u);
+                            }}
+                            checkedIcon={
+                                <CheckBox className={classes.checkedIcon} />
+                            }
+                            icon={
+                                <CheckBoxOutlineBlank
+                                    className={classes.uncheckedIcon}
+                                />
+                            }
+                            classes={{
+                                checked: classes.checked,
+                            }}
+                        />
+                    );
+
+                    u.share_admin_raw = u.share_admin;
+                    u.share_admin = (
+                        <Checkbox
+                            checked={u.share_admin_raw}
+                            tabIndex={-1}
+                            onClick={() => {
+                                handleToggleShareAdmin(u);
+                            }}
+                            checkedIcon={
+                                <CheckBox className={classes.checkedIcon} />
+                            }
+                            icon={
+                                <CheckBoxOutlineBlank
+                                    className={classes.uncheckedIcon}
+                                />
+                            }
+                            classes={{
+                                checked: classes.checked,
+                            }}
+                        />
+                    );
                 });
 
                 user.recovery_codes.forEach((u) => {
@@ -113,208 +162,218 @@ class User extends React.Component {
                         : '';
                     u.has_passphrase = u.has_passphrase ? t('YES') : t('NO');
                 });
-
-                this.setState({
-                    user: user,
-                });
+                setUser(user);
             });
     }
 
-    onDeleteSessions(selected_sessions) {
+    const handleToggle = (membershipId, groupAdmin, shareAdmin) => {
+        psono_server
+            .admin_update_membership(
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                membershipId,
+                groupAdmin,
+                shareAdmin
+            )
+            .then((values) => {
+                loadUser();
+            });
+    };
+    const handleToggleGroupAdmin = (membership) => {
+        return handleToggle(
+            membership.id,
+            !membership.admin_raw,
+            membership.share_admin_raw
+        );
+    };
+    const handleToggleShareAdmin = (membership) => {
+        return handleToggle(
+            membership.id,
+            membership.admin_raw,
+            !membership.share_admin_raw
+        );
+    };
+
+    const onDeleteSessions = (selected_sessions) => {
         const promises = [];
         selected_sessions.forEach((session) => {
             promises.push(
                 psono_server.admin_delete_session(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     session.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteMemberships(selected_memberships) {
+    const onDeleteMemberships = (selected_memberships) => {
         const promises = [];
         selected_memberships.forEach((membership) => {
             promises.push(
                 psono_server.admin_delete_membership(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     membership.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteDuos(selected_duos) {
+    const onDeleteDuos = (selected_duos) => {
         const promises = [];
         selected_duos.forEach((duo) => {
             promises.push(
                 psono_server.admin_delete_duo(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     duo.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteYubikeyOtps(selected_yubikey_otps) {
+    const onDeleteYubikeyOtps = (selected_yubikey_otps) => {
         const promises = [];
         selected_yubikey_otps.forEach((yubikey_otp) => {
             promises.push(
                 psono_server.admin_delete_yubikey_otp(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     yubikey_otp.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteWebAuthns(selected_webauthns) {
+    const onDeleteWebAuthns = (selected_webauthns) => {
         const promises = [];
         selected_webauthns.forEach((webauthn) => {
             promises.push(
                 psono_server.admin_delete_webauthn(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     webauthn.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteGoogleAuthenticators(selected_google_authenticators) {
+    const onDeleteGoogleAuthenticators = (selected_google_authenticators) => {
         const promises = [];
         selected_google_authenticators.forEach((google_authenticator) => {
             promises.push(
                 psono_server.admin_delete_google_authenticator(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     google_authenticator.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteRecoveryCodes(selected_recovery_codes) {
+    const onDeleteRecoveryCodes = (selected_recovery_codes) => {
         const promises = [];
         selected_recovery_codes.forEach((recovery_code) => {
             promises.push(
                 psono_server.admin_delete_recovery_code(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     recovery_code.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteEmergencyCodes(selected_emergency_codes) {
+    const onDeleteEmergencyCodes = (selected_emergency_codes) => {
         const promises = [];
         selected_emergency_codes.forEach((emergency_code) => {
             promises.push(
                 psono_server.admin_delete_emergency_code(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     emergency_code.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onDeleteLinkShares(selected_link_shares) {
+    const onDeleteLinkShares = (selected_link_shares) => {
         const promises = [];
         selected_link_shares.forEach((link_share) => {
             promises.push(
                 psono_server.admin_delete_link_share(
-                    this.props.state.user.token,
-                    this.props.state.user.session_secret_key,
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
                     link_share.id
                 )
             );
         });
 
         Promise.all(promises).then((values) => {
-            this.loadUser();
+            loadUser();
         });
-    }
+    };
 
-    onChangeEmailChange = (event) => {
-        let { user } = this.state;
+    const onChangeEmailChange = (event) => {
         user.email = event.target.value;
-        this.setState({
-            user,
-        });
+        setUser(user);
     };
 
-    onIsActiveToggle = (event) => {
-        let { user } = this.state;
+    const onIsActiveToggle = (event) => {
         user.is_active = !user.is_active;
-        this.setState({
-            user,
-        });
+        setUser(user);
     };
 
-    onIsEmailActiveToggle = (event) => {
-        let { user } = this.state;
+    const onIsEmailActiveToggle = (event) => {
         user.is_email_active = !user.is_email_active;
-        this.setState({
-            user,
-        });
+        setUser(user);
     };
 
-    onIsSuperuserToggle = (event) => {
-        let { user } = this.state;
+    const onIsSuperuserToggle = (event) => {
         user.is_superuser = !user.is_superuser;
-        this.setState({
-            user,
-        });
+        setUser(user);
     };
 
-    save = () => {
-        this.setState({
-            errors: [],
-            msgs: [],
-        });
-        let { user } = this.state;
+    const save = () => {
+        setErrors([]);
+        setMsgs([]);
         psono_server
             .admin_update_user(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
+                props.state.user.token,
+                props.state.user.session_secret_key,
                 user.id,
                 user.email,
                 user.is_active,
@@ -323,268 +382,223 @@ class User extends React.Component {
             )
             .then(
                 (result) => {
-                    let msgs = ['SAVE_SUCCESS'];
-                    this.setState({ msgs });
+                    setMsgs(['SAVE_SUCCESS']);
                 },
                 (result) => {
                     if (result.data.hasOwnProperty('email')) {
-                        let errors = result.data.email;
-                        this.setState({ errors });
+                        setErrors(result.data.email);
                     } else if (result.data.hasOwnProperty('errors')) {
-                        let errors = result.data.errors;
-                        this.setState({ errors });
+                        setErrors(result.data.errors);
                     } else {
-                        this.setState({
-                            errors: [result.data],
-                        });
+                        setErrors([result.data]);
                     }
                 }
             );
     };
 
-    render() {
-        const { classes, t } = this.props;
-        const user = this.state.user;
-
-        if (!user) {
-            return null;
-        }
-
-        if (user.authentication === 'AUTHKEY') {
-            this.authentication = 'Normal';
-        } else if (user.authentication === 'LDAP') {
-            this.authentication = 'LDAP';
-        } else if (user.authentication === 'SAML') {
-            this.authentication = 'SAML';
-        } else {
-            this.authentication = 'UNKNOWN';
-        }
-        const errors = (
-            <GridItem xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
-                {this.state.errors.map((prop, index) => {
-                    return (
-                        <SnackbarContent
-                            message={t(prop)}
-                            color="danger"
-                            key={index}
-                        />
-                    );
-                })}
-            </GridItem>
-        );
-        const msgs = (
-            <GridItem xs={8} sm={8} md={8} style={{ marginTop: '20px' }}>
-                {this.state.msgs.map((prop, index) => {
-                    return (
-                        <SnackbarContent
-                            message={t(prop)}
-                            color="info"
-                            key={index}
-                        />
-                    );
-                })}
-            </GridItem>
-        );
-
-        return (
-            <div>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <RegularCard
-                            cardTitle={t('EDIT_USER')}
-                            cardSubtitle={t('UPDATE_USER_DETAILS')}
-                            content={
-                                <div>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={12} md={7}>
-                                            <CustomInput
-                                                labelText={t('USERNAME')}
-                                                id="username"
-                                                formControlProps={{
-                                                    fullWidth: true,
-                                                }}
-                                                inputProps={{
-                                                    value: user.username,
-                                                    disabled: true,
-                                                    readOnly: true,
-                                                }}
-                                            />
-                                        </GridItem>
-                                        <GridItem xs={12} sm={12} md={5}>
-                                            <CustomInput
-                                                labelText={t('AUTHENTICATION')}
-                                                id="authentication"
-                                                formControlProps={{
-                                                    fullWidth: true,
-                                                }}
-                                                inputProps={{
-                                                    value: this.authentication,
-                                                    disabled: true,
-                                                    readOnly: true,
-                                                }}
-                                            />
-                                        </GridItem>
-                                    </Grid>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={12} md={12}>
-                                            <CustomInput
-                                                labelText={t('PUBLIC_KEY')}
-                                                id="public_key"
-                                                formControlProps={{
-                                                    fullWidth: true,
-                                                }}
-                                                inputProps={{
-                                                    value: user.public_key,
-                                                    disabled: true,
-                                                    readOnly: true,
-                                                }}
-                                            />
-                                        </GridItem>
-                                    </Grid>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={12} md={4}>
-                                            <CustomInput
-                                                labelText={t(
-                                                    'REGISTRATION_DATE'
-                                                )}
-                                                id="create_date"
-                                                formControlProps={{
-                                                    fullWidth: true,
-                                                }}
-                                                inputProps={{
-                                                    value: moment(
-                                                        user.create_date
-                                                    ).format(
-                                                        'YYYY-MM-DD HH:mm:ss'
-                                                    ),
-                                                    disabled: true,
-                                                    readOnly: true,
-                                                }}
-                                            />
-                                        </GridItem>
-                                        <GridItem xs={12} sm={12} md={8}>
-                                            <CustomInput
-                                                labelText={t('EMAIL')}
-                                                id="email"
-                                                formControlProps={{
-                                                    fullWidth: true,
-                                                }}
-                                                inputProps={{
-                                                    value: user.email,
-                                                    onChange:
-                                                        this
-                                                            .onChangeEmailChange,
-                                                }}
-                                            />
-                                        </GridItem>
-                                    </Grid>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={6} md={4}>
-                                            <div className={classes.checkbox}>
-                                                <Checkbox
-                                                    tabIndex={1}
-                                                    checked={user.is_active}
-                                                    onClick={() => {
-                                                        this.onIsActiveToggle();
-                                                    }}
-                                                />{' '}
-                                                {t('ACTIVE')}
-                                            </div>
-                                        </GridItem>
-                                        <GridItem xs={12} sm={6} md={4}>
-                                            <div className={classes.checkbox}>
-                                                <Checkbox
-                                                    tabIndex={1}
-                                                    checked={
-                                                        user.is_email_active
-                                                    }
-                                                    onClick={() => {
-                                                        this.onIsEmailActiveToggle();
-                                                    }}
-                                                />{' '}
-                                                {t('EMAIL_VERIFIED')}
-                                            </div>
-                                        </GridItem>
-                                        <GridItem xs={12} sm={6} md={4}>
-                                            <div className={classes.checkbox}>
-                                                <Checkbox
-                                                    tabIndex={1}
-                                                    checked={user.is_superuser}
-                                                    onClick={() => {
-                                                        this.onIsSuperuserToggle();
-                                                    }}
-                                                />{' '}
-                                                {t('SUPERUSER')}
-                                            </div>
-                                        </GridItem>
-                                        {errors}
-                                        {msgs}
-                                    </Grid>
-                                </div>
-                            }
-                            footer={
-                                <Button color="primary" onClick={this.save}>
-                                    {t('SAVE')}
-                                </Button>
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <UserCard
-                            sessions={user.sessions}
-                            memberships={user.memberships}
-                            duos={user.duos}
-                            google_authenticators={user.google_authenticators}
-                            yubikey_otps={user.yubikey_otps}
-                            webauthns={user.webauthns}
-                            recovery_codes={user.recovery_codes}
-                            emergency_codes={user.emergency_codes}
-                            link_shares={user.link_shares}
-                            onDeleteSessions={(selected_sessions) =>
-                                this.onDeleteSessions(selected_sessions)
-                            }
-                            onDeleteMemberships={(selected_memberships) =>
-                                this.onDeleteMemberships(selected_memberships)
-                            }
-                            onDeleteDuos={(selected_duos) =>
-                                this.onDeleteDuos(selected_duos)
-                            }
-                            onDeleteYubikeyOtps={(selected_yubikey_otps) =>
-                                this.onDeleteYubikeyOtps(selected_yubikey_otps)
-                            }
-                            onDeleteWebAuthns={(selected_webauthns) =>
-                                this.onDeleteWebAuthns(selected_webauthns)
-                            }
-                            onDeleteGoogleAuthenticators={(
-                                selected_google_authenticators
-                            ) =>
-                                this.onDeleteGoogleAuthenticators(
-                                    selected_google_authenticators
-                                )
-                            }
-                            onDeleteRecoveryCodes={(selected_recovery_codes) =>
-                                this.onDeleteRecoveryCodes(
-                                    selected_recovery_codes
-                                )
-                            }
-                            onDeleteEmergencyCodes={(
-                                selected_emergency_codes
-                            ) =>
-                                this.onDeleteEmergencyCodes(
-                                    selected_emergency_codes
-                                )
-                            }
-                            onDeleteLinkShares={(selected_link_shares) =>
-                                this.onDeleteLinkShares(selected_link_shares)
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-            </div>
-        );
+    if (!user) {
+        return null;
     }
-}
 
-export default compose(withTranslation(), withStyles(customInputStyle))(User);
+    let authentication;
+    if (user.authentication === 'AUTHKEY') {
+        authentication = 'Normal';
+    } else if (user.authentication === 'LDAP') {
+        authentication = 'LDAP';
+    } else if (user.authentication === 'SAML') {
+        authentication = 'SAML';
+    } else {
+        authentication = 'UNKNOWN';
+    }
+
+    return (
+        <div>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    <RegularCard
+                        cardTitle={t('EDIT_USER')}
+                        cardSubtitle={t('UPDATE_USER_DETAILS')}
+                        content={
+                            <div>
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={7}>
+                                        <CustomInput
+                                            labelText={t('USERNAME')}
+                                            id="username"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: user.username,
+                                                disabled: true,
+                                                readOnly: true,
+                                            }}
+                                        />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={5}>
+                                        <CustomInput
+                                            labelText={t('AUTHENTICATION')}
+                                            id="authentication"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: authentication,
+                                                disabled: true,
+                                                readOnly: true,
+                                            }}
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText={t('PUBLIC_KEY')}
+                                            id="public_key"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: user.public_key,
+                                                disabled: true,
+                                                readOnly: true,
+                                            }}
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={4}>
+                                        <CustomInput
+                                            labelText={t('REGISTRATION_DATE')}
+                                            id="create_date"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: moment(
+                                                    user.create_date
+                                                ).format('YYYY-MM-DD HH:mm:ss'),
+                                                disabled: true,
+                                                readOnly: true,
+                                            }}
+                                        />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={8}>
+                                        <CustomInput
+                                            labelText={t('EMAIL')}
+                                            id="email"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: user.email,
+                                                onChange: onChangeEmailChange,
+                                            }}
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem xs={12} sm={6} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={user.is_active}
+                                                onClick={onIsActiveToggle}
+                                            />{' '}
+                                            {t('ACTIVE')}
+                                        </div>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={6} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={user.is_email_active}
+                                                onClick={onIsEmailActiveToggle}
+                                            />{' '}
+                                            {t('EMAIL_VERIFIED')}
+                                        </div>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={6} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={user.is_superuser}
+                                                onClick={onIsSuperuserToggle}
+                                            />{' '}
+                                            {t('SUPERUSER')}
+                                        </div>
+                                    </GridItem>
+                                    <GridItem
+                                        xs={8}
+                                        sm={8}
+                                        md={8}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        {errors.map((prop, index) => {
+                                            return (
+                                                <SnackbarContent
+                                                    message={t(prop)}
+                                                    color="danger"
+                                                    key={index}
+                                                />
+                                            );
+                                        })}
+                                    </GridItem>
+                                    <GridItem
+                                        xs={8}
+                                        sm={8}
+                                        md={8}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        {msgs.map((prop, index) => {
+                                            return (
+                                                <SnackbarContent
+                                                    message={t(prop)}
+                                                    color="info"
+                                                    key={index}
+                                                />
+                                            );
+                                        })}
+                                    </GridItem>
+                                </Grid>
+                            </div>
+                        }
+                        footer={
+                            <Button color="primary" onClick={save}>
+                                {t('SAVE')}
+                            </Button>
+                        }
+                    />
+                </GridItem>
+            </Grid>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    <UserCard
+                        sessions={user.sessions}
+                        memberships={user.memberships}
+                        duos={user.duos}
+                        google_authenticators={user.google_authenticators}
+                        yubikey_otps={user.yubikey_otps}
+                        webauthns={user.webauthns}
+                        recovery_codes={user.recovery_codes}
+                        emergency_codes={user.emergency_codes}
+                        link_shares={user.link_shares}
+                        onDeleteSessions={onDeleteSessions}
+                        onDeleteMemberships={onDeleteMemberships}
+                        onDeleteDuos={onDeleteDuos}
+                        onDeleteYubikeyOtps={onDeleteYubikeyOtps}
+                        onDeleteWebAuthns={onDeleteWebAuthns}
+                        onDeleteGoogleAuthenticators={
+                            onDeleteGoogleAuthenticators
+                        }
+                        onDeleteRecoveryCodes={onDeleteRecoveryCodes}
+                        onDeleteEmergencyCodes={onDeleteEmergencyCodes}
+                        onDeleteLinkShares={onDeleteLinkShares}
+                    />
+                </GridItem>
+            </Grid>
+        </div>
+    );
+};
+
+export default UserEdit;

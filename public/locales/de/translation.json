@@ -5,6 +5,7 @@
   "SHARES": "Shares",
   "SHARE_DATE": "Share Datum",
   "SHARE_ID": "Share ID",
+  "SHARE_RIGHTS": "Share Rechte",
   "SIGNED_IN_AS": "Angemeldet als",
   "PASSWORDS_DONT_MATCH": "Passwörter nicht identisch.",
   "LDAP_GATEWAY_CONNECTION_ISSUE": "LDAP Gateway Verbindungsprobleme",
