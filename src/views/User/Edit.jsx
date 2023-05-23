@@ -348,23 +348,31 @@ const UserEdit = (props) => {
     };
 
     const onChangeEmailChange = (event) => {
-        user.email = event.target.value;
-        setUser(user);
+        setUser({
+            ...user,
+            email: event.target.value,
+        });
     };
 
     const onIsActiveToggle = (event) => {
-        user.is_active = !user.is_active;
-        setUser(user);
+        setUser({
+            ...user,
+            is_active: !user.is_active,
+        });
     };
 
     const onIsEmailActiveToggle = (event) => {
-        user.is_email_active = !user.is_email_active;
-        setUser(user);
+        setUser({
+            ...user,
+            is_email_active: !user.is_email_active,
+        });
     };
 
     const onIsSuperuserToggle = (event) => {
-        user.is_superuser = !user.is_superuser;
-        setUser(user);
+        setUser({
+            ...user,
+            is_superuser: !user.is_superuser,
+        });
     };
 
     const save = () => {
