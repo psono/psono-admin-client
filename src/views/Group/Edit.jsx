@@ -346,7 +346,7 @@ const GroupEdit = (props) => {
             .then((response) => {
                 mappedLdapGroupIndex[ldapGroup.id]['ldap_group_map_id'] =
                     response.data.id;
-                setMappedLdapGroupIndex(mappedLdapGroupIndex);
+                setMappedLdapGroupIndex({ ...mappedLdapGroupIndex });
             });
     };
 
@@ -361,7 +361,7 @@ const GroupEdit = (props) => {
             .then((response) => {
                 mappedSamlGroupIndex[samlGroup.id]['saml_group_map_id'] =
                     response.data.id;
-                setMappedSamlGroupIndex(mappedSamlGroupIndex);
+                setMappedSamlGroupIndex({ ...mappedSamlGroupIndex });
             });
     };
 
@@ -376,13 +376,13 @@ const GroupEdit = (props) => {
             .then((response) => {
                 mappedOidcGroupIndex[oidcGroup.id]['oidc_group_map_id'] =
                     response.data.id;
-                setMappedOidcGroupIndex(mappedOidcGroupIndex);
+                setMappedOidcGroupIndex({ ...mappedOidcGroupIndex });
             });
     };
 
     const removeMappingLDAP = (ldapGroup) => {
         mappedLdapGroupIndex[ldapGroup.id]['ldap_group_map_id'] = '';
-        setMappedLdapGroupIndex(mappedLdapGroupIndex);
+        setMappedLdapGroupIndex({ ...mappedLdapGroupIndex });
         psono_server.admin_ldap_delete_group_map(
             props.state.user.token,
             props.state.user.session_secret_key,
@@ -393,7 +393,7 @@ const GroupEdit = (props) => {
 
     const removeMappingSAML = (samlGroup) => {
         mappedSamlGroupIndex[samlGroup.id]['saml_group_map_id'] = '';
-        setMappedSamlGroupIndex(mappedSamlGroupIndex);
+        setMappedSamlGroupIndex({ ...mappedSamlGroupIndex });
         psono_server.admin_saml_delete_group_map(
             props.state.user.token,
             props.state.user.session_secret_key,
@@ -404,7 +404,7 @@ const GroupEdit = (props) => {
 
     const removeMappingOIDC = (oidcGroup) => {
         mappedOidcGroupIndex[oidcGroup.id]['oidc_group_map_id'] = '';
-        setMappedOidcGroupIndex(mappedOidcGroupIndex);
+        setMappedOidcGroupIndex({ ...mappedOidcGroupIndex });
         psono_server.admin_oidc_delete_group_map(
             props.state.user.token,
             props.state.user.session_secret_key,
@@ -436,7 +436,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedLdapGroupIndex[group.id]['group_admin'] =
                         !group_admin;
-                    setMappedLdapGroupIndex(mappedLdapGroupIndex);
+                    setMappedLdapGroupIndex({ ...mappedLdapGroupIndex });
                 });
         } else {
             psono_server
@@ -450,7 +450,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedLdapGroupIndex[group.id]['share_admin'] =
                         !share_admin;
-                    setMappedLdapGroupIndex(mappedLdapGroupIndex);
+                    setMappedLdapGroupIndex({ ...mappedLdapGroupIndex });
                 });
         }
     };
@@ -478,7 +478,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedSamlGroupIndex[group.id]['group_admin'] =
                         !group_admin;
-                    setMappedSamlGroupIndex(mappedSamlGroupIndex);
+                    setMappedSamlGroupIndex({ ...mappedSamlGroupIndex });
                 });
         } else {
             psono_server
@@ -492,7 +492,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedSamlGroupIndex[group.id]['share_admin'] =
                         !share_admin;
-                    setMappedSamlGroupIndex(mappedSamlGroupIndex);
+                    setMappedSamlGroupIndex({ ...mappedSamlGroupIndex });
                 });
         }
     };
@@ -520,7 +520,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedOidcGroupIndex[group.id]['group_admin'] =
                         !group_admin;
-                    setMappedOidcGroupIndex(mappedOidcGroupIndex);
+                    setMappedOidcGroupIndex({ ...mappedOidcGroupIndex });
                 });
         } else {
             psono_server
@@ -534,7 +534,7 @@ const GroupEdit = (props) => {
                 .then((response) => {
                     mappedOidcGroupIndex[group.id]['share_admin'] =
                         !share_admin;
-                    setMappedOidcGroupIndex(mappedOidcGroupIndex);
+                    setMappedOidcGroupIndex({ ...mappedOidcGroupIndex });
                 });
         }
     };
