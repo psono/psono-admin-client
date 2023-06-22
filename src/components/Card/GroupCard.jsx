@@ -12,6 +12,7 @@ const GroupCard = ({
     shareRights,
     ldapGroups,
     samlGroups,
+    scimGroups,
     oidcGroups,
     onDeleteMemberships,
 }) => {
@@ -19,6 +20,7 @@ const GroupCard = ({
 
     const hasLdapGroups = ldapGroups && ldapGroups.length > 0;
     const hasSamlGroups = samlGroups && samlGroups.length > 0;
+    const hasScimGroups = scimGroups && scimGroups.length > 0;
     const hasOidcGroups = oidcGroups && oidcGroups.length > 0;
 
     const tabs = [
@@ -133,6 +135,37 @@ const GroupCard = ({
                     ]}
                     data={samlGroups}
                     title={t('MAPPED_SAML_GROUPS')}
+                />
+            ),
+        });
+    }
+
+    if (hasScimGroups) {
+        tabs.push({
+            tabName: t('SCIM_GROUPS'),
+            tabIcon: Group,
+            tabContent: (
+                <CustomMaterialTable
+                    columns={[
+                        {
+                            field: 'mapped',
+                            title: t('MAPPED'),
+                            customSort: (a, b) => a.mapped_raw - b.mapped_raw,
+                        },
+                        { field: 'name', title: t('NAME') },
+                        {
+                            field: 'has_share_admin',
+                            title: t('SHARE_ADMIN'),
+                            customSort: (a, b) =>
+                                a.has_share_admin_raw - b.has_share_admin_raw,
+                        },
+                        {
+                            field: 'scim_provider_id',
+                            title: t('POVIDER_ID'),
+                        },
+                    ]}
+                    data={scimGroups}
+                    title={t('MAPPED_SCIM_GROUPS')}
                 />
             ),
         });

@@ -27,10 +27,12 @@ const GroupEdit = (props) => {
     const [mappedLdapGroupIndex, setMappedLdapGroupIndex] = useState({});
     const [mappedSamlGroupIndex, setMappedSamlGroupIndex] = useState({});
     const [mappedOidcGroupIndex, setMappedOidcGroupIndex] = useState({});
+    const [mappedScimGroupIndex, setMappedScimGroupIndex] = useState({});
     const [group, setGroup] = useState(null);
     const [ldapGroups, setLdapGroups] = useState([]);
     const [samlGroups, setSamlGroups] = useState([]);
     const [oidcGroups, setOidcGroups] = useState([]);
+    const [scimGroups, setScimGroups] = useState([]);
 
     React.useEffect(() => {
         loadGroup();
@@ -135,6 +137,17 @@ const GroupEdit = (props) => {
                         };
                     });
                 }
+                const mappedScimGroupIndex = {};
+                if (group.hasOwnProperty('scim_groups')) {
+                    group.scim_groups.forEach((scim_group) => {
+                        mappedScimGroupIndex[scim_group.scim_group_id] = {
+                            scim_group_id: scim_group.scim_group_id,
+                            scim_group_map_id: scim_group.scim_group_map_id,
+                            share_admin: scim_group.share_admin,
+                            group_admin: scim_group.group_admin,
+                        };
+                    });
+                }
 
                 if (
                     props.state.server.authentication_methods.indexOf(
@@ -207,9 +220,38 @@ const GroupEdit = (props) => {
                             setMappedSamlGroupIndex(mappedSamlGroupIndex);
                             setSamlGroups(samlGroups);
                         });
+                    psono_server
+                        .admin_scim_group(
+                            props.state.user.token,
+                            props.state.user.session_secret_key
+                        )
+                        .then((response) => {
+                            const scimGroups = response.data.scim_groups;
+
+                            scimGroups.forEach((scim_group) => {
+                                if (
+                                    mappedScimGroupIndex.hasOwnProperty(
+                                        scim_group.id
+                                    )
+                                ) {
+                                    return;
+                                }
+                                mappedScimGroupIndex[scim_group.id] = {
+                                    scim_group_id: scim_group.id,
+                                    scim_group_map_id: '',
+                                    share_admin: false,
+                                    group_admin: false,
+                                };
+                            });
+                            setGroup(group);
+                            setMappedScimGroupIndex(mappedScimGroupIndex);
+                            setScimGroups(scimGroups);
+                            console.log(scimGroups);
+                        });
                 } else {
                     setGroup(group);
                     setMappedSamlGroupIndex(mappedSamlGroupIndex);
+                    setMappedScimGroupIndex(mappedScimGroupIndex);
                 }
 
                 if (
@@ -323,6 +365,18 @@ const GroupEdit = (props) => {
         }
     };
 
+    const handleToggleSCIM = (scimGroup) => {
+        const isMapped =
+            mappedScimGroupIndex.hasOwnProperty(scimGroup.id) &&
+            mappedScimGroupIndex[scimGroup.id]['scim_group_map_id'];
+
+        if (isMapped) {
+            removeMappingSCIM(scimGroup);
+        } else {
+            addMappingSCIM(scimGroup);
+        }
+    };
+
     const handleToggleOIDC = (oidcGroup) => {
         const isMapped =
             mappedOidcGroupIndex.hasOwnProperty(oidcGroup.id) &&
@@ -365,6 +419,21 @@ const GroupEdit = (props) => {
             });
     };
 
+    const addMappingSCIM = (scimGroup) => {
+        psono_server
+            .admin_scim_create_group_map(
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                group.id,
+                scimGroup.id
+            )
+            .then((response) => {
+                mappedScimGroupIndex[scimGroup.id]['scim_group_map_id'] =
+                    response.data.id;
+                setMappedScimGroupIndex({ ...mappedScimGroupIndex });
+            });
+    };
+
     const addMappingOIDC = (oidcGroup) => {
         psono_server
             .admin_oidc_create_group_map(
@@ -399,6 +468,17 @@ const GroupEdit = (props) => {
             props.state.user.session_secret_key,
             group.id,
             samlGroup.id
+        );
+    };
+
+    const removeMappingSCIM = (scimGroup) => {
+        mappedScimGroupIndex[scimGroup.id]['scim_group_map_id'] = '';
+        setMappedScimGroupIndex({ ...mappedScimGroupIndex });
+        psono_server.admin_scim_delete_group_map(
+            props.state.user.token,
+            props.state.user.session_secret_key,
+            group.id,
+            scimGroup.id
         );
     };
 
@@ -497,6 +577,48 @@ const GroupEdit = (props) => {
         }
     };
 
+    const handleToggleAdminSCIM = (group, type) => {
+        const isMapped =
+            mappedScimGroupIndex.hasOwnProperty(group.id) &&
+            mappedScimGroupIndex[group.id]['scim_group_map_id'];
+        if (!isMapped) {
+            return;
+        }
+
+        let group_admin = mappedScimGroupIndex[group.id]['group_admin'];
+        let share_admin = mappedScimGroupIndex[group.id]['share_admin'];
+
+        if (type === 'group') {
+            psono_server
+                .admin_scim_update_group_map(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    mappedScimGroupIndex[group.id]['scim_group_map_id'],
+                    !group_admin,
+                    share_admin
+                )
+                .then((response) => {
+                    mappedScimGroupIndex[group.id]['group_admin'] =
+                        !group_admin;
+                    setMappedScimGroupIndex({ ...mappedScimGroupIndex });
+                });
+        } else {
+            psono_server
+                .admin_scim_update_group_map(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    mappedScimGroupIndex[group.id]['scim_group_map_id'],
+                    group_admin,
+                    !share_admin
+                )
+                .then((response) => {
+                    mappedScimGroupIndex[group.id]['share_admin'] =
+                        !share_admin;
+                    setMappedScimGroupIndex({ ...mappedScimGroupIndex });
+                });
+        }
+    };
+
     const handleToggleAdminOIDC = (group, type) => {
         const isMapped =
             mappedOidcGroupIndex.hasOwnProperty(group.id) &&
@@ -570,7 +692,7 @@ const GroupEdit = (props) => {
                     checked={ldap_group.has_group_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminLDAP(ldap_group, 'group', 'LDAP');
+                        handleToggleAdminLDAP(ldap_group, 'group');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -591,7 +713,7 @@ const GroupEdit = (props) => {
                     checked={ldap_group.has_share_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminLDAP(ldap_group, 'share', 'LDAP');
+                        handleToggleAdminLDAP(ldap_group, 'share');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -638,7 +760,7 @@ const GroupEdit = (props) => {
                     checked={saml_group.has_group_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminSAML(saml_group, 'group', 'SAML');
+                        handleToggleAdminSAML(saml_group, 'group');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -659,7 +781,75 @@ const GroupEdit = (props) => {
                     checked={saml_group.has_share_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminSAML(saml_group, 'share', 'SAML');
+                        handleToggleAdminSAML(saml_group, 'share');
+                    }}
+                    checkedIcon={<CheckBox className={classes.checkedIcon} />}
+                    icon={
+                        <CheckBoxOutlineBlank
+                            className={classes.uncheckedIcon}
+                        />
+                    }
+                    classes={{
+                        checked: classes.checked,
+                    }}
+                />
+            );
+        });
+    }
+    if (scimGroups) {
+        scimGroups.forEach((scim_group) => {
+            scim_group.mapped_raw =
+                mappedScimGroupIndex.hasOwnProperty(scim_group.id) &&
+                mappedScimGroupIndex[scim_group.id]['scim_group_map_id'] !== '';
+            scim_group.name = scim_group.display_name || scim_group.scim_name;
+            scim_group.mapped = (
+                <Checkbox
+                    checked={scim_group.mapped_raw}
+                    tabIndex={-1}
+                    onClick={() => {
+                        handleToggleSCIM(scim_group);
+                    }}
+                    checkedIcon={<CheckBox className={classes.checkedIcon} />}
+                    icon={
+                        <CheckBoxOutlineBlank
+                            className={classes.uncheckedIcon}
+                        />
+                    }
+                    classes={{
+                        checked: classes.checked,
+                    }}
+                />
+            );
+            scim_group.has_group_admin_raw =
+                mappedScimGroupIndex.hasOwnProperty(scim_group.id) &&
+                mappedScimGroupIndex[scim_group.id]['group_admin'];
+            scim_group.has_group_admin = (
+                <Checkbox
+                    checked={scim_group.has_group_admin_raw}
+                    tabIndex={-1}
+                    onClick={() => {
+                        handleToggleAdminSCIM(scim_group, 'group');
+                    }}
+                    checkedIcon={<CheckBox className={classes.checkedIcon} />}
+                    icon={
+                        <CheckBoxOutlineBlank
+                            className={classes.uncheckedIcon}
+                        />
+                    }
+                    classes={{
+                        checked: classes.checked,
+                    }}
+                />
+            );
+            scim_group.has_share_admin_raw =
+                mappedScimGroupIndex.hasOwnProperty(scim_group.id) &&
+                mappedScimGroupIndex[scim_group.id]['share_admin'];
+            scim_group.has_share_admin = (
+                <Checkbox
+                    checked={scim_group.has_share_admin_raw}
+                    tabIndex={-1}
+                    onClick={() => {
+                        handleToggleAdminSCIM(scim_group, 'share');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -706,7 +896,7 @@ const GroupEdit = (props) => {
                     checked={oidc_group.has_group_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminOIDC(oidc_group, 'group', 'OIDC');
+                        handleToggleAdminOIDC(oidc_group, 'group');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -727,7 +917,7 @@ const GroupEdit = (props) => {
                     checked={oidc_group.has_share_admin_raw}
                     tabIndex={-1}
                     onClick={() => {
-                        handleToggleAdminOIDC(oidc_group, 'share', 'OIDC');
+                        handleToggleAdminOIDC(oidc_group, 'share');
                     }}
                     checkedIcon={<CheckBox className={classes.checkedIcon} />}
                     icon={
@@ -821,6 +1011,7 @@ const GroupEdit = (props) => {
                             shareRights={group.share_rights}
                             ldapGroups={ldapGroups}
                             samlGroups={samlGroups}
+                            scimGroups={scimGroups}
                             oidcGroups={oidcGroups}
                         />
                     </GridItem>

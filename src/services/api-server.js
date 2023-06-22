@@ -515,6 +515,49 @@ function admin_ldap_group_sync(token, session_secret_key) {
 }
 
 /**
+ * GET: Returns a list of all SCIM groups (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_scim_group(token, session_secret_key) {
+    const endpoint = '/admin/scim/group/';
+    const method = 'GET';
+    const data = null;
+
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a SCIM group (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} scim_group_id The id of the SCIM group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_scim_group(token, session_secret_key, scim_group_id) {
+    const endpoint = '/admin/scim/group/';
+    const method = 'DELETE';
+    const data = {
+        scim_group_id: scim_group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * GET: Returns a list of all SAML groups (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -617,6 +660,97 @@ function admin_saml_group_sync(token, session_secret_key) {
     const data = null;
 
     const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a SCIM group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} scim_group_id The scim group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_scim_create_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    scim_group_id
+) {
+    const endpoint = '/admin/scim/group/map/';
+    const method = 'POST';
+    const data = {
+        group_id: group_id,
+        scim_group_id: scim_group_id,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a SCIM group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} scim_group_map_id The group map id
+ * @param {uuid} group_admin The group admin privilege
+ * @param {uuid} share_admin The share admin privilege
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_scim_update_group_map(
+    token,
+    session_secret_key,
+    scim_group_map_id,
+    group_admin,
+    share_admin
+) {
+    const endpoint = '/admin/scim/group/map/';
+    const method = 'PUT';
+    const data = {
+        scim_group_map_id: scim_group_map_id,
+        group_admin: group_admin,
+        share_admin: share_admin,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a SCIM group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The group id of the mapping entry
+ * @param {uuid} scim_group_id The scim group id of the mapping entry
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_scim_delete_group_map(
+    token,
+    session_secret_key,
+    group_id,
+    scim_group_id
+) {
+    const endpoint = '/admin/scim/group/map/';
+    const method = 'DELETE';
+    const data = {
+        group_id: group_id,
+        scim_group_id: scim_group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
         Authorization: 'Token ' + token,
     };
 
@@ -3116,11 +3250,16 @@ const service = {
     admin_ldap_update_group_map,
     admin_ldap_delete_group_map,
     admin_ldap_group_sync,
+    admin_scim_group,
+    admin_delete_scim_group,
     admin_saml_group,
     admin_delete_saml_group,
     admin_delete_oidc_group,
     admin_delete_ldap_group,
     admin_saml_group_sync,
+    admin_scim_create_group_map,
+    admin_scim_update_group_map,
+    admin_scim_delete_group_map,
     admin_saml_create_group_map,
     admin_saml_update_group_map,
     admin_saml_delete_group_map,
