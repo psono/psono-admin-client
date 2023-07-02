@@ -15,6 +15,7 @@ import FileserverCard from './Card/FileserverCard.jsx';
 import UsersCard from './Card/UsersCard.jsx';
 import LDAPCard from './Card/LDAPCard.jsx';
 import SAMLCard from './Card/SAMLCard.jsx';
+import SCIMCard from './Card/SCIMCard.jsx';
 import OIDCCard from './Card/OIDCCard.jsx';
 import UserCard from './Card/UserCard.jsx';
 import GroupCard from './Card/GroupCard.jsx';
@@ -119,6 +120,7 @@ export {
     UsersCard,
     LDAPCard,
     SAMLCard,
+    SCIMCard,
     OIDCCard,
     UserCard,
     GroupCard,
@@ -158,5 +160,5 @@ export {
     Small,
     A,
     // Form
-    LoginForm
+    LoginForm,
 };

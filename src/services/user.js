@@ -34,7 +34,7 @@ function initiate_login(username, server, remember_me, trust_device) {
     action.set_user_username(username);
     action.set_user_info_1(remember_me, trust_device);
 
-    return host.check_host(server).then(response => {
+    return host.check_host(server).then((response) => {
         return response;
     });
 }
@@ -50,7 +50,7 @@ function initiate_login(username, server, remember_me, trust_device) {
 function saml_login(saml_token_id) {
     const server_public_key = store.getState().server.public_key;
     const session_keys = cryptoLibrary.generate_public_private_keypair();
-    const onSuccess = function(response) {
+    const onSuccess = function (response) {
         response.data = JSON.parse(
             cryptoLibrary.decrypt_data_public_key(
                 response.data.login_info,
@@ -109,7 +109,7 @@ function saml_login(saml_token_id) {
         return required_multifactors;
     };
 
-    const onError = function(response) {
+    const onError = function (response) {
         return Promise.reject(response.data);
     };
 
@@ -117,7 +117,7 @@ function saml_login(saml_token_id) {
         saml_token_id: saml_token_id,
         device_time: new Date().toISOString(),
         device_fingerprint: device.get_device_fingerprint(),
-        device_description: device.get_device_description()
+        device_description: device.get_device_description(),
     };
 
     login_info = JSON.stringify(login_info);
@@ -154,7 +154,7 @@ function initiate_saml_login(server, remember_me, trust_device) {
     action.set_server_url(server);
     action.set_user_info_1(remember_me, trust_device);
 
-    return host.check_host(server).then(response => {
+    return host.check_host(server).then((response) => {
         return response;
     });
 }
@@ -171,7 +171,7 @@ function get_saml_redirect_url(provider_id) {
 
     return psono_server
         .saml_initiate_login(provider_id, return_to_url)
-        .then(result => {
+        .then((result) => {
             return result.data;
         });
 }
@@ -187,7 +187,7 @@ function get_saml_redirect_url(provider_id) {
 function oidc_login(oidc_token_id) {
     const server_public_key = store.getState().server.public_key;
     const session_keys = cryptoLibrary.generate_public_private_keypair();
-    const onSuccess = function(response) {
+    const onSuccess = function (response) {
         response.data = JSON.parse(
             cryptoLibrary.decrypt_data_public_key(
                 response.data.login_info,
@@ -246,7 +246,7 @@ function oidc_login(oidc_token_id) {
         return required_multifactors;
     };
 
-    const onError = function(response) {
+    const onError = function (response) {
         return Promise.reject(response.data);
     };
 
@@ -254,7 +254,7 @@ function oidc_login(oidc_token_id) {
         oidc_token_id: oidc_token_id,
         device_time: new Date().toISOString(),
         device_fingerprint: device.get_device_fingerprint(),
-        device_description: device.get_device_description()
+        device_description: device.get_device_description(),
     };
 
     login_info = JSON.stringify(login_info);
@@ -291,7 +291,7 @@ function initiate_oidc_login(server, remember_me, trust_device) {
     action.set_server_url(server);
     action.set_user_info_1(remember_me, trust_device);
 
-    return host.check_host(server).then(response => {
+    return host.check_host(server).then((response) => {
         return response;
     });
 }
@@ -308,7 +308,7 @@ function get_oidc_redirect_url(provider_id) {
 
     return psono_server
         .oidc_initiate_login(provider_id, return_to_url)
-        .then(result => {
+        .then((result) => {
             return result.data;
         });
 }
@@ -326,12 +326,17 @@ function ga_verify(ga_token) {
 
     return psono_server
         .ga_verify(token, ga_token, session_secret_key)
-        .catch(response => {
+        .catch((response) => {
             if (
                 response.hasOwnProperty('data') &&
                 response.data.hasOwnProperty('non_field_errors')
             ) {
                 return Promise.reject(response.data.non_field_errors);
+            } else if (
+                response.hasOwnProperty('data') &&
+                response.data.hasOwnProperty('ga_token')
+            ) {
+                return Promise.reject(response.data.ga_token);
             } else {
                 return Promise.reject(response);
             }
@@ -351,12 +356,17 @@ function duo_verify(duo_token) {
 
     return psono_server
         .duo_verify(token, duo_token, session_secret_key)
-        .catch(response => {
+        .catch((response) => {
             if (
                 response.hasOwnProperty('data') &&
                 response.data.hasOwnProperty('non_field_errors')
             ) {
                 return Promise.reject(response.data.non_field_errors);
+            } else if (
+                response.hasOwnProperty('data') &&
+                response.data.hasOwnProperty('duo_token')
+            ) {
+                return Promise.reject(response.data.duo_token);
             } else {
                 return Promise.reject(response);
             }
@@ -376,12 +386,17 @@ function yubikey_otp_verify(yubikey_otp) {
 
     return psono_server
         .yubikey_otp_verify(token, yubikey_otp, session_secret_key)
-        .catch(response => {
+        .catch((response) => {
             if (
                 response.hasOwnProperty('data') &&
                 response.data.hasOwnProperty('non_field_errors')
             ) {
                 return Promise.reject(response.data.non_field_errors);
+            } else if (
+                response.hasOwnProperty('data') &&
+                response.data.hasOwnProperty('yubikey_otp')
+            ) {
+                return Promise.reject(response.data.yubikey_otp);
             } else {
                 return Promise.reject(response);
             }
@@ -398,7 +413,7 @@ function activate_token() {
     const session_secret_key = store.getState().user.session_secret_key;
     const user_sauce = store.getState().user.user_sauce;
 
-    const onSuccess = function(activation_data) {
+    const onSuccess = function (activation_data) {
         // decrypt user secret key
         const user_secret_key = cryptoLibrary.decrypt_secret(
             activation_data.data.user.secret_key,
@@ -418,7 +433,7 @@ function activate_token() {
         verification = {};
 
         return {
-            response: 'success'
+            response: 'success',
         };
     };
 
@@ -514,7 +529,7 @@ function login(password, server_info, send_plain) {
 
     const session_keys = cryptoLibrary.generate_public_private_keypair();
 
-    const onSuccess = function(response) {
+    const onSuccess = function (response) {
         return handle_login_response(
             response,
             password,
@@ -523,7 +538,7 @@ function login(password, server_info, send_plain) {
         );
     };
 
-    const onError = function(response) {
+    const onError = function (response) {
         if (
             response.hasOwnProperty('data') &&
             response.data.hasOwnProperty('non_field_errors')
@@ -539,7 +554,7 @@ function login(password, server_info, send_plain) {
         authkey: authkey,
         device_time: new Date().toISOString(),
         device_fingerprint: device.get_device_fingerprint(),
-        device_description: device.get_device_description()
+        device_description: device.get_device_description(),
     };
 
     if (send_plain) {
@@ -604,7 +619,7 @@ const service = {
     duo_verify,
     yubikey_otp_verify,
     logout,
-    is_logged_in
+    is_logged_in,
 };
 
 export default service;
