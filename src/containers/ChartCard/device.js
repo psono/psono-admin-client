@@ -9,6 +9,14 @@ import store from '../../services/store';
 const DeviceChartCard = () => {
     const { t } = useTranslation();
     const [series, setSeries] = useState([0, 0, 0, 0, 0, 0]);
+    const [labels, setLabels] = useState([
+        'Other',
+        'Android',
+        'iPhone',
+        'Linux',
+        'Mac',
+        'Windows',
+    ]);
 
     React.useEffect(() => {
         loadStats();
@@ -20,19 +28,40 @@ const DeviceChartCard = () => {
                 store.getState().user.token,
                 store.getState().user.session_secret_key
             )
-            .then(response => {
-                setSeries([
+            .then((response) => {
+                console.log(response.data);
+
+                const newSeries = [
                     response.data.other,
                     response.data.android,
                     response.data.iphone,
                     response.data.linux,
                     response.data.mac,
-                    response.data.windows
-                ]);
+                    response.data.windows,
+                ];
+
+                const newLabels = [
+                    'Other',
+                    'Android',
+                    'iPhone',
+                    'Linux',
+                    'Mac',
+                    'Windows',
+                ];
+
+                function filterNotZero(entry, index) {
+                    if (entry === 0) {
+                        newLabels.splice(index, 1);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                setSeries(newSeries.filter(filterNotZero));
+                setLabels(newLabels);
             });
     };
-
-    const labels = ['Other', 'Android', 'iPhone', 'Linux', 'Mac', 'Windows'];
 
     return (
         <ChartCard
@@ -41,13 +70,13 @@ const DeviceChartCard = () => {
                     className="ct-chart"
                     data={{
                         labels,
-                        series
+                        series,
                     }}
                     type="Pie"
                     options={{
-                        labelInterpolationFnc: function(value) {
+                        labelInterpolationFnc: function (value) {
                             return value[0];
-                        }
+                        },
                     }}
                     responsiveOptions={[
                         [
@@ -56,18 +85,18 @@ const DeviceChartCard = () => {
                                 chartPadding: 20,
                                 labelOffset: 40,
                                 labelDirection: 'explode',
-                                labelInterpolationFnc: function(value) {
+                                labelInterpolationFnc: function (value) {
                                     return value;
-                                }
-                            }
+                                },
+                            },
                         ],
                         [
                             'screen and (min-width: 1024px)',
                             {
                                 labelOffset: 40,
-                                chartPadding: 20
-                            }
-                        ]
+                                chartPadding: 20,
+                            },
+                        ],
                     ]}
                 />
             }

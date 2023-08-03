@@ -9,6 +9,13 @@ import store from '../../services/store';
 const BrowserChartCard = () => {
     const { t } = useTranslation();
     const [series, setSeries] = useState([0, 0, 0, 0, 0]);
+    const [labels, setLabels] = useState([
+        'Other',
+        'Firefox',
+        'Chrome',
+        'Safari',
+        'Vivaldi',
+    ]);
 
     React.useEffect(() => {
         loadStats();
@@ -20,18 +27,36 @@ const BrowserChartCard = () => {
                 store.getState().user.token,
                 store.getState().user.session_secret_key
             )
-            .then(response => {
-                setSeries([
+            .then((response) => {
+                const newSeries = [
                     response.data.other,
                     response.data.firefox,
                     response.data.chrome,
                     response.data.safari,
-                    response.data.vivaldi
-                ]);
+                    response.data.vivaldi,
+                ];
+
+                const newLabels = [
+                    'Other',
+                    'Firefox',
+                    'Chrome',
+                    'Safari',
+                    'Vivaldi',
+                ];
+
+                function filterNotZero(entry, index) {
+                    if (entry === 0) {
+                        newLabels.splice(index, 1);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                setSeries(newSeries.filter(filterNotZero));
+                setLabels(newLabels);
             });
     };
-
-    const labels = ['Other', 'Firefox', 'Chrome', 'Safari', 'Vivaldi'];
 
     return (
         <ChartCard
@@ -40,13 +65,13 @@ const BrowserChartCard = () => {
                     className="ct-chart"
                     data={{
                         labels,
-                        series
+                        series,
                     }}
                     type="Pie"
                     options={{
-                        labelInterpolationFnc: function(value) {
+                        labelInterpolationFnc: function (value) {
                             return value[0];
-                        }
+                        },
                     }}
                     responsiveOptions={[
                         [
@@ -55,18 +80,18 @@ const BrowserChartCard = () => {
                                 chartPadding: 20,
                                 labelOffset: 40,
                                 labelDirection: 'explode',
-                                labelInterpolationFnc: function(value) {
+                                labelInterpolationFnc: function (value) {
                                     return value;
-                                }
-                            }
+                                },
+                            },
                         ],
                         [
                             'screen and (min-width: 1024px)',
                             {
                                 labelOffset: 40,
-                                chartPadding: 20
-                            }
-                        ]
+                                chartPadding: 20,
+                            },
+                        ],
                     ]}
                 />
             }
