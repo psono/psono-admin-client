@@ -19,9 +19,12 @@ class Users extends React.Component {
             <div>
                 {scim_group.groups.map(function (group, key) {
                     return (
-                        <a href={'/portal/group/' + group.id} key={key}>
-                            {group.name}
-                        </a>
+                        <>
+                            {key !== 0 ? ', ' : ''}
+                            <a href={'/portal/group/' + group.id} key={key}>
+                                {group.name}
+                            </a>
+                        </>
                     );
                 })}
             </div>

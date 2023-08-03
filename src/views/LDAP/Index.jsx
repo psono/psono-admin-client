@@ -25,9 +25,12 @@ class Users extends React.Component {
             <div>
                 {ldap_group.groups.map(function (group, key) {
                     return (
-                        <a href={'/portal/group/' + group.id} key={key}>
-                            {group.name}
-                        </a>
+                        <>
+                            {key !== 0 ? ', ' : ''}
+                            <a href={'/portal/group/' + group.id} key={key}>
+                                {group.name}
+                            </a>
+                        </>
                     );
                 })}
             </div>
@@ -114,7 +117,6 @@ class Users extends React.Component {
                 });
         });
     }
-
     render() {
         if (this.state.redirect_to) {
             return <Redirect to={this.state.redirect_to} />;
