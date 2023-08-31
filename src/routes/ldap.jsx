@@ -8,8 +8,8 @@ let routes = [
         sidebarName: 'LDAP',
         navbarName: 'LDAP',
         icon: Business,
-        component: LDAP
-    }
+        component: LDAP,
+    },
 ];
 
 export default routes;

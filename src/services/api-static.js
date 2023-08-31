@@ -20,7 +20,7 @@ function get(ressource) {
 }
 
 const service = {
-    get
+    get,
 };
 
 export default service;

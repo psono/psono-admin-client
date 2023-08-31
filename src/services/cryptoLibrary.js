@@ -50,7 +50,7 @@ let scrypt_lookup_table = {};
  * flushes the scrypt lookup table after 60 seconds
  */
 function clear_scrypt_lookup_table() {
-    setTimeout(function() {
+    setTimeout(function () {
         scrypt_lookup_table = {};
     }, 60000);
 }
@@ -84,7 +84,7 @@ function password_scrypt(password, salt) {
                 r,
                 p,
                 l,
-                function(pDone) {}
+                function (pDone) {}
             )
         );
         scrypt_lookup_table[lookup_hash] = k;
@@ -139,7 +139,7 @@ function generate_public_private_keypair() {
 
     return {
         public_key: converter.to_hex(pk), // 32 Bytes = 256 Bits
-        private_key: converter.to_hex(sk) // 32 Bytes = 256 Bits
+        private_key: converter.to_hex(sk), // 32 Bytes = 256 Bits
     };
 }
 
@@ -165,7 +165,7 @@ function encrypt_secret(secret, password, user_sauce) {
 
     return {
         nonce: converter.to_hex(n),
-        text: converter.to_hex(c)
+        text: converter.to_hex(c),
     };
 }
 
@@ -209,7 +209,7 @@ function encrypt_data(data, secret_key) {
 
     return {
         nonce: converter.to_hex(n),
-        text: converter.to_hex(c)
+        text: converter.to_hex(c),
     };
 }
 
@@ -251,7 +251,7 @@ function encrypt_data_public_key(data, public_key, private_key) {
 
     return {
         nonce: converter.to_hex(n),
-        text: converter.to_hex(c)
+        text: converter.to_hex(c),
     };
 }
 
@@ -324,7 +324,7 @@ function generate_recovery_code() {
         hex: password_hex,
         words: password_words,
         base58: password_base58,
-        base58_checksums: recovery_code_chunks.join('')
+        base58_checksums: recovery_code_chunks.join(''),
     };
 }
 
@@ -418,7 +418,7 @@ const service = {
     recovery_code_strip_checksums,
     recovery_password_chunk_pass_checksum,
     generate_uuid,
-    validate_signature
+    validate_signature,
 };
 
 export default service;

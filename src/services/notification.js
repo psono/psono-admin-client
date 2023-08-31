@@ -36,7 +36,7 @@ const service = {
     info_send,
     error_send,
     reset,
-    set
+    set,
 };
 
 export default service;

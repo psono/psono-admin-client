@@ -57,16 +57,16 @@ function check_known_hosts(server_url, verify_key) {
         if (known_hosts[i]['verify_key'] !== verify_key) {
             return {
                 status: 'signature_changed',
-                verify_key_old: known_hosts[i]['verify_key']
+                verify_key_old: known_hosts[i]['verify_key'],
             };
         }
         return {
-            status: 'matched'
+            status: 'matched',
         };
     }
 
     return {
-        status: 'not_found'
+        status: 'not_found',
     };
 }
 
@@ -78,7 +78,7 @@ function check_known_hosts(server_url, verify_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function check_host(server) {
-    const onSuccess = function(response) {
+    const onSuccess = function (response) {
         let check_result;
         const data = response.data;
         const server_url = server.toLowerCase();
@@ -98,7 +98,7 @@ function check_host(server) {
                 server_url: server_url,
                 status: 'invalid_signature',
                 verify_key: undefined,
-                info: info
+                info: info,
             };
         }
 
@@ -109,7 +109,7 @@ function check_host(server) {
                 server_url: server_url,
                 status: 'matched',
                 verify_key: data['verify_key'],
-                info: info
+                info: info,
             };
         } else if (check_result['status'] === 'signature_changed') {
             return {
@@ -117,14 +117,14 @@ function check_host(server) {
                 status: 'signature_changed',
                 verify_key: data['verify_key'],
                 verify_key_old: check_result['verify_key_old'],
-                info: info
+                info: info,
             };
         } else {
             return {
                 server_url: server_url,
                 status: 'new_server',
                 verify_key: data['verify_key'],
-                info: info
+                info: info,
             };
         }
     };
@@ -155,7 +155,7 @@ function approve_host(server_url, verify_key) {
 
     known_hosts.push({
         url: server_url,
-        verify_key: verify_key
+        verify_key: verify_key,
     });
 
     update_known_hosts(known_hosts);
@@ -169,12 +169,13 @@ function approve_host(server_url, verify_key) {
 function delete_known_host(fingerprint) {
     let known_hosts = get_known_hosts();
 
-    helper.remove_from_array(known_hosts, fingerprint, function(
-        known_host,
-        fingerprint
-    ) {
-        return known_host['verify_key'] === fingerprint;
-    });
+    helper.remove_from_array(
+        known_hosts,
+        fingerprint,
+        function (known_host, fingerprint) {
+            return known_host['verify_key'] === fingerprint;
+        }
+    );
 
     update_known_hosts(known_hosts);
 }
@@ -187,7 +188,7 @@ const service = {
     check_host,
     approve_host,
     delete_known_host,
-    update_known_hosts
+    update_known_hosts,
 };
 
 export default service;
