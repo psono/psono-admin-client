@@ -1,7 +1,7 @@
 import React from 'react';
 import converter from './converter';
 
-describe('Service: converter test suite', function() {
+describe('Service: converter test suite', function () {
     it('converter exists', () => {
         expect(converter).toBeDefined();
     });
@@ -10,22 +10,7 @@ describe('Service: converter test suite', function() {
         return expect(
             converter.to_hex(
                 new Uint8Array([
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                 ])
             )
         ).toBe('000102030405060708090a0b0c0d0e0f');
@@ -43,64 +28,10 @@ describe('Service: converter test suite', function() {
         return expect(
             converter.to_base58(
                 new Uint8Array([
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    18,
-                    19,
-                    20,
-                    21,
-                    22,
-                    23,
-                    24,
-                    25,
-                    26,
-                    27,
-                    28,
-                    29,
-                    30,
-                    31,
-                    32,
-                    33,
-                    34,
-                    35,
-                    36,
-                    37,
-                    38,
-                    39,
-                    40,
-                    41,
-                    42,
-                    43,
-                    44,
-                    45,
-                    46,
-                    47,
-                    48,
-                    49,
-                    50,
-                    51,
-                    52,
-                    53,
-                    54,
-                    55,
-                    56,
-                    57
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                    17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+                    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+                    47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                 ])
             )
         ).toBe(
@@ -158,7 +89,7 @@ describe('Service: converter test suite', function() {
                 'aunt',
                 'damp',
                 'novel',
-                'party'
+                'party',
             ])
         ).toBe('000102030405060708090a0b0c0d0e0f');
     });
@@ -178,18 +109,18 @@ describe('Service: converter test suite', function() {
             'aunt',
             'damp',
             'novel',
-            'party'
+            'party',
         ]);
     });
 
     it('from_base_x:ambiguous alphabet', () => {
-        return expect(function() {
+        return expect(function () {
             converter.from_base_x('ABAAAB', 'ABB');
         }).toThrow(new TypeError('B is ambiguous'));
     });
 
     it('from_base_x:value not in alphabet', () => {
-        return expect(function() {
+        return expect(function () {
             converter.from_base_x('AZB', 'AB');
         }).toThrow(new Error('Non-base2 character'));
     });
@@ -206,7 +137,7 @@ describe('Service: converter test suite', function() {
 
     it('encode_latin1', () => {
         const to_encode = String.fromCharCode(0x100);
-        return expect(function() {
+        return expect(function () {
             converter.encode_latin1(to_encode);
         }).toThrow(new Error('Cannot encode string in Latin1:' + to_encode));
     });

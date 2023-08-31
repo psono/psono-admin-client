@@ -38,13 +38,13 @@ class Sessions extends React.Component {
 
 Sessions.defaultProps = {
     iconColor: 'purple',
-    statIconColor: 'gray'
+    statIconColor: 'gray',
 };
 
 Sessions.propTypes = {
     users: PropTypes.node,
     devices: PropTypes.node,
-    total: PropTypes.node
+    total: PropTypes.node,
 };
 
 export default Sessions;

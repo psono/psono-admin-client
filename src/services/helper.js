@@ -81,7 +81,7 @@ function parse_url(url) {
         port: port,
         path: matches[5],
         query: matches[7],
-        fragment: matches[9]
+        fragment: matches[9],
     };
 }
 
@@ -353,7 +353,7 @@ function remove_from_array(array, search, cmp_fct) {
         return;
     }
     if (typeof cmp_fct === 'undefined') {
-        cmp_fct = function(a, b) {
+        cmp_fct = function (a, b) {
             return a === b;
         };
     }
@@ -370,7 +370,7 @@ function remove_from_array(array, search, cmp_fct) {
  * @param {string} content The content to copy
  */
 function copy_to_clipboard(content) {
-    const copy = function(e) {
+    const copy = function (e) {
         e.preventDefault();
         if (e.clipboardData) {
             e.clipboardData.setData('text/plain', content);
@@ -410,11 +410,65 @@ function get_password_filter(test) {
         'i'
     );
 
-    return function(datastore_entry) {
+    return function (datastore_entry) {
         return (
             regex.test(datastore_entry.name) ||
             regex.test(datastore_entry.urlfilter)
         );
+    };
+}
+
+/**
+ * Takes a string represenation of a duration and returns an object with the parsed days, hours, seconds and microseconds if present
+ *
+ * @param str
+ * @returns {{hours: (*|number), seconds: (*|number), minutes: (*|number), days: number, microseconds: number}}
+ */
+function timeDifference(str) {
+    let days = 0,
+        hours = 0,
+        minutes = 0,
+        seconds = 0,
+        microseconds = 0;
+
+    const parts = str.split(' ');
+    if (parts.length === 2) {
+        days = parseInt(parts[0], 10);
+        if (isNaN(days)) {
+            throw new Error('Invalid days format');
+        }
+    } else if (parts.length !== 1) {
+        throw new Error('Invalid input format');
+    }
+
+    const time = parts[parts.length - 1];
+    const [timeWithoutMicroseconds, microsecondsStr] = time.split('.');
+    [hours, minutes, seconds] = timeWithoutMicroseconds.split(':').map(Number);
+
+    if (
+        isNaN(hours) ||
+        isNaN(minutes) ||
+        isNaN(seconds) ||
+        hours > 23 ||
+        minutes > 59 ||
+        seconds > 59
+    ) {
+        throw new Error('Invalid time format');
+    }
+
+    if (microsecondsStr) {
+        microseconds = parseInt(microsecondsStr, 10);
+        if (isNaN(microseconds)) {
+            throw new Error('Invalid microseconds format');
+        }
+    }
+
+    return {
+        days,
+        hours,
+        minutes,
+        seconds,
+        microseconds,
     };
 }
 
@@ -433,7 +487,8 @@ const service = {
     remove_from_array,
     copy_to_clipboard,
     endsWith,
-    get_password_filter
+    get_password_filter,
+    timeDifference,
 };
 
 export default service;

@@ -9,9 +9,10 @@ import {
     CustomInput,
     GridItem,
     CustomMaterialTable,
-    ChartCard
+    ChartCard,
 } from '../../components';
 import psono_server from '../../services/api-server';
+import helperService from '../../services/helper';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import ChartistGraph from 'react-chartist';
 
@@ -26,7 +27,7 @@ class SecurityReport extends React.Component {
                 this.props.state.user.session_secret_key,
                 this.props.match.params.security_report_id
             )
-            .then(response => {
+            .then((response) => {
                 const security_report = response.data;
 
                 const password_length_distribution = {};
@@ -37,8 +38,15 @@ class SecurityReport extends React.Component {
                 const variation_count_distribution_labels = [];
                 const variation_count_distribution_series = [];
 
-                security_report.entries.forEach(e => {
+                security_report.entries.forEach((e) => {
                     e.duplicate = e.duplicate ? t('YES') : t('NO');
+                    e.write_age = helperService.timeDifference(e.write_age)[
+                        'days'
+                    ];
+                    e.create_age = helperService.timeDifference(e.create_age)[
+                        'days'
+                    ];
+
                     if (security_report.check_haveibeenpwned) {
                         e.breached = e.breached ? t('YES') : t('NO');
                     } else {
@@ -94,11 +102,15 @@ class SecurityReport extends React.Component {
                 }
 
                 this.setState({
-                    password_length_distribution_labels: password_length_distribution_labels,
-                    password_length_distribution_series: password_length_distribution_series,
-                    variation_count_distribution_labels: variation_count_distribution_labels,
-                    variation_count_distribution_series: variation_count_distribution_series,
-                    security_report: security_report
+                    password_length_distribution_labels:
+                        password_length_distribution_labels,
+                    password_length_distribution_series:
+                        password_length_distribution_series,
+                    variation_count_distribution_labels:
+                        variation_count_distribution_labels,
+                    variation_count_distribution_series:
+                        variation_count_distribution_series,
+                    security_report: security_report,
                 });
             });
     }
@@ -128,7 +140,7 @@ class SecurityReport extends React.Component {
                                                 labelText={t('CREATED_AT')}
                                                 id="create_date"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
                                                     value: moment(
@@ -137,7 +149,7 @@ class SecurityReport extends React.Component {
                                                         'YYYY-MM-DD HH:mm:ss'
                                                     ),
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -146,13 +158,12 @@ class SecurityReport extends React.Component {
                                                 labelText={t('USERNAME')}
                                                 id="username"
                                                 formControlProps={{
-                                                    fullWidth: true
+                                                    fullWidth: true,
                                                 }}
                                                 inputProps={{
-                                                    value:
-                                                        security_report.username,
+                                                    value: security_report.username,
                                                     disabled: true,
-                                                    readOnly: true
+                                                    readOnly: true,
                                                 }}
                                             />
                                         </GridItem>
@@ -210,13 +221,15 @@ class SecurityReport extends React.Component {
                                         labels: this.state
                                             .password_length_distribution_labels,
                                         series: this.state
-                                            .password_length_distribution_series
+                                            .password_length_distribution_series,
                                     }}
                                     type="Pie"
                                     options={{
-                                        labelInterpolationFnc: function(value) {
+                                        labelInterpolationFnc: function (
+                                            value
+                                        ) {
                                             return value[0];
-                                        }
+                                        },
                                     }}
                                     responsiveOptions={[
                                         [
@@ -225,20 +238,19 @@ class SecurityReport extends React.Component {
                                                 chartPadding: 20,
                                                 labelOffset: 40,
                                                 labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
+                                                labelInterpolationFnc:
+                                                    function (value) {
+                                                        return value;
+                                                    },
+                                            },
                                         ],
                                         [
                                             'screen and (min-width: 1024px)',
                                             {
                                                 labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
+                                                chartPadding: 20,
+                                            },
+                                        ],
                                     ]}
                                 />
                             }
@@ -257,13 +269,15 @@ class SecurityReport extends React.Component {
                                         labels: this.state
                                             .variation_count_distribution_labels,
                                         series: this.state
-                                            .variation_count_distribution_series
+                                            .variation_count_distribution_series,
                                     }}
                                     type="Pie"
                                     options={{
-                                        labelInterpolationFnc: function(value) {
+                                        labelInterpolationFnc: function (
+                                            value
+                                        ) {
                                             return value[0];
-                                        }
+                                        },
                                     }}
                                     responsiveOptions={[
                                         [
@@ -272,20 +286,19 @@ class SecurityReport extends React.Component {
                                                 chartPadding: 20,
                                                 labelOffset: 40,
                                                 labelDirection: 'explode',
-                                                labelInterpolationFnc: function(
-                                                    value
-                                                ) {
-                                                    return value;
-                                                }
-                                            }
+                                                labelInterpolationFnc:
+                                                    function (value) {
+                                                        return value;
+                                                    },
+                                            },
                                         ],
                                         [
                                             'screen and (min-width: 1024px)',
                                             {
                                                 labelOffset: 40,
-                                                chartPadding: 20
-                                            }
-                                        ]
+                                                chartPadding: 20,
+                                            },
+                                        ],
                                     ]}
                                 />
                             }
@@ -308,25 +321,33 @@ class SecurityReport extends React.Component {
                                 columns={[
                                     {
                                         field: 'name',
-                                        title: t('TITLE')
+                                        title: t('TITLE'),
                                     },
                                     {
                                         field: 'master_password',
-                                        title: t('MASTER_PASSWORD')
+                                        title: t('MASTER_PASSWORD'),
                                     },
                                     {
                                         field: 'password_length',
-                                        title: t('PASSWORD_LENGTH')
+                                        title: t('PASSWORD_LENGTH'),
                                     },
                                     {
                                         field: 'variation_count',
-                                        title: t('PASSWORD_CHARACTER_GROUPS')
+                                        title: t('PASSWORD_CHARACTER_GROUPS'),
+                                    },
+                                    {
+                                        field: 'create_age',
+                                        title: t('CREATED_IN_DAYS'),
+                                    },
+                                    {
+                                        field: 'write_age',
+                                        title: t('LAST_UPDATED_IN_DAYS'),
                                     },
                                     { field: 'breached', title: t('BREACHED') },
                                     {
                                         field: 'duplicate',
-                                        title: t('DUPLICATE')
-                                    }
+                                        title: t('DUPLICATE'),
+                                    },
                                 ]}
                                 data={this.state.security_report.entries}
                                 title={''}
@@ -339,6 +360,7 @@ class SecurityReport extends React.Component {
     }
 }
 
-export default compose(withTranslation(), withStyles(customInputStyle))(
-    SecurityReport
-);
+export default compose(
+    withTranslation(),
+    withStyles(customInputStyle)
+)(SecurityReport);

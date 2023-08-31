@@ -12,36 +12,36 @@ let routes = [
         sidebarName: 'USER',
         navbarName: 'USER',
         icon: Person,
-        component: UserEdit
+        component: UserEdit,
     },
     {
         path: '/security-report/:security_report_id',
         sidebarName: 'SECURITY_REPORT',
         navbarName: 'SECURITY_REPORT',
         icon: Timeline,
-        component: SecurityReportEdit
+        component: SecurityReportEdit,
     },
     {
         path: '/group/:group_id',
         sidebarName: 'GROUP',
         navbarName: 'GROUP',
         icon: Group,
-        component: GroupEdit
+        component: GroupEdit,
     },
     {
         path: '/groups/create',
         sidebarName: 'CREATE_GROUP',
         navbarName: 'CREATE_GROUP',
         icon: Group,
-        component: GroupCreate
+        component: GroupCreate,
     },
     {
         path: '/users/create',
         sidebarName: 'CREATE_USER',
         navbarName: 'CREATE_USER',
         icon: Person,
-        component: UserCreate
-    }
+        component: UserCreate,
+    },
 ];
 
 export default routes;

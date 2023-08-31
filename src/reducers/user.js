@@ -3,7 +3,7 @@ import {
     SET_USER_INFO_1,
     SET_USER_INFO_2,
     SET_USER_INFO_3,
-    LOGOUT
+    LOGOUT,
 } from '../actions/actionTypes';
 
 const default_username = '';
@@ -23,19 +23,19 @@ function user(
         token: '',
         user_sauce: '',
         user_email: '',
-        user_id: ''
+        user_id: '',
     },
     action
 ) {
     switch (action.type) {
         case SET_USER_USERNAME:
             return Object.assign({}, state, {
-                username: action.username
+                username: action.username,
             });
         case SET_USER_INFO_1:
             return Object.assign({}, state, {
                 remember_me: action.remember_me,
-                trust_device: action.trust_device
+                trust_device: action.trust_device,
             });
         case SET_USER_INFO_2:
             return Object.assign({}, state, {
@@ -43,14 +43,14 @@ function user(
                 user_public_key: action.user_public_key,
                 session_secret_key: action.session_secret_key,
                 token: action.token,
-                user_sauce: action.user_sauce
+                user_sauce: action.user_sauce,
             });
         case SET_USER_INFO_3:
             return Object.assign({}, state, {
                 isLoggedIn: true,
                 user_id: action.user_id,
                 user_email: action.user_email,
-                user_secret_key: action.user_secret_key
+                user_secret_key: action.user_secret_key,
             });
         case LOGOUT:
             return Object.assign({}, state, {
@@ -69,7 +69,7 @@ function user(
                 user_public_key: '',
                 session_secret_key: '',
                 token: '',
-                user_sauce: ''
+                user_sauce: '',
             });
         default:
             return state;

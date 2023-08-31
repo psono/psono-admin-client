@@ -1,4 +1,6 @@
 {
+  "LAST_UPDATED_IN_DAYS": "Last Updated (days)",
+  "CREATED_IN_DAYS": "Created (days)",
   "SCIM": "SCIM",
   "SCIM_GROUPS": "SCIM groups",
   "SCIM_MANAGEMENT": "SCIM management:",

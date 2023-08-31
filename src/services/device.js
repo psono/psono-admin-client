@@ -4,7 +4,7 @@ let fingerprint;
 
 activate();
 function activate() {
-    get_device_fingerprint_async().then(function(local_fingerprint) {
+    get_device_fingerprint_async().then(function (local_fingerprint) {
         fingerprint = local_fingerprint;
     });
 }
@@ -113,7 +113,7 @@ const service = {
     is_firefox: is_firefox,
     is_safari: is_safari,
     is_opera: is_opera,
-    get_device_description: get_device_description
+    get_device_description: get_device_description,
 };
 
 export default service;

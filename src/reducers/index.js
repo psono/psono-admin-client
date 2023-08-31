@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
     user,
     server,
     client,
-    notification
+    notification,
 });
 
 export default rootReducer;
