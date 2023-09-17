@@ -14,6 +14,7 @@ import { NavLink } from 'react-router-dom';
 import sidebarStyle from '../../assets/jss/material-dashboard-react/sidebarStyle';
 
 import { HeaderLinks } from '../../components';
+import user from '../../services/user';
 
 class Sidebar extends React.Component {
     // verifies if routeName is the one active (in browser input)
@@ -88,23 +89,26 @@ class Sidebar extends React.Component {
                         anchor="right"
                         open={this.props.open}
                         classes={{
-                            paper: classes.drawerPaper
+                            paper: classes.drawerPaper,
                         }}
                         onClose={this.props.handleDrawerToggle}
                         ModalProps={{
-                            keepMounted: true // Better open performance on mobile.
+                            keepMounted: true, // Better open performance on mobile.
                         }}
                     >
                         {brand}
                         <div className={classes.sidebarWrapper}>
-                            <HeaderLinks state={this.props.state} />
+                            <HeaderLinks
+                                state={this.props.state}
+                                logout={user.logout}
+                            />
                             {links}
                         </div>
                         {image !== undefined ? (
                             <div
                                 className={classes.background}
                                 style={{
-                                    backgroundImage: 'url(' + image + ')'
+                                    backgroundImage: 'url(' + image + ')',
                                 }}
                             />
                         ) : null}
@@ -116,7 +120,7 @@ class Sidebar extends React.Component {
                         variant="permanent"
                         open
                         classes={{
-                            paper: classes.drawerPaper
+                            paper: classes.drawerPaper,
                         }}
                     >
                         {brand}
@@ -125,7 +129,7 @@ class Sidebar extends React.Component {
                             <div
                                 className={classes.background}
                                 style={{
-                                    backgroundImage: 'url(' + image + ')'
+                                    backgroundImage: 'url(' + image + ')',
                                 }}
                             />
                         ) : null}
@@ -138,7 +142,7 @@ class Sidebar extends React.Component {
 
 Sidebar.propTypes = {
     classes: PropTypes.object.isRequired,
-    theme: PropTypes.object.isRequired
+    theme: PropTypes.object.isRequired,
 };
 
 export default compose(
