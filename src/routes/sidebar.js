@@ -1,7 +1,5 @@
 import DashboardPage from '../views/Dashboard/Index';
-//import UserProfile from '../views/UserProfile/UserProfile.jsx';
 import Users from '../views/Users/Index';
-import Policies from '../views/Policies/Index';
 import SecurityReports from '../views/SecurityReports/Index';
 // import TableList from '../views/TableList/TableList.jsx';
 // import Typography from '../views/Typography/Typography.jsx';
@@ -11,7 +9,6 @@ import SecurityReports from '../views/SecurityReports/Index';
 import {
     Dashboard,
     Person,
-    Policy,
     Timeline,
     // ContentPaste,
     // LibraryBooks,
@@ -19,7 +16,6 @@ import {
     // LocationOn,
     // Notifications
 } from '@material-ui/icons';
-import store from '../services/store';
 
 let routes = [
     {
