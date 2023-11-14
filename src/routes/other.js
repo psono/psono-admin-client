@@ -2,9 +2,11 @@ import SecurityReportEdit from '../views/SecurityReport/Edit';
 import UserEdit from '../views/User/Edit';
 import GroupEdit from '../views/Group/Edit';
 import GroupCreate from '../views/Group/Create';
+import PolicyCreate from '../views/Policies/Create';
+import PolicyEdit from '../views/Policies/Edit';
 import UserCreate from '../views/User/Create';
 
-import { Person, Group, Timeline } from '@material-ui/icons';
+import { Person, Group, Policy, Timeline } from '@material-ui/icons';
 
 let routes = [
     {
@@ -22,11 +24,25 @@ let routes = [
         component: SecurityReportEdit,
     },
     {
+        path: '/policy/:policy_id',
+        sidebarName: 'POLICY',
+        navbarName: 'POLICY',
+        icon: Policy,
+        component: PolicyEdit,
+    },
+    {
         path: '/group/:group_id',
         sidebarName: 'GROUP',
         navbarName: 'GROUP',
         icon: Group,
         component: GroupEdit,
+    },
+    {
+        path: '/policies/create',
+        sidebarName: 'CREATE_POLICY',
+        navbarName: 'CREATE_POLICY',
+        icon: Policy,
+        component: PolicyCreate,
     },
     {
         path: '/groups/create',

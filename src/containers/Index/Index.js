@@ -10,6 +10,7 @@ import { Header, Footer, Sidebar, Notification } from '../../components';
 
 import otherLinks from '../../routes/other';
 import sidebarLinks from '../../routes/sidebar';
+import eeLinks from '../../routes/ee';
 import ldapLinks from '../../routes/ldap';
 import samlLinks from '../../routes/saml';
 import oidcLinks from '../../routes/oidc';
@@ -56,25 +57,33 @@ class App extends React.Component {
         const { classes, ...rest } = this.props;
 
         let variableLinks = [];
+        if (this.props.state.server.type === 'EE') {
+            eeLinks.forEach(function (link) {
+                variableLinks.push(link);
+            });
+        }
         if (
+            this.props.state.server.type === 'EE' &&
             this.props.state.server.authentication_methods.indexOf('LDAP') !==
-            -1
+                -1
         ) {
             ldapLinks.forEach(function (link) {
                 variableLinks.push(link);
             });
         }
         if (
+            this.props.state.server.type === 'EE' &&
             this.props.state.server.authentication_methods.indexOf('SAML') !==
-            -1
+                -1
         ) {
             samlLinks.forEach(function (link) {
                 variableLinks.push(link);
             });
         }
         if (
+            this.props.state.server.type === 'EE' &&
             this.props.state.server.authentication_methods.indexOf('OIDC') !==
-            -1
+                -1
         ) {
             oidcLinks.forEach(function (link) {
                 variableLinks.push(link);

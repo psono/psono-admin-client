@@ -1038,6 +1038,251 @@ function admin_delete_session(token, session_secret_key, session_id) {
 }
 
 /**
+ * GET: Returns a list of all policys (for administrators) or the policy details of a single policy
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} [policy_id] (optional) The policy id
+ * @param {object} [params] (optional) Other search params
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_policy(token, session_secret_key, policy_id, params) {
+    const endpoint = '/admin/policy/' + (!policy_id ? '' : policy_id + '/');
+    const method = 'GET';
+    const data = null;
+
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(
+        method,
+        endpoint + queryParams,
+        data,
+        headers,
+        session_secret_key
+    );
+}
+
+/**
+ * POST: Creates a policy (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {string} title The title of the policy to create
+ * @param {object} config The config of the policy to create
+ * @param {double} priority The priority of the policy to create
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_create_policy(
+    token,
+    session_secret_key,
+    title,
+    config,
+    priority
+) {
+    const endpoint = '/admin/policy/';
+    const method = 'POST';
+    const data = {
+        title: title,
+        config: config,
+        priority: priority,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a policy group mapping (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} policy_id The id of the policy to create the group mapping
+ * @param {uuid} group_id The id of the group to create the group mapping
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_policy_create_group_map(
+    token,
+    session_secret_key,
+    policy_id,
+    group_id
+) {
+    const endpoint = '/admin/policy/group/map/';
+    const method = 'POST';
+    const data = {
+        policy_id: policy_id,
+        group_id: group_id,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a policy group map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} policy_id The policy id of the group mapping to delete
+ * @param {uuid} group_id The group id of the group mapping to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_policy_delete_group_map(
+    token,
+    session_secret_key,
+    policy_id,
+    group_id
+) {
+    const endpoint = '/admin/policy/group/map/';
+    const method = 'DELETE';
+    const data = {
+        policy_id: policy_id,
+        group_id: group_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a policy user mapping (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} policy_id The id of the policy to create the user mapping
+ * @param {uuid} user_id The id of the user to create the user mapping
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_policy_create_user_map(
+    token,
+    session_secret_key,
+    policy_id,
+    user_id
+) {
+    const endpoint = '/admin/policy/user/map/';
+    const method = 'POST';
+    const data = {
+        policy_id: policy_id,
+        user_id: user_id,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a policy user map (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} policy_id The policy id of the user mapping to delete
+ * @param {uuid} user_id The user id of the user mapping to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_policy_delete_user_map(
+    token,
+    session_secret_key,
+    policy_id,
+    user_id
+) {
+    const endpoint = '/admin/policy/user/map/';
+    const method = 'DELETE';
+    const data = {
+        policy_id: policy_id,
+        user_id: user_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * PUT: Updates a policy (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {string} policy_id The id of the policy to update
+ * @param {string} title The title of the policy to update
+ * @param {object} config The config of the policy to update
+ * @param {double} priority The priority of the policy to update
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_update_policy(
+    token,
+    session_secret_key,
+    policy_id,
+    title,
+    config,
+    priority
+) {
+    const endpoint = '/admin/policy/';
+    const method = 'PUT';
+    const data = {
+        policy_id: policy_id,
+        title: title,
+        config: config,
+        priority: priority,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a policy (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} policy_id The policy id of the group to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_policy(token, session_secret_key, policy_id) {
+    const endpoint = '/admin/policy/';
+    const method = 'DELETE';
+    const data = {
+        policy_id: policy_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * POST: Creates a managed group (for administrators)
  * (EE Only)
  *
@@ -3233,6 +3478,14 @@ const service = {
     admin_create_user,
     admin_delete_user,
     admin_delete_session,
+    admin_policy,
+    admin_policy_create_group_map,
+    admin_policy_delete_group_map,
+    admin_policy_create_user_map,
+    admin_policy_delete_user_map,
+    admin_create_policy,
+    admin_update_policy,
+    admin_delete_policy,
     admin_create_group,
     admin_delete_group,
     admin_update_membership,

@@ -223,6 +223,15 @@ class UsersCard extends React.Component {
                                 <CustomMaterialTable
                                     tableRef={this.props.groupTableRef}
                                     columns={[
+                                        {
+                                            field: 'mapped',
+                                            title: t('MAPPED'),
+                                            customSort: (a, b) => {
+                                                return (
+                                                    a.mapped_raw - b.mapped_raw
+                                                );
+                                            },
+                                        },
                                         { field: 'name', title: t('NAME') },
                                         {
                                             field: 'create_date',

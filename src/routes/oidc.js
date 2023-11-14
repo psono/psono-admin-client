@@ -8,8 +8,8 @@ let routes = [
         sidebarName: 'OIDC',
         navbarName: 'OIDC',
         icon: Business,
-        component: OIDC
-    }
+        component: OIDC,
+    },
 ];
 
 export default routes;
