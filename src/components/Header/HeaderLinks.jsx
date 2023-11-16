@@ -53,7 +53,6 @@ const HeaderLinks = (props) => {
 
     const logout = () => {
         props.logout();
-        this.setState({ openProfile: null });
     };
     return (
         <div className={classes.flex}>

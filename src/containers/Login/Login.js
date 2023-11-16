@@ -20,7 +20,7 @@ const style = {
         backgroundSize: 'cover',
         display: 'flex',
         'justify-content': 'center',
-        'align-items': 'center'
+        'align-items': 'center',
     },
     content: {
         width: '100%',
@@ -29,8 +29,8 @@ const style = {
         content: '',
         opacity: '.8',
         position: 'absolute',
-        background: '#000'
-    }
+        background: '#000',
+    },
 };
 
 class Login extends React.Component {
@@ -67,7 +67,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
     store: PropTypes.object.isRequired,
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {

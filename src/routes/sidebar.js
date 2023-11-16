@@ -1,5 +1,4 @@
 import DashboardPage from '../views/Dashboard/Index';
-//import UserProfile from '../views/UserProfile/UserProfile.jsx';
 import Users from '../views/Users/Index';
 import SecurityReports from '../views/SecurityReports/Index';
 // import TableList from '../views/TableList/TableList.jsx';
