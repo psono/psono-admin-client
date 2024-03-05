@@ -246,7 +246,6 @@ const GroupEdit = (props) => {
                             setGroup(group);
                             setMappedScimGroupIndex(mappedScimGroupIndex);
                             setScimGroups(scimGroups);
-                            console.log(scimGroups);
                         });
                 } else {
                     setGroup(group);
