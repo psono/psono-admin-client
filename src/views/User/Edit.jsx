@@ -415,6 +415,8 @@ const UserEdit = (props) => {
         authentication = 'LDAP';
     } else if (user.authentication === 'SAML') {
         authentication = 'SAML';
+    } else if (user.authentication === 'OIDC') {
+        authentication = 'OIDC';
     } else {
         authentication = 'UNKNOWN';
     }
