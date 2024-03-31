@@ -1,4 +1,5 @@
 {
+  "IP_ADDRESS_NOT_ALLOWED": "Ihrer IP Adresse ist es nicht erlaubt sich zu verbinden.",
   "SETTINGS": "Einstellungen",
   "OVERWRITE": "Überschreiben",
   "VALUE": "Wert",
@@ -28,6 +29,7 @@
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_SPECIAL_CHARS": "Passwortgenerator Default Einstellung für die Sonderzeichen",
   "POLICY_ALLOWED_FILE_REPOSITORY_TYPES": "Erlaubte Datei Repository Typen",
   "POLICY_ALLOWED_SECOND_FACTORS": "Erlaubte zweite Faktoren",
+  "POLICY_COMPLIANCE_IP_RESTRICTIONS": "IP Begrenzung",
   "CONFIGURATION": "Konfiguration",
   "POLICY_DETAILS": "Richtlinie Details",
   "EDIT_POLICY": "Richtlinie bearbeiten",

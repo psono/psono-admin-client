@@ -447,6 +447,10 @@ const PolicyEdit = (props) => {
             type: 'multiselect',
             values: ['yubikey_otp', 'webauthn', 'google_authenticator', 'duo'],
         },
+        {
+            key: 'COMPLIANCE_IP_RESTRICTIONS',
+            type: 'multilinestr',
+        },
     ];
 
     return (
@@ -774,6 +778,70 @@ const PolicyEdit = (props) => {
                                                             }}
                                                         />
                                                     )}
+                                                    {setting['type'] ===
+                                                        'multilinestr' && (
+                                                        <CustomInput
+                                                            id={setting['key']}
+                                                            key={setting['key']}
+                                                            formControlProps={{
+                                                                className:
+                                                                    classes.input,
+                                                            }}
+                                                            inputProps={{
+                                                                className:
+                                                                    classes.input,
+                                                                multiline: true,
+                                                                disabled:
+                                                                    !config.hasOwnProperty(
+                                                                        setting[
+                                                                            'key'
+                                                                        ]
+                                                                    ),
+                                                                value: (config.hasOwnProperty(
+                                                                    setting[
+                                                                        'key'
+                                                                    ]
+                                                                )
+                                                                    ? config[
+                                                                          setting[
+                                                                              'key'
+                                                                          ]
+                                                                      ]
+                                                                    : defaultValues.hasOwnProperty(
+                                                                          setting[
+                                                                              'key'
+                                                                          ]
+                                                                      )
+                                                                    ? defaultValues[
+                                                                          setting[
+                                                                              'key'
+                                                                          ]
+                                                                      ]
+                                                                    : []
+                                                                ).join('\n'),
+                                                                onChange: (
+                                                                    event
+                                                                ) => {
+                                                                    const newConfig =
+                                                                        {
+                                                                            ...config,
+                                                                        };
+                                                                    newConfig[
+                                                                        setting[
+                                                                            'key'
+                                                                        ]
+                                                                    ] =
+                                                                        event.target.value.split(
+                                                                            /[\s,;]+/
+                                                                        );
+                                                                    setConfig(
+                                                                        newConfig
+                                                                    );
+                                                                },
+                                                            }}
+                                                        />
+                                                    )}
+
                                                     {setting['type'] ===
                                                         'multiselect' && (
                                                         <FormControl
