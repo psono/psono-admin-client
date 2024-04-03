@@ -341,6 +341,38 @@ function admin_group(token, session_secret_key, group_id, params) {
 }
 
 /**
+ * PUT: Update a user (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_id The id of the group to update
+ * @param {string} name The new name for the group
+ * @param {boolean} forcedMembership
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_update_group(
+    token,
+    session_secret_key,
+    group_id,
+    name,
+    forcedMembership
+) {
+    const endpoint = '/admin/group/';
+    const method = 'PUT';
+    const data = {
+        group_id: group_id,
+        name: name,
+        forced_membership: forcedMembership,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * GET: Returns a list of all groups (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -3474,6 +3506,7 @@ const service = {
     admin_user,
     admin_session,
     admin_group,
+    admin_update_group,
     admin_security_report,
     admin_create_user,
     admin_delete_user,

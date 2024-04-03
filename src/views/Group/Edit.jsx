@@ -12,6 +12,8 @@ import {
     CustomInput,
     GridItem,
     GroupCard,
+    Button,
+    SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
@@ -24,6 +26,8 @@ const GroupEdit = (props) => {
     const { t } = useTranslation();
 
     const params = useParams();
+    const [errors, setErrors] = useState([]);
+    const [msgs, setMsgs] = useState([]);
     const [mappedLdapGroupIndex, setMappedLdapGroupIndex] = useState({});
     const [mappedSamlGroupIndex, setMappedSamlGroupIndex] = useState({});
     const [mappedOidcGroupIndex, setMappedOidcGroupIndex] = useState({});
@@ -294,6 +298,34 @@ const GroupEdit = (props) => {
             });
     }
 
+    const save = () => {
+        setErrors([]);
+        setMsgs([]);
+        console.log(group);
+        psono_server
+            .admin_update_group(
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                group.id,
+                group.name,
+                group.forced_membership
+            )
+            .then(
+                (result) => {
+                    setMsgs(['SAVE_SUCCESS']);
+                },
+                (result) => {
+                    if (result.data.hasOwnProperty('name')) {
+                        setErrors(result.data.name);
+                    } else if (result.data.hasOwnProperty('errors')) {
+                        setErrors(result.data.errors);
+                    } else {
+                        setErrors([result.data]);
+                    }
+                }
+            );
+    };
+
     const handleToggle = (membershipId, groupAdmin, shareAdmin) => {
         psono_server
             .admin_update_membership(
@@ -490,6 +522,13 @@ const GroupEdit = (props) => {
             group.id,
             oidcGroup.id
         );
+    };
+
+    const onForcedMembershipToggle = (event) => {
+        setGroup({
+            ...group,
+            forced_membership: !group.forced_membership,
+        });
     };
 
     const handleToggleAdminLDAP = (group, type) => {
@@ -952,14 +991,19 @@ const GroupEdit = (props) => {
                                                 }}
                                                 inputProps={{
                                                     value: group.name,
-                                                    disabled: true,
-                                                    readOnly: true,
+                                                    onChange: (event) => {
+                                                        setGroup({
+                                                            ...group,
+                                                            name: event.target
+                                                                .value,
+                                                        });
+                                                    },
                                                 }}
                                             />
                                         </GridItem>
                                     </Grid>
                                     <Grid container>
-                                        <GridItem xs={12} sm={12} md={12}>
+                                        <GridItem xs={12} sm={12} md={6}>
                                             <CustomInput
                                                 labelText={t('PUBLIC_KEY')}
                                                 id="public_key"
@@ -973,9 +1017,7 @@ const GroupEdit = (props) => {
                                                 }}
                                             />
                                         </GridItem>
-                                    </Grid>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={12} md={4}>
+                                        <GridItem xs={12} sm={12} md={6}>
                                             <CustomInput
                                                 labelText={t('CREATION_DATE')}
                                                 id="create_date"
@@ -994,11 +1036,65 @@ const GroupEdit = (props) => {
                                             />
                                         </GridItem>
                                     </Grid>
+                                    <Grid container>
+                                        {group.is_managed && (
+                                            <GridItem xs={12} sm={6} md={4}>
+                                                <div
+                                                    className={classes.checkbox}
+                                                >
+                                                    <Checkbox
+                                                        tabIndex={1}
+                                                        checked={
+                                                            group.forced_membership
+                                                        }
+                                                        onClick={
+                                                            onForcedMembershipToggle
+                                                        }
+                                                    />{' '}
+                                                    {t('FORCED_MEMBERSHIP')}
+                                                </div>
+                                            </GridItem>
+                                        )}
+                                        <GridItem
+                                            xs={8}
+                                            sm={8}
+                                            md={8}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            {errors.map((prop, index) => {
+                                                return (
+                                                    <SnackbarContent
+                                                        message={t(prop)}
+                                                        color="danger"
+                                                        key={index}
+                                                    />
+                                                );
+                                            })}
+                                        </GridItem>
+                                        <GridItem
+                                            xs={8}
+                                            sm={8}
+                                            md={8}
+                                            style={{ marginTop: '20px' }}
+                                        >
+                                            {msgs.map((prop, index) => {
+                                                return (
+                                                    <SnackbarContent
+                                                        message={t(prop)}
+                                                        color="info"
+                                                        key={index}
+                                                    />
+                                                );
+                                            })}
+                                        </GridItem>
+                                    </Grid>
                                 </div>
                             }
-                            // footer={
-                            //     <Button color="primary">Update User</Button>
-                            // }
+                            footer={
+                                <Button color="primary" onClick={save}>
+                                    {t('SAVE')}
+                                </Button>
+                            }
                         />
                     </GridItem>
                 </Grid>
