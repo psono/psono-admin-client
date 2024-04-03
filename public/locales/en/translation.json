@@ -1,4 +1,6 @@
 {
+  "FORCED_MEMBERSHIP": "Forced Membership",
+  "IP_ADDRESS_NOT_ALLOWED": "Your IP address is not allowed to connect.",
   "SETTINGS": "Settings",
   "OVERWRITE": "Overwrite",
   "VALUE": "Value",
@@ -28,6 +30,7 @@
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_SPECIAL_CHARS": "Passwordgenerator default setting for the special characters",
   "POLICY_ALLOWED_FILE_REPOSITORY_TYPES": "Allowed file repository types",
   "POLICY_ALLOWED_SECOND_FACTORS": "Allowed second factors",
+  "POLICY_COMPLIANCE_IP_RESTRICTIONS": "IP restrictions",
   "CONFIGURATION": "Configuration",
   "POLICY_DETAILS": "Policy Details",
   "EDIT_POLICY": "Edit policy",
