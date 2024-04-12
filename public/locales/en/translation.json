@@ -1,4 +1,5 @@
 {
+  "AUTOMATICALLY_CREATE_FOLDER": "Automatically create folder",
   "FORCED_MEMBERSHIP": "Forced Membership",
   "IP_ADDRESS_NOT_ALLOWED": "Your IP address is not allowed to connect.",
   "SETTINGS": "Settings",
@@ -244,6 +245,7 @@
   "DELETE_WEBAUTHN_S": "Delete WebAuthn(s)",
   "DELETE_DUO_S": "Delete Duo(s)",
   "DELETE_MEMBERSHIP_S": "Delete Membership(s)",
+  "DELETE_SHARE_RIGHT_S": "Delete Share Right(s)",
   "DELETE_SESSION_S": "Delete Session(s)",
   "JOINED": "Joined",
   "GROUP_ADMIN": "Group Admin",

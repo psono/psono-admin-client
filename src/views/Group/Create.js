@@ -1,7 +1,7 @@
-import React from 'react';
-import { Grid, withStyles } from '@material-ui/core';
-import { withTranslation } from 'react-i18next';
-import { compose } from 'redux';
+import React, { useState } from 'react';
+import { Checkbox, Grid } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 
 import {
@@ -9,134 +9,137 @@ import {
     CustomInput,
     GridItem,
     Button,
-    SnackbarContent
+    SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
-class Group extends React.Component {
-    state = {
-        errors_list: [],
-        errors_dict: {},
-        redirect_to: '',
-        groupname: '',
-        createGroupPossible: false
-    };
+const useStyles = makeStyles(customInputStyle);
 
-    componentDidMount() {
-        const is_ee_server = this.props.state.server.type === 'EE';
+const GroupCreate = (props) => {
+    const classes = useStyles();
+    const { t } = useTranslation();
+    const [errorsDict, setErrorsDict] = useState({});
+    const [redirectTo, setRedirectTo] = useState('');
+    const [groupName, setGroupName] = useState('');
+    const [autoCreateFolder, setAutoCreateFolder] = useState(false);
+
+    React.useEffect(() => {
+        const is_ee_server = props.state.server.type === 'EE';
 
         if (!is_ee_server) {
-            this.setState({
-                redirect_to: '/dashboard'
-            });
+            setRedirectTo('/dashboard');
         }
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    onChangeGroupName = event => {
-        this.setState({
-            groupname: event.target.value,
-            createGroupPossible:
-                event.target.value.length > 2 &&
-                event.target.value.indexOf('@') === -1
-        });
+    const onChangeGroupName = (event) => {
+        setGroupName(event.target.value);
     };
 
-    createGroup = () => {
-        const onSuccess = data => {
-            this.setState({
-                redirect_to: '/group/' + data.data.id
-            });
+    const createGroup = () => {
+        const onSuccess = (data) => {
+            setRedirectTo('/group/' + data.data.id);
         };
-        const onError = data => {
-            this.setState({
-                errors_dict: data.data
-            });
+        const onError = (data) => {
+            setErrorsDict(data.data);
         };
 
         psono_server
             .admin_create_group(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key,
-                this.state.groupname
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                groupName,
+                autoCreateFolder
             )
             .then(onSuccess, onError);
     };
 
-    render() {
-        const { t } = this.props;
-        if (this.state.redirect_to) {
-            return <Redirect to={this.state.redirect_to} />;
-        }
-        const errors_dict = this.state.errors_dict;
-        return (
-            <div>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <RegularCard
-                            cardTitle={t('CREATE_GROUP')}
-                            cardSubtitle={t('ADD_NECESSARY_DETAILS_BELOW')}
-                            content={
-                                <div>
-                                    <Grid container>
-                                        <GridItem xs={12} sm={12} md={7}>
-                                            <CustomInput
-                                                labelText={t('GROUP_NAME')}
-                                                id="groupname"
-                                                helperText={
-                                                    errors_dict.hasOwnProperty(
-                                                        'name'
-                                                    )
-                                                        ? errors_dict['name']
-                                                        : ''
-                                                }
-                                                formControlProps={{
-                                                    fullWidth: true
-                                                }}
-                                                inputProps={{
-                                                    value: this.state.groupname,
-                                                    onChange: this
-                                                        .onChangeGroupName
-                                                }}
-                                                error={errors_dict.hasOwnProperty(
-                                                    'name'
-                                                )}
-                                            />
-                                        </GridItem>
-                                    </Grid>
-                                </div>
-                            }
-                            footer={
-                                <div>
-                                    <Button
-                                        color="primary"
-                                        onClick={this.createGroup}
-                                        disabled={
-                                            !this.state.createGroupPossible
-                                        }
-                                    >
-                                        {t('CREATE_GROUP')}
-                                    </Button>
-                                    {errors_dict.hasOwnProperty(
-                                        'non_field_errors'
-                                    ) ? (
-                                        <SnackbarContent
-                                            message={t(
-                                                errors_dict['non_field_errors']
-                                            )}
-                                            color="danger"
-                                        />
-                                    ) : (
-                                        ''
-                                    )}
-                                </div>
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-            </div>
-        );
+    if (redirectTo) {
+        return <Redirect to={redirectTo} />;
     }
-}
 
-export default compose(withTranslation(), withStyles(customInputStyle))(Group);
+    return (
+        <div>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    <RegularCard
+                        cardTitle={t('CREATE_GROUP')}
+                        cardSubtitle={t('ADD_NECESSARY_DETAILS_BELOW')}
+                        content={
+                            <div>
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText={t('GROUP_NAME')}
+                                            id="groupname"
+                                            helperText={
+                                                errorsDict.hasOwnProperty(
+                                                    'name'
+                                                )
+                                                    ? errorsDict['name']
+                                                    : ''
+                                            }
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: groupName,
+                                                onChange: onChangeGroupName,
+                                            }}
+                                            error={errorsDict.hasOwnProperty(
+                                                'name'
+                                            )}
+                                        />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={6} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={autoCreateFolder}
+                                                onClick={(event) => {
+                                                    setAutoCreateFolder(
+                                                        !autoCreateFolder
+                                                    );
+                                                }}
+                                            />{' '}
+                                            {t('AUTOMATICALLY_CREATE_FOLDER')}
+                                        </div>
+                                    </GridItem>
+                                </Grid>
+                            </div>
+                        }
+                        footer={
+                            <div>
+                                <Button
+                                    color="primary"
+                                    onClick={createGroup}
+                                    disabled={
+                                        groupName.length <= 2 ||
+                                        groupName.indexOf('@') !== -1
+                                    }
+                                >
+                                    {t('CREATE_GROUP')}
+                                </Button>
+                                {errorsDict.hasOwnProperty(
+                                    'non_field_errors'
+                                ) ? (
+                                    <SnackbarContent
+                                        message={t(
+                                            errorsDict['non_field_errors']
+                                        )}
+                                        color="danger"
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                            </div>
+                        }
+                    />
+                </GridItem>
+            </Grid>
+        </div>
+    );
+};
+
+export default GroupCreate;

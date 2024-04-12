@@ -1324,11 +1324,17 @@ function admin_delete_policy(token, session_secret_key, policy_id) {
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_create_group(token, session_secret_key, name) {
+function admin_create_group(
+    token,
+    session_secret_key,
+    name,
+    auto_create_folder
+) {
     const endpoint = '/admin/group/';
     const method = 'POST';
     const data = {
         name: name,
+        auto_create_folder: auto_create_folder,
     };
     const headers = {
         Authorization: 'Token ' + token,
@@ -1393,6 +1399,41 @@ function admin_update_membership(
 }
 
 /**
+ * Ajax POST request to update a group share right with the token as authentication (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_share_right_id The group share right id to update
+ * @param {boolean} read Weather the users should have read rights or not
+ * @param {boolean} write Weather the users should have write rights or not
+ * @param {boolean} grant Weather the users should have write rights or not
+ *
+ * @returns {Promise<AxiosResponse<any>>} promise
+ */
+function admin_update_group_share_right(
+    token,
+    session_secret_key,
+    group_share_right_id,
+    read,
+    write,
+    grant
+) {
+    const endpoint = '/admin/group-share-right/';
+    const method = 'PUT';
+    const data = {
+        group_share_right_id: group_share_right_id,
+        read: read,
+        write: write,
+        grant: grant,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a group membership (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -1406,6 +1447,33 @@ function admin_delete_membership(token, session_secret_key, membership_id) {
     const method = 'DELETE';
     const data = {
         membership_id: membership_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * DELETE: Deletes a group share right (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} group_share_right_id The id of the membership to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_delete_group_share_right(
+    token,
+    session_secret_key,
+    group_share_right_id
+) {
+    const endpoint = '/admin/group-share-right/';
+    const method = 'DELETE';
+    const data = {
+        group_share_right_id: group_share_right_id,
     };
     const headers = {
         'Content-Type': 'application/json',
@@ -3522,7 +3590,9 @@ const service = {
     admin_create_group,
     admin_delete_group,
     admin_update_membership,
+    admin_update_group_share_right,
     admin_delete_membership,
+    admin_delete_group_share_right,
     admin_delete_duo,
     admin_delete_yubikey_otp,
     admin_delete_webauthn,

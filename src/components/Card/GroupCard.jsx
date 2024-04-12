@@ -15,6 +15,7 @@ const GroupCard = ({
     scimGroups,
     oidcGroups,
     onDeleteMemberships,
+    onDeleteGroupShareRights,
 }) => {
     const { t } = useTranslation();
 
@@ -74,6 +75,14 @@ const GroupCard = ({
                     ]}
                     data={shareRights}
                     title={t('SHARES')}
+                    actions={[
+                        {
+                            tooltip: t('DELETE_SHARE_RIGHT_S'),
+                            icon: Delete,
+                            onClick: (evt, data) =>
+                                onDeleteGroupShareRights([data]),
+                        },
+                    ]}
                 />
             ),
         },

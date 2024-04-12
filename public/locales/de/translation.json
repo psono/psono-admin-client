@@ -1,4 +1,5 @@
 {
+  "AUTOMATICALLY_CREATE_FOLDER": "Ordner automatisch erstellen",
   "FORCED_MEMBERSHIP": "Erzwungene Mitgliedschaft",
   "IP_ADDRESS_NOT_ALLOWED": "Ihrer IP Adresse ist es nicht erlaubt sich zu verbinden.",
   "SETTINGS": "Einstellungen",
@@ -244,6 +245,7 @@
   "DELETE_WEBAUTHN_S": "WebAuthn(s) löschen",
   "DELETE_DUO_S": "Duo(s) löschen",
   "DELETE_MEMBERSHIP_S": "Mitgliedschaft(en) löschen",
+  "DELETE_SHARE_RIGHT_S": "Share Recht(e) löschen",
   "DELETE_SESSION_S": "Session(s) löschen",
   "JOINED": "Beigetreten",
   "GROUP_ADMIN": "Gruppen Admin",
