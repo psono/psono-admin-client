@@ -1,4 +1,6 @@
 {
+  "CREATE_SHARE_RIGHT": "Share Recht erstellen",
+  "CREATE_SHARE_RIGHT_DETAILS": "Erstelle einen Ordner und teile diesen mit der Gruppe",
   "AUTOMATICALLY_CREATE_FOLDER": "Ordner automatisch erstellen",
   "FORCED_MEMBERSHIP": "Erzwungene Mitgliedschaft",
   "IP_ADDRESS_NOT_ALLOWED": "Ihrer IP Adresse ist es nicht erlaubt sich zu verbinden.",
@@ -159,6 +161,7 @@
   "FILESERVER_INFO": "Fileserver Info:",
   "TITLE": "Title",
   "GROUP_NAME": "Gruppen Name",
+  "FOLDER_NAME": "Ordner Name",
   "CREATE_USER": "Benutzer Erstellen",
   "CREATE_GROUP": "Gruppe Erstellen",
   "ADD_NECESSARY_DETAILS_BELOW": "Geben sie die notwendigen Details unten an",

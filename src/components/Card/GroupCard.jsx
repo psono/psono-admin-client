@@ -6,6 +6,7 @@ import { Group, Delete } from '@material-ui/icons';
 
 import { CustomMaterialTable } from '../../components';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
+import Add from '@material-ui/icons/Add';
 
 const GroupCard = ({
     memberships,
@@ -16,6 +17,8 @@ const GroupCard = ({
     oidcGroups,
     onDeleteMemberships,
     onDeleteGroupShareRights,
+    onCreateGroupShareRight,
+    isManaged,
 }) => {
     const { t } = useTranslation();
 
@@ -81,6 +84,13 @@ const GroupCard = ({
                             icon: Delete,
                             onClick: (evt, data) =>
                                 onDeleteGroupShareRights([data]),
+                        },
+                        {
+                            tooltip: t('CREATE_SHARE_RIGHT'),
+                            isFreeAction: true,
+                            icon: Add,
+                            hidden: !isManaged,
+                            onClick: (evt) => onCreateGroupShareRight(),
                         },
                     ]}
                 />

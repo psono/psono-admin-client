@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Checkbox } from '@material-ui/core';
@@ -23,6 +23,7 @@ const useStyles = makeStyles(customInputStyle);
 
 const GroupEdit = (props) => {
     const classes = useStyles();
+    const history = useHistory();
     const { t } = useTranslation();
 
     const params = useParams();
@@ -363,7 +364,6 @@ const GroupEdit = (props) => {
     const save = () => {
         setErrors([]);
         setMsgs([]);
-        console.log(group);
         psono_server
             .admin_update_group(
                 props.state.user.token,
@@ -455,44 +455,38 @@ const GroupEdit = (props) => {
         );
     };
 
-    const onDeleteMemberships = (selected_memberships) => {
+    const onDeleteMemberships = async (selected_memberships) => {
+        const promiseResults = [];
         selected_memberships.forEach((membership) => {
-            psono_server.admin_delete_membership(
-                props.state.user.token,
-                props.state.user.session_secret_key,
-                membership.id
+            promiseResults.push(
+                psono_server.admin_delete_membership(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    membership.id
+                )
             );
         });
-
-        let { memberships } = group;
-        selected_memberships.forEach((membership) => {
-            helper.remove_from_array(memberships, membership, function (a, b) {
-                return a.id === b.id;
-            });
-        });
-        setGroup(group);
+        await Promise.all(promiseResults);
+        loadGroup();
     };
 
-    const onDeleteGroupShareRights = (selectedShareRights) => {
+    const onDeleteGroupShareRights = async (selectedShareRights) => {
+        const promiseResults = [];
         selectedShareRights.forEach((groupShareRight) => {
-            psono_server.admin_delete_group_share_right(
-                props.state.user.token,
-                props.state.user.session_secret_key,
-                groupShareRight.id
+            promiseResults.push(
+                psono_server.admin_delete_group_share_right(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    groupShareRight.id
+                )
             );
         });
+        await Promise.all(promiseResults);
+        loadGroup();
+    };
 
-        let { share_rights } = group;
-        selectedShareRights.forEach((groupShareRight) => {
-            helper.remove_from_array(
-                share_rights,
-                groupShareRight,
-                function (a, b) {
-                    return a.id === b.id;
-                }
-            );
-        });
-        setGroup(group);
+    const onCreateGroupShareRight = (selectedShareRights) => {
+        history.push('/group/' + params.group_id + '/create-share-right');
     };
 
     const handleToggleLDAP = (ldapGroup) => {
@@ -1227,11 +1221,13 @@ const GroupEdit = (props) => {
                             memberships={group.memberships}
                             onDeleteMemberships={onDeleteMemberships}
                             onDeleteGroupShareRights={onDeleteGroupShareRights}
+                            onCreateGroupShareRight={onCreateGroupShareRight}
                             shareRights={group.share_rights}
                             ldapGroups={ldapGroups}
                             samlGroups={samlGroups}
                             scimGroups={scimGroups}
                             oidcGroups={oidcGroups}
+                            isManaged={group.is_managed}
                         />
                     </GridItem>
                 </Grid>

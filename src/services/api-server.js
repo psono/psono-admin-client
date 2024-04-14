@@ -1321,6 +1321,7 @@ function admin_delete_policy(token, session_secret_key, policy_id) {
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
  * @param {string} name The name of the group to create
+ * @param {boolean} auto_create_folder Automatically create a share with a folder with the same name
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
@@ -1335,6 +1336,45 @@ function admin_create_group(
     const data = {
         name: name,
         auto_create_folder: auto_create_folder,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
+ * POST: Creates a share right for a managed group (for administrators)
+ * (EE Only)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {string} group_id The group id
+ * @param {string} name The name of the group to create
+ * @param {boolean} read
+ * @param {boolean} write
+ * @param {boolean} grant
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_create_share_right(
+    token,
+    session_secret_key,
+    group_id,
+    name,
+    read,
+    write,
+    grant
+) {
+    const endpoint = '/admin/group-share-right/';
+    const method = 'POST';
+    const data = {
+        group_id: group_id,
+        name: name,
+        read: read,
+        write: write,
+        grant: grant,
     };
     const headers = {
         Authorization: 'Token ' + token,
@@ -3588,6 +3628,7 @@ const service = {
     admin_update_policy,
     admin_delete_policy,
     admin_create_group,
+    admin_create_share_right,
     admin_delete_group,
     admin_update_membership,
     admin_update_group_share_right,

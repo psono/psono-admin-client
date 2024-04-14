@@ -1,4 +1,6 @@
 {
+  "CREATE_SHARE_RIGHT": "Create share right",
+  "CREATE_SHARE_RIGHT_DETAILS": "Create a folder and share that one with the group",
   "AUTOMATICALLY_CREATE_FOLDER": "Automatically create folder",
   "FORCED_MEMBERSHIP": "Forced Membership",
   "IP_ADDRESS_NOT_ALLOWED": "Your IP address is not allowed to connect.",
@@ -159,6 +161,7 @@
   "FILESERVER_INFO": "Fileserver Info:",
   "TITLE": "Title",
   "GROUP_NAME": "Group Name",
+  "FOLDER_NAME": "Folder Name",
   "CREATE_USER": "Create User",
   "CREATE_GROUP": "Create Group",
   "ADD_NECESSARY_DETAILS_BELOW": "Add the necessary details below",
