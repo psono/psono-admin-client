@@ -17,7 +17,6 @@ import {
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
-import helper from '../../services/helper';
 
 const useStyles = makeStyles(customInputStyle);
 
@@ -55,6 +54,10 @@ const GroupEdit = (props) => {
                 const group = response.data;
 
                 group.share_rights.forEach((u) => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+
                     u.read_raw = u.read;
                     u.read = (
                         <Checkbox

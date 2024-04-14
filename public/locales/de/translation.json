@@ -160,6 +160,7 @@
   "RELEASES": "Releases:",
   "FILESERVER_INFO": "Fileserver Info:",
   "TITLE": "Title",
+  "TYPE": "Typ",
   "GROUP_NAME": "Gruppen Name",
   "FOLDER_NAME": "Ordner Name",
   "CREATE_USER": "Benutzer Erstellen",

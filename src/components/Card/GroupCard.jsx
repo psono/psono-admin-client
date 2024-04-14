@@ -66,6 +66,20 @@ const GroupCard = ({
                     columns={[
                         { field: 'share_id', title: t('SHARE_ID') },
                         {
+                            field: 'share_title',
+                            title: t('TITLE'),
+                            hidden: !shareRights.some(
+                                (shareRight) => shareRight.share_title
+                            ),
+                        },
+                        {
+                            field: 'share_type',
+                            title: t('TYPE'),
+                            hidden: !shareRights.some(
+                                (shareRight) => shareRight.share_title
+                            ),
+                        },
+                        {
                             field: 'create_date',
                             title: t('SHARE_DATE'),
                         },
