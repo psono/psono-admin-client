@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Checkbox, Grid } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { useHistory, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+
+import { Checkbox, Grid } from '@material-ui/core';
 
 import {
     RegularCard,
@@ -12,66 +12,65 @@ import {
     SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
+import { makeStyles } from '@material-ui/core/styles';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 
 const useStyles = makeStyles(customInputStyle);
 
-const GroupCreate = (props) => {
-    const classes = useStyles();
+const ShareRightGroupCreate = (props) => {
     const { t } = useTranslation();
+    const params = useParams();
+    const classes = useStyles();
+    const history = useHistory();
     const [errorsDict, setErrorsDict] = useState({});
-    const [redirectTo, setRedirectTo] = useState('');
-    const [groupName, setGroupName] = useState('');
-    const [autoCreateFolder, setAutoCreateFolder] = useState(false);
+    const [folderName, setFolderName] = useState('');
+    const [read, setRead] = useState(true);
+    const [write, setWrite] = useState(true);
+    const [grant, setGrant] = useState(true);
 
     React.useEffect(() => {
         const is_ee_server = props.state.server.type === 'EE';
 
         if (!is_ee_server) {
-            setRedirectTo('/dashboard');
+            history.push('/dashboard');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const onChangeGroupName = (event) => {
-        setGroupName(event.target.value);
-    };
-
     const createGroup = () => {
         const onSuccess = (data) => {
-            setRedirectTo('/group/' + data.data.id);
+            history.push('/group/' + params.group_id);
         };
         const onError = (data) => {
             setErrorsDict(data.data);
         };
 
         psono_server
-            .admin_create_group(
+            .admin_create_share_right(
                 props.state.user.token,
                 props.state.user.session_secret_key,
-                groupName,
-                autoCreateFolder
+                params.group_id,
+                folderName,
+                read,
+                write,
+                grant
             )
             .then(onSuccess, onError);
     };
-
-    if (redirectTo) {
-        return <Redirect to={redirectTo} />;
-    }
 
     return (
         <div>
             <Grid container>
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
-                        cardTitle={t('CREATE_GROUP')}
-                        cardSubtitle={t('ADD_NECESSARY_DETAILS_BELOW')}
+                        cardTitle={t('CREATE_SHARE_RIGHT')}
+                        cardSubtitle={t('CREATE_SHARE_RIGHT_DETAILS')}
                         content={
                             <div>
                                 <Grid container>
                                     <GridItem xs={12} sm={12} md={12}>
                                         <CustomInput
-                                            labelText={t('GROUP_NAME')}
+                                            labelText={t('FOLDER_NAME')}
                                             id="groupname"
                                             helperText={
                                                 errorsDict.hasOwnProperty(
@@ -84,26 +83,52 @@ const GroupCreate = (props) => {
                                                 fullWidth: true,
                                             }}
                                             inputProps={{
-                                                value: groupName,
-                                                onChange: onChangeGroupName,
+                                                value: folderName,
+                                                onChange: (event) => {
+                                                    setFolderName(
+                                                        event.target.value
+                                                    );
+                                                },
                                             }}
                                             error={errorsDict.hasOwnProperty(
                                                 'name'
                                             )}
                                         />
                                     </GridItem>
-                                    <GridItem xs={12} sm={6} md={4}>
+                                    <GridItem xs={12} sm={4} md={4}>
                                         <div className={classes.checkbox}>
                                             <Checkbox
                                                 tabIndex={1}
-                                                checked={autoCreateFolder}
+                                                checked={read}
                                                 onClick={(event) => {
-                                                    setAutoCreateFolder(
-                                                        !autoCreateFolder
-                                                    );
+                                                    setRead(!read);
                                                 }}
                                             />{' '}
-                                            {t('AUTOMATICALLY_CREATE_FOLDER')}
+                                            {t('READ')}
+                                        </div>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={4} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={write}
+                                                onClick={(event) => {
+                                                    setWrite(!write);
+                                                }}
+                                            />{' '}
+                                            {t('WRITE')}
+                                        </div>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={4} md={4}>
+                                        <div className={classes.checkbox}>
+                                            <Checkbox
+                                                tabIndex={1}
+                                                checked={grant}
+                                                onClick={(event) => {
+                                                    setGrant(!grant);
+                                                }}
+                                            />{' '}
+                                            {t('ADMIN')}
                                         </div>
                                     </GridItem>
                                 </Grid>
@@ -114,12 +139,9 @@ const GroupCreate = (props) => {
                                 <Button
                                     color="primary"
                                     onClick={createGroup}
-                                    disabled={
-                                        groupName.length <= 2 ||
-                                        groupName.indexOf('@') !== -1
-                                    }
+                                    disabled={!folderName}
                                 >
-                                    {t('CREATE_GROUP')}
+                                    {t('CREATE')}
                                 </Button>
                                 {errorsDict.hasOwnProperty(
                                     'non_field_errors'
@@ -142,4 +164,4 @@ const GroupCreate = (props) => {
     );
 };
 
-export default GroupCreate;
+export default ShareRightGroupCreate;

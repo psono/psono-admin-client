@@ -2,6 +2,7 @@ import SecurityReportEdit from '../views/SecurityReport/Edit';
 import UserEdit from '../views/User/Edit';
 import GroupEdit from '../views/Group/Edit';
 import GroupCreate from '../views/Group/Create';
+import GroupShareRightCreate from '../views/Group/ShareRightCreate';
 import PolicyCreate from '../views/Policies/Create';
 import PolicyEdit from '../views/Policies/Edit';
 import UserCreate from '../views/User/Create';
@@ -29,6 +30,13 @@ let routes = [
         navbarName: 'POLICY',
         icon: Policy,
         component: PolicyEdit,
+    },
+    {
+        path: '/group/:group_id/create-share-right',
+        sidebarName: 'CREATE_SHARE_RIGHT',
+        navbarName: 'CREATE_SHARE_RIGHT',
+        icon: Group,
+        component: GroupShareRightCreate,
     },
     {
         path: '/group/:group_id',

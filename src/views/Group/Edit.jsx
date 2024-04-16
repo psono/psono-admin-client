@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Checkbox } from '@material-ui/core';
@@ -17,12 +17,12 @@ import {
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
-import helper from '../../services/helper';
 
 const useStyles = makeStyles(customInputStyle);
 
 const GroupEdit = (props) => {
     const classes = useStyles();
+    const history = useHistory();
     const { t } = useTranslation();
 
     const params = useParams();
@@ -54,9 +54,75 @@ const GroupEdit = (props) => {
                 const group = response.data;
 
                 group.share_rights.forEach((u) => {
-                    u.read = u.read ? t('YES') : t('NO');
-                    u.write = u.write ? t('YES') : t('NO');
-                    u.grant = u.grant ? t('YES') : t('NO');
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+
+                    u.read_raw = u.read;
+                    u.read = (
+                        <Checkbox
+                            checked={u.read_raw}
+                            tabIndex={-1}
+                            onClick={() => {
+                                handleToggleShareRightRead(u);
+                            }}
+                            checkedIcon={
+                                <CheckBox className={classes.checkedIcon} />
+                            }
+                            icon={
+                                <CheckBoxOutlineBlank
+                                    className={classes.uncheckedIcon}
+                                />
+                            }
+                            classes={{
+                                checked: classes.checked,
+                            }}
+                        />
+                    );
+
+                    u.write_raw = u.write;
+                    u.write = (
+                        <Checkbox
+                            checked={u.write_raw}
+                            tabIndex={-1}
+                            onClick={() => {
+                                handleToggleShareRightWrite(u);
+                            }}
+                            checkedIcon={
+                                <CheckBox className={classes.checkedIcon} />
+                            }
+                            icon={
+                                <CheckBoxOutlineBlank
+                                    className={classes.uncheckedIcon}
+                                />
+                            }
+                            classes={{
+                                checked: classes.checked,
+                            }}
+                        />
+                    );
+
+                    u.grant_raw = u.grant;
+                    u.grant = (
+                        <Checkbox
+                            checked={u.grant_raw}
+                            tabIndex={-1}
+                            onClick={() => {
+                                handleToggleShareRightGrant(u);
+                            }}
+                            checkedIcon={
+                                <CheckBox className={classes.checkedIcon} />
+                            }
+                            icon={
+                                <CheckBoxOutlineBlank
+                                    className={classes.uncheckedIcon}
+                                />
+                            }
+                            classes={{
+                                checked: classes.checked,
+                            }}
+                        />
+                    );
                 });
 
                 group.memberships.forEach((u) => {
@@ -301,7 +367,6 @@ const GroupEdit = (props) => {
     const save = () => {
         setErrors([]);
         setMsgs([]);
-        console.log(group);
         psono_server
             .admin_update_group(
                 props.state.user.token,
@@ -326,7 +391,46 @@ const GroupEdit = (props) => {
             );
     };
 
-    const handleToggle = (membershipId, groupAdmin, shareAdmin) => {
+    const handleToggleShareRight = (groupShareRightId, read, write, grant) => {
+        psono_server
+            .admin_update_group_share_right(
+                props.state.user.token,
+                props.state.user.session_secret_key,
+                groupShareRightId,
+                read,
+                write,
+                grant
+            )
+            .then((values) => {
+                loadGroup();
+            });
+    };
+    const handleToggleShareRightRead = (groupShareRight) => {
+        return handleToggleShareRight(
+            groupShareRight.id,
+            !groupShareRight.read_raw,
+            groupShareRight.write_raw,
+            groupShareRight.grant_raw
+        );
+    };
+    const handleToggleShareRightWrite = (groupShareRight) => {
+        return handleToggleShareRight(
+            groupShareRight.id,
+            groupShareRight.read_raw,
+            !groupShareRight.write_raw,
+            groupShareRight.grant_raw
+        );
+    };
+    const handleToggleShareRightGrant = (groupShareRight) => {
+        return handleToggleShareRight(
+            groupShareRight.id,
+            groupShareRight.read_raw,
+            groupShareRight.write_raw,
+            !groupShareRight.grant_raw
+        );
+    };
+
+    const handleToggleGroup = (membershipId, groupAdmin, shareAdmin) => {
         psono_server
             .admin_update_membership(
                 props.state.user.token,
@@ -340,36 +444,52 @@ const GroupEdit = (props) => {
             });
     };
     const handleToggleGroupAdmin = (membership) => {
-        return handleToggle(
+        return handleToggleGroup(
             membership.id,
             !membership.admin_raw,
             membership.share_admin_raw
         );
     };
     const handleToggleShareAdmin = (membership) => {
-        return handleToggle(
+        return handleToggleGroup(
             membership.id,
             membership.admin_raw,
             !membership.share_admin_raw
         );
     };
 
-    const onDeleteMemberships = (selected_memberships) => {
+    const onDeleteMemberships = async (selected_memberships) => {
+        const promiseResults = [];
         selected_memberships.forEach((membership) => {
-            psono_server.admin_delete_membership(
-                props.state.user.token,
-                props.state.user.session_secret_key,
-                membership.id
+            promiseResults.push(
+                psono_server.admin_delete_membership(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    membership.id
+                )
             );
         });
+        await Promise.all(promiseResults);
+        loadGroup();
+    };
 
-        let { memberships } = group;
-        selected_memberships.forEach((membership) => {
-            helper.remove_from_array(memberships, membership, function (a, b) {
-                return a.id === b.id;
-            });
+    const onDeleteGroupShareRights = async (selectedShareRights) => {
+        const promiseResults = [];
+        selectedShareRights.forEach((groupShareRight) => {
+            promiseResults.push(
+                psono_server.admin_delete_group_share_right(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    groupShareRight.id
+                )
+            );
         });
-        setGroup(group);
+        await Promise.all(promiseResults);
+        loadGroup();
+    };
+
+    const onCreateGroupShareRight = (selectedShareRights) => {
+        history.push('/group/' + params.group_id + '/create-share-right');
     };
 
     const handleToggleLDAP = (ldapGroup) => {
@@ -1103,11 +1223,14 @@ const GroupEdit = (props) => {
                         <GroupCard
                             memberships={group.memberships}
                             onDeleteMemberships={onDeleteMemberships}
+                            onDeleteGroupShareRights={onDeleteGroupShareRights}
+                            onCreateGroupShareRight={onCreateGroupShareRight}
                             shareRights={group.share_rights}
                             ldapGroups={ldapGroups}
                             samlGroups={samlGroups}
                             scimGroups={scimGroups}
                             oidcGroups={oidcGroups}
+                            isManaged={group.is_managed}
                         />
                     </GridItem>
                 </Grid>

@@ -6,6 +6,7 @@ import { Group, Delete } from '@material-ui/icons';
 
 import { CustomMaterialTable } from '../../components';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
+import Add from '@material-ui/icons/Add';
 
 const GroupCard = ({
     memberships,
@@ -15,6 +16,9 @@ const GroupCard = ({
     scimGroups,
     oidcGroups,
     onDeleteMemberships,
+    onDeleteGroupShareRights,
+    onCreateGroupShareRight,
+    isManaged,
 }) => {
     const { t } = useTranslation();
 
@@ -62,6 +66,20 @@ const GroupCard = ({
                     columns={[
                         { field: 'share_id', title: t('SHARE_ID') },
                         {
+                            field: 'share_title',
+                            title: t('TITLE'),
+                            hidden: !shareRights.some(
+                                (shareRight) => shareRight.share_title
+                            ),
+                        },
+                        {
+                            field: 'share_type',
+                            title: t('TYPE'),
+                            hidden: !shareRights.some(
+                                (shareRight) => shareRight.share_title
+                            ),
+                        },
+                        {
                             field: 'create_date',
                             title: t('SHARE_DATE'),
                         },
@@ -74,6 +92,21 @@ const GroupCard = ({
                     ]}
                     data={shareRights}
                     title={t('SHARES')}
+                    actions={[
+                        {
+                            tooltip: t('DELETE_SHARE_RIGHT_S'),
+                            icon: Delete,
+                            onClick: (evt, data) =>
+                                onDeleteGroupShareRights([data]),
+                        },
+                        {
+                            tooltip: t('CREATE_SHARE_RIGHT'),
+                            isFreeAction: true,
+                            icon: Add,
+                            hidden: !isManaged,
+                            onClick: (evt) => onCreateGroupShareRight(),
+                        },
+                    ]}
                 />
             ),
         },
