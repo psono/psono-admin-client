@@ -1,13 +1,11 @@
-import React from 'react';
-import { withStyles, Grid } from '@material-ui/core';
-import { withTranslation } from 'react-i18next';
-import { compose } from 'redux';
+import React, { useRef, useState } from 'react';
+import { Grid } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import { UsersCard, GridItem } from '../../components';
-import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
+import { GridItem, CustomMaterialTable } from '../../components';
 import psono_server from '../../services/api-server';
 import i18n from '../../i18n';
 import store from '../../services/store';
@@ -16,16 +14,24 @@ import TwoFactorChartCard from '../../containers/ChartCard/two_factor';
 import BrowserChartCard from '../../containers/ChartCard/browser';
 import OsChartCard from '../../containers/ChartCard/os';
 import DeviceChartCard from '../../containers/ChartCard/device';
+import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
+import CustomTabs from '../../components/CustomTabs/CustomTabs';
+import Person from '@material-ui/icons/Person';
+import Edit from '@material-ui/icons/Edit';
+import CheckBox from '@material-ui/icons/CheckBox';
+import NotInterested from '@material-ui/icons/NotInterested';
+import Delete from '@material-ui/icons/Delete';
+import Add from '@material-ui/icons/Add';
+import DevicesOther from '@material-ui/icons/DevicesOther';
 
-class Users extends React.Component {
-    userTableRef = React.createRef();
-    groupTableRef = React.createRef();
-    sessionTableRef = React.createRef();
-    state = {
-        redirect_to: '',
-    };
+const UsersView = (props) => {
+    const { t } = useTranslation();
+    const userTableRef = useRef(null);
+    const sessionTableRef = useRef(null);
+    const history = useHistory();
+    const [deleteUsers, setDeleteUsers] = useState([]);
 
-    onDeleteUsers(selected_users) {
+    const onDeleteUsers = (selected_users) => {
         selected_users.forEach((user) => {
             psono_server
                 .admin_delete_user(
@@ -34,13 +40,13 @@ class Users extends React.Component {
                     user.id
                 )
                 .then(() => {
-                    this.userTableRef.current &&
-                        this.userTableRef.current.onQueryChange();
+                    userTableRef.current &&
+                        userTableRef.current.onQueryChange();
                 });
         });
-    }
+    };
 
-    update_users(selected_users, is_active) {
+    const updateUsers = (selected_users, is_active) => {
         selected_users.forEach((user) => {
             psono_server
                 .admin_update_user(
@@ -53,33 +59,25 @@ class Users extends React.Component {
                     undefined
                 )
                 .then(() => {
-                    this.userTableRef.current &&
-                        this.userTableRef.current.onQueryChange();
+                    userTableRef.current &&
+                        userTableRef.current.onQueryChange();
                 });
         });
-    }
+    };
 
-    onActivateUsers(selected_users) {
-        return this.update_users(selected_users, true);
-    }
+    const onActivateUsers = (selected_users) => {
+        return updateUsers(selected_users, true);
+    };
 
-    onDeactivateUsers(selected_users) {
-        return this.update_users(selected_users, false);
-    }
+    const onDeactivateUsers = (selected_users) => {
+        return updateUsers(selected_users, false);
+    };
 
-    onEditUser(selected_users) {
-        this.setState({
-            redirect_to: '/user/' + selected_users[0].id,
-        });
-    }
+    const onEditUser = (selected_users) => {
+        history.push('/user/' + selected_users[0].id);
+    };
 
-    onEditGroup(selected_groups) {
-        this.setState({
-            redirect_to: '/group/' + selected_groups[0].id,
-        });
-    }
-
-    onDeleteSessions(selected_sessions) {
+    const onDeleteSessions = (selected_sessions) => {
         selected_sessions.forEach((session) => {
             psono_server
                 .admin_delete_session(
@@ -88,40 +86,17 @@ class Users extends React.Component {
                     session.id
                 )
                 .then(() => {
-                    this.sessionTableRef.current &&
-                        this.sessionTableRef.current.onQueryChange();
+                    sessionTableRef.current &&
+                        sessionTableRef.current.onQueryChange();
                 });
         });
-    }
+    };
 
-    onDeleteGroups(selected_groups) {
-        selected_groups.forEach((group) => {
-            psono_server
-                .admin_delete_group(
-                    store.getState().user.token,
-                    store.getState().user.session_secret_key,
-                    group.id
-                )
-                .then(() => {
-                    this.groupTableRef.current &&
-                        this.groupTableRef.current.onQueryChange();
-                });
-        });
-    }
+    const onCreateUser = () => {
+        history.push('/users/create/');
+    };
 
-    onCreateGroup() {
-        this.setState({
-            redirect_to: '/groups/create/',
-        });
-    }
-
-    onCreateUser() {
-        this.setState({
-            redirect_to: '/users/create/',
-        });
-    }
-
-    loadUsers(query) {
+    const loadUsers = (query) => {
         const params = {
             page_size: query.pageSize,
             search: query.search,
@@ -178,9 +153,9 @@ class Users extends React.Component {
                     totalCount: response.data.count,
                 };
             });
-    }
+    };
 
-    loadSessions(query) {
+    const loadSessions = (query) => {
         const params = {
             page_size: query.pageSize,
             search: query.search,
@@ -193,9 +168,6 @@ class Users extends React.Component {
                 params['ordering'] = '-' + query.orderBy.field;
             }
         }
-
-        const { t } = this.props;
-
         return psono_server
             .admin_session(
                 store.getState().user.token,
@@ -225,110 +197,188 @@ class Users extends React.Component {
                     totalCount: response.data.count,
                 };
             });
-    }
+    };
 
-    loadGroups(query) {
-        const params = {
-            page_size: query.pageSize,
-            search: query.search,
-            page: query.page,
-        };
-        if (query.orderBy) {
-            if (query.orderDirection === 'asc') {
-                params['ordering'] = query.orderBy.field;
-            } else {
-                params['ordering'] = '-' + query.orderBy.field;
-            }
-        }
-        const { t } = this.props;
+    return (
+        <div>
+            <Grid container>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <OsChartCard />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <DeviceChartCard />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <BrowserChartCard />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <TwoFactorChartCard />
+                </GridItem>
+            </Grid>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    {deleteUsers.length > 0 && (
+                        <DeleteConfirmDialog
+                            title={t('DELETE_USER_S')}
+                            onConfirm={() => {
+                                onDeleteUsers(deleteUsers);
+                                setDeleteUsers([]);
+                            }}
+                            onAbort={() => {
+                                setDeleteUsers([]);
+                            }}
+                        >
+                            {t('DELETE_USER_CONFIRM_DIALOG')}
+                        </DeleteConfirmDialog>
+                    )}
+                    <CustomTabs
+                        title={t('USER_MANAGEMENT')}
+                        headerColor="primary"
+                        tabs={[
+                            {
+                                tabName: t('USERS'),
+                                tabIcon: Person,
+                                tabContent: (
+                                    <CustomMaterialTable
+                                        tableRef={userTableRef}
+                                        columns={[
+                                            {
+                                                field: 'username',
+                                                title: t('USERNAME'),
+                                            },
+                                            {
+                                                field: 'create_date',
+                                                title: t('CREATED_AT'),
+                                            },
+                                            {
+                                                field: 'last_login',
+                                                title: t('LAST_LOGIN'),
+                                            },
+                                            {
+                                                field: 'is_active',
+                                                title: t('ACTIVE'),
+                                            },
+                                            {
+                                                field: 'is_email_active',
+                                                title: t('EMAIL_ACTIVE'),
+                                            },
+                                            {
+                                                field: 'yubikey_otp_enabled',
+                                                title: t('YUBIKEY'),
+                                            },
+                                            {
+                                                field: 'google_authenticator_enabled',
+                                                title: t(
+                                                    'GOOGLE_AUTHENTICATOR'
+                                                ),
+                                            },
+                                            {
+                                                field: 'duo_enabled',
+                                                title: t('DUO_AUTHENTICATION'),
+                                            },
+                                            {
+                                                field: 'webauthn_enabled',
+                                                title: t('WEBAUTHN'),
+                                            },
+                                        ]}
+                                        data={loadUsers}
+                                        title={''}
+                                        actions={[
+                                            {
+                                                tooltip: t('EDIT_USER_S'),
+                                                icon: Edit,
+                                                onClick: (evt, data) =>
+                                                    onEditUser([data]),
+                                            },
+                                            {
+                                                tooltip: t('ACTIVATE_USER_S'),
+                                                icon: CheckBox,
+                                                onClick: (evt, data) =>
+                                                    onActivateUsers([data]),
+                                            },
+                                            {
+                                                tooltip: t('DEACTIVATE_USER_S'),
+                                                icon: NotInterested,
+                                                onClick: (evt, data) =>
+                                                    onDeactivateUsers([data]),
+                                            },
+                                            {
+                                                tooltip: t('DELETE_USER_S'),
+                                                icon: Delete,
+                                                onClick: (evt, data) => {
+                                                    setDeleteUsers([data]);
+                                                },
+                                            },
+                                            {
+                                                tooltip: t('CREATE_USER'),
+                                                isFreeAction: true,
+                                                icon: Add,
+                                                onClick: (evt) =>
+                                                    onCreateUser(),
+                                            },
+                                        ]}
+                                    />
+                                ),
+                            },
+                            {
+                                tabName: t('SESSIONS'),
+                                tabIcon: DevicesOther,
+                                tabContent: (
+                                    <CustomMaterialTable
+                                        tableRef={sessionTableRef}
+                                        columns={[
+                                            {
+                                                field: 'username',
+                                                title: t('USERNAME'),
+                                            },
+                                            {
+                                                field: 'create_date',
+                                                title: t('LOGGED_IN_AT'),
+                                            },
+                                            {
+                                                field: 'valid_till',
+                                                title: t('VALID_TILL'),
+                                            },
+                                            {
+                                                field: 'device_description',
+                                                title: t('DEVICE_DESCRIPTION'),
+                                            },
+                                            {
+                                                field: 'device_fingerprint',
+                                                title: t('DEVICE'),
+                                            },
+                                            {
+                                                field: 'completely_activated',
+                                                title: t('ACTIVATED'),
+                                            },
+                                            {
+                                                field: 'active',
+                                                title: t('STILL_ACTIVE'),
+                                            },
+                                        ]}
+                                        data={loadSessions}
+                                        title={''}
+                                        actions={[
+                                            {
+                                                tooltip: t('DELETE_SESSION_S'),
+                                                icon: Delete,
+                                                onClick: (evt, data) =>
+                                                    onDeleteSessions([data]),
+                                            },
+                                        ]}
+                                    />
+                                ),
+                            },
+                        ]}
+                    />
+                </GridItem>
+            </Grid>
+        </div>
+    );
+};
 
-        return psono_server
-            .admin_group(
-                store.getState().user.token,
-                store.getState().user.session_secret_key,
-                undefined,
-                params
-            )
-            .then((response) => {
-                const { groups } = response.data;
-                groups.forEach((g) => {
-                    g.create_date = moment(g.create_date).format(
-                        'YYYY-MM-DD HH:mm:ss'
-                    );
-                    g.is_managed = g.is_managed ? t('YES') : t('NO');
-                });
-                return {
-                    data: groups,
-                    page: query.page,
-                    pageSize: query.pageSize,
-                    totalCount: response.data.count,
-                };
-            });
-    }
-
-    render() {
-        if (this.state.redirect_to) {
-            return <Redirect to={this.state.redirect_to} />;
-        }
-        return (
-            <div>
-                <Grid container>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <OsChartCard />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <DeviceChartCard />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <BrowserChartCard />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <TwoFactorChartCard />
-                    </GridItem>
-                </Grid>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <UsersCard
-                            loadUsers={(query) => this.loadUsers(query)}
-                            loadSessions={(query) => this.loadSessions(query)}
-                            loadGroups={(query) => this.loadGroups(query)}
-                            userTableRef={this.userTableRef}
-                            groupTableRef={this.groupTableRef}
-                            sessionTableRef={this.sessionTableRef}
-                            onDeleteUsers={(user_ids) =>
-                                this.onDeleteUsers(user_ids)
-                            }
-                            onActivate={(user_ids) =>
-                                this.onActivateUsers(user_ids)
-                            }
-                            onDeactivate={(user_ids) =>
-                                this.onDeactivateUsers(user_ids)
-                            }
-                            onEditUser={(user_ids) => this.onEditUser(user_ids)}
-                            onEditGroup={(group_ids) =>
-                                this.onEditGroup(group_ids)
-                            }
-                            onDeleteSessions={(selected_sessions) =>
-                                this.onDeleteSessions(selected_sessions)
-                            }
-                            onDeleteGroups={(selected_groups) =>
-                                this.onDeleteGroups(selected_groups)
-                            }
-                            onCreateGroup={() => this.onCreateGroup()}
-                            onCreateUser={() => this.onCreateUser()}
-                            show_create_group_button={
-                                store.getState().server.type === 'EE'
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-            </div>
-        );
-    }
-}
-
-Users.propTypes = {
+UsersView.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default compose(withTranslation(), withStyles(dashboardStyle))(Users);
+export default UsersView;

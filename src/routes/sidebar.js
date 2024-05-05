@@ -1,21 +1,9 @@
 import DashboardPage from '../views/Dashboard/Index';
 import Users from '../views/Users/Index';
+import Groups from '../views/Groups/Index';
 import SecurityReports from '../views/SecurityReports/Index';
-// import TableList from '../views/TableList/TableList.jsx';
-// import Typography from '../views/Typography/Typography.jsx';
-// import Icons from '../views/Icons/Icons.jsx';
-// import NotificationsPage from '../views/Notifications/Notifications.jsx';
 
-import {
-    Dashboard,
-    Person,
-    Timeline,
-    // ContentPaste,
-    // LibraryBooks,
-    // BubbleChart,
-    // LocationOn,
-    // Notifications
-} from '@material-ui/icons';
+import { Dashboard, Person, Timeline, Group } from '@material-ui/icons';
 
 let routes = [
     {
@@ -31,6 +19,13 @@ let routes = [
         navbarName: 'USERS',
         icon: Person,
         component: Users,
+    },
+    {
+        path: '/groups',
+        sidebarName: 'GROUPS',
+        navbarName: 'GROUPS',
+        icon: Group,
+        component: Groups,
     },
     {
         path: '/security-reports',
