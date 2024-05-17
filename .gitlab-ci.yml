@@ -190,7 +190,7 @@ deploy-github:
   except:
     - schedules
   stage: deploy
-  image: psono-docker.jfrog.io/docker:25.0.3-git/docker:25.0.3-git
+  image: psono-docker.jfrog.io/docker:25.0.3-git
   services:
     - name: docker:25-dind
       alias: docker
