@@ -12,7 +12,6 @@ import ChartistGraph from 'react-chartist';
 import { Sessions } from '../../components';
 import { VersionCard } from '../../components';
 import { LicenseCard } from '../../components';
-import { HealthcheckCard } from '../../components';
 import { ChartCard } from '../../components';
 import { ReleaseCard } from '../../components';
 import { FileserverCard } from '../../components';
@@ -28,6 +27,8 @@ import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardS
 import api_static from '../../services/api-static';
 import psono_server from '../../services/api-server';
 import psono_client from '../../services/api-client';
+
+import HealthCheck from './HealthCheck';
 
 const Chartist = require('chartist');
 
@@ -57,11 +58,6 @@ class Dashboard extends React.Component {
         server_license_stat_text: '',
         count_registrations_first_week: 0,
         count_registrations_second_week: 0,
-        healthcheck: {
-            db_read: {},
-            db_sync: {},
-            time_sync: {},
-        },
         tr: true,
     };
 
@@ -75,18 +71,6 @@ class Dashboard extends React.Component {
                 r[key] = r.release[key];
             });
             r.created_at = moment(r.created_at).format('YYYY-MM-DD HH:mm:ss');
-            // r.description = r.description.split('\n').map((item, key) => {
-            //     if (item.startsWith('# ') || item.trim() === '') {
-            //         return null;
-            //     } else {
-            //         return (
-            //             <span key={key}>
-            //                 {item}
-            //                 <br />
-            //             </span>
-            //         );
-            //     }
-            // });
             delete r.commit;
             delete r.release;
         });
@@ -143,23 +127,6 @@ class Dashboard extends React.Component {
                 });
             });
 
-        psono_server.healthcheck().then(
-            (response) => {
-                //healthy is reported as 200
-                this.setState({
-                    healthcheck: response.data,
-                });
-            },
-            (response) => {
-                //error occured, could mean unhealthy...
-                if (response.status === 400) {
-                    //unhealthy is reported as 400
-                    this.setState({
-                        healthcheck: response.data,
-                    });
-                }
-            }
-        );
         psono_server
             .admin_info(
                 this.props.state.user.token,
@@ -314,38 +281,7 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                <Grid container>
-                    <GridItem xs={12} sm={4} md={4}>
-                        <HealthcheckCard
-                            title={t('DB_ACCESSIBILITY')}
-                            sub_title_success={t('IS_DB_REACHABLE')}
-                            sub_title_error={t('DB_CONNECTION_BROKEN')}
-                            healthcheck={this.state.healthcheck.db_read.healthy}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={4} md={4}>
-                        <HealthcheckCard
-                            title={t('DB_SYNCHRONIZED')}
-                            sub_title_success={t(
-                                'ARE_DATABASE_MIGRATIONS_PENDING'
-                            )}
-                            sub_title_error={t(
-                                'PENDING_DATABASE_MIGRATIONS_DETECTED'
-                            )}
-                            healthcheck={this.state.healthcheck.db_sync.healthy}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={4} md={4}>
-                        <HealthcheckCard
-                            title={t('TIME_SYNC')}
-                            sub_title_success={t('IS_SERVER_TIME_CORRECT')}
-                            sub_title_error={t('SERVER_TIME_OUT_OF_SYNC')}
-                            healthcheck={
-                                this.state.healthcheck.time_sync.healthy
-                            }
-                        />
-                    </GridItem>
-                </Grid>
+                <HealthCheck />
                 <Grid container>
                     <GridItem xs={12} sm={12} md={6}>
                         {this.state.data_day_total !== undefined ? (
