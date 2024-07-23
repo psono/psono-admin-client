@@ -352,5 +352,10 @@
   "REQUEST_PASSWORD_RESET": "Request Password Reset",
   "LOST_PASSWORD": "Lost password",
   "PRIVACY_POLICY": "Privacy Policy",
-  "ABOUT_US": "About Us"
+  "ABOUT_US": "About Us",
+  "IVALT": "IVALT",
+  "IVALT_MOBILE": "Mobile",
+  "IVALT_ACTIVE": "Active",
+  "IVALT_CREATED_AT": "Created At",
+  "DELETE_IVALT": "Delete Auth"
 }

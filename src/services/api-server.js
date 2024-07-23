@@ -3603,6 +3603,20 @@ function webauthnVerify(token, sessionSecretKey, credential) {
     return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
+function deleteIvaltUser(token, session_secret_key, user_id) {
+    const endpoint = '/admin/ivalt';
+    const method = 'DELETE';
+    const data = {
+        ivalt_id: user_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
 const service = {
     info,
     healthcheck,
@@ -3732,6 +3746,7 @@ const service = {
     delete_account,
     webauthnVerifyInit,
     webauthnVerify,
+    deleteIvaltUser
 };
 
 export default service;

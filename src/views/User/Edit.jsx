@@ -211,6 +211,23 @@ const UserEdit = (props) => {
         });
     };
 
+    const onDeleteIvaltUser = (selected_user) => {
+        const promises = [];
+        selected_user.forEach((user) => {
+            promises.push(
+                psono_server.deleteIvaltUser(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    user.id
+                )
+            );
+        });
+
+        Promise.all(promises).then((values) => {
+            loadUser();
+        });
+    }
+
     const onDeleteMemberships = (selected_memberships) => {
         const promises = [];
         selected_memberships.forEach((membership) => {
@@ -587,6 +604,7 @@ const UserEdit = (props) => {
                         sessions={user.sessions}
                         memberships={user.memberships}
                         duos={user.duos}
+                        ivalts={user.ivalts}
                         google_authenticators={user.google_authenticators}
                         yubikey_otps={user.yubikey_otps}
                         webauthns={user.webauthns}
@@ -601,6 +619,7 @@ const UserEdit = (props) => {
                         onDeleteGoogleAuthenticators={
                             onDeleteGoogleAuthenticators
                         }
+                        onDeleteIvaltUser={onDeleteIvaltUser}
                         onDeleteRecoveryCodes={onDeleteRecoveryCodes}
                         onDeleteEmergencyCodes={onDeleteEmergencyCodes}
                         onDeleteLinkShares={onDeleteLinkShares}
