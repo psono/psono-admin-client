@@ -137,7 +137,7 @@ function generate_secret_key() {
  *
  * @returns {PublicPrivateKeyPair} Returns object with a public-private-key-pair
  */
-function generate_public_private_keypair() {
+function generatePublicPrivateKeypair() {
     const sk = randomBytes(32);
     const pk = nacl.box.generate_pubkey(sk);
 
@@ -191,7 +191,7 @@ function encrypt_secret(secret, password, userSauce) {
  *
  * @returns {string} secret The decrypted secret
  */
-function decrypt_secret(text, nonce, password, userSauce) {
+function decryptSecret(text, nonce, password, userSauce) {
     if (userSauce.includes('@')) {
         // security. Do not remove!
         throw new Error(
@@ -218,7 +218,7 @@ function decrypt_secret(text, nonce, password, userSauce) {
  *
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
-function encrypt_data(data, secret_key) {
+function encryptData(data, secret_key) {
     const k = converter.from_hex(secret_key);
     const m = converter.encode_utf8(data);
     const n = randomBytes(24);
@@ -259,7 +259,7 @@ function decrypt_data(text, nonce, secret_key) {
  *
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
-function encrypt_data_public_key(data, public_key, private_key) {
+function encryptDataPublicKey(data, public_key, private_key) {
     const p = converter.from_hex(public_key);
     const s = converter.from_hex(private_key);
     const m = converter.encode_utf8(data);
@@ -283,7 +283,7 @@ function encrypt_data_public_key(data, public_key, private_key) {
  *
  * @returns {string} The decrypted data
  */
-function decrypt_data_public_key(text, nonce, public_key, private_key) {
+function decryptDataPublicKey(text, nonce, public_key, private_key) {
     const p = converter.from_hex(public_key);
     const s = converter.from_hex(private_key);
     const n = converter.from_hex(nonce);
@@ -422,13 +422,13 @@ const service = {
     sha512,
     generate_authkey,
     generate_secret_key,
-    generate_public_private_keypair,
+    generatePublicPrivateKeypair,
     encrypt_secret,
-    decrypt_secret,
-    encrypt_data,
+    decryptSecret,
+    encryptData,
     decrypt_data,
-    encrypt_data_public_key,
-    decrypt_data_public_key,
+    encryptDataPublicKey,
+    decryptDataPublicKey,
     generateUserSauce,
     get_checksum,
     generate_recovery_code,

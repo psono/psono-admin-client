@@ -1,4 +1,8 @@
 {
+  "PASSWORD_INCORRECT": "Password incorrect",
+  "DECRYPT": "Decrypt",
+  "VERIFY_USER": "Verify user",
+  "ENTER_PASSWORD_TO_DECRYPT_YOUR_DATASTORE": "Your datastore is protected by a separate password, which is necessary to access your data.",
   "CREATE_SHARE_RIGHT": "Create share right",
   "CREATE_SHARE_RIGHT_DETAILS": "Create a folder and share it with the group",
   "AUTOMATICALLY_CREATE_FOLDER": "Automatically create a folder",

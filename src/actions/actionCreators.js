@@ -4,148 +4,167 @@ import {
     SET_USER_INFO_1,
     SET_USER_INFO_2,
     SET_USER_INFO_3,
+    SET_SERVER_SECRET_EXISTS,
     LOGOUT,
     SET_SERVER_URL,
     SET_SERVER_INFO,
     SET_CLIENT_URL,
     SET_ADMIN_CLIENT_CONFIG,
     NOTIFICATION_SEND,
-    NOTIFICATION_SET
+    NOTIFICATION_SET,
 } from './actionTypes';
 
-function set_user_username(username) {
-    return dispatch => {
+function setUserUsername(username) {
+    return (dispatch) => {
         dispatch({
             type: SET_USER_USERNAME,
-            username
+            username,
         });
     };
 }
 
-function set_user_info_1(remember_me, trust_device) {
-    return dispatch => {
+function setUserInfo1(remember_me, trust_device, authentication) {
+    return (dispatch) => {
         dispatch({
             type: SET_USER_INFO_1,
             remember_me,
-            trust_device
+            trust_device,
+            authentication,
         });
     };
 }
-function set_user_info_2(
+function setUserInfo2(
     user_private_key,
     user_public_key,
     session_secret_key,
     token,
-    user_sauce
+    user_sauce,
+    authentication
 ) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({
             type: SET_USER_INFO_2,
             user_private_key,
             user_public_key,
             session_secret_key,
             token,
-            user_sauce
+            user_sauce,
+            authentication,
         });
     };
 }
-function set_user_info_3(user_id, user_email, user_secret_key) {
-    return dispatch => {
+function setUserInfo3(
+    user_id,
+    user_email,
+    user_secret_key,
+    serverSecretExists
+) {
+    return (dispatch) => {
         dispatch({
             type: SET_USER_INFO_3,
             user_id,
             user_email,
-            user_secret_key
+            user_secret_key,
+            serverSecretExists,
+        });
+    };
+}
+function setServerSecretExists(serverSecretExists) {
+    return (dispatch) => {
+        dispatch({
+            type: SET_SERVER_SECRET_EXISTS,
+            serverSecretExists: serverSecretExists,
         });
     };
 }
 
 function logout(remember_me) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({
             type: LOGOUT,
-            remember_me
+            remember_me,
         });
     };
 }
 
-function set_server_info(info) {
-    return dispatch => {
+function setServerInfo(info) {
+    return (dispatch) => {
         dispatch({
             type: SET_SERVER_INFO,
-            info
+            info,
         });
     };
 }
 
-function set_server_url(url) {
-    return dispatch => {
+function setServerUrl(url) {
+    return (dispatch) => {
         dispatch({
             type: SET_SERVER_URL,
-            url: url
+            url: url,
         });
     };
 }
 
-function set_client_url(url) {
-    return dispatch => {
+function setClientUrl(url) {
+    return (dispatch) => {
         dispatch({
             type: SET_CLIENT_URL,
-            url: url
+            url: url,
         });
     };
 }
 
-function set_admin_client_config(config) {
-    return dispatch => {
+function setAdminClientConfig(config) {
+    return (dispatch) => {
         dispatch({
             type: SET_ADMIN_CLIENT_CONFIG,
-            config: config
+            config: config,
         });
     };
 }
 
-function set_known_hosts(known_hosts) {
-    return dispatch => {
+function setKnownHosts(known_hosts) {
+    return (dispatch) => {
         dispatch({
             type: SET_KNOWN_HOSTS,
-            known_hosts: known_hosts
+            known_hosts: known_hosts,
         });
     };
 }
 
-function send_notification(message, message_type) {
-    return dispatch => {
+function sendNotification(message, message_type) {
+    return (dispatch) => {
         dispatch({
             type: NOTIFICATION_SEND,
             message: message,
-            message_type: message_type
+            message_type: message_type,
         });
     };
 }
 
-function set_notifications(messages) {
-    return dispatch => {
+function setNotifications(messages) {
+    return (dispatch) => {
         dispatch({
             type: NOTIFICATION_SET,
-            messages: messages
+            messages: messages,
         });
     };
 }
 
 const actionCreators = {
-    set_user_username,
-    set_user_info_1,
-    set_user_info_2,
-    set_user_info_3,
+    setUserUsername,
+    setUserInfo1,
+    setUserInfo2,
+    setUserInfo3,
+    setServerSecretExists,
     logout,
-    set_server_info,
-    set_server_url,
-    set_client_url,
-    set_admin_client_config,
-    set_known_hosts,
-    send_notification,
-    set_notifications
+    setServerInfo,
+    setServerUrl,
+    setClientUrl,
+    setAdminClientConfig,
+    setKnownHosts,
+    sendNotification,
+    setNotifications,
 };
 
 export default actionCreators;

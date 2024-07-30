@@ -4,7 +4,7 @@ let fingerprint;
 
 activate();
 function activate() {
-    get_device_fingerprint_async().then(function (local_fingerprint) {
+    getDeviceFingerprintAsync().then(function (local_fingerprint) {
         fingerprint = local_fingerprint;
     });
 }
@@ -14,7 +14,7 @@ function activate() {
  *
  * @returns Promise<AxiosResponse<any>> Returns promise with the device fingerprint
  */
-function get_device_fingerprint_async() {
+function getDeviceFingerprintAsync() {
     return new Promise((resolve, reject) => {
         resolve(client_js.getFingerprint());
     });
@@ -25,7 +25,7 @@ function get_device_fingerprint_async() {
  *
  * @returns {string} Fingerprint of the device
  */
-function get_device_fingerprint() {
+function getDeviceFingerprint() {
     if (fingerprint) {
         return fingerprint;
     }
@@ -83,7 +83,7 @@ function is_opera() {
  *
  * @returns {string} Returns the device's description
  */
-function get_device_description() {
+function getDeviceDescription() {
     let description = '';
     if (typeof client_js.getDeviceVendor() !== 'undefined') {
         description = description + client_js.getDeviceVendor() + ' ';
@@ -107,13 +107,13 @@ function get_device_description() {
 }
 
 const service = {
-    get_device_fingerprint: get_device_fingerprint,
+    getDeviceFingerprint: getDeviceFingerprint,
     is_ie: is_ie,
     is_chrome: is_chrome,
     is_firefox: is_firefox,
     is_safari: is_safari,
     is_opera: is_opera,
-    get_device_description: get_device_description,
+    getDeviceDescription: getDeviceDescription,
 };
 
 export default service;
