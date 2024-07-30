@@ -50,7 +50,7 @@ function call(method, endpoint, data, headers, session_secret_key) {
     const url = store.getState().server.url + endpoint;
 
     if (session_secret_key && data !== null) {
-        data = cryptoLibrary.encrypt_data(
+        data = cryptoLibrary.encryptData(
             JSON.stringify(data),
             session_secret_key
         );
@@ -63,10 +63,10 @@ function call(method, endpoint, data, headers, session_secret_key) {
     ) {
         const validator = {
             request_time: new Date().toISOString(),
-            request_device_fingerprint: device.get_device_fingerprint(),
+            request_device_fingerprint: device.getDeviceFingerprint(),
         };
         headers['Authorization-Validator'] = JSON.stringify(
-            cryptoLibrary.encrypt_data(
+            cryptoLibrary.encryptData(
                 JSON.stringify(validator),
                 session_secret_key
             )
@@ -1768,7 +1768,7 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function saml_initiate_login(saml_provider_id, return_to_url) {
+function samlInitiateLogin(saml_provider_id, return_to_url) {
     const endpoint = '/saml/' + saml_provider_id + '/initiate-login/';
     const method = 'POST';
     const data = {
@@ -1790,12 +1790,7 @@ function saml_initiate_login(saml_provider_id, return_to_url) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function saml_login(
-    login_info,
-    login_info_nonce,
-    public_key,
-    session_duration
-) {
+function samlLogin(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/saml/login/';
     const method = 'POST';
     const data = {
@@ -1818,7 +1813,7 @@ function saml_login(
  *
  * @returns {promise} Returns a promise with the login status
  */
-function oidc_initiate_login(oidc_provider_id, return_to_url) {
+function oidcInitiateLogin(oidc_provider_id, return_to_url) {
     const endpoint = '/oidc/' + oidc_provider_id + '/initiate-login/';
     const method = 'POST';
     const data = {
@@ -1840,12 +1835,7 @@ function oidc_initiate_login(oidc_provider_id, return_to_url) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function oidc_login(
-    login_info,
-    login_info_nonce,
-    public_key,
-    session_duration
-) {
+function oidcLogin(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/oidc/login/';
     const method = 'POST';
     const data = {
@@ -1935,7 +1925,7 @@ function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function activate_token(
+function activateToken(
     token,
     verification,
     verification_nonce,
@@ -3666,14 +3656,14 @@ const service = {
     admin_oidc_delete_group_map,
     admin_update_user,
     login,
-    saml_initiate_login,
-    saml_login,
-    oidc_initiate_login,
-    oidc_login,
+    samlInitiateLogin,
+    samlLogin,
+    oidcInitiateLogin,
+    oidcLogin,
     ga_verify,
     duo_verify,
     yubikey_otp_verify,
-    activate_token,
+    activateToken,
     get_sessions,
     logout,
     register,

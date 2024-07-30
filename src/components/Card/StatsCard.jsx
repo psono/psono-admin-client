@@ -1,26 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// @material-ui/core components
-import withStyles from '@material-ui/core/styles/withStyles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 // core components
 import statsCardStyle from '../../assets/jss/material-dashboard-react/statsCardStyle';
 
+const useStyles = makeStyles(statsCardStyle);
+
 function StatsCard({ ...props }) {
     const {
-        classes,
         title,
         description,
         statLink,
         small,
         statText,
         statIconColor,
-        iconColor
+        iconColor,
     } = props;
+
+    const classes = useStyles();
 
     return (
         <Card className={classes.card}>
@@ -30,7 +32,7 @@ function StatsCard({ ...props }) {
                         classes.cardHeader +
                         ' ' +
                         classes[iconColor + 'CardHeader'],
-                    avatar: classes.cardAvatar
+                    avatar: classes.cardAvatar,
                 }}
                 avatar={<props.icon className={classes.cardIcon} />}
             />
@@ -78,7 +80,7 @@ function StatsCard({ ...props }) {
 
 StatsCard.defaultProps = {
     iconColor: 'purple',
-    statIconColor: 'gray'
+    statIconColor: 'gray',
 };
 
 StatsCard.propTypes = {
@@ -96,10 +98,10 @@ StatsCard.propTypes = {
         'success',
         'info',
         'rose',
-        'gray'
+        'gray',
     ]),
     statLink: PropTypes.object,
-    statText: PropTypes.node
+    statText: PropTypes.node,
 };
 
-export default withStyles(statsCardStyle)(StatsCard);
+export default StatsCard;

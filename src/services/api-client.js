@@ -12,7 +12,7 @@ function get_version() {
 }
 
 function set_url(url) {
-    action.set_client_url(url);
+    action.setClientUrl(url);
 }
 
 const service = {

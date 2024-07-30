@@ -70,6 +70,7 @@ class LoginForm extends React.Component {
         duo: '',
         google_authenticator: '',
         duo_request: false,
+        decryptLoginDataFunction: null,
     };
 
     handleToggleRememberMe = () => () => {
@@ -116,7 +117,7 @@ class LoginForm extends React.Component {
     requirement_check_mfa = () => {
         let multifactors = this.state.multifactors;
         if (multifactors.length === 0) {
-            this.props.activate_token().then(() => {
+            this.props.activateToken().then(() => {
                 this.setState({
                     loggedIn: true,
                     loginLoading: false,
@@ -367,32 +368,24 @@ class LoginForm extends React.Component {
 
         return this.props
             .login(password, this.state.server_info, send_plain)
-            .then(
-                (required_multifactors) => {
+            .then(this.handleLogin, (result) => {
+                this.setState({ loginLoading: false });
+                if (result.hasOwnProperty('non_field_errors')) {
+                    let errors = result.non_field_errors;
                     this.setState({
-                        multifactors: required_multifactors,
+                        view: 'default',
+                        errors,
                     });
-                    this.requirement_check_mfa();
-                },
-                (result) => {
-                    this.setState({ loginLoading: false });
-                    if (result.hasOwnProperty('non_field_errors')) {
-                        let errors = result.non_field_errors;
-                        this.setState({
-                            view: 'default',
-                            errors,
-                        });
-                    } else {
-                        this.setState({
-                            view: 'default',
-                            errors: [result],
-                        });
-                    }
+                } else {
+                    this.setState({
+                        view: 'default',
+                        errors: [result],
+                    });
                 }
-            );
+            });
     };
 
-    initiate_login = () => {
+    initiateLogin = () => {
         this.setState({
             loginLoading: true,
             errors: [],
@@ -406,7 +399,7 @@ class LoginForm extends React.Component {
         );
 
         return this.props
-            .initiate_login(
+            .initiateLogin(
                 fullUsername,
                 this.state.server,
                 this.state.remember_me,
@@ -415,7 +408,7 @@ class LoginForm extends React.Component {
             .then(
                 (result) => {
                     this.setState({ server_info: result });
-                    this.props.actions.set_server_info(result.info);
+                    this.props.actions.setServerInfo(result.info);
                     if (result.status !== 'matched') {
                         this.setState({ view: result.status });
                     } else if (this.has_ldap_auth(result)) {
@@ -445,7 +438,7 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_saml_login = (providerId) => {
+    initiateSamlLogin = (providerId) => {
         this.setState({
             loginLoading: true,
             errors: [],
@@ -453,7 +446,7 @@ class LoginForm extends React.Component {
             providerId,
         });
         return this.props
-            .initiate_saml_login(
+            .initiateSamlLogin(
                 this.state.server,
                 this.state.remember_me,
                 this.state.trust_device
@@ -461,7 +454,7 @@ class LoginForm extends React.Component {
             .then(
                 (result) => {
                     this.setState({ server_info: result });
-                    this.props.actions.set_server_info(result.info);
+                    this.props.actions.setServerInfo(result.info);
                     if (result.status !== 'matched') {
                         this.setState({ view: result.status });
                     } else {
@@ -490,7 +483,7 @@ class LoginForm extends React.Component {
             });
     };
 
-    initiate_oidc_login = (providerId) => {
+    initiateOidcLogin = (providerId) => {
         this.setState({
             loginLoading: true,
             errors: [],
@@ -498,7 +491,7 @@ class LoginForm extends React.Component {
             providerId,
         });
         return this.props
-            .initiate_oidc_login(
+            .initiateOidcLogin(
                 this.state.server,
                 this.state.remember_me,
                 this.state.trust_device
@@ -506,7 +499,7 @@ class LoginForm extends React.Component {
             .then(
                 (result) => {
                     this.setState({ server_info: result });
-                    this.props.actions.set_server_info(result.info);
+                    this.props.actions.setServerInfo(result.info);
                     if (result.status !== 'matched') {
                         this.setState({ view: result.status });
                     } else {
@@ -542,9 +535,9 @@ class LoginForm extends React.Component {
         );
 
         if (this.state.loginType === 'SAML') {
-            this.initiate_saml_login(this.state.providerId);
+            this.initiateSamlLogin(this.state.providerId);
         } else if (this.state.loginType === 'OIDC') {
-            this.initiate_oidc_login(this.state.providerId);
+            this.initiateOidcLogin(this.state.providerId);
         } else if (this.has_ldap_auth(this.state.server_info)) {
             this.setState({
                 view: 'ask_send_plain',
@@ -554,12 +547,9 @@ class LoginForm extends React.Component {
             let password = this.state.password;
             this.setState({ password: '' });
 
-            this.props.login(password, this.state.server_info).then(
-                (required_multifactors) => {
-                    this.setState({ multifactors: required_multifactors });
-                    this.requirement_check_mfa();
-                },
-                (result) => {
+            this.props
+                .login(password, this.state.server_info)
+                .then(this.handleLogin, (result) => {
                     this.setState({ loginLoading: false });
                     if (result.hasOwnProperty('non_field_errors')) {
                         let errors = result.non_field_errors;
@@ -568,8 +558,7 @@ class LoginForm extends React.Component {
                         console.log(result);
                         this.setState({ errors: [result] });
                     }
-                }
-            );
+                });
             this.setState({ password: '' });
         }
     };
@@ -583,6 +572,40 @@ class LoginForm extends React.Component {
         this.props.logout();
     };
 
+    decryptData = () => {
+        const loginDetails = this.state.decryptLoginDataFunction(
+            this.state.password
+        );
+        if (loginDetails.hasOwnProperty('required_multifactors')) {
+            const requiredMultifactors = loginDetails['required_multifactors'];
+            this.setState({
+                multifactors: requiredMultifactors,
+            });
+            this.requirement_check_mfa();
+        }
+        if (loginDetails.hasOwnProperty('require_password')) {
+            this.setState({
+                view: 'default',
+                errors: ['PASSWORD_INCORRECT'],
+            });
+        }
+    };
+
+    handleLogin = (loginDetails) => {
+        if (loginDetails.hasOwnProperty('required_multifactors')) {
+            const requiredMultifactors = loginDetails['required_multifactors'];
+            this.setState({
+                multifactors: requiredMultifactors,
+            });
+            this.requirement_check_mfa();
+        }
+        if (loginDetails.hasOwnProperty('require_password')) {
+            this.setState({
+                decryptLoginDataFunction: loginDetails['require_password'],
+            });
+        }
+    };
+
     onNewConfigLoaded = (admin_client_config) => {
         this.setState({
             server:
@@ -590,9 +613,8 @@ class LoginForm extends React.Component {
             domain: admin_client_config.backend_servers[0].domain,
             admin_client_config: admin_client_config,
         });
-
         if (this.props.location.pathname.startsWith('/saml/token/')) {
-            const saml_token_id = this.props.location.pathname.replace(
+            const samlTokenId = this.props.location.pathname.replace(
                 '/saml/token/',
                 ''
             );
@@ -600,15 +622,10 @@ class LoginForm extends React.Component {
                 .check_host(store.getState().server.url)
                 .then((result) => {
                     this.setState({ server_info: result });
-                    this.props.actions.set_server_info(result.info);
-                    this.props.saml_login(saml_token_id).then(
-                        (required_multifactors) => {
-                            this.setState({
-                                multifactors: required_multifactors,
-                            });
-                            this.requirement_check_mfa();
-                        },
-                        (result) => {
+                    this.props.actions.setServerInfo(result.info);
+                    this.props
+                        .samlLogin(samlTokenId)
+                        .then(this.handleLogin, (result) => {
                             this.setState({ loginLoading: false });
                             if (result.hasOwnProperty('non_field_errors')) {
                                 let errors = result.non_field_errors;
@@ -622,13 +639,12 @@ class LoginForm extends React.Component {
                                     errors: [result],
                                 });
                             }
-                        }
-                    );
+                        });
                 });
         }
 
         if (this.props.location.pathname.startsWith('/oidc/token/')) {
-            const oidc_token_id = this.props.location.pathname.replace(
+            const oidcTokenId = this.props.location.pathname.replace(
                 '/oidc/token/',
                 ''
             );
@@ -636,15 +652,10 @@ class LoginForm extends React.Component {
                 .check_host(store.getState().server.url)
                 .then((result) => {
                     this.setState({ server_info: result });
-                    this.props.actions.set_server_info(result.info);
-                    this.props.oidc_login(oidc_token_id).then(
-                        (required_multifactors) => {
-                            this.setState({
-                                multifactors: required_multifactors,
-                            });
-                            this.requirement_check_mfa();
-                        },
-                        (result) => {
+                    this.props.actions.setServerInfo(result.info);
+                    this.props
+                        .oidcLogin(oidcTokenId)
+                        .then(this.handleLogin, (result) => {
                             this.setState({ loginLoading: false });
                             if (result.hasOwnProperty('non_field_errors')) {
                                 let errors = result.non_field_errors;
@@ -658,8 +669,7 @@ class LoginForm extends React.Component {
                                     errors: [result],
                                 });
                             }
-                        }
-                    );
+                        });
                 });
         }
     };
@@ -686,6 +696,67 @@ class LoginForm extends React.Component {
 
         if (this.state.loggedIn) {
             return <Redirect to="/dashboard" />;
+        }
+
+        if (this.state.decryptLoginDataFunction !== null) {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('VERIFY_USER')}
+                        cardSubtitle={t(
+                            'ENTER_PASSWORD_TO_DECRYPT_YOUR_DATASTORE'
+                        )}
+                        content={
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText={t('PASSWORD')}
+                                            id="password"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: this.state.password,
+                                                onChange: this.onChangePassword,
+                                                type: 'password',
+                                            }}
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="primary"
+                                            onClick={this.decryptData}
+                                            type="submit"
+                                        >
+                                            {t('DECRYPT')}
+                                        </Button>
+                                        <Button
+                                            color="transparent"
+                                            onClick={this.cancel}
+                                        >
+                                            {t('CANCEL')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
         }
 
         if (this.state.view === 'default') {
@@ -760,8 +831,8 @@ class LoginForm extends React.Component {
                                     </GridItem>
                                 </Grid>
                                 {saml_provider.map((provider, i) => {
-                                    const initiate_saml_login_helper = () => {
-                                        return this.initiate_saml_login(
+                                    const initiateSamlLoginHelper = () => {
+                                        return this.initiateSamlLogin(
                                             provider.provider_id
                                         );
                                     };
@@ -777,7 +848,7 @@ class LoginForm extends React.Component {
                                                 <Button
                                                     color="primary"
                                                     onClick={
-                                                        initiate_saml_login_helper
+                                                        initiateSamlLoginHelper
                                                     }
                                                     type="submit"
                                                     id="sad"
@@ -810,8 +881,8 @@ class LoginForm extends React.Component {
                                     );
                                 })}
                                 {oidc_provider.map((provider, i) => {
-                                    const initiate_oidc_login_helper = () => {
-                                        return this.initiate_oidc_login(
+                                    const initiateOidcLoginHelper = () => {
+                                        return this.initiateOidcLogin(
                                             provider.provider_id
                                         );
                                     };
@@ -827,7 +898,7 @@ class LoginForm extends React.Component {
                                                 <Button
                                                     color="primary"
                                                     onClick={
-                                                        initiate_oidc_login_helper
+                                                        initiateOidcLoginHelper
                                                     }
                                                     type="submit"
                                                     id="sad"
@@ -923,7 +994,7 @@ class LoginForm extends React.Component {
                                     >
                                         <Button
                                             color="primary"
-                                            onClick={this.initiate_login}
+                                            onClick={this.initiateLogin}
                                             type="submit"
                                             disabled={
                                                 !this.state.loginPossible ||

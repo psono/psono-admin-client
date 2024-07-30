@@ -35,7 +35,7 @@ function get_current_host_url() {
  * @param {array} new_known_hosts List of the new servers
  */
 function update_known_hosts(new_known_hosts) {
-    action.set_known_hosts(new_known_hosts);
+    action.setKnownHosts(new_known_hosts);
 }
 
 /**
