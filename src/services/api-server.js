@@ -3617,6 +3617,22 @@ function deleteIvaltUser(token, session_secret_key, user_id) {
     return call(method, endpoint, data, headers, session_secret_key);
 }
 
+function send_ivalt_two_factor_notification(
+    token,
+    session_secret_key,
+    requestType
+) {
+    const endpoint = '/authentication/ivalt-verify/';
+    const method = 'POST';
+    const data = {
+        request_type: requestType,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
 const service = {
     info,
     healthcheck,
@@ -3746,7 +3762,8 @@ const service = {
     delete_account,
     webauthnVerifyInit,
     webauthnVerify,
-    deleteIvaltUser
+    deleteIvaltUser,
+    send_ivalt_two_factor_notification,
 };
 
 export default service;

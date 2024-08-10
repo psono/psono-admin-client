@@ -605,6 +605,24 @@ function is_logged_in() {
     return store.getState().user.isLoggedIn;
 }
 
+function send_ivalt_two_factor_notification(request_type) {
+    const token = store.getState().user.token;
+    const sessionSecretKey = store.getState().user.session_secret_key;
+    const onSuccess = function (response) {
+        return response;
+    };
+    const onError = function (error) {
+        return error;
+    };
+    return psono_server
+        .send_ivalt_two_factor_notification(
+            token,
+            sessionSecretKey,
+            request_type
+        )
+        .then(onSuccess, onError);
+}
+
 const service = {
     initiate_login,
     saml_login,
@@ -620,6 +638,7 @@ const service = {
     yubikey_otp_verify,
     logout,
     is_logged_in,
+    send_ivalt_two_factor_notification,
 };
 
 export default service;

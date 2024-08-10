@@ -357,5 +357,9 @@
   "IVALT_MOBILE": "Mobile",
   "IVALT_ACTIVE": "Active",
   "IVALT_CREATED_AT": "Created At",
-  "DELETE_IVALT": "Delete Auth"
+  "DELETE_IVALT": "Delete Auth",
+  "IVALT_AUTHENTICATION": "IVALT Authentication",
+  "VERIFY_IVALT_AUTHENTICATION": "Verify IVALT Authentication",
+  "IVALT_AUTHENTICATION_REQUEST_SENT": "iVALT Authentication request sent!",
+  "IVALT_AUTHENTICATION_REQUEST_SENT_DESCRIPTION": "Please check your iVALT app for the verify authentication request."
 }

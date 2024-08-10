@@ -57,6 +57,8 @@ class Login extends React.Component {
                     yubikey_otp_verify={user.yubikey_otp_verify}
                     duo_verify={user.duo_verify}
                     ga_verify={user.ga_verify}
+                    ivalt_notify={user.send_ivalt_two_factor_notification}
+                    validate_ivalt_2fa={user.send_ivalt_two_factor_notification}
                     approve_host={host.approve_host}
                     get_config={browserClient.get_config}
                 />
