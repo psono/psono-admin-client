@@ -221,15 +221,15 @@ const UserCard = (props) => {
                             columns={[
                                 {
                                     field: 'mobile',
-                                    title: t('IVALT_MOBILE'),
+                                    title: t('MOBILE'),
                                 },
                                 {
                                     field: 'active',
-                                    title: t('IVALT_ACTIVE'),
+                                    title: t('ACTIVE'),
                                 },
                                 {
                                     field: 'create_date',
-                                    title: t('IVALT_CREATED_AT'),
+                                    title: t('CREATED_AT'),
                                 }
                             ]}
                             data={ivalts}

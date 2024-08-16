@@ -385,13 +385,11 @@ class LoginForm extends React.Component {
                     helper.remove_from_array(multifactors, 'ivalt_2fa');
                     this.setState({ multifactors: multifactors });
                     this.requirement_check_mfa();
-                    console.log(res.data.non_field_errors, 'SUCCESS');
                 } else if (
                     this.state.errorsResponses[res.data.non_field_errors[0]] !==
                         undefined &&
                     res.data.non_field_errors[0] !== 'AUTHENTICATION_FAILED'
                 ) {
-                    console.log(res.data.non_field_errors[0], 'KOI ERROR');
                     this.setState({
                         errors: [
                             this.state.errorsResponses[
@@ -1487,7 +1485,7 @@ class LoginForm extends React.Component {
                                         }}
                                     >
                                         <p>
-                                            Time remaining: {this.state.timer}{' '}
+                                            {t('TIME_REMAIN')}: {this.state.timer}{' '}
                                             seconds
                                         </p>
                                     </div>

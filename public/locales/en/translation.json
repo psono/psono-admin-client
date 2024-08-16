@@ -354,12 +354,15 @@
   "PRIVACY_POLICY": "Privacy Policy",
   "ABOUT_US": "About Us",
   "IVALT": "IVALT",
-  "IVALT_MOBILE": "Mobile",
-  "IVALT_ACTIVE": "Active",
-  "IVALT_CREATED_AT": "Created At",
+  "MOBILE": "Mobile",
   "DELETE_IVALT": "Delete Auth",
   "IVALT_AUTHENTICATION": "IVALT Authentication",
   "VERIFY_IVALT_AUTHENTICATION": "Verify IVALT Authentication",
   "IVALT_AUTHENTICATION_REQUEST_SENT": "iVALT Authentication request sent!",
-  "IVALT_AUTHENTICATION_REQUEST_SENT_DESCRIPTION": "Please check your iVALT app for the verify authentication request."
+  "IVALT_AUTH_REQUEST_SENT": "Ivalt Authenticated Request sent Successfully",
+  "IVALT_INVALID_TIMEZONE": "Invalid timezone. Please try again",
+  "IVALT_INVALID_GEOFENCE": "Invalid geofence. Please try again",
+  "IVALT_AUTHENTICATION_REQUEST_SENT_DESCRIPTION": "Please check your iVALT app for the verify authentication request.",
+  "IVALT_AUTH_FAILED": "Authentication failed. Please try again",
+  "TIME_REMAIN": "Time remaining"
 }
