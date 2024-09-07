@@ -1,4 +1,13 @@
 {
+  "SERVER_UNSUPPORTED": "Server unsupported",
+  "THE_VERSION_OF_THE_SERVER_IS_TOO_OLD_AND_NOT_SUPPORTED_PLEASE_UPGRADE": "The version of the server is too old. This client doesn't support the old version anymore. Please update your server or tell your administrator to update it.",
+  "IGNORE_AND_CONTINUE": "Ignore and continue",
+  "THE_SIGNATURE_OF_THE_SERVER_CHANGED": "The signature of the server changed. It could mean that the connection to the server has been compromised.",
+  "CONTACT_THE_OWNER_OF_THE_SERVER": "Please contact the owner of this server.",
+  "FINGERPRINT_OF_THE_NEW_SERVER": "Fingerprint of the new server",
+  "FINGERPRINT_OF_THE_OLD_SERVER": "Fingerprint of the old server",
+  "SERVER_SIGNATURE_CHANGED": "Server signature changed",
+  "THE_FINGERPRINT_OF_THE_SERVER_CHANGED": "The fingerprint of the server's signature changed",
   "PASSWORD_INCORRECT": "Password incorrect",
   "DECRYPT": "Decrypt",
   "VERIFY_USER": "Verify user",

@@ -17,7 +17,7 @@ let verification = {};
 
 /**
  * Updates the global state with username, server, remember_me and trust_device
- * Returns the result of check_host
+ * Returns the result of checkHost
  *
  * @param username
  * @param server
@@ -34,7 +34,7 @@ function initiateLogin(username, server, remember_me, trust_device) {
     action.setUserUsername(username);
     action.setUserInfo1(remember_me, trust_device);
 
-    return host.check_host(server).then((response) => {
+    return host.checkHost(server).then((response) => {
         return response;
     });
 }
@@ -99,7 +99,7 @@ function samlLogin(samlTokenId) {
 
 /**
  * Updates the global state with server, remember_me and trust_device
- * Returns the result of check_host
+ * Returns the result of checkHost
  *
  * @param server
  * @param remember_me
@@ -110,7 +110,7 @@ function initiateSamlLogin(server, remember_me, trust_device) {
     action.setServerUrl(server);
     action.setUserInfo1(remember_me, trust_device);
 
-    return host.check_host(server).then((response) => {
+    return host.checkHost(server).then((response) => {
         return response;
     });
 }
@@ -192,7 +192,7 @@ function oidcLogin(oidcTokenId) {
 
 /**
  * Updates the global state with server, remember_me and trust_device
- * Returns the result of check_host
+ * Returns the result of checkHost
  *
  * @param server
  * @param remember_me
@@ -203,7 +203,7 @@ function initiateOidcLogin(server, remember_me, trust_device) {
     action.setServerUrl(server);
     action.setUserInfo1(remember_me, trust_device);
 
-    return host.check_host(server).then((response) => {
+    return host.checkHost(server).then((response) => {
         return response;
     });
 }
