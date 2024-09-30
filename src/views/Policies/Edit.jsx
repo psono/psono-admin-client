@@ -451,6 +451,18 @@ const PolicyEdit = (props) => {
             key: 'COMPLIANCE_IP_RESTRICTIONS',
             type: 'multilinestr',
         },
+        {
+            key: 'MAX_APP_TOKEN_TIME_VALID',
+            type: 'int',
+        },
+        {
+            key: 'MAX_WEB_TOKEN_TIME_VALID',
+            type: 'int',
+        },
+        {
+            key: 'MAX_API_KEY_TOKEN_TIME_VALID',
+            type: 'int',
+        },
     ];
 
     return (
