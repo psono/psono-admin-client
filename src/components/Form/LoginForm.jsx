@@ -139,7 +139,7 @@ class LoginForm extends React.Component {
                 if (this.state.server_info.info.multifactor_enabled === false) {
                     multifactors = [];
                 } else {
-                    helper.remove_from_array(multifactors, 'yubikey_otp_2fa');
+                    helper.removeFromArray(multifactors, 'yubikey_otp_2fa');
                 }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
@@ -158,7 +158,7 @@ class LoginForm extends React.Component {
                 if (this.state.server_info.info.multifactor_enabled === false) {
                     multifactors = [];
                 } else {
-                    helper.remove_from_array(
+                    helper.removeFromArray(
                         multifactors,
                         'google_authenticator_2fa'
                     );
@@ -184,7 +184,7 @@ class LoginForm extends React.Component {
                 if (this.state.server_info.info.multifactor_enabled === false) {
                     multifactors = [];
                 } else {
-                    helper.remove_from_array(multifactors, 'duo_2fa');
+                    helper.removeFromArray(multifactors, 'duo_2fa');
                 }
                 this.setState({ multifactors: multifactors });
                 this.requirement_check_mfa();
@@ -274,7 +274,7 @@ class LoginForm extends React.Component {
                             ) {
                                 multifactors = [];
                             } else {
-                                helper.remove_from_array(
+                                helper.removeFromArray(
                                     multifactors,
                                     'webauthn_2fa'
                                 );
@@ -410,7 +410,10 @@ class LoginForm extends React.Component {
                     this.setState({ server_info: result });
                     this.props.actions.setServerInfo(result.info);
                     if (result.status !== 'matched') {
-                        this.setState({ view: result.status });
+                        this.setState({
+                            view: result.status,
+                            loginLoading: false,
+                        });
                     } else if (this.has_ldap_auth(result)) {
                         this.setState({
                             view: 'ask_send_plain',
@@ -528,8 +531,8 @@ class LoginForm extends React.Component {
             });
     };
 
-    approve_host = () => {
-        this.props.approve_host(
+    approveHost = () => {
+        this.props.approveHost(
             this.state.server_info.server_url,
             this.state.server_info.verify_key
         );
@@ -618,29 +621,27 @@ class LoginForm extends React.Component {
                 '/saml/token/',
                 ''
             );
-            this.props
-                .check_host(store.getState().server.url)
-                .then((result) => {
-                    this.setState({ server_info: result });
-                    this.props.actions.setServerInfo(result.info);
-                    this.props
-                        .samlLogin(samlTokenId)
-                        .then(this.handleLogin, (result) => {
-                            this.setState({ loginLoading: false });
-                            if (result.hasOwnProperty('non_field_errors')) {
-                                let errors = result.non_field_errors;
-                                this.setState({
-                                    view: 'default',
-                                    errors,
-                                });
-                            } else {
-                                this.setState({
-                                    view: 'default',
-                                    errors: [result],
-                                });
-                            }
-                        });
-                });
+            this.props.checkHost(store.getState().server.url).then((result) => {
+                this.setState({ server_info: result });
+                this.props.actions.setServerInfo(result.info);
+                this.props
+                    .samlLogin(samlTokenId)
+                    .then(this.handleLogin, (result) => {
+                        this.setState({ loginLoading: false });
+                        if (result.hasOwnProperty('non_field_errors')) {
+                            let errors = result.non_field_errors;
+                            this.setState({
+                                view: 'default',
+                                errors,
+                            });
+                        } else {
+                            this.setState({
+                                view: 'default',
+                                errors: [result],
+                            });
+                        }
+                    });
+            });
         }
 
         if (this.props.location.pathname.startsWith('/oidc/token/')) {
@@ -648,29 +649,27 @@ class LoginForm extends React.Component {
                 '/oidc/token/',
                 ''
             );
-            this.props
-                .check_host(store.getState().server.url)
-                .then((result) => {
-                    this.setState({ server_info: result });
-                    this.props.actions.setServerInfo(result.info);
-                    this.props
-                        .oidcLogin(oidcTokenId)
-                        .then(this.handleLogin, (result) => {
-                            this.setState({ loginLoading: false });
-                            if (result.hasOwnProperty('non_field_errors')) {
-                                let errors = result.non_field_errors;
-                                this.setState({
-                                    view: 'default',
-                                    errors,
-                                });
-                            } else {
-                                this.setState({
-                                    view: 'default',
-                                    errors: [result],
-                                });
-                            }
-                        });
-                });
+            this.props.checkHost(store.getState().server.url).then((result) => {
+                this.setState({ server_info: result });
+                this.props.actions.setServerInfo(result.info);
+                this.props
+                    .oidcLogin(oidcTokenId)
+                    .then(this.handleLogin, (result) => {
+                        this.setState({ loginLoading: false });
+                        if (result.hasOwnProperty('non_field_errors')) {
+                            let errors = result.non_field_errors;
+                            this.setState({
+                                view: 'default',
+                                errors,
+                            });
+                        } else {
+                            this.setState({
+                                view: 'default',
+                                errors: [result],
+                            });
+                        }
+                    });
+            });
         }
     };
 
@@ -1008,7 +1007,7 @@ class LoginForm extends React.Component {
                                                         : { display: 'none' }
                                                 }
                                             >
-                                                Login
+                                                {t('LOGIN')}
                                             </span>
                                             <BarLoader
                                                 color={'#FFF'}
@@ -1089,7 +1088,7 @@ class LoginForm extends React.Component {
                                     >
                                         <Button
                                             color="primary"
-                                            onClick={this.approve_host}
+                                            onClick={this.approveHost}
                                             type="submit"
                                         >
                                             {t('APPROVE')}
@@ -1099,6 +1098,152 @@ class LoginForm extends React.Component {
                                             onClick={this.cancel}
                                         >
                                             {t('CANCEL')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+        if (this.state.view === 'unsupported_server_version') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('SERVER_UNSUPPORTED')}
+                        content={
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <SnackbarContent
+                                            message={t(
+                                                'THE_VERSION_OF_THE_SERVER_IS_TOO_OLD_AND_NOT_SUPPORTED_PLEASE_UPGRADE'
+                                            )}
+                                            close
+                                            color="warning"
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="primary"
+                                            onClick={this.cancel}
+                                            type="submit"
+                                        >
+                                            {t('BACK')}
+                                        </Button>
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>{errors}</Grid>
+                            </form>
+                        }
+                    />
+                </div>
+            );
+        }
+        if (this.state.view === 'signature_changed') {
+            return (
+                <div className={classes.wrapper}>
+                    <RegularCard
+                        cardTitle={t('SERVER_SIGNATURE_CHANGED')}
+                        cardSubtitle={t(
+                            'THE_FINGERPRINT_OF_THE_SERVER_CHANGED'
+                        )}
+                        content={
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                }}
+                                autoComplete="off"
+                            >
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText={t(
+                                                'FINGERPRINT_OF_THE_NEW_SERVER'
+                                            )}
+                                            id="server_fingerprint"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: this.state.server_info
+                                                    .verify_key,
+                                                disabled: true,
+                                                multiline: true,
+                                            }}
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText={t(
+                                                'FINGERPRINT_OF_THE_OLD_SERVER'
+                                            )}
+                                            id="server_fingerprint"
+                                            formControlProps={{
+                                                fullWidth: true,
+                                            }}
+                                            inputProps={{
+                                                value: this.state.server_info
+                                                    .verify_key_old,
+                                                disabled: true,
+                                                multiline: true,
+                                            }}
+                                        />
+                                        <SnackbarContent
+                                            message={
+                                                <>
+                                                    {t(
+                                                        'THE_SIGNATURE_OF_THE_SERVER_CHANGED'
+                                                    )}
+                                                    <br />
+                                                    <br />
+                                                    <strong>
+                                                        {t(
+                                                            'CONTACT_THE_OWNER_OF_THE_SERVER'
+                                                        )}
+                                                    </strong>
+                                                </>
+                                            }
+                                            close
+                                            color="warning"
+                                        />
+                                    </GridItem>
+                                </Grid>
+                                <Grid container>
+                                    <GridItem
+                                        xs={12}
+                                        sm={4}
+                                        md={12}
+                                        style={{ marginTop: '20px' }}
+                                    >
+                                        <Button
+                                            color="primary"
+                                            onClick={this.cancel}
+                                            type="submit"
+                                        >
+                                            {t('CANCEL')}
+                                        </Button>
+                                        <Button
+                                            color="transparent"
+                                            onClick={this.approveHost}
+                                        >
+                                            {t('IGNORE_AND_CONTINUE')}
                                         </Button>
                                     </GridItem>
                                 </Grid>

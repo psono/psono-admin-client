@@ -48,7 +48,7 @@ class Login extends React.Component {
                     initiateSamlLogin={user.initiateSamlLogin}
                     get_saml_redirect_url={user.get_saml_redirect_url}
                     oidcLogin={user.oidcLogin}
-                    check_host={host.check_host}
+                    checkHost={host.checkHost}
                     initiateOidcLogin={user.initiateOidcLogin}
                     get_oidc_redirect_url={user.get_oidc_redirect_url}
                     login={user.login}
@@ -57,7 +57,7 @@ class Login extends React.Component {
                     yubikey_otp_verify={user.yubikey_otp_verify}
                     duo_verify={user.duo_verify}
                     ga_verify={user.ga_verify}
-                    approve_host={host.approve_host}
+                    approveHost={host.approveHost}
                     get_config={browserClient.get_config}
                 />
             </div>

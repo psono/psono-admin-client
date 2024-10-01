@@ -348,7 +348,7 @@ function split_string_in_chunks(str, len) {
  * @param {*} search The item to remove
  * @param {function|undefined} [cmp_fct] (optional) Compare function
  */
-function remove_from_array(array, search, cmp_fct) {
+function removeFromArray(array, search, cmp_fct) {
     if (!array) {
         return;
     }
@@ -484,7 +484,7 @@ const service = {
     is_valid_group_name,
     is_valid_password,
     split_string_in_chunks,
-    remove_from_array,
+    removeFromArray,
     copy_to_clipboard,
     endsWith,
     get_password_filter,
