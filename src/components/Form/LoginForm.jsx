@@ -80,11 +80,11 @@ const LoginForm = (props) => {
         props.get_config().then(onNewConfigLoaded);
     }, []);
 
-    const handleToggleRememberMe = () => () => {
+    const handleToggleRememberMe = () => {
         setRememberMe(!rememberMe);
     };
 
-    const handleToggleTrustDevice = () => () => {
+    const handleToggleTrustDevice = () => {
         setTrustDevice(!trustDevice);
     };
     const manageButtonState = () => {
