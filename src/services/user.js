@@ -478,10 +478,10 @@ function handleLoginResponse(
     return decrypted_response_data;
 }
 
-function login(password, server_info, send_plain) {
+function login(password, serverInfo, sendPlain) {
     const username = store.getState().user.username;
     const trust_device = store.getState().user.trust_device;
-    const server_public_key = server_info.info.public_key;
+    const server_public_key = serverInfo.info.public_key;
 
     let authkey = cryptoLibrary.generate_authkey(username, password);
 
@@ -516,7 +516,7 @@ function login(password, server_info, send_plain) {
         device_description: device.getDeviceDescription(),
     };
 
-    if (send_plain) {
+    if (sendPlain) {
         login_info['password'] = password;
     }
 
