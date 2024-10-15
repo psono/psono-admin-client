@@ -73,7 +73,7 @@ const LoginForm = (props) => {
     const [yubikeyOtp, setYubikeyOtp] = useState('');
     const [multifactors, setMultifactors] = useState([]);
     const [loginType, setLoginType] = useState('');
-    const [serverInfo, setServerInfo] = useState({});
+    const [serverCheck, setServerCheck] = useState({});
     const [adminClientConfig, setAdminClientConfig] = useState({});
 
     React.useEffect(() => {
@@ -142,7 +142,7 @@ const LoginForm = (props) => {
         props.yubikey_otp_verify(yubikeyOtp).then(
             () => {
                 let requiredMultifactors = [...multifactors];
-                if (serverInfo.info.multifactor_enabled === false) {
+                if (serverCheck.info.multifactor_enabled === false) {
                     requiredMultifactors = [];
                 } else {
                     helper.removeFromArray(
@@ -162,7 +162,7 @@ const LoginForm = (props) => {
         props.ga_verify(googleAuthenticator).then(
             () => {
                 let requiredMultifactors = [...multifactors];
-                if (serverInfo.info.multifactor_enabled === false) {
+                if (serverCheck.info.multifactor_enabled === false) {
                     requiredMultifactors = [];
                 } else {
                     helper.removeFromArray(
@@ -187,7 +187,7 @@ const LoginForm = (props) => {
         props.duo_verify(duo_code).then(
             () => {
                 let requiredMultifactors = [...multifactors];
-                if (serverInfo.info.multifactor_enabled === false) {
+                if (serverCheck.info.multifactor_enabled === false) {
                     requiredMultifactors = [];
                 } else {
                     helper.removeFromArray(requiredMultifactors, 'duo_2fa');
@@ -266,7 +266,9 @@ const LoginForm = (props) => {
                     .verifyWebauthn(JSON.stringify(convertedCredential))
                     .then(
                         (successful) => {
-                            if (serverInfo.info.multifactor_enabled === false) {
+                            if (
+                                serverCheck.info.multifactor_enabled === false
+                            ) {
                                 setMultifactors([]);
                             } else {
                                 helper.removeFromArray(
@@ -302,7 +304,7 @@ const LoginForm = (props) => {
 
     const handleMfa = () => {
         if (
-            serverInfo.info.multifactor_enabled === false &&
+            serverCheck.info.multifactor_enabled === false &&
             multifactors.length > 1
         ) {
             // show choose multifactor screen as only one is required to be solved
@@ -335,20 +337,20 @@ const LoginForm = (props) => {
         );
     };
 
-    const approve_send_plain = () => {
-        return next_login_step(true);
+    const approveSendPlain = () => {
+        return nextLoginStep(true, serverCheck);
     };
 
-    const disapprove_send_plain = () => {
-        return next_login_step(false);
+    const disapproveSendPlain = () => {
+        return nextLoginStep(false, serverCheck);
     };
 
-    const next_login_step = (send_plain) => {
+    const nextLoginStep = (sendPlain, serverCheck) => {
         let passwordCopy = password;
         setPassword('');
 
         return props
-            .login(passwordCopy, serverInfo, send_plain)
+            .login(passwordCopy, serverCheck, sendPlain)
             .then(handleLogin, (result) => {
                 setLoginLoading(false);
                 if (result.hasOwnProperty('non_field_errors')) {
@@ -376,17 +378,17 @@ const LoginForm = (props) => {
         return props
             .initiateLogin(fullUsername, server, rememberMe, trustDevice)
             .then(
-                (result) => {
-                    setServerInfo(result);
-                    action.setServerInfo(result.info);
-                    if (result.status !== 'matched') {
-                        setView(result.status);
+                (serverCheck) => {
+                    setServerCheck(serverCheck);
+                    action.setServerInfo(serverCheck.info);
+                    if (serverCheck.status !== 'matched') {
+                        setView(serverCheck.status);
                         setLoginLoading(false);
-                    } else if (has_ldap_auth(result)) {
+                    } else if (has_ldap_auth(serverCheck)) {
                         setView('ask_send_plain');
                         setLoginLoading(false);
                     } else {
-                        return next_login_step(false);
+                        return nextLoginStep(false, serverCheck);
                     }
                 },
                 (result) => {
@@ -415,7 +417,7 @@ const LoginForm = (props) => {
             .initiateSamlLogin(server, rememberMe, trustDevice)
             .then(
                 (result) => {
-                    setServerInfo(result);
+                    setServerCheck(result);
                     action.setServerInfo(result.info);
                     if (result.status !== 'matched') {
                         setView(result.status);
@@ -453,7 +455,7 @@ const LoginForm = (props) => {
             .initiateOidcLogin(server, rememberMe, trustDevice)
             .then(
                 (result) => {
-                    setServerInfo(result);
+                    setServerCheck(result);
                     action.setServerInfo(result.info);
                     if (result.status !== 'matched') {
                         setView(result.status);
@@ -483,13 +485,13 @@ const LoginForm = (props) => {
     };
 
     const approveHost = () => {
-        props.approveHost(serverInfo.server_url, serverInfo.verify_key);
+        props.approveHost(serverCheck.server_url, serverCheck.verify_key);
 
         if (loginType === 'SAML') {
             initiateSamlLogin(providerId);
         } else if (loginType === 'OIDC') {
             initiateOidcLogin(providerId);
-        } else if (has_ldap_auth(serverInfo)) {
+        } else if (has_ldap_auth(serverCheck)) {
             setView('ask_send_plain');
             setLoginLoading(false);
         } else {
@@ -497,7 +499,7 @@ const LoginForm = (props) => {
             setPassword('');
 
             props
-                .login(passwordCopy, serverInfo)
+                .login(passwordCopy, serverCheck)
                 .then(handleLogin, (result) => {
                     setLoginLoading(false);
                     if (result.hasOwnProperty('non_field_errors')) {
@@ -551,7 +553,7 @@ const LoginForm = (props) => {
         if (location.pathname.startsWith('/saml/token/')) {
             const samlTokenId = location.pathname.replace('/saml/token/', '');
             props.checkHost(store.getState().server.url).then((result) => {
-                setServerInfo(result);
+                setServerCheck(result);
                 action.setServerInfo(result.info);
                 props.samlLogin(samlTokenId).then(handleLogin, (result) => {
                     setLoginLoading(false);
@@ -570,7 +572,7 @@ const LoginForm = (props) => {
         if (location.pathname.startsWith('/oidc/token/')) {
             const oidcTokenId = location.pathname.replace('/oidc/token/', '');
             props.checkHost(store.getState().server.url).then((result) => {
-                setServerInfo(result);
+                setServerCheck(result);
                 action.setServerInfo(result.info);
                 props.oidcLogin(oidcTokenId).then(handleLogin, (result) => {
                     setLoginLoading(false);
@@ -943,7 +945,7 @@ const LoginForm = (props) => {
                                             fullWidth: true,
                                         }}
                                         inputProps={{
-                                            value: serverInfo.verify_key,
+                                            value: serverCheck.verify_key,
                                             disabled: true,
                                             multiline: true,
                                         }}
@@ -1056,7 +1058,7 @@ const LoginForm = (props) => {
                                             fullWidth: true,
                                         }}
                                         inputProps={{
-                                            value: serverInfo.verify_key,
+                                            value: serverCheck.verify_key,
                                             disabled: true,
                                             multiline: true,
                                         }}
@@ -1074,7 +1076,7 @@ const LoginForm = (props) => {
                                             fullWidth: true,
                                         }}
                                         inputProps={{
-                                            value: serverInfo.verify_key_old,
+                                            value: serverCheck.verify_key_old,
                                             disabled: true,
                                             multiline: true,
                                         }}
@@ -1494,14 +1496,14 @@ const LoginForm = (props) => {
                                 >
                                     <Button
                                         color="warning"
-                                        onClick={approve_send_plain}
+                                        onClick={approveSendPlain}
                                         type="submit"
                                     >
                                         {t('APPROVE_UNSAFE')}
                                     </Button>
                                     <Button
                                         color="success"
-                                        onClick={disapprove_send_plain}
+                                        onClick={disapproveSendPlain}
                                     >
                                         {t('DISAPPROVE_UNSAFE')}
                                     </Button>
