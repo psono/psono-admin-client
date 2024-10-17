@@ -377,8 +377,4 @@ const UsersView = (props) => {
     );
 };
 
-UsersView.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
 export default UsersView;

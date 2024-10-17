@@ -87,11 +87,11 @@ function call(method, endpoint, data, headers, session_secret_key) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    if (error.response.status === 403 && user.is_logged_in()) {
+                    if (error.response.status === 403 && user.isLoggedIn()) {
                         // User did not have permission
                         user.logout(i18n.t('PERMISSION_DENIED'));
                     }
-                    if (error.response.status === 401 && user.is_logged_in()) {
+                    if (error.response.status === 401 && user.isLoggedIn()) {
                         // session expired, lets log the user out
                         user.logout(i18n.t('SESSION_EXPIRED'));
                     }

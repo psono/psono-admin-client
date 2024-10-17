@@ -560,7 +560,7 @@ function logout(msg = '') {
     }
 }
 
-function is_logged_in() {
+function isLoggedIn() {
     return store.getState().user.isLoggedIn;
 }
 
@@ -578,7 +578,7 @@ const service = {
     duo_verify,
     yubikey_otp_verify,
     logout,
-    is_logged_in,
+    isLoggedIn,
 };
 
 export default service;

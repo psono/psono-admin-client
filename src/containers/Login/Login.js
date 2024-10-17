@@ -66,7 +66,6 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
 };
 
