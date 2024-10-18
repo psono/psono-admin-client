@@ -163,7 +163,7 @@ const GroupCard = ({
                         },
                         {
                             field: 'saml_provider_id',
-                            title: t('POVIDER_ID'),
+                            title: t('PROVIDER_ID'),
                         },
                     ]}
                     data={samlGroups}
@@ -194,7 +194,7 @@ const GroupCard = ({
                         },
                         {
                             field: 'scim_provider_id',
-                            title: t('POVIDER_ID'),
+                            title: t('PROVIDER_ID'),
                         },
                     ]}
                     data={scimGroups}
@@ -225,7 +225,7 @@ const GroupCard = ({
                         },
                         {
                             field: 'oidc_provider_id',
-                            title: t('POVIDER_ID'),
+                            title: t('PROVIDER_ID'),
                         },
                     ]}
                     data={oidcGroups}

@@ -11,6 +11,8 @@ import host from '../../services/host';
 import browserClient from '../../services/browser-client';
 
 import image from '../../assets/img/background.jpg';
+import store from '../../services/store';
+import { Redirect } from 'react-router-dom';
 const style = {
     wrapper: {
         position: 'relative',
@@ -36,6 +38,10 @@ const style = {
 class Login extends React.Component {
     render() {
         const { classes, ...rest } = this.props;
+
+        if (store.getState().user.isLoggedIn) {
+            return <Redirect to="/" />;
+        }
 
         return (
             <div className={classes.wrapper}>
@@ -66,7 +72,6 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
 };
 

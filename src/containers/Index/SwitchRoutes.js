@@ -1,5 +1,11 @@
 import React from 'react';
-import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
+import {
+    Switch,
+    Route,
+    Redirect,
+    matchPath,
+    useLocation,
+} from 'react-router-dom';
 import sidebarRoutes from '../../routes/sidebar';
 import eeRoutes from '../../routes/ee';
 import ldapRoutes from '../../routes/ldap';
@@ -8,6 +14,7 @@ import oidcRoutes from '../../routes/oidc';
 import otherRoutes from '../../routes/other';
 
 const SwitchRoutes = (props) => {
+    let location = useLocation();
     const { actions, state, store, ...rest } = props;
 
     let variableLinks = [];
@@ -45,7 +52,7 @@ const SwitchRoutes = (props) => {
 
     let match = null;
     for (let i = 0; i < routes.length; i++) {
-        match = matchPath(props.location.pathname, routes[i].path);
+        match = matchPath(location.pathname, routes[i].path);
         if (match !== null) {
             break;
         }

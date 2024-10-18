@@ -55,7 +55,7 @@ class OIDCCard extends React.Component {
                                         },
                                         {
                                             field: 'oidc_provider_id',
-                                            title: t('POVIDER_ID'),
+                                            title: t('PROVIDER_ID'),
                                         },
                                         {
                                             field: 'groups',
