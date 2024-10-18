@@ -63,7 +63,6 @@ const LoginForm = (props) => {
     const [providerId, setProviderId] = useState(0);
     const [trustDevice, setTrustDevice] = useState(false);
     const [loginLoading, setLoginLoading] = useState(false);
-    const [loginPossible, setLoginPossible] = useState(false);
     const [domain, setDomain] = useState('');
     const [errors, setErrors] = useState([]);
     const [googleAuthenticator, setGoogleAuthenticator] = useState('');
@@ -87,13 +86,6 @@ const LoginForm = (props) => {
     const handleToggleTrustDevice = () => {
         setTrustDevice(!trustDevice);
     };
-    const manageButtonState = () => {
-        if (username && password) {
-            setLoginPossible(true);
-        } else {
-            setLoginPossible(false);
-        }
-    };
     const onChangeYubikeyOTP = (event) => {
         setYubikeyOtp(event.target.value);
     };
@@ -105,18 +97,13 @@ const LoginForm = (props) => {
     };
     const onChangeUsername = (event) => {
         setUsername(event.target.value);
-        // wrapping manageButtonState in timeout so that psono's autofill works
-        setTimeout(() => manageButtonState(), 0);
     };
     const onChangePassword = (event) => {
         setPassword(event.target.value);
-        // wrapping manageButtonState in timeout so that psono's autofill works
-        setTimeout(() => manageButtonState(), 0);
     };
     const onChangeServer = (event) => {
         setServer(event.target.value);
         setDomain(helper.get_domain(event.target.value));
-        manageButtonState();
     };
 
     const requirementCheckMfa = () => {
@@ -880,7 +867,8 @@ const LoginForm = (props) => {
                                         onClick={initiateLogin}
                                         type="submit"
                                         disabled={
-                                            !loginPossible || loginLoading
+                                            !(username && password) ||
+                                            loginLoading
                                         }
                                     >
                                         <span
