@@ -205,17 +205,17 @@ describe('Service: helper test suite', function () {
         expect(helper.is_valid_username('abc') === true).toBeTruthy();
     });
 
-    it('remove_from_array', function () {
+    it('removeFromArray', function () {
         const array = [1, 2, 5, 7];
         const search = 5;
         const target = [1, 2, 7];
 
-        helper.remove_from_array(array, search);
+        helper.removeFromArray(array, search);
 
         expect(array).toEqual(target);
     });
 
-    it('remove_from_array_own_cmp_fct', function () {
+    it('removeFromArray_own_cmp_fct', function () {
         const array = [1, 2, 5, 5, 7];
         const search = 5;
         const target = [5, 5];
@@ -224,7 +224,7 @@ describe('Service: helper test suite', function () {
             return a !== b;
         };
 
-        helper.remove_from_array(array, search, cmp_fct);
+        helper.removeFromArray(array, search, cmp_fct);
 
         expect(array).toEqual(target);
     });

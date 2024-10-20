@@ -98,7 +98,7 @@ function get_config(key) {
                     admin_client_config['oidc_provider'] = [];
                 }
                 _admin_client_config = admin_client_config;
-                action.set_admin_client_config(admin_client_config);
+                action.setAdminClientConfig(admin_client_config);
                 resolve(_get_config(admin_client_config, key));
             });
         } else {

@@ -50,7 +50,7 @@ function call(method, endpoint, data, headers, session_secret_key) {
     const url = store.getState().server.url + endpoint;
 
     if (session_secret_key && data !== null) {
-        data = cryptoLibrary.encrypt_data(
+        data = cryptoLibrary.encryptData(
             JSON.stringify(data),
             session_secret_key
         );
@@ -63,10 +63,10 @@ function call(method, endpoint, data, headers, session_secret_key) {
     ) {
         const validator = {
             request_time: new Date().toISOString(),
-            request_device_fingerprint: device.get_device_fingerprint(),
+            request_device_fingerprint: device.getDeviceFingerprint(),
         };
         headers['Authorization-Validator'] = JSON.stringify(
-            cryptoLibrary.encrypt_data(
+            cryptoLibrary.encryptData(
                 JSON.stringify(validator),
                 session_secret_key
             )
@@ -87,11 +87,11 @@ function call(method, endpoint, data, headers, session_secret_key) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-                    if (error.response.status === 403 && user.is_logged_in()) {
+                    if (error.response.status === 403 && user.isLoggedIn()) {
                         // User did not have permission
                         user.logout(i18n.t('PERMISSION_DENIED'));
                     }
-                    if (error.response.status === 401 && user.is_logged_in()) {
+                    if (error.response.status === 401 && user.isLoggedIn()) {
                         // session expired, lets log the user out
                         user.logout(i18n.t('SESSION_EXPIRED'));
                     }
@@ -1547,6 +1547,29 @@ function admin_delete_duo(token, session_secret_key, duo_id) {
 }
 
 /**
+ * DELETE: Deletes an iVALT (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} ivaltId The id of the iValt to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function adminDeleteIvalt(token, session_secret_key, ivaltId) {
+    const endpoint = '/admin/ivalt/';
+    const method = 'DELETE';
+    const data = {
+        ivalt_id: ivaltId,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a yubikey otp (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -1768,7 +1791,7 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function saml_initiate_login(saml_provider_id, return_to_url) {
+function samlInitiateLogin(saml_provider_id, return_to_url) {
     const endpoint = '/saml/' + saml_provider_id + '/initiate-login/';
     const method = 'POST';
     const data = {
@@ -1790,12 +1813,7 @@ function saml_initiate_login(saml_provider_id, return_to_url) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function saml_login(
-    login_info,
-    login_info_nonce,
-    public_key,
-    session_duration
-) {
+function samlLogin(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/saml/login/';
     const method = 'POST';
     const data = {
@@ -1818,7 +1836,7 @@ function saml_login(
  *
  * @returns {promise} Returns a promise with the login status
  */
-function oidc_initiate_login(oidc_provider_id, return_to_url) {
+function oidcInitiateLogin(oidc_provider_id, return_to_url) {
     const endpoint = '/oidc/' + oidc_provider_id + '/initiate-login/';
     const method = 'POST';
     const data = {
@@ -1840,12 +1858,7 @@ function oidc_initiate_login(oidc_provider_id, return_to_url) {
  *
  * @returns {promise} Returns a promise with the login status
  */
-function oidc_login(
-    login_info,
-    login_info_nonce,
-    public_key,
-    session_duration
-) {
+function oidcLogin(login_info, login_info_nonce, public_key, session_duration) {
     const endpoint = '/oidc/login/';
     const method = 'POST';
     const data = {
@@ -1935,7 +1948,7 @@ function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
  *
  * @returns {Promise<AxiosResponse<any>>} promise
  */
-function activate_token(
+function activateToken(
     token,
     verification,
     verification_nonce,
@@ -3603,25 +3616,7 @@ function webauthnVerify(token, sessionSecretKey, credential) {
     return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
-function deleteIvaltUser(token, session_secret_key, user_id) {
-    const endpoint = '/admin/ivalt';
-    const method = 'DELETE';
-    const data = {
-        ivalt_id: user_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
-
-    return call(method, endpoint, data, headers, session_secret_key);
-}
-
-function send_ivalt_two_factor_notification(
-    token,
-    session_secret_key,
-    requestType
-) {
+const ivaltVerify = function (token, sessionSecretKey, requestType) {
     const endpoint = '/authentication/ivalt-verify/';
     const method = 'POST';
     const data = {
@@ -3630,8 +3625,8 @@ function send_ivalt_two_factor_notification(
     const headers = {
         Authorization: 'Token ' + token,
     };
-    return call(method, endpoint, data, headers, session_secret_key);
-}
+    return call(method, endpoint, data, headers, sessionSecretKey);
+};
 
 const service = {
     info,
@@ -3665,6 +3660,7 @@ const service = {
     admin_delete_membership,
     admin_delete_group_share_right,
     admin_delete_duo,
+    adminDeleteIvalt,
     admin_delete_yubikey_otp,
     admin_delete_webauthn,
     admin_delete_google_authenticator,
@@ -3696,14 +3692,14 @@ const service = {
     admin_oidc_delete_group_map,
     admin_update_user,
     login,
-    saml_initiate_login,
-    saml_login,
-    oidc_initiate_login,
-    oidc_login,
+    samlInitiateLogin,
+    samlLogin,
+    oidcInitiateLogin,
+    oidcLogin,
     ga_verify,
     duo_verify,
     yubikey_otp_verify,
-    activate_token,
+    activateToken,
     get_sessions,
     logout,
     register,
@@ -3762,8 +3758,7 @@ const service = {
     delete_account,
     webauthnVerifyInit,
     webauthnVerify,
-    deleteIvaltUser,
-    send_ivalt_two_factor_notification,
+    ivaltVerify,
 };
 
 export default service;

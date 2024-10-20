@@ -112,6 +112,10 @@ function password_scrypt(password, salt) {
  * @returns {string} auth_key Scrypt hex value of the password with the sha512 of lowercase email as salt
  */
 function generate_authkey(username, password) {
+    if (!username || !username.includes('@')) {
+        // security. Do not remove!
+        throw new Error('Malformed username.');
+    }
     // takes the sha512(username) as salt.
     // var salt = nacl.to_hex(nacl.crypto_hash_string(username.toLowerCase()));
     const salt = sha512(username.toLowerCase());
@@ -133,7 +137,7 @@ function generate_secret_key() {
  *
  * @returns {PublicPrivateKeyPair} Returns object with a public-private-key-pair
  */
-function generate_public_private_keypair() {
+function generatePublicPrivateKeypair() {
     const sk = randomBytes(32);
     const pk = nacl.box.generate_pubkey(sk);
 
@@ -145,17 +149,24 @@ function generate_public_private_keypair() {
 
 /**
  * Takes the secret and encrypts that with the provided password. The crypto_box takes only 256 bits, therefore we
- * are using sha256(password+user_sauce) as key for encryption.
+ * are using sha256(password+userSauce) as key for encryption.
  * Returns the nonce and the cipher text as hex.
  *
  * @param {string} secret The secret you want to encrypt
  * @param {string} password The password you want to use to encrypt the secret
- * @param {string} user_sauce The user's sauce
+ * @param {string} userSauce The user's sauce
  *
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
-function encrypt_secret(secret, password, user_sauce) {
-    const salt = sha512(user_sauce);
+function encrypt_secret(secret, password, userSauce) {
+    if (userSauce.includes('@')) {
+        // security. Do not remove!
+        throw new Error(
+            'encrypt secret may not contain an @ as it may be a username'
+        );
+    }
+
+    const salt = sha512(userSauce);
     const k = converter.from_hex(sha256(password_scrypt(password, salt))); // key
 
     // and now lets encrypt
@@ -170,18 +181,24 @@ function encrypt_secret(secret, password, user_sauce) {
 }
 
 /**
- * Takes the cipher text and decrypts that with the nonce and the sha256(password+user_sauce).
+ * Takes the cipher text and decrypts that with the nonce and the sha256(password+userSauce).
  * Returns the initial secret.
  *
  * @param {string} text The encrypted text
  * @param {string} nonce The nonce for the encrypted text
  * @param {string} password The password to decrypt the text
- * @param {string} user_sauce The users sauce used during encryption
+ * @param {string} userSauce The users sauce used during encryption
  *
  * @returns {string} secret The decrypted secret
  */
-function decrypt_secret(text, nonce, password, user_sauce) {
-    const salt = sha512(user_sauce);
+function decryptSecret(text, nonce, password, userSauce) {
+    if (userSauce.includes('@')) {
+        // security. Do not remove!
+        throw new Error(
+            'encrypt secret may not contain an @ as it may be a username'
+        );
+    }
+    const salt = sha512(userSauce);
     const k = converter.from_hex(sha256(password_scrypt(password, salt)));
 
     // and now lets decrypt
@@ -201,7 +218,7 @@ function decrypt_secret(text, nonce, password, user_sauce) {
  *
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
-function encrypt_data(data, secret_key) {
+function encryptData(data, secret_key) {
     const k = converter.from_hex(secret_key);
     const m = converter.encode_utf8(data);
     const n = randomBytes(24);
@@ -242,7 +259,7 @@ function decrypt_data(text, nonce, secret_key) {
  *
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
-function encrypt_data_public_key(data, public_key, private_key) {
+function encryptDataPublicKey(data, public_key, private_key) {
     const p = converter.from_hex(public_key);
     const s = converter.from_hex(private_key);
     const m = converter.encode_utf8(data);
@@ -266,7 +283,7 @@ function encrypt_data_public_key(data, public_key, private_key) {
  *
  * @returns {string} The decrypted data
  */
-function decrypt_data_public_key(text, nonce, public_key, private_key) {
+function decryptDataPublicKey(text, nonce, public_key, private_key) {
     const p = converter.from_hex(public_key);
     const s = converter.from_hex(private_key);
     const n = converter.from_hex(nonce);
@@ -281,7 +298,7 @@ function decrypt_data_public_key(text, nonce, public_key, private_key) {
  *
  * @returns {string} Returns a random user sauce (32 bytes, hex encoded)
  */
-function generate_user_sauce() {
+function generateUserSauce() {
     return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
 }
 
@@ -405,14 +422,14 @@ const service = {
     sha512,
     generate_authkey,
     generate_secret_key,
-    generate_public_private_keypair,
+    generatePublicPrivateKeypair,
     encrypt_secret,
-    decrypt_secret,
-    encrypt_data,
+    decryptSecret,
+    encryptData,
     decrypt_data,
-    encrypt_data_public_key,
-    decrypt_data_public_key,
-    generate_user_sauce,
+    encryptDataPublicKey,
+    decryptDataPublicKey,
+    generateUserSauce,
     get_checksum,
     generate_recovery_code,
     recovery_code_strip_checksums,

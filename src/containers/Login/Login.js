@@ -11,6 +11,8 @@ import host from '../../services/host';
 import browserClient from '../../services/browser-client';
 
 import image from '../../assets/img/background.jpg';
+import store from '../../services/store';
+import { Redirect } from 'react-router-dom';
 const style = {
     wrapper: {
         position: 'relative',
@@ -37,29 +39,31 @@ class Login extends React.Component {
     render() {
         const { classes, ...rest } = this.props;
 
+        if (store.getState().user.isLoggedIn) {
+            return <Redirect to="/" />;
+        }
+
         return (
             <div className={classes.wrapper}>
                 <div className={classes.content} />
                 <Notification />
                 <LoginForm
                     {...rest}
-                    initiate_login={user.initiate_login}
-                    saml_login={user.saml_login}
-                    initiate_saml_login={user.initiate_saml_login}
+                    initiateLogin={user.initiateLogin}
+                    samlLogin={user.samlLogin}
+                    initiateSamlLogin={user.initiateSamlLogin}
                     get_saml_redirect_url={user.get_saml_redirect_url}
-                    oidc_login={user.oidc_login}
-                    check_host={host.check_host}
-                    initiate_oidc_login={user.initiate_oidc_login}
+                    oidcLogin={user.oidcLogin}
+                    checkHost={host.checkHost}
+                    initiateOidcLogin={user.initiateOidcLogin}
                     get_oidc_redirect_url={user.get_oidc_redirect_url}
                     login={user.login}
-                    activate_token={user.activate_token}
+                    activateToken={user.activateToken}
                     logout={user.logout}
                     yubikey_otp_verify={user.yubikey_otp_verify}
                     duo_verify={user.duo_verify}
                     ga_verify={user.ga_verify}
-                    ivalt_notify={user.send_ivalt_two_factor_notification}
-                    validate_ivalt_2fa={user.send_ivalt_two_factor_notification}
-                    approve_host={host.approve_host}
+                    approveHost={host.approveHost}
                     get_config={browserClient.get_config}
                 />
             </div>
@@ -68,7 +72,6 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    store: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
 };
 

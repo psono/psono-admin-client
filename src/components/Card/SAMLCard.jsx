@@ -60,7 +60,7 @@ class SAMLCard extends React.Component {
                                             { field: 'name', title: t('NAME') },
                                             {
                                                 field: 'saml_provider_id',
-                                                title: t('POVIDER_ID'),
+                                                title: t('PROVIDER_ID'),
                                             },
                                             {
                                                 field: 'groups',

@@ -3,6 +3,7 @@ import {
     SET_USER_INFO_1,
     SET_USER_INFO_2,
     SET_USER_INFO_3,
+    SET_SERVER_SECRET_EXISTS,
     LOGOUT,
 } from '../actions/actionTypes';
 
@@ -16,7 +17,9 @@ function user(
         username: default_username,
         remember_me: default_remember_me,
         trust_device: default_trust_device,
+        authentication: '',
         user_secret_key: '',
+        serverSecretExists: false,
         user_private_key: '',
         user_public_key: '',
         session_secret_key: '',
@@ -36,6 +39,7 @@ function user(
             return Object.assign({}, state, {
                 remember_me: action.remember_me,
                 trust_device: action.trust_device,
+                authentication: action.authentication,
             });
         case SET_USER_INFO_2:
             return Object.assign({}, state, {
@@ -44,6 +48,7 @@ function user(
                 session_secret_key: action.session_secret_key,
                 token: action.token,
                 user_sauce: action.user_sauce,
+                authentication: action.authentication,
             });
         case SET_USER_INFO_3:
             return Object.assign({}, state, {
@@ -51,6 +56,11 @@ function user(
                 user_id: action.user_id,
                 user_email: action.user_email,
                 user_secret_key: action.user_secret_key,
+                serverSecretExists: action.serverSecretExists,
+            });
+        case SET_SERVER_SECRET_EXISTS:
+            return Object.assign({}, state, {
+                serverSecretExists: action.serverSecretExists,
             });
         case LOGOUT:
             return Object.assign({}, state, {
@@ -62,7 +72,9 @@ function user(
                 trust_device: state.remember_me
                     ? state.trust_device
                     : default_trust_device,
+                authentication: '',
                 user_secret_key: '',
+                serverSecretExists: false,
                 user_private_key: '',
                 user_email: '',
                 user_id: '',

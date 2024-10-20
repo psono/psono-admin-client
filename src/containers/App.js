@@ -5,7 +5,6 @@ import { HashLoader } from 'react-spinners';
 import { createBrowserHistory } from 'history';
 import { withStyles } from '@material-ui/core';
 import { Router, Route, Switch } from 'react-router-dom';
-import { matchPath } from 'react-router-dom';
 import { compose } from 'redux';
 
 import store from '../services/store';
@@ -17,7 +16,8 @@ import 'font-awesome/css/font-awesome.min.css';
 
 import 'clientjs/dist/client.min.js';
 import '../assets/css/material-dashboard-react.css';
-import mainRoutes from '../routes/main';
+import Index from '../containers/Index/Index';
+import Login from '../containers/Login/Login';
 import logo from '../assets/img/logo.png';
 import image from '../assets/img/background.jpg';
 
@@ -66,32 +66,23 @@ const Loader = compose(withStyles(style))(LoaderClass);
 
 class App extends Component {
     render() {
-        let match = null;
-        for (let i = 0; i < mainRoutes.length; i++) {
-            match = matchPath(hist.location.pathname, mainRoutes[i].path);
-            if (match !== null) {
-                break;
-            }
-        }
         return (
             <Suspense fallback={<Loader />}>
                 <PersistGate loading={<HashLoader />} persistor={persistor}>
                     <Router history={hist} basename="/portal">
                         <Switch>
-                            {mainRoutes.map((prop, key) => {
-                                return (
-                                    <Route
-                                        path={prop.path}
-                                        render={() => (
-                                            <prop.component
-                                                store={store}
-                                                location={hist.location}
-                                            />
-                                        )}
-                                        key={key}
-                                    />
-                                );
-                            })}
+                            <Route path={'/saml/token/:saml_token_id'}>
+                                <Login />
+                            </Route>
+                            <Route path={'/oidc/token/:oidc_token_id'}>
+                                <Login />
+                            </Route>
+                            <Route path={'/login'}>
+                                <Login />
+                            </Route>
+                            <Route path={'/'}>
+                                <Index />
+                            </Route>
                         </Switch>
                     </Router>
                 </PersistGate>

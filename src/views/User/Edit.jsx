@@ -84,6 +84,13 @@ const UserEdit = (props) => {
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
+                user.ivalts.forEach((u) => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.active = u.active ? t('YES') : t('NO');
+                });
+
                 user.memberships.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
@@ -211,14 +218,14 @@ const UserEdit = (props) => {
         });
     };
 
-    const onDeleteIvaltUser = (selected_user) => {
+    const onDeleteIvaltUser = (selected_ivalts) => {
         const promises = [];
-        selected_user.forEach((user) => {
+        selected_ivalts.forEach((ivalt) => {
             promises.push(
-                psono_server.deleteIvaltUser(
+                psono_server.adminDeleteIvalt(
                     props.state.user.token,
                     props.state.user.session_secret_key,
-                    user.id
+                    ivalt.id
                 )
             );
         });
@@ -226,7 +233,7 @@ const UserEdit = (props) => {
         Promise.all(promises).then((values) => {
             loadUser();
         });
-    }
+    };
 
     const onDeleteMemberships = (selected_memberships) => {
         const promises = [];
