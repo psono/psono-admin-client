@@ -84,6 +84,13 @@ const UserEdit = (props) => {
                     u.active = u.active ? t('YES') : t('NO');
                 });
 
+                user.ivalts.forEach((u) => {
+                    u.create_date = moment(u.create_date).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                    );
+                    u.active = u.active ? t('YES') : t('NO');
+                });
+
                 user.memberships.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
@@ -202,6 +209,23 @@ const UserEdit = (props) => {
                     props.state.user.token,
                     props.state.user.session_secret_key,
                     session.id
+                )
+            );
+        });
+
+        Promise.all(promises).then((values) => {
+            loadUser();
+        });
+    };
+
+    const onDeleteIvaltUser = (selected_ivalts) => {
+        const promises = [];
+        selected_ivalts.forEach((ivalt) => {
+            promises.push(
+                psono_server.adminDeleteIvalt(
+                    props.state.user.token,
+                    props.state.user.session_secret_key,
+                    ivalt.id
                 )
             );
         });
@@ -587,6 +611,7 @@ const UserEdit = (props) => {
                         sessions={user.sessions}
                         memberships={user.memberships}
                         duos={user.duos}
+                        ivalts={user.ivalts}
                         google_authenticators={user.google_authenticators}
                         yubikey_otps={user.yubikey_otps}
                         webauthns={user.webauthns}
@@ -601,6 +626,7 @@ const UserEdit = (props) => {
                         onDeleteGoogleAuthenticators={
                             onDeleteGoogleAuthenticators
                         }
+                        onDeleteIvaltUser={onDeleteIvaltUser}
                         onDeleteRecoveryCodes={onDeleteRecoveryCodes}
                         onDeleteEmergencyCodes={onDeleteEmergencyCodes}
                         onDeleteLinkShares={onDeleteLinkShares}

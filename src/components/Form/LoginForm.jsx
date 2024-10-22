@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { BarLoader } from 'react-spinners';
 import { useHistory } from 'react-router-dom';
 
-import { Grid, Checkbox } from '@material-ui/core';
+import { Grid, Checkbox, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Check } from '@material-ui/icons';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -18,9 +18,12 @@ import {
 
 import action from '../../actions/boundActionCreators';
 import helper from '../../services/helper';
+import ivaltClient from '../../services/ivalt';
 import webauthnService from '../../services/webauthn';
 import converter from '../../services/converter';
 import store from '../../services/store';
+import iValtLogo from '../../assets/img/sc-logo.png';
+const defaultTimer = 2 * 60;
 
 const useStyles = makeStyles((theme) => ({
     wrapper: {
@@ -48,6 +51,13 @@ const useStyles = makeStyles((theme) => ({
         border: '1px solid rgba(0, 0, 0, .54)',
         borderRadius: '3px',
     },
+    progress: {
+        position: 'absolute',
+        top: '104px',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 0,
+    },
 }));
 
 const LoginForm = (props) => {
@@ -74,6 +84,73 @@ const LoginForm = (props) => {
     const [loginType, setLoginType] = useState('');
     const [serverCheck, setServerCheck] = useState({});
     const [adminClientConfig, setAdminClientConfig] = useState({});
+    const [timer, setTimer] = useState(defaultTimer);
+    const [ivaltLoading, setIvaltLoading] = useState(false);
+    const errorsResponses = {
+        AUTHENTICATION_FAILED: t('IVALT_AUTH_FAILED'),
+        BIOMETRIC_AUTH_REQUEST_SUCCESSFULLY_SENT: t('IVALT_AUTH_REQUEST_SENT'),
+        INVALID_TIMEZONE: t('IVALT_INVALID_TIMEZONE'),
+        INVALID_GEOFENCE: t('IVALT_INVALID_GEOFENCE'),
+    };
+    React.useEffect(() => {
+        let timerInterval;
+        let timeout;
+
+        if (ivaltLoading) {
+            timerInterval = setInterval(() => {
+                if (timer <= 0) {
+                    setIvaltLoading(false);
+                    setTimer(defaultTimer);
+                    clearInterval(timerInterval);
+                    setErrors([t('IVALT_AUTH_TIMEOUT')]);
+
+                    return;
+                }
+                if (timer % 2 == 0) {
+                    validateIvalt();
+                }
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(timerInterval);
+            clearTimeout(timeout);
+        };
+    }, [ivaltLoading, timer]);
+
+    const validateIvalt = () => {
+        ivaltClient.validateIvaltTwoFactor().then(
+            (res) => {
+                if (res.data.non_field_errors === undefined) {
+                    setIvaltLoading(false);
+                    setTimer(defaultTimer);
+
+                    let requiredMultifactors = [...multifactors];
+                    if (serverCheck.info.multifactor_enabled === false) {
+                        helper.removeFromArray(
+                            requiredMultifactors,
+                            'ivalt_2fa'
+                        );
+                    } else {
+                        requiredMultifactors = [];
+                    }
+
+                    setMultifactors(requiredMultifactors);
+                } else if (
+                    errorsResponses[res.data.non_field_errors[0]] !==
+                        undefined &&
+                    res.data.non_field_errors[0] !== 'AUTHENTICATION_FAILED'
+                ) {
+                    setErrors([errorsResponses[res.data.non_field_errors[0]]]);
+                    setIvaltLoading(false);
+                }
+            },
+            (error, res) => {
+                console.log(error, 'ERROR RESPONSE');
+            }
+        );
+    };
 
     React.useEffect(() => {
         props.get_config().then(onNewConfigLoaded);
@@ -305,6 +382,10 @@ const LoginForm = (props) => {
             show_ga_2fa_form();
         } else if (multifactors.indexOf('duo_2fa') !== -1) {
             show_duo_2fa_form();
+        } else if (multifactors.indexOf('ivalt_2fa') !== -1) {
+            setIvaltLoading(true);
+            sendIvaltAuthRequest();
+            showIvaltForm();
         } else {
             setView('default');
             setLoginLoading(false);
@@ -313,6 +394,27 @@ const LoginForm = (props) => {
             ]);
             props.logout();
         }
+    };
+
+    const sendIvaltAuthRequest = () => {
+        setErrors([]);
+        ivaltClient.sendTwoFactorNotification().then(
+            (createdIvalt) => {
+                validateIvalt();
+            },
+            function (error) {
+                if (error.hasOwnProperty('non_field_errors')) {
+                    setErrors(error.non_field_errors);
+                } else {
+                    console.error(error);
+                }
+            }
+        );
+    };
+
+    const showIvaltForm = () => {
+        setView('ivalt');
+        setLoginLoading(false);
     };
 
     const has_ldap_auth = (server_check) => {
@@ -1270,6 +1372,94 @@ const LoginForm = (props) => {
                                 </GridItem>
                             </Grid>
                             <Grid container>{errorGridItem}</Grid>
+                        </form>
+                    }
+                />
+            </div>
+        );
+    }
+
+    if (view === 'ivalt') {
+        return (
+            <div className={classes.wrapper}>
+                <RegularCard
+                    cardTitle={t('IVALT_AUTHENTICATION')}
+                    cardSubtitle={t('VERIFY_IVALT_AUTHENTICATION')}
+                    content={
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                            }}
+                            autoComplete="off"
+                        >
+                            <Grid container>
+                                <GridItem xs={12} sm={12} md={12}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            flexWrap: 'nowrap',
+                                            alignContent: 'center',
+                                            justifyContent: 'center !important',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            marginBottom: '20px',
+                                        }}
+                                    >
+                                        <img
+                                            src={iValtLogo}
+                                            alt="ivalt"
+                                            style={{ width: 50 }}
+                                        />
+                                        <CircularProgress
+                                            size={60}
+                                            className={classes.progress}
+                                            style={{
+                                                animation: 'unset',
+                                                zIndex: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </GridItem>
+                                <GridItem xs={12} sm={12} md={12}>
+                                    <SnackbarContent
+                                        message={t(
+                                            'IVALT_AUTHENTICATION_REQUEST_SENT_PLEASE_CHECK_APP'
+                                        )}
+                                        close
+                                        color="info"
+                                    />
+                                </GridItem>
+                                <GridItem xs={12} sm={12} md={12}>
+                                    {ivaltLoading ? (
+                                        <div
+                                            style={{
+                                                marginTop: '20px',
+                                                textAlign: 'center',
+                                                color: 'red',
+                                            }}
+                                        >
+                                            <p>
+                                                <Trans
+                                                    i18nKey="TIME_REMAINING_TIMER_SECONDS"
+                                                    timer={timer}
+                                                >
+                                                    Time remaining: {{ timer }}{' '}
+                                                    seconds
+                                                </Trans>
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <Button
+                                            onClick={() => {
+                                                setIvaltLoading(true);
+                                                sendIvaltAuthRequest();
+                                            }}
+                                        >
+                                            {t('RETRY')}
+                                        </Button>
+                                    )}
+                                </GridItem>
+                            </Grid>
                         </form>
                     }
                 />

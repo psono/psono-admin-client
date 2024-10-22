@@ -1547,6 +1547,29 @@ function admin_delete_duo(token, session_secret_key, duo_id) {
 }
 
 /**
+ * DELETE: Deletes an iVALT (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} ivaltId The id of the iValt to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function adminDeleteIvalt(token, session_secret_key, ivaltId) {
+    const endpoint = '/admin/ivalt/';
+    const method = 'DELETE';
+    const data = {
+        ivalt_id: ivaltId,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a yubikey otp (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -3593,6 +3616,18 @@ function webauthnVerify(token, sessionSecretKey, credential) {
     return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
+const ivaltVerify = function (token, sessionSecretKey, requestType) {
+    const endpoint = '/authentication/ivalt-verify/';
+    const method = 'POST';
+    const data = {
+        request_type: requestType,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+    return call(method, endpoint, data, headers, sessionSecretKey);
+};
+
 const service = {
     info,
     healthcheck,
@@ -3625,6 +3660,7 @@ const service = {
     admin_delete_membership,
     admin_delete_group_share_right,
     admin_delete_duo,
+    adminDeleteIvalt,
     admin_delete_yubikey_otp,
     admin_delete_webauthn,
     admin_delete_google_authenticator,
@@ -3722,6 +3758,7 @@ const service = {
     delete_account,
     webauthnVerifyInit,
     webauthnVerify,
+    ivaltVerify,
 };
 
 export default service;

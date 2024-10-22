@@ -1,4 +1,5 @@
 {
+  "RETRY": "Retry",
   "SERVER_UNSUPPORTED": "Server unsupported",
   "THE_VERSION_OF_THE_SERVER_IS_TOO_OLD_AND_NOT_SUPPORTED_PLEASE_UPGRADE": "The version of the server is too old. This client doesn't support the old version anymore. Please update your server or tell your administrator to update it.",
   "IGNORE_AND_CONTINUE": "Ignore and continue",
@@ -368,5 +369,16 @@
   "REQUEST_PASSWORD_RESET": "Request Password Reset",
   "LOST_PASSWORD": "Lost password",
   "PRIVACY_POLICY": "Privacy Policy",
-  "ABOUT_US": "About Us"
+  "ABOUT_US": "About Us",
+  "IVALT": "IVALT",
+  "MOBILE": "Mobile",
+  "DELETE_IVALT": "Delete iVALT",
+  "IVALT_AUTHENTICATION": "IVALT authentication",
+  "VERIFY_IVALT_AUTHENTICATION": "Verify IVALT authentication",
+  "IVALT_AUTHENTICATION_REQUEST_SENT_PLEASE_CHECK_APP": "iVALT authentication request sent! Please check your iVALT app to approve the authentication request.",
+  "IVALT_AUTH_REQUEST_SENT": "IVALT authenticated request sent successfully",
+  "IVALT_INVALID_TIMEZONE": "Invalid timezone. Please try again later.",
+  "IVALT_INVALID_GEOFENCE": "Invalid geofence. Please try again later.",
+  "IVALT_AUTH_FAILED": "Authentication failed. Please try again.",
+  "TIME_REMAINING_TIMER_SECONDS": "Time remaining: {{timer}} seconds"
 }

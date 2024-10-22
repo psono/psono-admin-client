@@ -28,6 +28,8 @@ const UserCard = (props) => {
         onDeleteRecoveryCodes,
         onDeleteEmergencyCodes,
         onDeleteLinkShares,
+        onDeleteIvaltUser,
+        ivalts
     } = props;
 
     return (
@@ -206,6 +208,38 @@ const UserCard = (props) => {
                                     icon: Delete,
                                     onClick: (evt, data) =>
                                         onDeleteGoogleAuthenticators([data]),
+                                },
+                            ]}
+                        />
+                    ),
+                },
+                {
+                    tabName: t('IVALT'),
+                    tabIcon: Group,
+                    tabContent: (
+                        <CustomMaterialTable
+                            columns={[
+                                {
+                                    field: 'mobile',
+                                    title: t('MOBILE'),
+                                },
+                                {
+                                    field: 'active',
+                                    title: t('ACTIVE'),
+                                },
+                                {
+                                    field: 'create_date',
+                                    title: t('CREATED_AT'),
+                                }
+                            ]}
+                            data={ivalts}
+                            title={t('IVALT')}
+                            actions={[
+                                {
+                                    tooltip: t('DELETE_IVALT'),
+                                    icon: Delete,
+                                    onClick: (evt, data) =>
+                                        onDeleteIvaltUser([data]),
                                 },
                             ]}
                         />
