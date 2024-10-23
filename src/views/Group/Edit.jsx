@@ -17,6 +17,7 @@ import {
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
+import store from '../../services/store';
 
 const useStyles = makeStyles(customInputStyle);
 
@@ -46,8 +47,8 @@ const GroupEdit = (props) => {
     function loadGroup() {
         psono_server
             .admin_group(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 params.group_id
             )
             .then((response) => {
@@ -227,8 +228,8 @@ const GroupEdit = (props) => {
                 ) {
                     psono_server
                         .admin_ldap_group(
-                            props.state.user.token,
-                            props.state.user.session_secret_key
+                            store.getState().user.token,
+                            store.getState().user.session_secret_key
                         )
                         .then((response) => {
                             const ldapGroups = response.data.ldap_groups;
@@ -265,8 +266,8 @@ const GroupEdit = (props) => {
                 ) {
                     psono_server
                         .admin_saml_group(
-                            props.state.user.token,
-                            props.state.user.session_secret_key
+                            store.getState().user.token,
+                            store.getState().user.session_secret_key
                         )
                         .then((response) => {
                             const samlGroups = response.data.saml_groups;
@@ -292,8 +293,8 @@ const GroupEdit = (props) => {
                         });
                     psono_server
                         .admin_scim_group(
-                            props.state.user.token,
-                            props.state.user.session_secret_key
+                            store.getState().user.token,
+                            store.getState().user.session_secret_key
                         )
                         .then((response) => {
                             const scimGroups = response.data.scim_groups;
@@ -331,8 +332,8 @@ const GroupEdit = (props) => {
                 ) {
                     psono_server
                         .admin_oidc_group(
-                            props.state.user.token,
-                            props.state.user.session_secret_key
+                            store.getState().user.token,
+                            store.getState().user.session_secret_key
                         )
                         .then((response) => {
                             const oidcGroups = response.data.oidc_groups;
@@ -369,8 +370,8 @@ const GroupEdit = (props) => {
         setMsgs([]);
         psono_server
             .admin_update_group(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 group.id,
                 group.name,
                 group.forced_membership
@@ -394,8 +395,8 @@ const GroupEdit = (props) => {
     const handleToggleShareRight = (groupShareRightId, read, write, grant) => {
         psono_server
             .admin_update_group_share_right(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 groupShareRightId,
                 read,
                 write,
@@ -433,8 +434,8 @@ const GroupEdit = (props) => {
     const handleToggleGroup = (membershipId, groupAdmin, shareAdmin) => {
         psono_server
             .admin_update_membership(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 membershipId,
                 groupAdmin,
                 shareAdmin
@@ -463,8 +464,8 @@ const GroupEdit = (props) => {
         selected_memberships.forEach((membership) => {
             promiseResults.push(
                 psono_server.admin_delete_membership(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     membership.id
                 )
             );
@@ -478,8 +479,8 @@ const GroupEdit = (props) => {
         selectedShareRights.forEach((groupShareRight) => {
             promiseResults.push(
                 psono_server.admin_delete_group_share_right(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     groupShareRight.id
                 )
             );
@@ -543,8 +544,8 @@ const GroupEdit = (props) => {
     const addMappingLDAP = (ldapGroup) => {
         psono_server
             .admin_ldap_create_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 group.id,
                 ldapGroup.id
             )
@@ -558,8 +559,8 @@ const GroupEdit = (props) => {
     const addMappingSAML = (samlGroup) => {
         psono_server
             .admin_saml_create_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 group.id,
                 samlGroup.id
             )
@@ -573,8 +574,8 @@ const GroupEdit = (props) => {
     const addMappingSCIM = (scimGroup) => {
         psono_server
             .admin_scim_create_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 group.id,
                 scimGroup.id
             )
@@ -588,8 +589,8 @@ const GroupEdit = (props) => {
     const addMappingOIDC = (oidcGroup) => {
         psono_server
             .admin_oidc_create_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 group.id,
                 oidcGroup.id
             )
@@ -604,8 +605,8 @@ const GroupEdit = (props) => {
         mappedLdapGroupIndex[ldapGroup.id]['ldap_group_map_id'] = '';
         setMappedLdapGroupIndex({ ...mappedLdapGroupIndex });
         psono_server.admin_ldap_delete_group_map(
-            props.state.user.token,
-            props.state.user.session_secret_key,
+            store.getState().user.token,
+            store.getState().user.session_secret_key,
             group.id,
             ldapGroup.id
         );
@@ -615,8 +616,8 @@ const GroupEdit = (props) => {
         mappedSamlGroupIndex[samlGroup.id]['saml_group_map_id'] = '';
         setMappedSamlGroupIndex({ ...mappedSamlGroupIndex });
         psono_server.admin_saml_delete_group_map(
-            props.state.user.token,
-            props.state.user.session_secret_key,
+            store.getState().user.token,
+            store.getState().user.session_secret_key,
             group.id,
             samlGroup.id
         );
@@ -626,8 +627,8 @@ const GroupEdit = (props) => {
         mappedScimGroupIndex[scimGroup.id]['scim_group_map_id'] = '';
         setMappedScimGroupIndex({ ...mappedScimGroupIndex });
         psono_server.admin_scim_delete_group_map(
-            props.state.user.token,
-            props.state.user.session_secret_key,
+            store.getState().user.token,
+            store.getState().user.session_secret_key,
             group.id,
             scimGroup.id
         );
@@ -637,8 +638,8 @@ const GroupEdit = (props) => {
         mappedOidcGroupIndex[oidcGroup.id]['oidc_group_map_id'] = '';
         setMappedOidcGroupIndex({ ...mappedOidcGroupIndex });
         psono_server.admin_oidc_delete_group_map(
-            props.state.user.token,
-            props.state.user.session_secret_key,
+            store.getState().user.token,
+            store.getState().user.session_secret_key,
             group.id,
             oidcGroup.id
         );
@@ -665,8 +666,8 @@ const GroupEdit = (props) => {
         if (type === 'group') {
             psono_server
                 .admin_ldap_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedLdapGroupIndex[group.id]['ldap_group_map_id'],
                     !group_admin,
                     share_admin
@@ -679,8 +680,8 @@ const GroupEdit = (props) => {
         } else {
             psono_server
                 .admin_ldap_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedLdapGroupIndex[group.id]['ldap_group_map_id'],
                     group_admin,
                     !share_admin
@@ -707,8 +708,8 @@ const GroupEdit = (props) => {
         if (type === 'group') {
             psono_server
                 .admin_saml_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedSamlGroupIndex[group.id]['saml_group_map_id'],
                     !group_admin,
                     share_admin
@@ -721,8 +722,8 @@ const GroupEdit = (props) => {
         } else {
             psono_server
                 .admin_saml_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedSamlGroupIndex[group.id]['saml_group_map_id'],
                     group_admin,
                     !share_admin
@@ -749,8 +750,8 @@ const GroupEdit = (props) => {
         if (type === 'group') {
             psono_server
                 .admin_scim_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedScimGroupIndex[group.id]['scim_group_map_id'],
                     !group_admin,
                     share_admin
@@ -763,8 +764,8 @@ const GroupEdit = (props) => {
         } else {
             psono_server
                 .admin_scim_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedScimGroupIndex[group.id]['scim_group_map_id'],
                     group_admin,
                     !share_admin
@@ -791,8 +792,8 @@ const GroupEdit = (props) => {
         if (type === 'group') {
             psono_server
                 .admin_oidc_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedOidcGroupIndex[group.id]['oidc_group_map_id'],
                     !group_admin,
                     share_admin
@@ -805,8 +806,8 @@ const GroupEdit = (props) => {
         } else {
             psono_server
                 .admin_oidc_update_group_map(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     mappedOidcGroupIndex[group.id]['oidc_group_map_id'],
                     group_admin,
                     !share_admin

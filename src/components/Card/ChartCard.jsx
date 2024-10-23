@@ -5,82 +5,80 @@ import {
     CardContent,
     CardHeader,
     CardActions,
-    Typography
+    Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 
 import chartCardStyle from '../../assets/jss/material-dashboard-react/chartCardStyle';
 
-class ChartCard extends React.Component {
-    render() {
-        const {
-            classes,
-            chartColor,
-            statIconColor,
-            chart,
-            title,
-            text,
-            statLink,
-            statText,
-            fontAwesomeStatsIcon
-        } = this.props;
-        return (
-            <Card className={classes.card}>
-                <CardHeader
-                    classes={{
-                        root:
-                            classes.cardHeader +
-                            ' ' +
-                            classes[chartColor + 'CardHeader']
-                    }}
-                    subheader={chart}
-                />
-                <CardContent className={classes.cardContent}>
-                    <Typography
-                        type="title"
-                        component="h4"
-                        className={classes.cardTitle}
-                    >
-                        {title}
-                    </Typography>
-                    <Typography component="p" className={classes.cardCategory}>
-                        {text}
-                    </Typography>
-                </CardContent>
-                <CardActions className={classes.cardActions}>
-                    <div className={classes.cardStats}>
-                        {fontAwesomeStatsIcon ? (
-                            <FontAwesome name={fontAwesomeStatsIcon} />
-                        ) : (
-                            <this.props.statIcon
-                                className={
-                                    classes.cardStatsIcon +
-                                    ' ' +
-                                    classes[statIconColor + 'CardStatsIcon']
-                                }
-                            />
-                        )}{' '}
-                        {statLink !== undefined ? (
-                            <a
-                                href={statLink.href}
-                                className={classes.cardStatsLink}
-                            >
-                                {statLink.text}
-                            </a>
-                        ) : statText !== undefined ? (
-                            statText
-                        ) : null}
-                    </div>
-                </CardActions>
-            </Card>
-        );
-    }
-}
+const ChartCard = ({
+    classes,
+    chartColor,
+    statIconColor,
+    chart,
+    title,
+    text,
+    statLink,
+    statText,
+    fontAwesomeStatsIcon,
+    statIcon: StatIcon,
+}) => {
+    return (
+        <Card className={classes.card}>
+            <CardHeader
+                classes={{
+                    root:
+                        classes.cardHeader +
+                        ' ' +
+                        classes[chartColor + 'CardHeader'],
+                }}
+                subheader={chart}
+            />
+            <CardContent className={classes.cardContent}>
+                <Typography
+                    type="title"
+                    component="h4"
+                    className={classes.cardTitle}
+                >
+                    {title}
+                </Typography>
+                <Typography component="p" className={classes.cardCategory}>
+                    {text}
+                </Typography>
+            </CardContent>
+            <CardActions className={classes.cardActions}>
+                <div className={classes.cardStats}>
+                    {fontAwesomeStatsIcon ? (
+                        <FontAwesome name={fontAwesomeStatsIcon} />
+                    ) : (
+                        <StatIcon
+                            className={
+                                classes.cardStatsIcon +
+                                ' ' +
+                                classes[statIconColor + 'CardStatsIcon']
+                            }
+                        />
+                    )}
+                    {statLink ? (
+                        <a
+                            href={statLink.href}
+                            className={classes.cardStatsLink}
+                        >
+                            {statLink.text}
+                        </a>
+                    ) : statText ? (
+                        statText
+                    ) : null}
+                </div>
+            </CardActions>
+        </Card>
+    );
+};
 
 ChartCard.defaultProps = {
     statIconColor: 'gray',
-    chartColor: 'purple'
+    chartColor: 'purple',
 };
 
 ChartCard.propTypes = {
@@ -88,7 +86,7 @@ ChartCard.propTypes = {
     chart: PropTypes.object.isRequired,
     title: PropTypes.node,
     text: PropTypes.node,
-    statIcon: PropTypes.object,
+    statIcon: PropTypes.elementType,
     fontAwesomeStatsIcon: PropTypes.node,
     statIconColor: PropTypes.oneOf([
         'warning',
@@ -97,11 +95,11 @@ ChartCard.propTypes = {
         'success',
         'info',
         'rose',
-        'gray'
+        'gray',
     ]),
     chartColor: PropTypes.oneOf(['orange', 'green', 'red', 'blue', 'purple']),
     statLink: PropTypes.object,
-    statText: PropTypes.node
+    statText: PropTypes.node,
 };
 
 export default withStyles(chartCardStyle)(ChartCard);

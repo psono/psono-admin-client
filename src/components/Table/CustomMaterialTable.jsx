@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MaterialTable from '@material-table/core';
 import { withStyles } from '@material-ui/core';
-
-import { withTranslation } from 'react-i18next';
-import { compose } from 'redux';
-
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 
@@ -54,104 +51,94 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-class CustomMaterialTable extends React.Component {
-    state = {
-        pageSize: 5,
+const CustomMaterialTable = ({
+    title,
+    columns,
+    data,
+    options,
+    actions,
+    tableRef,
+}) => {
+    const { t } = useTranslation();
+    const [pageSize, setPageSize] = useState(5);
+
+    const defaultOptions = {
+        pageSize,
+        headerStyle: {
+            fontSize: '12px',
+            color: 'rgba(0, 0, 0, 0.54)',
+        },
+        searchFieldStyle: {
+            fontSize: '12px',
+            color: 'rgba(0, 0, 0, 0.54)',
+        },
     };
-    render() {
-        const { t, title, columns, data, options, actions } = this.props;
-        const { pageSize } = this.state;
 
-        const defaultOptions = {
-            pageSize,
-            headerStyle: {
-                fontSize: '12px',
-                color: 'rgba(0, 0, 0, 0.54)',
-            },
-            searchFieldStyle: {
-                fontSize: '12px',
-                color: 'rgba(0, 0, 0, 0.54)',
-            },
-        };
+    const mergedOptions = { ...defaultOptions, ...options };
 
-        const mergedOptions = { ...defaultOptions, ...options };
-
-        return (
-            <div>
-                <MaterialTable
-                    onChangeRowsPerPage={(newPageSize) =>
-                        this.setState({ pageSize: newPageSize })
-                    }
-                    tableRef={this.props.tableRef}
-                    icons={tableIcons}
-                    title={title}
-                    columns={columns}
-                    data={data}
-                    options={mergedOptions}
-                    actions={actions}
-                    localization={{
-                        body: {
-                            emptyDataSourceMessage: t(
-                                'MATERIAL_TABLE_NO_RECORD_TO_DISPLAY'
-                            ),
-                            addTooltip: t('MATERIAL_TABLE_ADD'),
-                            deleteTooltip: t('MATERIAL_TABLE_DELETE'),
-                            editTooltip: t('MATERIAL_TABLE_EDIT'),
-                            filterRow: {
-                                filterTooltip: t('MATERIAL_TABLE_FILTER'),
-                            },
-                            editRow: {
-                                deleteText: t(
-                                    'MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW'
-                                ),
-                                cancelTooltip: t('MATERIAL_TABLE_CANCEL'),
-                                saveTooltip: t('MATERIAL_TABLE_SAVE'),
-                            },
-                        },
-                        grouping: {
-                            placeholder: t('MATERIAL_TABLE_DRAG_HEADERS'),
-                        },
-                        header: {
-                            actions: t('MATERIAL_TABLE_ACTIONS'),
-                        },
-                        pagination: {
-                            labelDisplayedRows: t(
-                                'MATERIAL_TABLE_FROM_TO_COUNT'
-                            ),
-                            labelRowsSelect: t('MATERIAL_TABLE_ROWS'),
-                            labelRowsPerPage: t('MATERIAL_TABLE_ROWS_PER_PAGE'),
-                            firstAriaLabel: t('MATERIAL_TABLE_FIRST_PAGE'),
-                            firstTooltip: t('MATERIAL_TABLE_FIRST_PAGE'),
-                            previousAriaLabel: t(
-                                'MATERIAL_TABLE_PREVIOUS_PAGE'
-                            ),
-                            previousTooltip: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
-                            nextAriaLabel: t('MATERIAL_TABLE_NEXT_PAGE'),
-                            nextTooltip: t('MATERIAL_TABLE_NEXT_PAGE'),
-                            lastAriaLabel: t('MATERIAL_TABLE_LAST_PAGE'),
-                            lastTooltip: t('MATERIAL_TABLE_LAST_PAGE'),
-                        },
-                        toolbar: {
-                            addRemoveColumns: t(
-                                'MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS'
-                            ),
-                            nRowsSelected: t('MATERIAL_TABLE_N_ROWS_SELECTED'),
-                            showColumnsTitle: t('MATERIAL_TABLE_SHOW_COLUMNS'),
-                            showColumnsAriaLabel: t(
-                                'MATERIAL_TABLE_SHOW_COLUMNS'
-                            ),
-                            exportTitle: t('MATERIAL_TABLE_EXPORT'),
-                            exportAriaLabel: t('MATERIAL_TABLE_EXPORT'),
-                            exportName: t('MATERIAL_TABLE_EXPORT_AS_CSV'),
-                            searchTooltip: t('MATERIAL_TABLE_SEARCH'),
-                            searchPlaceholder: t('MATERIAL_TABLE_SEARCH'),
-                        },
-                    }}
-                />
-            </div>
-        );
-    }
-}
+    return (
+        <MaterialTable
+            onChangeRowsPerPage={setPageSize}
+            tableRef={tableRef}
+            icons={tableIcons}
+            title={title}
+            columns={columns}
+            data={data}
+            options={mergedOptions}
+            actions={actions}
+            localization={{
+                body: {
+                    emptyDataSourceMessage: t(
+                        'MATERIAL_TABLE_NO_RECORD_TO_DISPLAY'
+                    ),
+                    addTooltip: t('MATERIAL_TABLE_ADD'),
+                    deleteTooltip: t('MATERIAL_TABLE_DELETE'),
+                    editTooltip: t('MATERIAL_TABLE_EDIT'),
+                    filterRow: {
+                        filterTooltip: t('MATERIAL_TABLE_FILTER'),
+                    },
+                    editRow: {
+                        deleteText: t(
+                            'MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW'
+                        ),
+                        cancelTooltip: t('MATERIAL_TABLE_CANCEL'),
+                        saveTooltip: t('MATERIAL_TABLE_SAVE'),
+                    },
+                },
+                grouping: {
+                    placeholder: t('MATERIAL_TABLE_DRAG_HEADERS'),
+                },
+                header: {
+                    actions: t('MATERIAL_TABLE_ACTIONS'),
+                },
+                pagination: {
+                    labelDisplayedRows: t('MATERIAL_TABLE_FROM_TO_COUNT'),
+                    labelRowsSelect: t('MATERIAL_TABLE_ROWS'),
+                    labelRowsPerPage: t('MATERIAL_TABLE_ROWS_PER_PAGE'),
+                    firstAriaLabel: t('MATERIAL_TABLE_FIRST_PAGE'),
+                    firstTooltip: t('MATERIAL_TABLE_FIRST_PAGE'),
+                    previousAriaLabel: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
+                    previousTooltip: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
+                    nextAriaLabel: t('MATERIAL_TABLE_NEXT_PAGE'),
+                    nextTooltip: t('MATERIAL_TABLE_NEXT_PAGE'),
+                    lastAriaLabel: t('MATERIAL_TABLE_LAST_PAGE'),
+                    lastTooltip: t('MATERIAL_TABLE_LAST_PAGE'),
+                },
+                toolbar: {
+                    addRemoveColumns: t('MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS'),
+                    nRowsSelected: t('MATERIAL_TABLE_N_ROWS_SELECTED'),
+                    showColumnsTitle: t('MATERIAL_TABLE_SHOW_COLUMNS'),
+                    showColumnsAriaLabel: t('MATERIAL_TABLE_SHOW_COLUMNS'),
+                    exportTitle: t('MATERIAL_TABLE_EXPORT'),
+                    exportAriaLabel: t('MATERIAL_TABLE_EXPORT'),
+                    exportName: t('MATERIAL_TABLE_EXPORT_AS_CSV'),
+                    searchTooltip: t('MATERIAL_TABLE_SEARCH'),
+                    searchPlaceholder: t('MATERIAL_TABLE_SEARCH'),
+                },
+            }}
+        />
+    );
+};
 
 CustomMaterialTable.propTypes = {
     title: PropTypes.string,
@@ -165,7 +152,4 @@ CustomMaterialTable.propTypes = {
     tableRef: PropTypes.object,
 };
 
-export default compose(
-    withTranslation(),
-    withStyles(tableStyle)
-)(CustomMaterialTable);
+export default withStyles(tableStyle)(CustomMaterialTable);

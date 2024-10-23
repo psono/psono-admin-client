@@ -13,6 +13,7 @@ import {
 } from '../../components/index';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
+import store from '../../services/store';
 
 const useStyles = makeStyles(customInputStyle);
 
@@ -47,8 +48,8 @@ const GroupCreate = (props) => {
 
         psono_server
             .admin_create_group(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 groupName,
                 autoCreateFolder
             )

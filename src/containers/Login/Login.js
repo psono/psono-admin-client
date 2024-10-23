@@ -13,6 +13,7 @@ import browserClient from '../../services/browser-client';
 import image from '../../assets/img/background.jpg';
 import store from '../../services/store';
 import { Redirect } from 'react-router-dom';
+
 const style = {
     wrapper: {
         position: 'relative',
@@ -21,13 +22,13 @@ const style = {
         backgroundImage: `url(${image})`,
         backgroundSize: 'cover',
         display: 'flex',
-        'justify-content': 'center',
-        'align-items': 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     content: {
         width: '100%',
         height: '100%',
-        'z-index': '3',
+        zIndex: '3',
         content: '',
         opacity: '.8',
         position: 'absolute',
@@ -35,41 +36,37 @@ const style = {
     },
 };
 
-class Login extends React.Component {
-    render() {
-        const { classes, ...rest } = this.props;
-
-        if (store.getState().user.isLoggedIn) {
-            return <Redirect to="/" />;
-        }
-
-        return (
-            <div className={classes.wrapper}>
-                <div className={classes.content} />
-                <Notification />
-                <LoginForm
-                    {...rest}
-                    initiateLogin={user.initiateLogin}
-                    samlLogin={user.samlLogin}
-                    initiateSamlLogin={user.initiateSamlLogin}
-                    get_saml_redirect_url={user.get_saml_redirect_url}
-                    oidcLogin={user.oidcLogin}
-                    checkHost={host.checkHost}
-                    initiateOidcLogin={user.initiateOidcLogin}
-                    get_oidc_redirect_url={user.get_oidc_redirect_url}
-                    login={user.login}
-                    activateToken={user.activateToken}
-                    logout={user.logout}
-                    yubikey_otp_verify={user.yubikey_otp_verify}
-                    duo_verify={user.duo_verify}
-                    ga_verify={user.ga_verify}
-                    approveHost={host.approveHost}
-                    get_config={browserClient.get_config}
-                />
-            </div>
-        );
+const Login = ({ classes, ...rest }) => {
+    if (store.getState().user.isLoggedIn) {
+        return <Redirect to="/" />;
     }
-}
+
+    return (
+        <div className={classes.wrapper}>
+            <div className={classes.content} />
+            <Notification />
+            <LoginForm
+                {...rest}
+                initiateLogin={user.initiateLogin}
+                samlLogin={user.samlLogin}
+                initiateSamlLogin={user.initiateSamlLogin}
+                get_saml_redirect_url={user.get_saml_redirect_url}
+                oidcLogin={user.oidcLogin}
+                checkHost={host.checkHost}
+                initiateOidcLogin={user.initiateOidcLogin}
+                get_oidc_redirect_url={user.get_oidc_redirect_url}
+                login={user.login}
+                activateToken={user.activateToken}
+                logout={user.logout}
+                yubikey_otp_verify={user.yubikey_otp_verify}
+                duo_verify={user.duo_verify}
+                ga_verify={user.ga_verify}
+                approveHost={host.approveHost}
+                get_config={browserClient.get_config}
+            />
+        </div>
+    );
+};
 
 Login.propTypes = {
     classes: PropTypes.object.isRequired,

@@ -14,6 +14,7 @@ import {
 import psono_server from '../../services/api-server';
 import { makeStyles } from '@material-ui/core/styles';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
+import store from '../../services/store';
 
 const useStyles = makeStyles(customInputStyle);
 
@@ -47,8 +48,8 @@ const ShareRightGroupCreate = (props) => {
 
         psono_server
             .admin_create_share_right(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 params.group_id,
                 folderName,
                 read,

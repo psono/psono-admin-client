@@ -1,62 +1,47 @@
-import React from 'react';
-import { withStyles, Grid } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Grid } from '@material-ui/core';
 
 import { SCIMCard, GridItem } from '../../components';
-import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 import store from '../../services/store';
 
-class Users extends React.Component {
-    state = {
-        redirect_to: '',
-        scim_groups: [],
-    };
+const Users = () => {
+    const [scimGroups, setScimGroups] = useState([]);
 
-    createGroupsNode(scim_group) {
+    const createGroupsNode = (scim_group) => {
         scim_group.groups = (
             <div>
-                {scim_group.groups.map(function (group, key) {
-                    return (
-                        <>
-                            {key !== 0 ? ', ' : ''}
-                            <a href={'/portal/group/' + group.id} key={key}>
-                                {group.name}
-                            </a>
-                        </>
-                    );
-                })}
+                {scim_group.groups.map((group, key) => (
+                    <>
+                        {key !== 0 ? ', ' : ''}
+                        <a href={'/portal/group/' + group.id} key={key}>
+                            {group.name}
+                        </a>
+                    </>
+                ))}
             </div>
         );
-    }
+    };
 
-    componentDidMount() {
-        this.loadScimGroups();
-    }
-
-    loadScimGroups() {
+    const loadScimGroups = () => {
         psono_server
             .admin_scim_group(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key
             )
             .then((response) => {
                 const { scim_groups } = response.data;
-
-                scim_groups.forEach((scim_group) => {
-                    scim_group['name'] =
-                        scim_group['display_name'] || scim_group['scim_name'];
-                    this.createGroupsNode(scim_group);
-                });
-
-                this.setState({
-                    scim_groups,
-                });
+                scim_groups.forEach(createGroupsNode);
+                setScimGroups(
+                    scim_groups.map((scim_group) => ({
+                        ...scim_group,
+                        name: scim_group.display_name || scim_group.scim_name,
+                    }))
+                );
             });
-    }
+    };
 
-    onDeleteScimGroups(selectedGroups) {
+    const onDeleteScimGroups = (selectedGroups) => {
         selectedGroups.forEach((group) => {
             psono_server
                 .admin_delete_scim_group(
@@ -65,34 +50,27 @@ class Users extends React.Component {
                     group.id
                 )
                 .then(() => {
-                    this.loadScimGroups();
+                    loadScimGroups();
                 });
         });
-    }
+    };
 
-    render() {
-        if (this.state.redirect_to) {
-            return <Redirect to={this.state.redirect_to} />;
-        }
-        return (
-            <div>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <SCIMCard
-                            scim_groups={this.state.scim_groups}
-                            onDeleteScimGroups={(groups) =>
-                                this.onDeleteScimGroups(groups)
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-            </div>
-        );
-    }
-}
+    useEffect(() => {
+        loadScimGroups();
+    }, []);
 
-Users.propTypes = {
-    classes: PropTypes.object.isRequired,
+    return (
+        <div>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    <SCIMCard
+                        scim_groups={scimGroups}
+                        onDeleteScimGroups={onDeleteScimGroups}
+                    />
+                </GridItem>
+            </Grid>
+        </div>
+    );
 };
 
-export default withStyles(dashboardStyle)(Users);
+export default Users;

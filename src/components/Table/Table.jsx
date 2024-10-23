@@ -5,68 +5,53 @@ import {
     TableHead,
     TableRow,
     TableBody,
-    TableCell
+    TableCell,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import tableStyle from '../../assets/jss/material-dashboard-react/tableStyle';
 
-class CustomTable extends React.Component {
-    render() {
-        const { classes, tableHead, tableData, tableHeaderColor } = this.props;
-        return (
-            <div className={classes.tableResponsive}>
-                <Table className={classes.table}>
-                    {tableHead !== undefined ? (
-                        <TableHead
-                            className={
-                                classes[tableHeaderColor + 'TableHeader']
-                            }
-                        >
-                            <TableRow>
-                                {tableHead.map((prop, key) => {
-                                    return (
-                                        <TableCell
-                                            className={
-                                                classes.tableCell +
-                                                ' ' +
-                                                classes.tableHeadCell
-                                            }
-                                            key={key}
-                                        >
-                                            {prop}
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
-                        </TableHead>
-                    ) : null}
-                    <TableBody>
-                        {tableData.map((prop, key) => {
-                            return (
-                                <TableRow key={key}>
-                                    {prop.map((prop, key) => {
-                                        return (
-                                            <TableCell
-                                                className={classes.tableCell}
-                                                key={key}
-                                            >
-                                                {prop}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </div>
-        );
-    }
-}
+const CustomTable = ({ classes, tableHead, tableData, tableHeaderColor }) => {
+    return (
+        <div className={classes.tableResponsive}>
+            <Table className={classes.table}>
+                {tableHead !== undefined ? (
+                    <TableHead
+                        className={classes[`${tableHeaderColor}TableHeader`]}
+                    >
+                        <TableRow>
+                            {tableHead.map((prop, key) => (
+                                <TableCell
+                                    className={`${classes.tableCell} ${classes.tableHeadCell}`}
+                                    key={key}
+                                >
+                                    {prop}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                ) : null}
+                <TableBody>
+                    {tableData.map((row, key) => (
+                        <TableRow key={key}>
+                            {row.map((cell, cellKey) => (
+                                <TableCell
+                                    className={classes.tableCell}
+                                    key={cellKey}
+                                >
+                                    {cell}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+};
 
 CustomTable.defaultProps = {
-    tableHeaderColor: 'gray'
+    tableHeaderColor: 'gray',
 };
 
 CustomTable.propTypes = {
@@ -78,10 +63,10 @@ CustomTable.propTypes = {
         'success',
         'info',
         'rose',
-        'gray'
+        'gray',
     ]),
     tableHead: PropTypes.arrayOf(PropTypes.string),
-    tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+    tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 };
 
 export default withStyles(tableStyle)(CustomTable);

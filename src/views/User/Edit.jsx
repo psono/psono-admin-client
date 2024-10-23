@@ -17,9 +17,10 @@ import {
 } from '../../components';
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
+import store from '../../services/store';
 
 const useStyles = makeStyles(customInputStyle);
-const UserEdit = (props) => {
+const UserEdit = () => {
     const classes = useStyles();
     const { t } = useTranslation();
     const { user_id } = useParams();
@@ -35,8 +36,8 @@ const UserEdit = (props) => {
     function loadUser() {
         psono_server
             .admin_user(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 user_id
             )
             .then((response) => {
@@ -176,8 +177,8 @@ const UserEdit = (props) => {
     const handleToggle = (membershipId, groupAdmin, shareAdmin) => {
         psono_server
             .admin_update_membership(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 membershipId,
                 groupAdmin,
                 shareAdmin
@@ -206,8 +207,8 @@ const UserEdit = (props) => {
         selected_sessions.forEach((session) => {
             promises.push(
                 psono_server.admin_delete_session(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     session.id
                 )
             );
@@ -223,8 +224,8 @@ const UserEdit = (props) => {
         selected_ivalts.forEach((ivalt) => {
             promises.push(
                 psono_server.adminDeleteIvalt(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     ivalt.id
                 )
             );
@@ -240,8 +241,8 @@ const UserEdit = (props) => {
         selected_memberships.forEach((membership) => {
             promises.push(
                 psono_server.admin_delete_membership(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     membership.id
                 )
             );
@@ -257,8 +258,8 @@ const UserEdit = (props) => {
         selected_duos.forEach((duo) => {
             promises.push(
                 psono_server.admin_delete_duo(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     duo.id
                 )
             );
@@ -274,8 +275,8 @@ const UserEdit = (props) => {
         selected_yubikey_otps.forEach((yubikey_otp) => {
             promises.push(
                 psono_server.admin_delete_yubikey_otp(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     yubikey_otp.id
                 )
             );
@@ -291,8 +292,8 @@ const UserEdit = (props) => {
         selected_webauthns.forEach((webauthn) => {
             promises.push(
                 psono_server.admin_delete_webauthn(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     webauthn.id
                 )
             );
@@ -308,8 +309,8 @@ const UserEdit = (props) => {
         selected_google_authenticators.forEach((google_authenticator) => {
             promises.push(
                 psono_server.admin_delete_google_authenticator(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     google_authenticator.id
                 )
             );
@@ -325,8 +326,8 @@ const UserEdit = (props) => {
         selected_recovery_codes.forEach((recovery_code) => {
             promises.push(
                 psono_server.admin_delete_recovery_code(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     recovery_code.id
                 )
             );
@@ -342,8 +343,8 @@ const UserEdit = (props) => {
         selected_emergency_codes.forEach((emergency_code) => {
             promises.push(
                 psono_server.admin_delete_emergency_code(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     emergency_code.id
                 )
             );
@@ -359,8 +360,8 @@ const UserEdit = (props) => {
         selected_link_shares.forEach((link_share) => {
             promises.push(
                 psono_server.admin_delete_link_share(
-                    props.state.user.token,
-                    props.state.user.session_secret_key,
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
                     link_share.id
                 )
             );
@@ -404,8 +405,8 @@ const UserEdit = (props) => {
         setMsgs([]);
         psono_server
             .admin_update_user(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 user.id,
                 user.email,
                 user.is_active,
