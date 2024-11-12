@@ -6,6 +6,13 @@ import { initReactI18next } from 'react-i18next';
 // import moment from 'moment'
 
 const languages = {
+    ar: { code: 'ar', lng_code: 'LANG_AR', lng_title_native: 'عربي' },
+    bn: {
+        code: 'bn',
+        lng_code: 'LANG_BN',
+        lng_title_native: 'বাংলা',
+        active: true,
+    },
     ca: {
         code: 'ca',
         lng_code: 'LANG_CA',
@@ -16,6 +23,12 @@ const languages = {
         code: 'cs',
         lng_code: 'LANG_CS',
         lng_title_native: 'Česky',
+        active: true,
+    },
+    da: {
+        code: 'da',
+        lng_code: 'LANG_DA',
+        lng_title_native: 'Dansk',
         active: true,
     },
     de: {
@@ -62,12 +75,28 @@ const languages = {
         lng_title_native: 'Italiano',
         active: true,
     },
-    ja: { code: 'ja', lng_code: 'LANG_JA', lng_title_native: '日本語' },
-    ko: { code: 'ko', lng_code: 'LANG_KO', lng_title_native: '한국어' },
+    ja: {
+        code: 'ja',
+        lng_code: 'LANG_JA',
+        lng_title_native: '日本語',
+        active: true,
+    },
+    ko: {
+        code: 'ko',
+        lng_code: 'LANG_KO',
+        lng_title_native: '한국어',
+        active: true,
+    },
     nl: {
         code: 'nl',
         lng_code: 'LANG_NL',
         lng_title_native: 'Nederlands',
+        active: true,
+    },
+    no: {
+        code: 'no',
+        lng_code: 'LANG_NO',
+        lng_title_native: 'Norsk',
         active: true,
     },
     pl: {
@@ -94,42 +123,39 @@ const languages = {
         lng_title_native: 'Русский',
         active: true,
     },
-    vi: { code: 'vi', lng_code: 'LANG_VI', lng_title_native: '' }, // lng_title_native incorrect
-    da: { code: 'da', lng_code: 'LANG_DA', lng_title_native: '' }, // lng_title_native incorrect
     sv: {
         code: 'sv',
         lng_code: 'LANG_SV',
         lng_title_native: 'Svenska',
         active: true,
     },
-    sk: {
-        code: 'sk',
-        lng_code: 'LANG_SK',
-        lng_title_native: 'Slovák',
-        active: true,
-    },
+    sk: { code: 'sk', lng_code: 'LANG_SK', lng_title_native: 'Slovák' },
     uk: {
         code: 'uk',
         lng_code: 'LANG_UK',
         lng_title_native: 'Український',
         active: true,
     },
-    no: {
-        code: 'no',
-        lng_code: 'LANG_NO',
-        lng_title_native: 'Norsk',
+    he: { code: 'he', lng_code: 'LANG_HE', lng_title_native: '' }, // deactivated
+    hi: {
+        code: 'hi',
+        lng_code: 'LANG_HI',
+        lng_title_native: 'हिंदी',
         active: true,
     },
-    he: { code: 'he', lng_code: 'LANG_HE', lng_title_native: '' }, // lng_title_native incorrect
-    ar: { code: 'ar', lng_code: 'LANG_AR', lng_title_native: '' }, // lng_title_native incorrect
-    hi: { code: 'hi', lng_code: 'LANG_HI', lng_title_native: '' }, // lng_title_native incorrect
-    bn: {
-        code: 'bn',
-        lng_code: 'LANG_BN',
-        lng_title_native: 'বাংলা',
+    vi: { code: 'vi', lng_code: 'LANG_VI', lng_title_native: '' }, // deactivated
+    'zh-Hans': {
+        code: 'zh-Hans',
+        lng_code: 'LANG_ZH_HANS',
+        lng_title_native: '简体中文',
         active: true,
     },
-    zh_CN: { code: 'zh_CN', lng_code: 'LANG_ZH_CN', lng_title_native: '漢語' },
+    'zh-Hant': {
+        code: 'zh-Hant',
+        lng_code: 'LANG_ZH_HANT',
+        lng_title_native: '繁體中文',
+        active: true,
+    },
 };
 
 const supportedLngs = [];
