@@ -258,7 +258,7 @@ const Dashboard = ({ classes, state }) => {
         registration_text = (
             <span>
                 <span className={classes.successText}>
-                    <ArrowUpward className={classes.upArrowCardCategory} /> 55%
+                    <ArrowUpward className={classes.upArrowCardCategory} /> 0%
                 </span>{' '}
                 {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
             </span>

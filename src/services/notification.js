@@ -5,7 +5,7 @@ import action from '../actions/boundActionCreators';
  *
  * @param {array} message The message to send
  */
-function info_send(message) {
+function infoSend(message) {
     action.sendNotification(message, 'info');
 }
 
@@ -33,7 +33,7 @@ function set(messages) {
 }
 
 const service = {
-    info_send,
+    infoSend,
     error_send,
     reset,
     set,
