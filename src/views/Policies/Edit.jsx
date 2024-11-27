@@ -411,6 +411,18 @@ const PolicyEdit = (props) => {
             type: 'int',
         },
         {
+            key: 'COMPLIANCE_CLIPBOARD_CLEAR_DELAY',
+            type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_MIN_CLIPBOARD_CLEAR_DELAY',
+            type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_MAX_CLIPBOARD_CLEAR_DELAY',
+            type: 'int',
+        },
+        {
             key: 'COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_PASSWORD_LENGTH',
             type: 'int',
         },
