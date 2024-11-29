@@ -1,46 +1,36 @@
-import React from 'react';
-import { withStyles, Grid } from '@material-ui/core';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { Grid } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 
 import { SAMLCard, GridItem } from '../../components';
-import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import psono_server from '../../services/api-server';
 import notification from '../../services/notification';
 import store from '../../services/store';
 
-class Users extends React.Component {
-    state = {
-        redirect_to: '',
-        saml_groups: [],
-    };
+const SAML = (props) => {
+    const [redirectTo, setRedirectTo] = useState('');
+    const [samlGroups, setSamlGroups] = useState([]);
 
-    createGroupsNode(saml_group) {
+    const createGroupsNode = (saml_group) => {
         saml_group.groups = (
             <div>
-                {saml_group.groups.map(function (group, key) {
-                    return (
-                        <>
-                            {key !== 0 ? ', ' : ''}
-                            <a href={'/portal/group/' + group.id} key={key}>
-                                {group.name}
-                            </a>
-                        </>
-                    );
-                })}
+                {saml_group.groups.map((group, key) => (
+                    <>
+                        {key !== 0 ? ', ' : ''}
+                        <a href={'/portal/group/' + group.id} key={key}>
+                            {group.name}
+                        </a>
+                    </>
+                ))}
             </div>
         );
-    }
+    };
 
-    componentDidMount() {
-        this.loadSamlGroups();
-    }
-
-    loadSamlGroups() {
+    const loadSamlGroups = () => {
         psono_server
             .admin_saml_group(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key
             )
             .then((response) => {
                 const { saml_groups } = response.data;
@@ -48,33 +38,31 @@ class Users extends React.Component {
                 saml_groups.forEach((saml_group) => {
                     saml_group['name'] =
                         saml_group['display_name'] || saml_group['saml_name'];
-                    this.createGroupsNode(saml_group);
+                    createGroupsNode(saml_group);
                 });
 
-                this.setState({
-                    saml_groups,
-                });
+                setSamlGroups(saml_groups);
             });
-    }
+    };
 
-    onSyncGroupsSaml() {
+    const onSyncGroupsSaml = () => {
         psono_server
             .admin_saml_group_sync(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
+                store.getState().user.token,
+                store.getState().user.session_secret_key
             )
             .then(
-                (response) => {
-                    this.loadSamlGroups();
+                () => {
+                    loadSamlGroups();
                 },
                 (response) => {
                     const { non_field_errors } = response.data;
                     notification.error_send(non_field_errors[0]);
                 }
             );
-    }
+    };
 
-    onDeleteSamlGroups(selectedGroups) {
+    const onDeleteSamlGroups = (selectedGroups) => {
         selectedGroups.forEach((group) => {
             psono_server
                 .admin_delete_saml_group(
@@ -83,35 +71,32 @@ class Users extends React.Component {
                     group.id
                 )
                 .then(() => {
-                    this.loadSamlGroups();
+                    loadSamlGroups();
                 });
         });
+    };
+
+    useEffect(() => {
+        loadSamlGroups();
+    }, []);
+
+    if (redirectTo) {
+        return <Redirect to={redirectTo} />;
     }
 
-    render() {
-        if (this.state.redirect_to) {
-            return <Redirect to={this.state.redirect_to} />;
-        }
-        return (
-            <div>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={12}>
-                        <SAMLCard
-                            saml_groups={this.state.saml_groups}
-                            onSyncGroupsSaml={() => this.onSyncGroupsSaml()}
-                            onDeleteSamlGroups={(groups) =>
-                                this.onDeleteSamlGroups(groups)
-                            }
-                        />
-                    </GridItem>
-                </Grid>
-            </div>
-        );
-    }
-}
-
-Users.propTypes = {
-    classes: PropTypes.object.isRequired,
+    return (
+        <div>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={12}>
+                    <SAMLCard
+                        saml_groups={samlGroups}
+                        onSyncGroupsSaml={onSyncGroupsSaml}
+                        onDeleteSamlGroups={onDeleteSamlGroups}
+                    />
+                </GridItem>
+            </Grid>
+        </div>
+    );
 };
 
-export default withStyles(dashboardStyle)(Users);
+export default SAML;

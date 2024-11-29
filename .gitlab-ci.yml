@@ -53,6 +53,7 @@ test-upload-translations:
   image: psono-docker.jfrog.io/python:3
   script:
     - pip install requests
+    - python3 var/upload_translations.py
     - python3 var/sync_translations.py
   only:
     - develop@psono/psono-admin-client

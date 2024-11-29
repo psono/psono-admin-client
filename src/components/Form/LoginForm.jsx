@@ -69,9 +69,13 @@ const LoginForm = (props) => {
     const [username, setUsername] = useState(store.getState().user.username);
     const [password, setPassword] = useState('');
     const [server, setServer] = useState(store.getState().server.url);
-    const [rememberMe, setRememberMe] = useState(false);
+    const [rememberMe, setRememberMe] = useState(
+        store.getState().user.remember_me
+    );
     const [providerId, setProviderId] = useState(0);
-    const [trustDevice, setTrustDevice] = useState(false);
+    const [trustDevice, setTrustDevice] = useState(
+        store.getState().user.trust_device
+    );
     const [loginLoading, setLoginLoading] = useState(false);
     const [domain, setDomain] = useState('');
     const [errors, setErrors] = useState([]);

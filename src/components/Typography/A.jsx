@@ -4,22 +4,20 @@ import PropTypes from 'prop-types';
 
 import typographyStyle from '../../assets/jss/material-dashboard-react/typographyStyle';
 
-class A extends React.Component {
-    render() {
-        const { classes, children, ...rest } = this.props;
-        return (
-            <a
-                {...rest}
-                className={classes.defaultFontStyle + ' ' + classes.aStyle}
-            >
-                {children}
-            </a>
-        );
-    }
-}
+const A = ({ classes, children, ...rest }) => {
+    return (
+        <a
+            {...rest}
+            className={`${classes.defaultFontStyle} ${classes.aStyle}`}
+        >
+            {children}
+        </a>
+    );
+};
 
 A.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 export default withStyles(typographyStyle)(A);

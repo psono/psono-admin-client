@@ -24,47 +24,8 @@ LANGUAGE_CODES = [
     "es", "es-ar", "es-gt", "es-cr", "es-pa", "es-do", "es-mx", "es-ve", "es-co",
     "es-pe", "es-ec", "es-cl", "es-uy", "es-py", "es-bo", "es-sv", "es-hn", "es-ni",
     "es-pr", "sx", "sv", "sv-fi", "th", "ts", "tn", "tr", "uk", "ur", "ve", "vi", "xh",
-    "ji", "zu", "ar", "bn"
+    "ji", "zu", "ar", "bn", "zh", "zh-Hant", "zh-Hans"
 ]
-
-FILE_PATHS = {
-    'en': 'public/locales/en/translation.json',
-}
-
-
-def upload_language(lang):
-
-    if lang in FILE_PATHS:
-        data = {
-            'id': POEDITOR_PROJECT_ID,
-            'api_token': POEDITOR_API_KEY,
-            'updating': 'terms_translations',
-            'language': lang,
-            'overwrite': 1,
-        }
-        with open(FILE_PATHS[lang], 'rb') as file:
-            r = requests.post('https://api.poeditor.com/v2/projects/upload', data=data, files={'file': file})
-
-    else:
-        print("Error: upload_language " + lang + " No webhook configured for this language")
-    #     params = (
-    #         ('api_token', POEDITOR_API_KEY),
-    #         ('id_project', POEDITOR_PROJECT_ID),
-    #         ('language', lang),
-    #         ('operation', 'import_terms_and_translations'),
-    #     )
-    #
-    #     r = requests.post('https://poeditor.com/api/webhooks/gitlab', params=params)
-    if not r.ok:
-        print("Error: upload_language " + lang)
-        print(r.text)
-        exit(1)
-    content = json.loads(r.content)
-    if "response" not in content or "status" not in content["response"] or content["response"]["status"] != 'success':
-        print("Error: upload_language " + lang)
-        print(r.text)
-        exit(1)
-    print("Success: upload_language " + lang)
 
 def download_language(lang):
     data = [
@@ -127,21 +88,15 @@ def get_languages():
 
 
 def main():
-    # Upload
-    for lang in FILE_PATHS:
-        upload_language(lang)
-        time.sleep(20)
-
     # Download
     languages = get_languages()
     for lang in languages:
-        language_code = lang['code'].lower()
-        if language_code not in LANGUAGE_CODES:
+        if lang['code'] not in LANGUAGE_CODES:
             print("Error: main")
-            print("Invalid Language Code " + language_code)
+            print("Invalid Language Code " + lang['code'])
             exit(1)
-        file = download_language(language_code)
-        deploy_to_artifactory(ARTIFACTORY_USER, ARTIFACTORY_PASS, ARTIFACTORY_URL, ARTIFACTORY_PATH, language_code, file)
+        file = download_language(lang['code'])
+        deploy_to_artifactory(ARTIFACTORY_USER, ARTIFACTORY_PASS, ARTIFACTORY_URL, ARTIFACTORY_PATH, lang['code'], file)
 
     print("Success")
 

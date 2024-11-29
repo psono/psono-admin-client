@@ -1,11 +1,10 @@
-import React, { Component, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { HashLoader } from 'react-spinners';
 import { createBrowserHistory } from 'history';
 import { withStyles } from '@material-ui/core';
-import { Router, Route, Switch } from 'react-router-dom';
-import { compose } from 'redux';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import store from '../services/store';
 
@@ -35,13 +34,13 @@ const style = {
         backgroundImage: `url(${image})`,
         backgroundSize: 'cover',
         display: 'flex',
-        'justify-content': 'center',
-        'align-items': 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     content: {
         width: '100%',
         height: '100%',
-        'z-index': '3',
+        zIndex: '3',
         content: '',
         opacity: '.8',
         position: 'absolute',
@@ -49,46 +48,37 @@ const style = {
     },
 };
 
-class LoaderClass extends Component {
-    render() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.wrapper}>
-                <div className={classes.content} />
-                <img src={logo} alt="logo" />
-                <div>loading...</div>
-            </div>
-        );
-    }
-}
+const Loader = ({ classes }) => (
+    <div className={classes.wrapper}>
+        <div className={classes.content} />
+        <img src={logo} alt="logo" />
+        <div>loading...</div>
+    </div>
+);
 
-const Loader = compose(withStyles(style))(LoaderClass);
+const StyledLoader = withStyles(style)(Loader);
 
-class App extends Component {
-    render() {
-        return (
-            <Suspense fallback={<Loader />}>
-                <PersistGate loading={<HashLoader />} persistor={persistor}>
-                    <Router history={hist} basename="/portal">
-                        <Switch>
-                            <Route path={'/saml/token/:saml_token_id'}>
-                                <Login />
-                            </Route>
-                            <Route path={'/oidc/token/:oidc_token_id'}>
-                                <Login />
-                            </Route>
-                            <Route path={'/login'}>
-                                <Login />
-                            </Route>
-                            <Route path={'/'}>
-                                <Index />
-                            </Route>
-                        </Switch>
-                    </Router>
-                </PersistGate>
-            </Suspense>
-        );
-    }
-}
+const App = () => (
+    <Suspense fallback={<StyledLoader />}>
+        <PersistGate loading={<HashLoader />} persistor={persistor}>
+            <Router history={hist} basename="/portal">
+                <Switch>
+                    <Route path={'/saml/token/:saml_token_id'}>
+                        <Login />
+                    </Route>
+                    <Route path={'/oidc/token/:oidc_token_id'}>
+                        <Login />
+                    </Route>
+                    <Route path={'/login'}>
+                        <Login />
+                    </Route>
+                    <Route path={'/'}>
+                        <Index />
+                    </Route>
+                </Switch>
+            </Router>
+        </PersistGate>
+    </Suspense>
+);
 
 export default App;

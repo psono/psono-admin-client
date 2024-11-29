@@ -12,6 +12,7 @@ import {
     SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
+import store from '../../services/store';
 
 const UserCreate = (props) => {
     const { t } = useTranslation();
@@ -93,8 +94,8 @@ const UserCreate = (props) => {
 
         psono_server
             .admin_create_user(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 username,
                 password1,
                 email

@@ -4,19 +4,17 @@ import { withStyles } from '@material-ui/core';
 
 import typographyStyle from '../../assets/jss/material-dashboard-react/typographyStyle';
 
-class Info extends React.Component {
-    render() {
-        const { classes, children } = this.props;
-        return (
-            <div className={classes.defaultFontStyle + ' ' + classes.infoText}>
-                {children}
-            </div>
-        );
-    }
-}
+const Info = ({ classes, children }) => {
+    return (
+        <div className={`${classes.defaultFontStyle} ${classes.infoText}`}>
+            {children}
+        </div>
+    );
+};
 
 Info.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 export default withStyles(typographyStyle)(Info);

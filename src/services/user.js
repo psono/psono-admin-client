@@ -556,7 +556,7 @@ function logout(msg = '') {
     psono_server.logout(token, session_secret_key);
     action.logout(store.getState().user.remember_me);
     if (msg) {
-        notification.info_send(msg);
+        notification.infoSend(msg);
     }
 }
 

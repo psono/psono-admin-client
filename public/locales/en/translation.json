@@ -1,4 +1,5 @@
 {
+  "DOWNLOAD": "Download",
   "RETRY": "Retry",
   "SERVER_UNSUPPORTED": "Server unsupported",
   "THE_VERSION_OF_THE_SERVER_IS_TOO_OLD_AND_NOT_SUPPORTED_PLEASE_UPGRADE": "The version of the server is too old. This client doesn't support the old version anymore. Please update your server or tell your administrator to update it.",
@@ -40,6 +41,9 @@
   "POLICY_ALLOW_USER_SEARCH_BY_USERNAME_PARTIAL": "Allow user search by partial username",
   "POLICY_COMPLIANCE_CENTRAL_SECURITY_REPORT_SECURITY_RECURRENCE_INTERVAL": "Recurrence interval in seconds for central security reports",
   "POLICY_COMPLIANCE_MAX_OFFLINE_CACHE_TIME_VALID": "Maximum age in seconds since the last server connection of the offline cache",
+  "POLICY_COMPLIANCE_CLIPBOARD_CLEAR_DELAY": "Default for the clipboard clear delay",
+  "POLICY_COMPLIANCE_MIN_CLIPBOARD_CLEAR_DELAY": "Minimum permitted clipboard clear delay",
+  "POLICY_COMPLIANCE_MAX_CLIPBOARD_CLEAR_DELAY": "Maximum permitted clipboard clear delay",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_PASSWORD_LENGTH": "Password generator default setting for password length",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_LETTERS_UPPERCASE": "Password generator default setting for uppercase letters",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_LETTERS_LOWERCASE": "Password generator default setting for lowercase letters",

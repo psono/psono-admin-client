@@ -1,39 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { withStyles, Grid } from '@material-ui/core';
-import { withTranslation, Trans } from 'react-i18next';
-import { compose } from 'redux';
+import { useTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
 import { ArrowUpward, ArrowDownward, AccessTime } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-// react plugin for creating charts
 import ChartistGraph from 'react-chartist';
 
-import { Sessions } from '../../components';
-import { VersionCard } from '../../components';
-import { LicenseCard } from '../../components';
-import { ChartCard } from '../../components';
-import { ReleaseCard } from '../../components';
-import { FileserverCard } from '../../components';
-import { GridItem } from '../../components';
-import { CustomMaterialTable } from '../../components';
+import {
+    Sessions,
+    VersionCard,
+    LicenseCard,
+    ChartCard,
+    ReleaseCard,
+    FileserverCard,
+    GridItem,
+    CustomMaterialTable,
+} from '../../components';
 import Card from '../../components/Card/Card.js';
 import CardHeader from '../../components/Card/CardHeader.js';
 import CardBody from '../../components/Card/CardBody.js';
 
 import { dailySalesChart } from '../../variables/charts';
-
 import dashboardStyle from '../../assets/jss/material-dashboard-react/dashboardStyle';
 import api_static from '../../services/api-static';
 import psono_server from '../../services/api-server';
 import psono_client from '../../services/api-client';
-
 import HealthCheck from './HealthCheck';
+import store from '../../services/store';
 
 const Chartist = require('chartist');
 
-class Dashboard extends React.Component {
-    state = {
+const Dashboard = ({ classes, state }) => {
+    const { t } = useTranslation();
+    const [dashboardData, setDashboardData] = useState({
         admin_client_tags: [],
         admin_client_latest_version: '',
         admin_client_used_version: '',
@@ -58,496 +58,458 @@ class Dashboard extends React.Component {
         server_license_stat_text: '',
         count_registrations_first_week: 0,
         count_registrations_second_week: 0,
-        tr: true,
-    };
+        label_day: [],
+        data_day_total: [],
+        data_day_new: [],
+        label_month: [],
+        data_month_total: [],
+        data_month_new: [],
+        registrations: [],
+    });
 
-    convert_tags_to_releases(tags) {
+    const convertTagsToReleases = (tags) => {
         tags.forEach((r) => {
-            Object.keys(r.commit).forEach(function (key) {
+            Object.keys(r.commit).forEach((key) => {
                 r[key] = r.commit[key];
             });
-
-            Object.keys(r.release).forEach(function (key) {
+            Object.keys(r.release).forEach((key) => {
                 r[key] = r.release[key];
             });
             r.created_at = moment(r.created_at).format('YYYY-MM-DD HH:mm:ss');
             delete r.commit;
             delete r.release;
         });
-    }
+    };
 
-    componentDidMount() {
-        const { t } = this.props;
-        if (this.props.state.server.type === 'CE') {
-            api_static
-                .get('/gitlab.com/psono/psono-server/changelog.json')
-                .then((response) => {
-                    this.convert_tags_to_releases(response.data);
-                    this.setState({
-                        server_tags: response.data,
-                        server_latest_version: response.data[0].name,
-                    });
-                });
-        } else {
-            api_static
-                .get('/gitlab.com/psono-enterprise/psono-server/changelog.json')
-                .then((response) => {
-                    this.convert_tags_to_releases(response.data);
-                    this.setState({
-                        server_tags: response.data,
-                        server_latest_version: response.data[0].name,
-                    });
-                });
-        }
-        api_static
-            .get('/gitlab.com/psono/psono-client/changelog.json')
-            .then((response) => {
-                this.convert_tags_to_releases(response.data);
-                this.setState({
-                    client_tags: response.data,
-                    client_latest_version: response.data[0].name,
-                });
-            });
-        api_static
-            .get('/gitlab.com/psono/psono-admin-client/changelog.json')
-            .then((response) => {
-                this.convert_tags_to_releases(response.data);
-                this.setState({
-                    admin_client_tags: response.data,
-                    admin_client_latest_version: response.data[0].name,
-                });
-            });
-        api_static
-            .get('/gitlab.com/psono/psono-fileserver/changelog.json')
-            .then((response) => {
-                this.convert_tags_to_releases(response.data);
-                this.setState({
-                    fileserver_tags: response.data,
-                    fileserver_latest_version: response.data[0].name,
-                });
-            });
+    useEffect(() => {
+        const fetchData = async () => {
+            const serverType = state.server.type;
 
-        psono_server
-            .admin_info(
-                this.props.state.user.token,
-                this.props.state.user.session_secret_key
-            )
-            .then((response) => {
-                response.data.info = JSON.parse(response.data.info);
+            const serverChangelogUrl =
+                serverType === 'CE'
+                    ? '/gitlab.com/psono/psono-server/changelog.json'
+                    : '/gitlab.com/psono-enterprise/psono-server/changelog.json';
 
-                let label_day = [];
-                let data_day_total = [];
-                let data_day_new = [];
+            const [
+                serverResponse,
+                clientResponse,
+                adminClientResponse,
+                fileServerResponse,
+            ] = await Promise.all([
+                api_static.get(serverChangelogUrl),
+                api_static.get('/gitlab.com/psono/psono-client/changelog.json'),
+                api_static.get(
+                    '/gitlab.com/psono/psono-admin-client/changelog.json'
+                ),
+                api_static.get(
+                    '/gitlab.com/psono/psono-fileserver/changelog.json'
+                ),
+            ]);
 
-                let count = response.data.registrations_over_day.length;
+            convertTagsToReleases(serverResponse.data);
+            convertTagsToReleases(clientResponse.data);
+            convertTagsToReleases(adminClientResponse.data);
+            convertTagsToReleases(fileServerResponse.data);
 
-                let count_registrations_first_week = 0;
-                let count_registrations_second_week = 0;
-                response.data.registrations_over_day.forEach(function (r) {
-                    count = count - 1;
-                    if (count > 13) {
-                        return;
-                    }
-                    if (count > 6) {
-                        count_registrations_first_week =
-                            count_registrations_first_week + r.count_new;
-                    } else {
-                        count_registrations_second_week =
-                            count_registrations_second_week + r.count_new;
-                    }
-                    label_day.push(r.weekday);
-                    data_day_new.push(r.count_new);
-                    data_day_total.push(r.count_total);
-                });
+            setDashboardData((prevData) => ({
+                ...prevData,
+                server_tags: serverResponse.data,
+                server_latest_version: serverResponse.data[0].name,
+                client_tags: clientResponse.data,
+                client_latest_version: clientResponse.data[0].name,
+                admin_client_tags: adminClientResponse.data,
+                admin_client_latest_version: adminClientResponse.data[0].name,
+                fileserver_tags: fileServerResponse.data,
+                fileserver_latest_version: fileServerResponse.data[0].name,
+            }));
 
-                let label_month = [];
-                let data_month_new = [];
-                let data_month_total = [];
-                response.data.registrations_over_month.forEach(function (r) {
-                    label_month.push(r.month);
-                    data_month_new.push(r.count_new);
-                    data_month_total.push(r.count_total);
-                });
-
-                let registrations = [];
-                response.data.registrations.forEach(function (r) {
-                    registrations.push({
-                        date: moment(r.date).format('YYYY-MM-DD HH:mm:ss'),
-                        username: r.username,
-                        active: r.active ? t('YES') : t('NO'),
-                    });
-                });
-
-                this.setState({
-                    server_license_max_users:
-                        response.data.info.license_max_users,
-                    server_user_count_active: response.data.user_count_active,
-                    server_user_count_total: response.data.user_count_total,
-                    server_token_count_device: response.data.token_count_device,
-                    server_token_count_user: response.data.token_count_user,
-                    server_token_count_total: response.data.token_count_total,
-                    fileserver: response.data.fileserver,
-                    server_license_valid_from:
-                        response.data.info.license_valid_from,
-                    server_license_valid_till:
-                        response.data.info.license_valid_till,
-                    server_used_version:
-                        'v' + response.data.info.version.split(' ')[0],
-                    count_registrations_first_week,
-                    count_registrations_second_week,
-                    label_day,
-                    data_day_total,
-                    data_day_new,
-                    label_month,
-                    data_month_new,
-                    data_month_total,
-                    registrations,
-                });
-                psono_client.set_url(response.data.info.web_client);
-                return psono_client.get_version().then((response) => {
-                    this.setState({
-                        client_used_version: 'v' + response.data.split(' ')[0],
-                    });
-                });
-            });
-
-        axios
-            .get('/portal/VERSION.txt?t=' + new Date().getTime())
-            .then((response) => {
-                this.setState({
-                    admin_client_used_version:
-                        'v' + response.data.split(' ')[0],
-                });
-            });
-    }
-
-    render() {
-        const { t } = this.props;
-        const {
-            count_registrations_second_week,
-            count_registrations_first_week,
-        } = this.state;
-        const { files } = this.props.state.server;
-        let registration_text;
-        if (this.state.count_registrations_second_week) {
-            let percentage = Math.round(
-                (this.state.count_registrations_second_week /
-                    this.state.count_registrations_first_week) *
-                    100 -
-                    100
+            const serverInfoResponse = await psono_server.admin_info(
+                store.getState().user.token,
+                store.getState().user.session_secret_key
             );
-            if (percentage >= 0) {
-                registration_text = (
-                    <span>
-                        <span className={this.props.classes.successText}>
-                            <ArrowUpward
-                                className={
-                                    this.props.classes.upArrowCardCategory
-                                }
-                            />{' '}
-                            {percentage}%
-                        </span>{' '}
-                        {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
-                    </span>
-                );
-            } else {
-                registration_text = (
-                    <span>
-                        <span className={this.props.classes.dangerText}>
-                            <ArrowDownward
-                                className={
-                                    this.props.classes.upArrowCardCategory
-                                }
-                            />{' '}
-                            {-percentage}%
-                        </span>{' '}
-                        {t('DECREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
-                    </span>
-                );
-            }
-        } else {
-            registration_text = (
+
+            const info = JSON.parse(serverInfoResponse.data.info);
+
+            let label_day = [];
+            let data_day_total = [];
+            let data_day_new = [];
+            let count = serverInfoResponse.data.registrations_over_day.length;
+            let count_registrations_first_week = 0;
+            let count_registrations_second_week = 0;
+
+            serverInfoResponse.data.registrations_over_day.forEach((r) => {
+                count -= 1;
+                if (count > 13) return;
+                if (count > 6) {
+                    count_registrations_first_week += r.count_new;
+                } else {
+                    count_registrations_second_week += r.count_new;
+                }
+                label_day.push(r.weekday);
+                data_day_new.push(r.count_new);
+                data_day_total.push(r.count_total);
+            });
+
+            let label_month = [];
+            let data_month_new = [];
+            let data_month_total = [];
+            serverInfoResponse.data.registrations_over_month.forEach((r) => {
+                label_month.push(r.month);
+                data_month_new.push(r.count_new);
+                data_month_total.push(r.count_total);
+            });
+
+            let registrations = serverInfoResponse.data.registrations.map(
+                (r) => ({
+                    date: moment(r.date).format('YYYY-MM-DD HH:mm:ss'),
+                    username: r.username,
+                    active: r.active ? t('YES') : t('NO'),
+                })
+            );
+
+            setDashboardData((prevData) => ({
+                ...prevData,
+                server_license_max_users: info.license_max_users,
+                server_user_count_active:
+                    serverInfoResponse.data.user_count_active,
+                server_user_count_total:
+                    serverInfoResponse.data.user_count_total,
+                server_token_count_device:
+                    serverInfoResponse.data.token_count_device,
+                server_token_count_user:
+                    serverInfoResponse.data.token_count_user,
+                server_token_count_total:
+                    serverInfoResponse.data.token_count_total,
+                fileserver: serverInfoResponse.data.fileserver,
+                server_license_valid_from: info.license_valid_from,
+                server_license_valid_till: info.license_valid_till,
+                server_used_version: 'v' + info.version.split(' ')[0],
+                count_registrations_first_week,
+                count_registrations_second_week,
+                label_day,
+                data_day_total,
+                data_day_new,
+                label_month,
+                data_month_new,
+                data_month_total,
+                registrations,
+            }));
+
+            const clientVersionResponse = await psono_client.get_version();
+            setDashboardData((prevData) => ({
+                ...prevData,
+                client_used_version:
+                    'v' + clientVersionResponse.data.split(' ')[0],
+            }));
+
+            const adminClientVersionResponse = await axios.get(
+                '/portal/VERSION.txt?t=' + new Date().getTime()
+            );
+            setDashboardData((prevData) => ({
+                ...prevData,
+                admin_client_used_version:
+                    'v' + adminClientVersionResponse.data.split(' ')[0],
+            }));
+        };
+
+        fetchData();
+    }, [state.server.type, t]);
+
+    const {
+        count_registrations_second_week,
+        count_registrations_first_week,
+        fileserver,
+        data_day_total,
+        data_day_new,
+        label_day,
+        data_month_total,
+        data_month_new,
+        label_month,
+    } = dashboardData;
+
+    let registration_text;
+    if (count_registrations_second_week) {
+        const percentage = Math.round(
+            (count_registrations_second_week / count_registrations_first_week) *
+                100 -
+                100
+        );
+        registration_text =
+            percentage >= 0 ? (
                 <span>
-                    <span className={this.props.classes.successText}>
-                        <ArrowUpward
-                            className={this.props.classes.upArrowCardCategory}
-                        />{' '}
-                        55%
+                    <span className={classes.successText}>
+                        <ArrowUpward className={classes.upArrowCardCategory} />{' '}
+                        {percentage}%
                     </span>{' '}
                     {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
                 </span>
+            ) : (
+                <span>
+                    <span className={classes.dangerText}>
+                        <ArrowDownward
+                            className={classes.upArrowCardCategory}
+                        />{' '}
+                        {-percentage}%
+                    </span>{' '}
+                    {t('DECREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
+                </span>
             );
-        }
-
-        return (
-            <div>
-                <HealthCheck />
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={6}>
-                        {this.state.data_day_total !== undefined ? (
-                            <ChartCard
-                                chart={
-                                    <ChartistGraph
-                                        className="ct-chart"
-                                        data={{
-                                            labels: this.state.label_day,
-                                            series: [
-                                                this.state.data_day_total,
-                                                this.state.data_day_new,
-                                            ],
-                                        }}
-                                        type="Line"
-                                        options={{
-                                            lineSmooth:
-                                                Chartist.Interpolation.cardinal(
-                                                    {
-                                                        tension: 0,
-                                                    }
-                                                ),
-                                            low: 0,
-                                            high:
-                                                Math.max(
-                                                    ...this.state
-                                                        .data_day_total,
-                                                    ...this.state.data_day_new
-                                                ) * 1.05,
-                                            chartPadding: {
-                                                top: 0,
-                                                right: 0,
-                                                bottom: 10,
-                                                left: 10,
-                                            },
-                                            plugins: [
-                                                Chartist.plugins.ctAxisTitle({
-                                                    axisX: {
-                                                        axisTitle: t(
-                                                            'WEEKDAY_RED_NEW_USERS_WHITE_TOTAL_USERS'
-                                                        ),
-                                                        axisClass: 'ct-label',
-                                                        offset: {
-                                                            x: 0,
-                                                            y: 35,
-                                                        },
-                                                        textAnchor: 'middle',
-                                                    },
-                                                    axisY: {
-                                                        axisTitle: t('USERS'),
-                                                        axisClass: 'ct-label',
-                                                        offset: {
-                                                            x: 10,
-                                                            y: -10,
-                                                        },
-                                                        flipTitle: false,
-                                                    },
-                                                }),
-                                            ],
-                                        }}
-                                        listener={dailySalesChart.animation}
-                                    />
-                                }
-                                chartColor="blue"
-                                title={t('REGISTRATIONS_PER_DAY')}
-                                text={registration_text}
-                                statIcon={AccessTime}
-                                statText={
-                                    <Trans
-                                        i18nKey="THIS_WEEK_USERS_VS_LAST_WEEK_USERS"
-                                        count_registrations_second_week={
-                                            count_registrations_second_week
-                                        }
-                                        count_registrations_first_week={
-                                            count_registrations_first_week
-                                        }
-                                    >
-                                        This week{' '}
-                                        {{ count_registrations_second_week }}{' '}
-                                        users registered (last week:{' '}
-                                        {{ count_registrations_first_week }}{' '}
-                                        users)
-                                    </Trans>
-                                }
-                            />
-                        ) : null}
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={6}>
-                        {this.state.data_month_total !== undefined ? (
-                            <ChartCard
-                                chart={
-                                    <ChartistGraph
-                                        className="ct-chart"
-                                        data={{
-                                            labels: this.state.label_month,
-                                            series: [
-                                                this.state.data_month_total,
-                                                this.state.data_month_new,
-                                            ],
-                                        }}
-                                        type="Line"
-                                        options={{
-                                            lineSmooth:
-                                                Chartist.Interpolation.cardinal(
-                                                    {
-                                                        tension: 0,
-                                                    }
-                                                ),
-                                            low: 0,
-                                            high:
-                                                Math.max(
-                                                    ...this.state
-                                                        .data_month_total,
-                                                    ...this.state.data_month_new
-                                                ) * 1.05,
-                                            chartPadding: {
-                                                top: 0,
-                                                right: 0,
-                                                bottom: 10,
-                                                left: 10,
-                                            },
-                                            plugins: [
-                                                Chartist.plugins.ctAxisTitle({
-                                                    axisX: {
-                                                        axisTitle: t(
-                                                            'MONTH_RED_NEW_USERS_WHITE_TOTAL_USERS'
-                                                        ),
-                                                        axisClass: 'ct-label',
-                                                        offset: {
-                                                            x: 0,
-                                                            y: 35,
-                                                        },
-                                                        textAnchor: 'middle',
-                                                    },
-                                                    axisY: {
-                                                        axisTitle: t('USERS'),
-                                                        axisClass: 'ct-label',
-                                                        offset: {
-                                                            x: 10,
-                                                            y: -10,
-                                                        },
-                                                        flipTitle: false,
-                                                    },
-                                                }),
-                                            ],
-                                        }}
-                                        listener={dailySalesChart.animation}
-                                    />
-                                }
-                                chartColor="green"
-                                title={t('USERS_PER_MONTH')}
-                                text={t('REGISTERED_USERS_OVER_TIME')}
-                                statIcon={AccessTime}
-                                statText={t('LAST_REGISRATION')}
-                            />
-                        ) : null}
-                    </GridItem>
-                </Grid>
-                <Grid container>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <LicenseCard
-                            active={this.state.server_user_count_active}
-                            total={this.state.server_user_count_total}
-                            licensed={this.state.server_license_max_users}
-                            valid_from={this.state.server_license_valid_from}
-                            valid_till={this.state.server_license_valid_till}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={6} lg={3}>
-                        <Sessions
-                            users={this.state.server_token_count_user}
-                            devices={this.state.server_token_count_device}
-                            total={this.state.server_token_count_total}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={4} lg={2}>
-                        <VersionCard
-                            used_version={this.state.client_used_version}
-                            latest_version={this.state.client_latest_version}
-                            title={t('CLIENT_VERSION')}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={4} lg={2}>
-                        <VersionCard
-                            used_version={this.state.server_used_version}
-                            latest_version={this.state.server_latest_version}
-                            title={t('SERVER_VERSION')}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={6} md={4} lg={2}>
-                        <VersionCard
-                            used_version={this.state.admin_client_used_version}
-                            latest_version={
-                                this.state.admin_client_latest_version
-                            }
-                            title={t('PORTAL_VERSION')}
-                        />
-                    </GridItem>
-                </Grid>
-                <Grid container>
-                    <GridItem xs={12} sm={12} md={6}>
-                        {files && (
-                            <FileserverCard
-                                fileserver={this.state.fileserver}
-                                latest_version={
-                                    this.state.fileserver_latest_version
-                                }
-                            />
-                        )}
-                        <ReleaseCard
-                            server_releases={this.state.server_tags}
-                            client_releases={this.state.client_tags}
-                            admin_client_releases={this.state.admin_client_tags}
-                            fileserver_releases={this.state.fileserver_tags}
-                        />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={6}>
-                        {this.state.registrations !== undefined ? (
-                            <Card>
-                                <CardHeader color="warning">
-                                    <h4
-                                        className={
-                                            this.props.classes.cardTitleWhite
-                                        }
-                                    >
-                                        {t('REGISTRATIONS')}
-                                    </h4>
-                                    <p
-                                        className={
-                                            this.props.classes.cardCategoryWhite
-                                        }
-                                    >
-                                        {t('LAST_JOINED_USERS')}
-                                    </p>
-                                </CardHeader>
-                                <CardBody>
-                                    <CustomMaterialTable
-                                        columns={[
-                                            { field: 'date', title: t('DATE') },
-                                            {
-                                                field: 'username',
-                                                title: t('USERNAME'),
-                                            },
-                                            {
-                                                field: 'active',
-                                                title: t('ACTIVE'),
-                                            },
-                                        ]}
-                                        data={this.state.registrations}
-                                        title={''}
-                                    />
-                                </CardBody>
-                            </Card>
-                        ) : null}
-                    </GridItem>
-                </Grid>
-            </div>
+    } else {
+        registration_text = (
+            <span>
+                <span className={classes.successText}>
+                    <ArrowUpward className={classes.upArrowCardCategory} /> 0%
+                </span>{' '}
+                {t('INCREASE_IN_THIS_WEEKS_REGISTRAITIONS')}
+            </span>
         );
     }
-}
+
+    return (
+        <div>
+            <HealthCheck />
+            <Grid container>
+                <GridItem xs={12} sm={12} md={6}>
+                    {data_day_total && (
+                        <ChartCard
+                            chart={
+                                <ChartistGraph
+                                    className="ct-chart"
+                                    data={{
+                                        labels: label_day,
+                                        series: [data_day_total, data_day_new],
+                                    }}
+                                    type="Line"
+                                    options={{
+                                        lineSmooth:
+                                            Chartist.Interpolation.cardinal({
+                                                tension: 0,
+                                            }),
+                                        low: 0,
+                                        high:
+                                            Math.max(
+                                                ...data_day_total,
+                                                ...data_day_new
+                                            ) * 1.05,
+                                        chartPadding: {
+                                            top: 0,
+                                            right: 0,
+                                            bottom: 10,
+                                            left: 10,
+                                        },
+                                        plugins: [
+                                            Chartist.plugins.ctAxisTitle({
+                                                axisX: {
+                                                    axisTitle: t(
+                                                        'WEEKDAY_RED_NEW_USERS_WHITE_TOTAL_USERS'
+                                                    ),
+                                                    axisClass: 'ct-label',
+                                                    offset: {
+                                                        x: 0,
+                                                        y: 35,
+                                                    },
+                                                    textAnchor: 'middle',
+                                                },
+                                                axisY: {
+                                                    axisTitle: t('USERS'),
+                                                    axisClass: 'ct-label',
+                                                    offset: {
+                                                        x: 10,
+                                                        y: -10,
+                                                    },
+                                                    flipTitle: false,
+                                                },
+                                            }),
+                                        ],
+                                    }}
+                                    listener={dailySalesChart.animation}
+                                />
+                            }
+                            chartColor="blue"
+                            title={t('REGISTRATIONS_PER_DAY')}
+                            text={registration_text}
+                            statIcon={AccessTime}
+                            statText={
+                                <Trans
+                                    i18nKey="THIS_WEEK_USERS_VS_LAST_WEEK_USERS"
+                                    count_registrations_second_week={
+                                        count_registrations_second_week
+                                    }
+                                    count_registrations_first_week={
+                                        count_registrations_first_week
+                                    }
+                                >
+                                    This week{' '}
+                                    {{ count_registrations_second_week }} users
+                                    registered (last week:{' '}
+                                    {{ count_registrations_first_week }} users)
+                                </Trans>
+                            }
+                        />
+                    )}
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6}>
+                    {data_month_total && (
+                        <ChartCard
+                            chart={
+                                <ChartistGraph
+                                    className="ct-chart"
+                                    data={{
+                                        labels: label_month,
+                                        series: [
+                                            data_month_total,
+                                            data_month_new,
+                                        ],
+                                    }}
+                                    type="Line"
+                                    options={{
+                                        lineSmooth:
+                                            Chartist.Interpolation.cardinal({
+                                                tension: 0,
+                                            }),
+                                        low: 0,
+                                        high:
+                                            Math.max(
+                                                ...data_month_total,
+                                                ...data_month_new
+                                            ) * 1.05,
+                                        chartPadding: {
+                                            top: 0,
+                                            right: 0,
+                                            bottom: 10,
+                                            left: 10,
+                                        },
+                                        plugins: [
+                                            Chartist.plugins.ctAxisTitle({
+                                                axisX: {
+                                                    axisTitle: t(
+                                                        'MONTH_RED_NEW_USERS_WHITE_TOTAL_USERS'
+                                                    ),
+                                                    axisClass: 'ct-label',
+                                                    offset: {
+                                                        x: 0,
+                                                        y: 35,
+                                                    },
+                                                    textAnchor: 'middle',
+                                                },
+                                                axisY: {
+                                                    axisTitle: t('USERS'),
+                                                    axisClass: 'ct-label',
+                                                    offset: {
+                                                        x: 10,
+                                                        y: -10,
+                                                    },
+                                                    flipTitle: false,
+                                                },
+                                            }),
+                                        ],
+                                    }}
+                                    listener={dailySalesChart.animation}
+                                />
+                            }
+                            chartColor="green"
+                            title={t('USERS_PER_MONTH')}
+                            text={t('REGISTERED_USERS_OVER_TIME')}
+                            statIcon={AccessTime}
+                            statText={t('LAST_REGISRATION')}
+                        />
+                    )}
+                </GridItem>
+            </Grid>
+            <Grid container>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <LicenseCard
+                        active={dashboardData.server_user_count_active}
+                        total={dashboardData.server_user_count_total}
+                        licensed={dashboardData.server_license_max_users}
+                        valid_from={dashboardData.server_license_valid_from}
+                        valid_till={dashboardData.server_license_valid_till}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={6} lg={3}>
+                    <Sessions
+                        users={dashboardData.server_token_count_user}
+                        devices={dashboardData.server_token_count_device}
+                        total={dashboardData.server_token_count_total}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={4} lg={2}>
+                    <VersionCard
+                        used_version={dashboardData.client_used_version}
+                        latest_version={dashboardData.client_latest_version}
+                        title={t('CLIENT_VERSION')}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={4} lg={2}>
+                    <VersionCard
+                        used_version={dashboardData.server_used_version}
+                        latest_version={dashboardData.server_latest_version}
+                        title={t('SERVER_VERSION')}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={6} md={4} lg={2}>
+                    <VersionCard
+                        used_version={dashboardData.admin_client_used_version}
+                        latest_version={
+                            dashboardData.admin_client_latest_version
+                        }
+                        title={t('PORTAL_VERSION')}
+                    />
+                </GridItem>
+            </Grid>
+            <Grid container>
+                <GridItem xs={12} sm={12} md={6}>
+                    {state.server.files && (
+                        <FileserverCard
+                            fileserver={dashboardData.fileserver}
+                            latest_version={
+                                dashboardData.fileserver_latest_version
+                            }
+                        />
+                    )}
+                    <ReleaseCard
+                        server_releases={dashboardData.server_tags}
+                        client_releases={dashboardData.client_tags}
+                        admin_client_releases={dashboardData.admin_client_tags}
+                        fileserver_releases={dashboardData.fileserver_tags}
+                    />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6}>
+                    {dashboardData.registrations.length > 0 && (
+                        <Card>
+                            <CardHeader color="warning">
+                                <h4 className={classes.cardTitleWhite}>
+                                    {t('REGISTRATIONS')}
+                                </h4>
+                                <p className={classes.cardCategoryWhite}>
+                                    {t('LAST_JOINED_USERS')}
+                                </p>
+                            </CardHeader>
+                            <CardBody>
+                                <CustomMaterialTable
+                                    columns={[
+                                        { field: 'date', title: t('DATE') },
+                                        {
+                                            field: 'username',
+                                            title: t('USERNAME'),
+                                        },
+                                        { field: 'active', title: t('ACTIVE') },
+                                    ]}
+                                    data={dashboardData.registrations}
+                                    title={''}
+                                />
+                            </CardBody>
+                        </Card>
+                    )}
+                </GridItem>
+            </Grid>
+        </div>
+    );
+};
 
 Dashboard.propTypes = {
     classes: PropTypes.object.isRequired,
+    state: PropTypes.object.isRequired,
 };
 
-export default compose(
-    withTranslation(),
-    withStyles(dashboardStyle)
-)(Dashboard);
+export default withStyles(dashboardStyle)(Dashboard);

@@ -5,68 +5,57 @@ import {
     CardHeader,
     CardContent,
     CardActions,
-    Typography
+    Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import profileCardStyle from '../../assets/jss/material-dashboard-react/profileCardStyle';
 
-class ProfileCard extends React.Component {
-    render() {
-        const {
-            classes,
-            subtitle,
-            title,
-            description,
-            footer,
-            avatar
-        } = this.props;
-        return (
-            <Card className={classes.card}>
-                <CardHeader
-                    classes={{
-                        root: classes.cardHeader,
-                        avatar: classes.cardAvatar
-                    }}
-                    avatar={
-                        <img src={avatar} alt="..." className={classes.img} />
-                    }
-                />
-                <CardContent className={classes.textAlign}>
-                    {subtitle !== undefined ? (
-                        <Typography
-                            component="h6"
-                            className={classes.cardSubtitle}
-                        >
-                            {subtitle}
-                        </Typography>
-                    ) : null}
-                    {title !== undefined ? (
-                        <Typography
-                            component="h4"
-                            className={classes.cardTitle}
-                        >
-                            {title}
-                        </Typography>
-                    ) : null}
-                    {description !== undefined ? (
-                        <Typography
-                            component="p"
-                            className={classes.cardDescription}
-                        >
-                            {description}
-                        </Typography>
-                    ) : null}
-                </CardContent>
-                <CardActions
-                    className={classes.textAlign + ' ' + classes.cardActions}
-                >
-                    {footer}
-                </CardActions>
-            </Card>
-        );
-    }
-}
+const ProfileCard = ({
+    classes,
+    subtitle,
+    title,
+    description,
+    footer,
+    avatar,
+}) => {
+    return (
+        <Card className={classes.card}>
+            <CardHeader
+                classes={{
+                    root: classes.cardHeader,
+                    avatar: classes.cardAvatar,
+                }}
+                avatar={<img src={avatar} alt="..." className={classes.img} />}
+            />
+            <CardContent className={classes.textAlign}>
+                {subtitle && (
+                    <Typography component="h6" className={classes.cardSubtitle}>
+                        {subtitle}
+                    </Typography>
+                )}
+                {title && (
+                    <Typography component="h4" className={classes.cardTitle}>
+                        {title}
+                    </Typography>
+                )}
+                {description && (
+                    <Typography
+                        component="p"
+                        className={classes.cardDescription}
+                    >
+                        {description}
+                    </Typography>
+                )}
+            </CardContent>
+            <CardActions
+                className={`${classes.textAlign} ${classes.cardActions}`}
+            >
+                {footer}
+            </CardActions>
+        </Card>
+    );
+};
 
 ProfileCard.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -74,7 +63,7 @@ ProfileCard.propTypes = {
     subtitle: PropTypes.node,
     description: PropTypes.node,
     footer: PropTypes.node,
-    avatar: PropTypes.string
+    avatar: PropTypes.string,
 };
 
 export default withStyles(profileCardStyle)(ProfileCard);

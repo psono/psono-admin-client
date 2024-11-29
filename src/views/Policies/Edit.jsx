@@ -62,8 +62,8 @@ const PolicyEdit = (props) => {
     const addMappingGroup = (group) => {
         psono_server
             .admin_policy_create_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 policy_id,
                 group.id
             )
@@ -77,8 +77,8 @@ const PolicyEdit = (props) => {
     const removeMappingGroup = (group) => {
         psono_server
             .admin_policy_delete_group_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 policy_id,
                 group.id
             )
@@ -102,8 +102,8 @@ const PolicyEdit = (props) => {
     const addMappingUser = (users) => {
         psono_server
             .admin_policy_create_user_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 policy_id,
                 users.id
             )
@@ -117,8 +117,8 @@ const PolicyEdit = (props) => {
     const removeMappingUser = (user) => {
         psono_server
             .admin_policy_delete_user_map(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 policy_id,
                 user.id
             )
@@ -142,8 +142,8 @@ const PolicyEdit = (props) => {
     function loadPolicy() {
         psono_server
             .admin_policy(
-                props.state.user.token,
-                props.state.user.session_secret_key,
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
                 policy_id
             )
             .then((response) => {
@@ -408,6 +408,18 @@ const PolicyEdit = (props) => {
         },
         {
             key: 'COMPLIANCE_MAX_OFFLINE_CACHE_TIME_VALID',
+            type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_CLIPBOARD_CLEAR_DELAY',
+            type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_MIN_CLIPBOARD_CLEAR_DELAY',
+            type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_MAX_CLIPBOARD_CLEAR_DELAY',
             type: 'int',
         },
         {
