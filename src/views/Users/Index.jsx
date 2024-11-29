@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 import { GridItem, CustomMaterialTable } from '../../components';
