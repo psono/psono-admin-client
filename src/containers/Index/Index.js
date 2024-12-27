@@ -59,24 +59,24 @@ const App = (props) => {
     const { classes, ...rest } = props;
 
     let variableLinks = [];
-    if (props.state.server.type === 'EE') {
+    if (store.getState().server.type === 'EE') {
         eeLinks.forEach((link) => variableLinks.push(link));
     }
     if (
-        props.state.server.type === 'EE' &&
-        props.state.server.authentication_methods.includes('LDAP')
+        store.getState().server.type === 'EE' &&
+        store.getState().server.authentication_methods.includes('LDAP')
     ) {
         ldapLinks.forEach((link) => variableLinks.push(link));
     }
     if (
-        props.state.server.type === 'EE' &&
-        props.state.server.authentication_methods.includes('SAML')
+        store.getState().server.type === 'EE' &&
+        store.getState().server.authentication_methods.includes('SAML')
     ) {
         samlLinks.forEach((link) => variableLinks.push(link));
     }
     if (
-        props.state.server.type === 'EE' &&
-        props.state.server.authentication_methods.includes('OIDC')
+        store.getState().server.type === 'EE' &&
+        store.getState().server.authentication_methods.includes('OIDC')
     ) {
         oidcLinks.forEach((link) => variableLinks.push(link));
     }

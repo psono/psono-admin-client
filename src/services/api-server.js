@@ -1047,6 +1047,29 @@ function admin_delete_user(token, session_secret_key, user_id) {
 }
 
 /**
+ * POST: Wipes a user (for administrators)
+ *
+ * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
+ * @param {string} session_secret_key The session secret key
+ * @param {uuid} user_id The user id of the user to delete
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+function admin_wipe_user(token, session_secret_key, user_id) {
+    const endpoint = '/admin/user-wipe/';
+    const method = 'POST';
+    const data = {
+        user_id: user_id,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+/**
  * DELETE: Deletes a session (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
@@ -3643,6 +3666,7 @@ const service = {
     admin_security_report,
     admin_create_user,
     admin_delete_user,
+    admin_wipe_user,
     admin_delete_session,
     admin_policy,
     admin_policy_create_group_map,

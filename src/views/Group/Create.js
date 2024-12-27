@@ -26,7 +26,7 @@ const GroupCreate = (props) => {
     const [autoCreateFolder, setAutoCreateFolder] = useState(false);
 
     React.useEffect(() => {
-        const is_ee_server = props.state.server.type === 'EE';
+        const is_ee_server = store.getState().server.type === 'EE';
 
         if (!is_ee_server) {
             setRedirectTo('/dashboard');

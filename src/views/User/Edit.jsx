@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import moment from 'moment';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,15 +18,19 @@ import {
 import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import store from '../../services/store';
+import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
 
 const useStyles = makeStyles(customInputStyle);
 const UserEdit = () => {
     const classes = useStyles();
     const { t } = useTranslation();
+    const history = useHistory();
     const { user_id } = useParams();
     const [user, setUser] = useState(null);
     const [errors, setErrors] = useState([]);
     const [msgs, setMsgs] = useState([]);
+    const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
+    const [wipeUserModalOpen, setWipeUserModalOpen] = useState(false);
 
     React.useEffect(() => {
         loadUser();
@@ -448,6 +452,50 @@ const UserEdit = () => {
 
     return (
         <div>
+            {deleteUserModalOpen && (
+                <DeleteConfirmDialog
+                    title={t('DELETE_USER_S')}
+                    onConfirm={() => {
+                        psono_server
+                            .admin_delete_user(
+                                store.getState().user.token,
+                                store.getState().user.session_secret_key,
+                                user.id
+                            )
+                            .then(() => {
+                                history.push('/user/');
+                            });
+                        setDeleteUserModalOpen(false);
+                    }}
+                    onAbort={() => {
+                        setDeleteUserModalOpen(false);
+                    }}
+                >
+                    {t('DELETE_USER_CONFIRM_DIALOG')}
+                </DeleteConfirmDialog>
+            )}
+            {wipeUserModalOpen && (
+                <DeleteConfirmDialog
+                    title={t('WIPE_USER_S')}
+                    onConfirm={() => {
+                        psono_server
+                            .admin_wipe_user(
+                                store.getState().user.token,
+                                store.getState().user.session_secret_key,
+                                user.id
+                            )
+                            .then(() => {
+                                history.push('/user/');
+                            });
+                        setWipeUserModalOpen(false);
+                    }}
+                    onAbort={() => {
+                        setWipeUserModalOpen(false);
+                    }}
+                >
+                    {t('WIPE_USER_CONFIRM_DIALOG')}
+                </DeleteConfirmDialog>
+            )}
             <Grid container>
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
@@ -599,9 +647,26 @@ const UserEdit = () => {
                             </div>
                         }
                         footer={
-                            <Button color="primary" onClick={save}>
-                                {t('SAVE')}
-                            </Button>
+                            <>
+                                <Button color="primary" onClick={save}>
+                                    {t('SAVE')}
+                                </Button>
+                                <Button
+                                    onClick={() => setDeleteUserModalOpen(true)}
+                                >
+                                    {t('DELETE')}
+                                </Button>
+                                {store.getState().server.type == 'EE' &&
+                                    user.authentication !== 'AUTHKEY' && (
+                                        <Button
+                                            onClick={() =>
+                                                setWipeUserModalOpen(true)
+                                            }
+                                        >
+                                            {t('WIPE')}
+                                        </Button>
+                                    )}
+                            </>
                         }
                     />
                 </GridItem>
