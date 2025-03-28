@@ -387,6 +387,10 @@ const PolicyEdit = (props) => {
             type: 'boolean',
         },
         {
+            key: 'COMPLIANCE_ENFORCE_BREACH_DETECTION',
+            type: 'boolean',
+        },
+        {
             key: 'DISABLE_CENTRAL_SECURITY_REPORTS',
             type: 'boolean',
         },

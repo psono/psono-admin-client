@@ -8,7 +8,7 @@ POEDITOR_PROJECT_ID = os.environ['POEDITOR_PROJECT_ID']
 
 
 FILE_PATHS = {
-    'en': 'public/locales/en/translation.json',
+    'en': 'public/locales/locale-en.json',
 }
 
 
