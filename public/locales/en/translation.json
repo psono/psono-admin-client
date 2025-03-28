@@ -35,6 +35,7 @@
   "POLICY_COMPLIANCE_DISABLE_UNMANAGED_GROUPS": "Disable unmanaged groups",
   "POLICY_COMPLIANCE_ENFORCE_2FA": "Enforce second factor authentication",
   "POLICY_COMPLIANCE_ENFORCE_CENTRAL_SECURITY_REPORTS": "Enforce central security reports",
+  "POLICY_COMPLIANCE_ENFORCE_BREACH_DETECTION": "Enforce breach detection in security reports",
   "POLICY_DISABLE_CENTRAL_SECURITY_REPORTS": "Disable central security reports",
   "POLICY_DISABLE_CALLBACKS": "Disable callbacks",
   "POLICY_ALLOW_USER_SEARCH_BY_EMAIL": "Allow user search by email",
