@@ -184,7 +184,7 @@ i18n
         debug: process.env.NODE_ENV === 'development',
         backend: {
             // for all available options read the backend's repository readme file
-            loadPath: process.env.PUBLIC_URL + '/locales/{{lng}}/{{ns}}.json',
+            loadPath: process.env.PUBLIC_URL + '/locales/locale-{{lng}}.json',
         },
 
         interpolation: {
