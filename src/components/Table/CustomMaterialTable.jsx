@@ -200,12 +200,20 @@ const CustomMaterialTable = ({
         actions = [];
     }
 
-    actions.push({
-        tooltip: t('DOWNLOAD'),
-        icon: CloudDownloadIcon,
-        isFreeAction: true,
-        onClick: (evt) => downloaddataAsCsv(),
-    });
+    // Check if a download action already exists to prevent duplication
+    const downloadActionExists = actions.some(
+        (action) =>
+            action.icon === CloudDownloadIcon && action.isFreeAction === true
+    );
+
+    if (!downloadActionExists) {
+        actions.push({
+            tooltip: t('DOWNLOAD'),
+            icon: CloudDownloadIcon,
+            isFreeAction: true,
+            onClick: (evt) => downloaddataAsCsv(),
+        });
+    }
 
     return (
         <MaterialTable
