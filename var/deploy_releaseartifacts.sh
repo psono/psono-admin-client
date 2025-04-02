@@ -10,4 +10,5 @@ curl -fL https://getcli.jfrog.io | sh && \
 ./jfrog config add rt-server-1 --artifactory-url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials --interactive=false && \
 ./jfrog rt dl psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip --flat && \
 gsutil cp webclient.zip gs://get.psono.com/$CI_PROJECT_PATH/latest/adminclient.zip && \
-gsutil cp webclient.zip gs://get.psono.com/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME/adminclient.zip
+gsutil cp webclient.zip gs://get.psono.com/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME/adminclient.zip && \
+gsutil cp sbom.json gs://get.psono.com/$CI_PROJECT_PATH/$CI_COMMIT_REF_NAME/sbom.json
