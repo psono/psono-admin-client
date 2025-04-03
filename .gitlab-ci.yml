@@ -90,6 +90,26 @@ build-docker-image:
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 
+build-sbom:
+  except:
+    - schedules
+  stage: build
+  image: psono-docker.jfrog.io/ubuntu:22.04
+  script:
+    - sh ./var/build-ubuntu.sh
+    - npx @cyclonedx/cyclonedx-npm > sbom.json
+    - mv /builds/psono/psono-admin-client/sbom.json ../
+    - rm -Rf *
+    - rm -Rf .* 2> /dev/null || true
+    - mv ../sbom.json ./
+  artifacts:
+    name: "sbom_$CI_COMMIT_REF_NAME"
+    paths:
+      - ./*
+  only:
+    - branches@psono/psono-admin-client
+    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
+
 build-webclient:
   except:
     - schedules
@@ -240,13 +260,15 @@ deploy-nightlyartifacts:
     - schedules
   stage: release
   image: psono-docker.jfrog.io/ubuntu:22.04
+  dependencies:
+    - build-sbom
   script:
     - sh ./var/deploy_nightlyartifacts.sh
   environment:
     name: static.psono.com
     url: https://get.psono.com/psono/psono-admin-client/nightly/adminclient.zip
   only:
-    - develop
+    - develop@psono/psono-admin-client
 
 
 deploy-releaseartifacts:
@@ -254,6 +276,8 @@ deploy-releaseartifacts:
     - schedules
   stage: release
   image: psono-docker.jfrog.io/ubuntu:22.04
+  dependencies:
+    - build-sbom
   script:
     - sh ./var/deploy_releaseartifacts.sh
   environment:

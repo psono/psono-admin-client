@@ -11,6 +11,7 @@ import store from './store';
 import device from './device';
 import notification from './notification';
 import browserClient from './browser-client';
+import i18n from '../i18n';
 
 let sessionPassword = '';
 let verification = {};
@@ -474,6 +475,15 @@ function handleLoginResponse(
         decrypted_response_data.user.user_sauce,
         authentication
     );
+
+    if (
+        decrypted_response_data.user.hasOwnProperty('language') &&
+        i18n.options.supportedLngs.includes(
+            decrypted_response_data.user.language
+        )
+    ) {
+        i18n.changeLanguage(decrypted_response_data.user.language);
+    }
 
     return decrypted_response_data;
 }
