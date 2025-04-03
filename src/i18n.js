@@ -111,8 +111,8 @@ const languages = {
         lng_title_native: 'Portuguese',
         active: true,
     },
-    'pt-br': {
-        code: 'pt-br',
+    'pt-BR': {
+        code: 'pt-BR',
         lng_code: 'LANG_PT_BR',
         lng_title_native: 'Portuguese (BR)',
         active: true,

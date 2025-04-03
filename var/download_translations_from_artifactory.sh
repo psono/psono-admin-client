@@ -26,7 +26,7 @@ curl -f -o public/locales/locale-ja.json https://psono.jfrog.io/psono/psono/admi
 curl -f -o public/locales/locale-ko.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-ko.json && \
 curl -f -o public/locales/locale-nl.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-nl.json && \
 curl -f -o public/locales/locale-pt.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-pt.json && \
-curl -f -o public/locales/locale-pt-br.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-pt-br.json && \
+curl -f -o public/locales/locale-pt-BR.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-pt-br.json && \
 curl -f -o public/locales/locale-pl.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-pl.json && \
 curl -f -o public/locales/locale-ru.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-ru.json && \
 curl -f -o public/locales/locale-sk.json https://psono.jfrog.io/psono/psono/admin-client/languages/locale-sk.json && \
