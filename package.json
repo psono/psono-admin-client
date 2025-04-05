@@ -15,7 +15,6 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
-    "axios": "^1.2.1",
     "chartist": "^0.10.1",
     "chartist-plugin-axistitle": "^0.0.4",
     "classnames": "^2.2.6",
