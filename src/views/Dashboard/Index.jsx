@@ -195,11 +195,10 @@ const Dashboard = ({ classes, state }) => {
                 registrations,
             }));
 
-            const clientVersionResponse = await psono_client.get_version();
+            const clientVersionResponse = await psono_client.getVersion();
             setDashboardData((prevData) => ({
                 ...prevData,
-                client_used_version:
-                    'v' + clientVersionResponse.data.split(' ')[0],
+                client_used_version: 'v' + clientVersionResponse.split(' ')[0],
             }));
 
             const adminClientVersionResponse = await axios.get(
