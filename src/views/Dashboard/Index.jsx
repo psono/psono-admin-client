@@ -4,7 +4,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
 import { ArrowUpward, ArrowDownward, AccessTime } from '@material-ui/icons';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import ChartistGraph from 'react-chartist';
 
 import {
@@ -201,13 +200,15 @@ const Dashboard = ({ classes, state }) => {
                 client_used_version: 'v' + clientVersionResponse.split(' ')[0],
             }));
 
-            const adminClientVersionResponse = await axios.get(
+            const adminClientVersionRequest = await fetch(
                 '/portal/VERSION.txt?t=' + new Date().getTime()
             );
+            const adminClientVersionResponse =
+                await adminClientVersionRequest.text();
             setDashboardData((prevData) => ({
                 ...prevData,
                 admin_client_used_version:
-                    'v' + adminClientVersionResponse.data.split(' ')[0],
+                    'v' + adminClientVersionResponse.split(' ')[0],
             }));
         };
 
