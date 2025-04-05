@@ -2,9 +2,6 @@
  * Gitlab service, that implements the Gitlab API
  */
 
-import axios from 'axios';
-//import store from './store';
-
 const BASE_URL = 'https://static.psono.com';
 
 /**
@@ -13,10 +10,11 @@ const BASE_URL = 'https://static.psono.com';
  *
  * @param {string} ressource The "url" part to return
  *
- * @returns {Promise<AxiosResponse<any>>} promise
+ * @returns {Promise<string>} promise
  */
-function get(ressource) {
-    return axios.get(BASE_URL + ressource);
+async function get(ressource) {
+    const response = await fetch(BASE_URL + ressource);
+    return await response.json();
 }
 
 const service = {

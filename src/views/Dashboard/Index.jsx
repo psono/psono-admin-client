@@ -105,21 +105,21 @@ const Dashboard = ({ classes, state }) => {
                 ),
             ]);
 
-            convertTagsToReleases(serverResponse.data);
-            convertTagsToReleases(clientResponse.data);
-            convertTagsToReleases(adminClientResponse.data);
-            convertTagsToReleases(fileServerResponse.data);
+            convertTagsToReleases(serverResponse);
+            convertTagsToReleases(clientResponse);
+            convertTagsToReleases(adminClientResponse);
+            convertTagsToReleases(fileServerResponse);
 
             setDashboardData((prevData) => ({
                 ...prevData,
-                server_tags: serverResponse.data,
-                server_latest_version: serverResponse.data[0].name,
-                client_tags: clientResponse.data,
-                client_latest_version: clientResponse.data[0].name,
-                admin_client_tags: adminClientResponse.data,
-                admin_client_latest_version: adminClientResponse.data[0].name,
-                fileserver_tags: fileServerResponse.data,
-                fileserver_latest_version: fileServerResponse.data[0].name,
+                server_tags: serverResponse,
+                server_latest_version: serverResponse[0].name,
+                client_tags: clientResponse,
+                client_latest_version: clientResponse[0].name,
+                admin_client_tags: adminClientResponse,
+                admin_client_latest_version: adminClientResponse[0].name,
+                fileserver_tags: fileServerResponse,
+                fileserver_latest_version: fileServerResponse[0].name,
             }));
 
             const serverInfoResponse = await psono_server.admin_info(
