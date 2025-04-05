@@ -42,7 +42,7 @@ const Users = () => {
                 },
                 (response) => {
                     const { non_field_errors } = response.data;
-                    notification.error_send(non_field_errors[0]);
+                    notification.errorSend(non_field_errors[0]);
                 }
             );
     };
