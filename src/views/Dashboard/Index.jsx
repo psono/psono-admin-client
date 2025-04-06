@@ -4,7 +4,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
 import { ArrowUpward, ArrowDownward, AccessTime } from '@material-ui/icons';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import ChartistGraph from 'react-chartist';
 
 import {
@@ -106,21 +105,21 @@ const Dashboard = ({ classes, state }) => {
                 ),
             ]);
 
-            convertTagsToReleases(serverResponse.data);
-            convertTagsToReleases(clientResponse.data);
-            convertTagsToReleases(adminClientResponse.data);
-            convertTagsToReleases(fileServerResponse.data);
+            convertTagsToReleases(serverResponse);
+            convertTagsToReleases(clientResponse);
+            convertTagsToReleases(adminClientResponse);
+            convertTagsToReleases(fileServerResponse);
 
             setDashboardData((prevData) => ({
                 ...prevData,
-                server_tags: serverResponse.data,
-                server_latest_version: serverResponse.data[0].name,
-                client_tags: clientResponse.data,
-                client_latest_version: clientResponse.data[0].name,
-                admin_client_tags: adminClientResponse.data,
-                admin_client_latest_version: adminClientResponse.data[0].name,
-                fileserver_tags: fileServerResponse.data,
-                fileserver_latest_version: fileServerResponse.data[0].name,
+                server_tags: serverResponse,
+                server_latest_version: serverResponse[0].name,
+                client_tags: clientResponse,
+                client_latest_version: clientResponse[0].name,
+                admin_client_tags: adminClientResponse,
+                admin_client_latest_version: adminClientResponse[0].name,
+                fileserver_tags: fileServerResponse,
+                fileserver_latest_version: fileServerResponse[0].name,
             }));
 
             const serverInfoResponse = await psono_server.admin_info(
@@ -195,20 +194,21 @@ const Dashboard = ({ classes, state }) => {
                 registrations,
             }));
 
-            const clientVersionResponse = await psono_client.get_version();
+            const clientVersionResponse = await psono_client.getVersion();
             setDashboardData((prevData) => ({
                 ...prevData,
-                client_used_version:
-                    'v' + clientVersionResponse.data.split(' ')[0],
+                client_used_version: 'v' + clientVersionResponse.split(' ')[0],
             }));
 
-            const adminClientVersionResponse = await axios.get(
+            const adminClientVersionRequest = await fetch(
                 '/portal/VERSION.txt?t=' + new Date().getTime()
             );
+            const adminClientVersionResponse =
+                await adminClientVersionRequest.text();
             setDashboardData((prevData) => ({
                 ...prevData,
                 admin_client_used_version:
-                    'v' + adminClientVersionResponse.data.split(' ')[0],
+                    'v' + adminClientVersionResponse.split(' ')[0],
             }));
         };
 

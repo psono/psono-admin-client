@@ -2,18 +2,27 @@
  * Browser client service for the psono web client
  */
 
-import axios from 'axios';
 import action from '../actions/boundActionCreators';
 import helper from './helper';
+import notification from './notification';
 
 let _admin_client_config = {};
 
-function load_config() {
-    return axios
-        .get(process.env.PUBLIC_URL + '/config.json')
-        .then((response) => {
-            return response.data;
-        });
+function loadConfig() {
+    return fetch(process.env.PUBLIC_URL + '/config.json').then(
+        async (response) => {
+            let configJson;
+
+            try {
+                configJson = await response.json();
+            } catch (e) {
+                notification.errorSend('CONFIG_JSON_MALFORMED');
+                return {};
+            }
+
+            return configJson;
+        }
+    );
 }
 
 /**
@@ -44,7 +53,7 @@ function _get_config(config, key) {
 function get_config(key) {
     return new Promise((resolve, reject) => {
         if (Object.keys(_admin_client_config).length === 0) {
-            load_config().then((admin_client_config) => {
+            loadConfig().then((admin_client_config) => {
                 const parsed_url = helper.parse_url(window.location.href);
                 if (!admin_client_config.hasOwnProperty('base_url')) {
                     admin_client_config['base_url'] =
@@ -124,7 +133,6 @@ function get_oidc_return_to_url() {
 const service = {
     get_saml_return_to_url,
     get_oidc_return_to_url,
-    load_config,
     get_config,
 };
 

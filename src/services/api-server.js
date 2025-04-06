@@ -2,7 +2,6 @@
  * Server Service, implements the Psono API
  */
 
-import axios from 'axios';
 import store from './store';
 import cryptoLibrary from './cryptoLibrary';
 import user from './user';
@@ -11,13 +10,25 @@ import i18n from '../i18n';
 
 /**
  * Decrypts data with a secret
- * @param session_secret_key
+ * @param sessionSecretKey
  * @param data
  * @returns {*}
  */
-function decrypt_data(session_secret_key, data) {
+function decryptData(sessionSecretKey, data) {
     if (
-        session_secret_key &&
+        sessionSecretKey &&
+        data !== null &&
+        data.hasOwnProperty('data') &&
+        data.data !== '' &&
+        (!data.data.hasOwnProperty('text') ||
+            !data.data.hasOwnProperty('nonce'))
+    ) {
+        // we expected an encrypted response, yet the response was unencrypted, so we don't trust it.
+        console.log('UNENCRYPTED_RESPONSE_RECEIVED', data.data);
+        throw new Error('UNENCRYPTED_RESPONSE_RECEIVED');
+    }
+    if (
+        sessionSecretKey &&
         data !== null &&
         data.hasOwnProperty('data') &&
         data.data.hasOwnProperty('text') &&
@@ -27,7 +38,7 @@ function decrypt_data(session_secret_key, data) {
             cryptoLibrary.decrypt_data(
                 data.data.text,
                 data.data.nonce,
-                session_secret_key
+                sessionSecretKey
             )
         );
     }
@@ -35,83 +46,173 @@ function decrypt_data(session_secret_key, data) {
     return data;
 }
 
-/**
- * Helper function that handled the actual requests and encrypts them and decrypts the result (if applicable)
- *
- * @param {function} method
- * @param {string} endpoint
- * @param {object} data
- * @param {object} headers
- * @param {string} session_secret_key
- *
- * @returns {Promise<AxiosResponse<any>>}
- */
-function call(method, endpoint, data, headers, session_secret_key) {
-    const url = store.getState().server.url + endpoint;
+function _statelessCall(
+    method,
+    endpoint,
+    body,
+    headers,
+    sessionSecretKey,
+    serverUrl,
+    deviceFingerprint,
+    sideEffect
+) {
+    const url = serverUrl + endpoint;
 
-    if (session_secret_key && data !== null) {
-        data = cryptoLibrary.encryptData(
-            JSON.stringify(data),
-            session_secret_key
+    if (sessionSecretKey && body !== null) {
+        body = cryptoLibrary.encryptData(
+            JSON.stringify(body),
+            sessionSecretKey
         );
     }
 
     if (
-        session_secret_key &&
+        sessionSecretKey &&
         headers &&
         headers.hasOwnProperty('Authorization')
     ) {
         const validator = {
             request_time: new Date().toISOString(),
-            request_device_fingerprint: device.getDeviceFingerprint(),
+            request_device_fingerprint: deviceFingerprint,
         };
         headers['Authorization-Validator'] = JSON.stringify(
             cryptoLibrary.encryptData(
                 JSON.stringify(validator),
-                session_secret_key
+                sessionSecretKey
             )
         );
     }
 
-    return new Promise((resolve, reject) => {
-        axios({
-            method,
-            url,
-            data,
-            headers,
-        })
-            .then((data) => {
-                resolve(decrypt_data(session_secret_key, data));
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-                    if (error.response.status === 403 && user.isLoggedIn()) {
-                        // User did not have permission
-                        user.logout(i18n.t('PERMISSION_DENIED'));
-                    }
-                    if (error.response.status === 401 && user.isLoggedIn()) {
-                        // session expired, lets log the user out
-                        user.logout(i18n.t('SESSION_EXPIRED'));
-                    }
-                    console.log(error.response);
-                    return reject(
-                        decrypt_data(session_secret_key, error.response)
-                    );
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                    // http.ClientRequest in node.js
-                    console.log(error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
+    // TODO add later for audit log again
+    // let log_audit = storage.find_key('config','server_info')
+    // if (log_audit) {
+    //     log_audit = log_audit.value['log_audit']
+    // }
+    //
+    // if (sessionSecretKey && headers && headers.hasOwnProperty(AUDIT_LOG_HEADER) && log_audit) {
+    //     headers[AUDIT_LOG_HEADER] = JSON.stringify(cryptoLibrary.encryptData(JSON.stringify(headers[AUDIT_LOG_HEADER]), sessionSecretKey));
+    // } else if (headers && headers.hasOwnProperty(AUDIT_LOG_HEADER)) {
+    //     delete headers[AUDIT_LOG_HEADER];
+    // }
+
+    const req = {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers,
+        },
+    };
+
+    if (body != null) {
+        req['body'] = JSON.stringify(body);
+    }
+
+    return new Promise(async (resolve, reject) => {
+        let rawResponse;
+        try {
+            rawResponse = await fetch(url, req);
+        } catch (e) {
+            console.log(e);
+            reject({ errors: ['SERVER_OFFLINE'] });
+            return;
+        }
+
+        if (typeof sideEffect === 'function') {
+            sideEffect(rawResponse);
+        }
+
+        let data = await rawResponse.text();
+        if (data) {
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                // pass
+            }
+        }
+
+        let decryptedData;
+
+        // compatibility to old axios library
+        if (data) {
+            data = {
+                data,
+            };
+        }
+
+        if (!rawResponse.ok) {
+            console.log(rawResponse);
+            console.log(data);
+            if (rawResponse.status === 404) {
+                if (rawResponse.statusText) {
+                    return reject(rawResponse.statusText);
                 }
-                console.log(error.config);
-                reject({ errors: ['Server offline.'] });
-            });
+                return reject({ errors: ['RESOURCE_NOT_FOUND'] });
+            }
+
+            if (rawResponse.status >= 500) {
+                if (rawResponse.statusText) {
+                    return reject(rawResponse.statusText);
+                }
+                return reject({ errors: ['SERVER_OFFLINE'] });
+            }
+            // received error 400. We fall through here and check below with rawResponse.ok whether we have to return
+            // a success or failed response
+        }
+
+        try {
+            decryptedData = decryptData(
+                sessionSecretKey,
+                data,
+                url,
+                req.method
+            );
+        } catch (e) {
+            return reject({ errors: ['UNENCRYPTED_RESPONSE_RECEIVED'] });
+        }
+        if (rawResponse.ok) {
+            return resolve(decryptedData);
+        } else {
+            return reject(decryptedData);
+        }
     });
+}
+
+function call(method, endpoint, body, headers, sessionSecretKey) {
+    const serverUrl = store.getState().server.url;
+    const deviceFingerprint = device.getDeviceFingerprint();
+    const sideEffect = (rawResponse) => {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (rawResponse.status === 403 && user.isLoggedIn()) {
+            // User did not have permission
+            user.logout(i18n.t('PERMISSION_DENIED'));
+        }
+        if (rawResponse.status === 401 && user.isLoggedIn()) {
+            // session expired, lets log the user out
+            user.logout(i18n.t('SESSION_EXPIRED'));
+        }
+        if (rawResponse.status === 423 && user.isLoggedIn()) {
+            // server error, lets log the user out
+            user.logout(rawResponse.statusText);
+        }
+        if (rawResponse.status === 502 && user.isLoggedIn()) {
+            // server error, lets log the user out
+            user.logout(rawResponse.statusText);
+        }
+        if (rawResponse.status === 503 && user.isLoggedIn()) {
+            // server error, lets log the user out
+            user.logout(rawResponse.statusText);
+        }
+    };
+    return _statelessCall(
+        method,
+        endpoint,
+        body,
+        headers,
+        sessionSecretKey,
+        serverUrl,
+        deviceFingerprint,
+        sideEffect
+    );
 }
 
 /**

@@ -1,4 +1,5 @@
 {
+  "CONFIG_JSON_MALFORMED": "The json format of your the config.json seems to be malformed. Once fixed make sure to test in an private / incognito browser tab.",
   "DOWNLOAD": "Download",
   "RETRY": "Retry",
   "SERVER_UNSUPPORTED": "Server unsupported",

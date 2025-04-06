@@ -14,7 +14,7 @@ function infoSend(message) {
  *
  * @param {array} message The message to send
  */
-function error_send(message) {
+function errorSend(message) {
     action.sendNotification(message, 'danger');
 }
 
@@ -34,7 +34,7 @@ function set(messages) {
 
 const service = {
     infoSend,
-    error_send,
+    errorSend,
     reset,
     set,
 };
