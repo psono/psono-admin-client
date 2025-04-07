@@ -44,7 +44,7 @@ test-vulnerability-scan:
   stage: test
   image: psono-docker.jfrog.io/node:lts-alpine
   script:
-    - npm audit --audit-level high --json --only=prod
+    - npm audit --audit-level high --json --omit=dev
   allow_failure: true
 
 
