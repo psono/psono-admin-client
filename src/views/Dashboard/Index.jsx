@@ -27,6 +27,7 @@ import psono_server from '../../services/api-server';
 import psono_client from '../../services/api-client';
 import HealthCheck from './HealthCheck';
 import store from '../../services/store';
+import notification from '../../services/notification';
 
 const Chartist = require('chartist');
 
@@ -84,43 +85,49 @@ const Dashboard = ({ classes, state }) => {
         const fetchData = async () => {
             const serverType = state.server.type;
 
-            const serverChangelogUrl =
-                serverType === 'CE'
-                    ? '/gitlab.com/psono/psono-server/changelog.json'
-                    : '/gitlab.com/psono-enterprise/psono-server/changelog.json';
+            try {
+                const serverChangelogUrl =
+                    serverType === 'CE'
+                        ? '/gitlab.com/psono/psono-server/changelog.json'
+                        : '/gitlab.com/psono-enterprise/psono-server/changelog.json';
 
-            const [
-                serverResponse,
-                clientResponse,
-                adminClientResponse,
-                fileServerResponse,
-            ] = await Promise.all([
-                api_static.get(serverChangelogUrl),
-                api_static.get('/gitlab.com/psono/psono-client/changelog.json'),
-                api_static.get(
-                    '/gitlab.com/psono/psono-admin-client/changelog.json'
-                ),
-                api_static.get(
-                    '/gitlab.com/psono/psono-fileserver/changelog.json'
-                ),
-            ]);
+                const [
+                    serverResponse,
+                    clientResponse,
+                    adminClientResponse,
+                    fileServerResponse,
+                ] = await Promise.all([
+                    api_static.get(serverChangelogUrl),
+                    api_static.get(
+                        '/gitlab.com/psono/psono-client/changelog.json'
+                    ),
+                    api_static.get(
+                        '/gitlab.com/psono/psono-admin-client/changelog.json'
+                    ),
+                    api_static.get(
+                        '/gitlab.com/psono/psono-fileserver/changelog.json'
+                    ),
+                ]);
 
-            convertTagsToReleases(serverResponse);
-            convertTagsToReleases(clientResponse);
-            convertTagsToReleases(adminClientResponse);
-            convertTagsToReleases(fileServerResponse);
+                convertTagsToReleases(serverResponse);
+                convertTagsToReleases(clientResponse);
+                convertTagsToReleases(adminClientResponse);
+                convertTagsToReleases(fileServerResponse);
 
-            setDashboardData((prevData) => ({
-                ...prevData,
-                server_tags: serverResponse,
-                server_latest_version: serverResponse[0].name,
-                client_tags: clientResponse,
-                client_latest_version: clientResponse[0].name,
-                admin_client_tags: adminClientResponse,
-                admin_client_latest_version: adminClientResponse[0].name,
-                fileserver_tags: fileServerResponse,
-                fileserver_latest_version: fileServerResponse[0].name,
-            }));
+                setDashboardData((prevData) => ({
+                    ...prevData,
+                    server_tags: serverResponse,
+                    server_latest_version: serverResponse[0].name,
+                    client_tags: clientResponse,
+                    client_latest_version: clientResponse[0].name,
+                    admin_client_tags: adminClientResponse,
+                    admin_client_latest_version: adminClientResponse[0].name,
+                    fileserver_tags: fileServerResponse,
+                    fileserver_latest_version: fileServerResponse[0].name,
+                }));
+            } catch (e) {
+                console.log(e);
+            }
 
             const serverInfoResponse = await psono_server.admin_info(
                 store.getState().user.token,
