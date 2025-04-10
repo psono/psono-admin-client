@@ -21,7 +21,7 @@ function VersionCard(props) {
                 icon={Update}
                 iconColor="orange"
                 title={title}
-                description={t('LOADING')}
+                description={used_version || t('LOADING')}
                 statIcon={Update}
                 statIconColor="gray"
                 statText={t('WAITING_FOR_VERSION')}
