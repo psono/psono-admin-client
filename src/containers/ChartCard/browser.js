@@ -34,6 +34,9 @@ const BrowserChartCard = () => {
                     response.data.chrome,
                     response.data.safari,
                     response.data.vivaldi,
+                    response.data.edge || 0,
+                    response.data.brave || 0,
+                    response.data.opera || 0,
                 ];
 
                 const newLabels = [
@@ -42,6 +45,9 @@ const BrowserChartCard = () => {
                     'Chrome',
                     'Safari',
                     'Vivaldi',
+                    'Edge',
+                    'Brave',
+                    'Opera',
                 ];
 
                 function filterNotZero(entry, index) {

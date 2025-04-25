@@ -29,8 +29,6 @@ const DeviceChartCard = () => {
                 store.getState().user.session_secret_key
             )
             .then((response) => {
-                console.log(response.data);
-
                 const newSeries = [
                     response.data.other,
                     response.data.android,
@@ -38,6 +36,7 @@ const DeviceChartCard = () => {
                     response.data.linux,
                     response.data.mac,
                     response.data.windows,
+                    response.data.ipad || 0,
                 ];
 
                 const newLabels = [
@@ -47,6 +46,7 @@ const DeviceChartCard = () => {
                     'Linux',
                     'Mac',
                     'Windows',
+                    'iPad',
                 ];
 
                 function filterNotZero(entry, index) {

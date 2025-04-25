@@ -36,6 +36,7 @@ const OsChartCard = () => {
                     response.data.mac_os,
                     response.data.android,
                     response.data.ios,
+                    response.data.ipados || 0,
                 ];
 
                 const newLabels = [
@@ -45,6 +46,7 @@ const OsChartCard = () => {
                     'Mac OS',
                     'Android',
                     'iOS',
+                    'iPadOS',
                 ];
 
                 function filterNotZero(entry, index) {
