@@ -20,10 +20,10 @@ const HealthCheck = (props) => {
                 setHealthcheck(response.data);
             },
             (response) => {
-                //error occured, could mean unhealthy...
-                if (response.status === 400) {
-                    //unhealthy is reported as 400
+                if (response.hasOwnProperty('data')) {
                     setHealthcheck(response.data);
+                } else {
+                    console.log(response);
                 }
             }
         );
