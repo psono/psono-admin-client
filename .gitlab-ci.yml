@@ -56,7 +56,7 @@ test-upload-translations:
     - python3 var/upload_translations.py
     - python3 var/sync_translations.py
   only:
-    - develop@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
 
 build-docker-image:
   except:
@@ -86,7 +86,7 @@ build-docker-image:
     - docker buildx create builder --use
     - docker buildx build --platform linux/amd64,linux/arm64 -t $CONTAINER_TEST_IMAGE --push --pull .
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 
@@ -107,7 +107,7 @@ build-sbom:
     paths:
       - ./*
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 build-webclient:
@@ -135,7 +135,7 @@ build-webclient:
     paths:
     - ./*
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 release-artifacts:
@@ -196,8 +196,8 @@ release-docker:
     - echo $artifactory_credentials | docker login --username=gitlab --password-stdin psono-docker.jfrog.io
     - skopeo copy --all docker://$CONTAINER_TEST_IMAGE docker://$CONTAINER_LATEST_IMAGE_JFROG
   only:
-    - develop@psono/psono-admin-client
-    - master@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
+    - master@esaqa/psono/psono-admin-client
 
 deploy-docker:
   except:
@@ -268,7 +268,7 @@ deploy-nightlyartifacts:
     name: static.psono.com
     url: https://get.psono.com/psono/psono-admin-client/nightly/adminclient.zip
   only:
-    - develop@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
 
 
 deploy-releaseartifacts:
