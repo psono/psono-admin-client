@@ -29,7 +29,7 @@ const UserCard = (props) => {
         onDeleteEmergencyCodes,
         onDeleteLinkShares,
         onDeleteIvaltUser,
-        ivalts
+        ivalts,
     } = props;
 
     return (
@@ -188,7 +188,7 @@ const UserCard = (props) => {
                     ),
                 },
                 {
-                    tabName: t('GOOGLE_AUTHS'),
+                    tabName: t('TOTPS'),
                     tabIcon: Group,
                     tabContent: (
                         <CustomMaterialTable
@@ -201,7 +201,7 @@ const UserCard = (props) => {
                                 { field: 'active', title: t('ACTIVE') },
                             ]}
                             data={google_authenticators}
-                            title={t('GOOGLE_AUTHENTICATORS')}
+                            title={t('TOTPS')}
                             actions={[
                                 {
                                     tooltip: t('DELETE_GOOGLE_AUTH_S'),
@@ -230,7 +230,7 @@ const UserCard = (props) => {
                                 {
                                     field: 'create_date',
                                     title: t('CREATED_AT'),
-                                }
+                                },
                             ]}
                             data={ivalts}
                             title={t('IVALT')}

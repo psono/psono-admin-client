@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-echo "Clonging gitlab.com/psono/psono-admin-client.git"
-git clone https://gitlab.com/psono/psono-admin-client.git
+echo "Cloning gitlab.com/esaqa/psono/psono-admin-client.git"
+git clone https://gitlab.com/esaqa/psono/psono-admin-client.git
 cd psono-admin-client
 git branch --track develop origin/develop
 git fetch --all

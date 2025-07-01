@@ -267,9 +267,7 @@ const UsersView = (props) => {
                                             },
                                             {
                                                 field: 'google_authenticator_enabled',
-                                                title: t(
-                                                    'GOOGLE_AUTHENTICATOR'
-                                                ),
+                                                title: t('TOTP'),
                                             },
                                             {
                                                 field: 'duo_enabled',

@@ -1740,11 +1740,11 @@ function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
 }
 
 /**
- * DELETE: Deletes a google authenticator (for administrators)
+ * DELETE: Deletes a TOTP (for administrators)
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} google_authenticator_id The id of the google authenticator to delete
+ * @param {uuid} google_authenticator_id The id of the TOTP to delete
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
@@ -3005,7 +3005,7 @@ function search_user(token, session_secret_key, user_id, user_username) {
 }
 
 /**
- * Ajax PUT request with the token as authentication to generate a google authenticator
+ * Ajax PUT request with the token as authentication to generate a TOTP
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
@@ -3027,12 +3027,12 @@ function create_ga(token, session_secret_key, title) {
 }
 
 /**
- * Ajax GET request to get a list of all registered google authenticators
+ * Ajax GET request to get a list of all registered TOTPs
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
  *
- * @returns {Promise<AxiosResponse<any>>} Returns a promise with a list of all google authenticators
+ * @returns {Promise<AxiosResponse<any>>} Returns a promise with a list of all TOTPs
  */
 function read_ga(token, session_secret_key) {
     const endpoint = '/user/ga/';
@@ -3047,12 +3047,12 @@ function read_ga(token, session_secret_key) {
 }
 
 /**
- * Ajax POST request to activate registered Google Authenticator
+ * Ajax POST request to activate registered TOTP
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} google_authenticator_id The Google Authenticator id to activate
- * @param {string} google_authenticator_token One Google Authenticator Code
+ * @param {uuid} google_authenticator_id The TOTP id to activate
+ * @param {string} google_authenticator_token One TOTP Code
  *
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
@@ -3077,11 +3077,11 @@ function activate_ga(
 }
 
 /**
- * Ajax DELETE request to delete a given Google authenticator
+ * Ajax DELETE request to delete a given TOTP
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key
- * @param {uuid} google_authenticator_id The google authenticator id to delete
+ * @param {uuid} google_authenticator_id The TOTP id to delete
  *
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
@@ -3181,7 +3181,7 @@ function activate_duo(token, session_secret_key, duo_id, duo_token) {
 }
 
 /**
- * Ajax DELETE request to delete a given Google authenticator
+ * Ajax DELETE request to delete a given TOTP
  *
  * @param {string} token authentication token of the user, returned by authentication_login(email, authkey)
  * @param {string} session_secret_key The session secret key

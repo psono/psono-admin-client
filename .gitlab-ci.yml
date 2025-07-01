@@ -20,7 +20,7 @@ create-translations:
     - pip3 install requests openai==1.55.3
     - python3 var/translate.py
   only:
-    - master@psono/psono-admin-client
+    - master@esaqa/psono/psono-admin-client
 
 test-unittests:
   except:
@@ -56,7 +56,7 @@ test-upload-translations:
     - python3 var/upload_translations.py
     - python3 var/sync_translations.py
   only:
-    - develop@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
 
 build-docker-image:
   except:
@@ -86,7 +86,7 @@ build-docker-image:
     - docker buildx create builder --use
     - docker buildx build --platform linux/amd64,linux/arm64 -t $CONTAINER_TEST_IMAGE --push --pull .
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 
@@ -98,7 +98,7 @@ build-sbom:
   script:
     - sh ./var/build-ubuntu.sh
     - npx @cyclonedx/cyclonedx-npm > sbom.json
-    - mv /builds/psono/psono-admin-client/sbom.json ../
+    - mv /builds/esaqa/psono/psono-admin-client/sbom.json ../
     - rm -Rf *
     - rm -Rf .* 2> /dev/null || true
     - mv ../sbom.json ./
@@ -107,7 +107,7 @@ build-sbom:
     paths:
       - ./*
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 build-webclient:
@@ -123,10 +123,10 @@ build-webclient:
       if [ ! -z "$artifactory_credentials" ]; then
         curl -fL https://getcli.jfrog.io | sh &&
         ./jfrog config add rt-server-1 --artifactory-url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials --interactive=false &&
-        ./jfrog rt u --target-props="CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_COMMIT_SHA=$CI_COMMIT_SHA;CI_COMMIT_URL=$CI_PROJECT_URL/commit/$CI_COMMIT_SHA;CI_PROJECT_ID=$CI_PROJECT_ID;CI_PROJECT_NAME=$CI_PROJECT_NAME;CI_PROJECT_NAMESPACE=$CI_PROJECT_NAMESPACE;CI_PROJECT_URL=$CI_PROJECT_URL;CI_PIPELINE_ID=$CI_PIPELINE_ID;CI_PIPELINE_URL=$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID;CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_JOB_ID=$CI_JOB_ID;CI_JOB_URL=$CI_PROJECT_URL/-/jobs/$CI_JOB_ID;CI_JOB_NAME=$CI_JOB_NAME;CI_JOB_STAGE=$CI_JOB_STAGE;CI_RUNNER_ID=$CI_RUNNER_ID;GITLAB_USER_ID=$GITLAB_USER_ID;CI_SERVER_VERSION=$CI_SERVER_VERSION" /builds/psono/psono-admin-client/build/psono.webclient.zip psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip &&
+        ./jfrog rt u --target-props="CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_COMMIT_SHA=$CI_COMMIT_SHA;CI_COMMIT_URL=$CI_PROJECT_URL/commit/$CI_COMMIT_SHA;CI_PROJECT_ID=$CI_PROJECT_ID;CI_PROJECT_NAME=$CI_PROJECT_NAME;CI_PROJECT_NAMESPACE=$CI_PROJECT_NAMESPACE;CI_PROJECT_URL=$CI_PROJECT_URL;CI_PIPELINE_ID=$CI_PIPELINE_ID;CI_PIPELINE_URL=$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID;CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_JOB_ID=$CI_JOB_ID;CI_JOB_URL=$CI_PROJECT_URL/-/jobs/$CI_JOB_ID;CI_JOB_NAME=$CI_JOB_NAME;CI_JOB_STAGE=$CI_JOB_STAGE;CI_RUNNER_ID=$CI_RUNNER_ID;GITLAB_USER_ID=$GITLAB_USER_ID;CI_SERVER_VERSION=$CI_SERVER_VERSION" /builds/esaqa/psono/psono-admin-client/build/psono.webclient.zip psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip &&
         ./jfrog rt sp "psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip" "CI_COMMIT_TAG=$CI_COMMIT_TAG" || true
       fi
-    - mv /builds/psono/psono-admin-client/build ../
+    - mv /builds/esaqa/psono/psono-admin-client/build ../
     - rm -Rf *
     - rm -Rf .* 2> /dev/null || true
     - mv ../build/* ./
@@ -135,7 +135,7 @@ build-webclient:
     paths:
     - ./*
   only:
-    - branches@psono/psono-admin-client
+    - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
 
 release-artifacts:
@@ -196,8 +196,8 @@ release-docker:
     - echo $artifactory_credentials | docker login --username=gitlab --password-stdin psono-docker.jfrog.io
     - skopeo copy --all docker://$CONTAINER_TEST_IMAGE docker://$CONTAINER_LATEST_IMAGE_JFROG
   only:
-    - develop@psono/psono-admin-client
-    - master@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
+    - master@esaqa/psono/psono-admin-client
 
 deploy-docker:
   except:
@@ -268,7 +268,7 @@ deploy-nightlyartifacts:
     name: static.psono.com
     url: https://get.psono.com/psono/psono-admin-client/nightly/adminclient.zip
   only:
-    - develop@psono/psono-admin-client
+    - develop@esaqa/psono/psono-admin-client
 
 
 deploy-releaseartifacts:
