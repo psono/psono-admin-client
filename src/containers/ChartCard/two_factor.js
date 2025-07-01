@@ -12,7 +12,7 @@ const TwoFactorChartCard = () => {
     const [labels, setLabels] = useState([
         'None',
         'Yubikey',
-        'Google Authenticator',
+        'TOTP',
         'Duo',
         'WebAuthn',
     ]);
@@ -43,7 +43,7 @@ const TwoFactorChartCard = () => {
                 const newLabels = [
                     'None',
                     'Yubikey',
-                    'Google Authenticator',
+                    'TOTP',
                     'Duo',
                     'WebAuthn',
                 ];

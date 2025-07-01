@@ -226,7 +226,7 @@ const LoginForm = (props) => {
         );
     };
 
-    const verify_google_authenticator = () => {
+    const verify_totp = () => {
         props.ga_verify(googleAuthenticator).then(
             () => {
                 let requiredMultifactors = [...multifactors];
@@ -1300,7 +1300,7 @@ const LoginForm = (props) => {
                                             type="submit"
                                             fullWidth
                                         >
-                                            {t('GOOGLE_AUTHENTICATOR')}
+                                            {t('TOTP')}
                                         </Button>
                                     </GridItem>
                                 )}
@@ -1534,7 +1534,7 @@ const LoginForm = (props) => {
             <div className={classes.wrapper}>
                 <RegularCard
                     cardTitle={t('GOOGLE_AUTHENTICATION')}
-                    cardSubtitle={t('ENTER_GOOGLE_AUTHENTICATOR_BELOW')}
+                    cardSubtitle={t('ENTER_TOTP_BELOW')}
                     content={
                         <form
                             onSubmit={(e) => {
@@ -1545,7 +1545,7 @@ const LoginForm = (props) => {
                             <Grid container>
                                 <GridItem xs={12} sm={12} md={12}>
                                     <CustomInput
-                                        labelText={t('GOOGLE_AUTHENTICATOR')}
+                                        labelText={t('TOTP')}
                                         id="google_authenticator"
                                         formControlProps={{
                                             fullWidth: true,
@@ -1567,7 +1567,7 @@ const LoginForm = (props) => {
                                 >
                                     <Button
                                         color="primary"
-                                        onClick={verify_google_authenticator}
+                                        onClick={verify_totp}
                                         type="submit"
                                     >
                                         {t('SEND')}
