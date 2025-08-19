@@ -277,6 +277,10 @@ const UsersView = (props) => {
                                                 field: 'webauthn_enabled',
                                                 title: t('WEBAUTHN'),
                                             },
+                                            {
+                                                field: 'secret_count',
+                                                title: t('SECRETS'),
+                                            },
                                         ]}
                                         data={loadUsers}
                                         title={''}

@@ -348,6 +348,7 @@
   "AUTHENTICATION": "Authentication",
   "DUO_AUTHENTICATION": "Duo Authentication",
   "WEBAUTHN": "WebAuthn",
+  "SECRETS": "Secrets",
   "SOLVE_THE_WEBAUTHN_CHALLENGE": "Solve the WebAuthn challenge",
   "SOLVE_THE_WEBAUTHN_CHALLENGE_EXPLAINED": "You have configured WebAuthn as a second factor to protect your account. Your browser should now present you with a flow to solve this challenge and log in.",
   "WEBAUTHN_FIDO2_TOKEN_NOT_FOUND": "FIDO2 / WebAuthn token not found",
