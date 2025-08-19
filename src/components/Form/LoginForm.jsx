@@ -88,6 +88,10 @@ const LoginForm = (props) => {
     const [loginType, setLoginType] = useState('');
     const [serverCheck, setServerCheck] = useState({});
     const [adminClientConfig, setAdminClientConfig] = useState({});
+    const [
+        plainPasswordWhitelistedServerUrls,
+        setPlainPasswordWhitelistedServerUrls,
+    ] = useState([]);
     const [timer, setTimer] = useState(defaultTimer);
     const [ivaltLoading, setIvaltLoading] = useState(false);
     const errorsResponses = {
@@ -478,8 +482,16 @@ const LoginForm = (props) => {
                         setView(serverCheck.status);
                         setLoginLoading(false);
                     } else if (has_ldap_auth(serverCheck)) {
-                        setView('ask_send_plain');
-                        setLoginLoading(false);
+                        if (
+                            plainPasswordWhitelistedServerUrls.includes(
+                                serverCheck.server_url
+                            )
+                        ) {
+                            return nextLoginStep(true, serverCheck);
+                        } else {
+                            setView('ask_send_plain');
+                            setLoginLoading(false);
+                        }
                     } else {
                         return nextLoginStep(false, serverCheck);
                     }
@@ -585,8 +597,30 @@ const LoginForm = (props) => {
         } else if (loginType === 'OIDC') {
             initiateOidcLogin(providerId);
         } else if (has_ldap_auth(serverCheck)) {
-            setView('ask_send_plain');
-            setLoginLoading(false);
+            if (
+                plainPasswordWhitelistedServerUrls.includes(
+                    serverCheck.server_url
+                )
+            ) {
+                let passwordCopy = password;
+                setPassword('');
+
+                props
+                    .login(passwordCopy, serverCheck, true)
+                    .then(handleLogin, (result) => {
+                        setLoginLoading(false);
+                        if (result.hasOwnProperty('non_field_errors')) {
+                            let errors = result.non_field_errors;
+                            setErrors(errors);
+                        } else {
+                            console.log(result);
+                            setErrors([result]);
+                        }
+                    });
+            } else {
+                setView('ask_send_plain');
+                setLoginLoading(false);
+            }
         } else {
             let passwordCopy = password;
             setPassword('');
@@ -642,6 +676,23 @@ const LoginForm = (props) => {
     const onNewConfigLoaded = (adminClientConfig) => {
         setServer(server || adminClientConfig.backend_servers[0].url);
         setDomain(adminClientConfig.backend_servers[0].domain);
+
+        // Process autoapprove_plain_password configuration
+        const plainPasswordWhitelistedServerUrls =
+            adminClientConfig.backend_servers
+                .filter(function (server) {
+                    return (
+                        server.hasOwnProperty('autoapprove_plain_password') &&
+                        !!server['autoapprove_plain_password']
+                    );
+                })
+                .map(function (server) {
+                    return server['url'];
+                });
+
+        setPlainPasswordWhitelistedServerUrls(
+            plainPasswordWhitelistedServerUrls
+        );
         setAdminClientConfig(adminClientConfig);
         if (location.pathname.startsWith('/saml/token/')) {
             const samlTokenId = location.pathname.replace('/saml/token/', '');
