@@ -347,6 +347,10 @@ const PolicyEdit = (props) => {
             type: 'boolean',
         },
         {
+            key: 'COMPLIANCE_DISABLE_TOTP',
+            type: 'boolean',
+        },
+        {
             key: 'COMPLIANCE_DISABLE_EXPORT',
             type: 'boolean',
         },
