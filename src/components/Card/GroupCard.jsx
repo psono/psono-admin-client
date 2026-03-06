@@ -18,7 +18,7 @@ const GroupCard = ({
     onDeleteMemberships,
     onDeleteGroupShareRights,
     onCreateGroupShareRight,
-    isManaged,
+    hasGroupUserSecret,
 }) => {
     const { t } = useTranslation();
 
@@ -103,7 +103,7 @@ const GroupCard = ({
                             tooltip: t('CREATE_SHARE_RIGHT'),
                             isFreeAction: true,
                             icon: Add,
-                            hidden: !isManaged,
+                            hidden: !hasGroupUserSecret,
                             onClick: (evt) => onCreateGroupShareRight(),
                         },
                     ]}

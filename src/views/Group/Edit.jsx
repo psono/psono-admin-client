@@ -53,7 +53,6 @@ const GroupEdit = (props) => {
             )
             .then((response) => {
                 const group = response.data;
-
                 group.share_rights.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
                         'YYYY-MM-DD HH:mm:ss'
@@ -1231,7 +1230,7 @@ const GroupEdit = (props) => {
                             samlGroups={samlGroups}
                             scimGroups={scimGroups}
                             oidcGroups={oidcGroups}
-                            isManaged={group.is_managed}
+                            hasGroupUserSecret={!!group.own_group_user_secret}
                         />
                     </GridItem>
                 </Grid>

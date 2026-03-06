@@ -493,7 +493,7 @@ function login(password, serverInfo, sendPlain) {
     const trust_device = store.getState().user.trust_device;
     const server_public_key = serverInfo.info.public_key;
 
-    let authkey = cryptoLibrary.generate_authkey(username, password);
+    let authkey = cryptoLibrary.generateAuthkey(username, password);
 
     const session_keys = cryptoLibrary.generatePublicPrivateKeypair();
 

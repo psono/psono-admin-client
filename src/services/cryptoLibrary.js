@@ -111,7 +111,7 @@ function password_scrypt(password, salt) {
  *
  * @returns {string} auth_key Scrypt hex value of the password with the sha512 of lowercase email as salt
  */
-function generate_authkey(username, password) {
+function generateAuthkey(username, password) {
     if (!username || !username.includes('@')) {
         // security. Do not remove!
         throw new Error('Malformed username.');
@@ -127,7 +127,7 @@ function generate_authkey(username, password) {
  *
  * @returns {string} Returns secret key (hex encoded, 32 byte long)
  */
-function generate_secret_key() {
+function generateSecretKey() {
     return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
 }
 
@@ -240,7 +240,7 @@ function encryptData(data, secret_key) {
  *
  * @returns {string} The decrypted data
  */
-function decrypt_data(text, nonce, secret_key) {
+function decryptData(text, nonce, secret_key) {
     const k = converter.from_hex(secret_key);
     const n = converter.from_hex(nonce);
     const c = converter.from_hex(text);
@@ -420,13 +420,13 @@ const service = {
     randomBytes,
     sha256,
     sha512,
-    generate_authkey,
-    generate_secret_key,
+    generateAuthkey,
+    generateSecretKey,
     generatePublicPrivateKeypair,
     encrypt_secret,
     decryptSecret,
     encryptData,
-    decrypt_data,
+    decryptData,
     encryptDataPublicKey,
     decryptDataPublicKey,
     generateUserSauce,
