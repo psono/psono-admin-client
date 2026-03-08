@@ -2,11 +2,11 @@
  * Server Service, implements the Psono API
  */
 
-import store from './store';
-import cryptoLibrary from './cryptoLibrary';
-import user from './user';
-import device from './device';
-import i18n from '../i18n';
+import store from "./store";
+import cryptoLibrary from "./cryptoLibrary";
+import user from "./user";
+import device from "./device";
+import i18n from "../i18n";
 
 /**
  * Decrypts data with a secret
@@ -15,204 +15,188 @@ import i18n from '../i18n';
  * @returns {*}
  */
 function decryptData(sessionSecretKey, data) {
-    if (
-        sessionSecretKey &&
-        data !== null &&
-        data.hasOwnProperty('data') &&
-        data.data !== '' &&
-        (!data.data.hasOwnProperty('text') ||
-            !data.data.hasOwnProperty('nonce'))
-    ) {
-        // we expected an encrypted response, yet the response was unencrypted, so we don't trust it.
-        console.log('UNENCRYPTED_RESPONSE_RECEIVED', data.data);
-        throw new Error('UNENCRYPTED_RESPONSE_RECEIVED');
-    }
-    if (
-        sessionSecretKey &&
-        data !== null &&
-        data.hasOwnProperty('data') &&
-        data.data.hasOwnProperty('text') &&
-        data.data.hasOwnProperty('nonce')
-    ) {
-        data.data = JSON.parse(
-            cryptoLibrary.decryptData(
-                data.data.text,
-                data.data.nonce,
-                sessionSecretKey
-            )
-        );
-    }
+	if (
+		sessionSecretKey &&
+		data !== null &&
+		data.hasOwnProperty("data") &&
+		data.data !== "" &&
+		(!data.data.hasOwnProperty("text") || !data.data.hasOwnProperty("nonce"))
+	) {
+		// we expected an encrypted response, yet the response was unencrypted, so we don't trust it.
+		console.log("UNENCRYPTED_RESPONSE_RECEIVED", data.data);
+		throw new Error("UNENCRYPTED_RESPONSE_RECEIVED");
+	}
+	if (
+		sessionSecretKey &&
+		data !== null &&
+		data.hasOwnProperty("data") &&
+		data.data.hasOwnProperty("text") &&
+		data.data.hasOwnProperty("nonce")
+	) {
+		data.data = JSON.parse(
+			cryptoLibrary.decryptData(
+				data.data.text,
+				data.data.nonce,
+				sessionSecretKey,
+			),
+		);
+	}
 
-    return data;
+	return data;
 }
 
 function _statelessCall(
-    method,
-    endpoint,
-    body,
-    headers,
-    sessionSecretKey,
-    serverUrl,
-    deviceFingerprint,
-    sideEffect
+	method,
+	endpoint,
+	body,
+	headers,
+	sessionSecretKey,
+	serverUrl,
+	deviceFingerprint,
+	sideEffect,
 ) {
-    const url = serverUrl + endpoint;
+	const url = serverUrl + endpoint;
 
-    if (sessionSecretKey && body !== null) {
-        body = cryptoLibrary.encryptData(
-            JSON.stringify(body),
-            sessionSecretKey
-        );
-    }
+	if (sessionSecretKey && body !== null) {
+		body = cryptoLibrary.encryptData(JSON.stringify(body), sessionSecretKey);
+	}
 
-    if (
-        sessionSecretKey &&
-        headers &&
-        headers.hasOwnProperty('Authorization')
-    ) {
-        const validator = {
-            request_time: new Date().toISOString(),
-            request_device_fingerprint: deviceFingerprint,
-        };
-        headers['Authorization-Validator'] = JSON.stringify(
-            cryptoLibrary.encryptData(
-                JSON.stringify(validator),
-                sessionSecretKey
-            )
-        );
-    }
+	if (sessionSecretKey && headers && headers.hasOwnProperty("Authorization")) {
+		const validator = {
+			request_time: new Date().toISOString(),
+			request_device_fingerprint: deviceFingerprint,
+		};
+		headers["Authorization-Validator"] = JSON.stringify(
+			cryptoLibrary.encryptData(JSON.stringify(validator), sessionSecretKey),
+		);
+	}
 
-    // TODO add later for audit log again
-    // let log_audit = storage.find_key('config','server_info')
-    // if (log_audit) {
-    //     log_audit = log_audit.value['log_audit']
-    // }
-    //
-    // if (sessionSecretKey && headers && headers.hasOwnProperty(AUDIT_LOG_HEADER) && log_audit) {
-    //     headers[AUDIT_LOG_HEADER] = JSON.stringify(cryptoLibrary.encryptData(JSON.stringify(headers[AUDIT_LOG_HEADER]), sessionSecretKey));
-    // } else if (headers && headers.hasOwnProperty(AUDIT_LOG_HEADER)) {
-    //     delete headers[AUDIT_LOG_HEADER];
-    // }
+	// TODO add later for audit log again
+	// let log_audit = storage.find_key('config','server_info')
+	// if (log_audit) {
+	//     log_audit = log_audit.value['log_audit']
+	// }
+	//
+	// if (sessionSecretKey && headers && headers.hasOwnProperty(AUDIT_LOG_HEADER) && log_audit) {
+	//     headers[AUDIT_LOG_HEADER] = JSON.stringify(cryptoLibrary.encryptData(JSON.stringify(headers[AUDIT_LOG_HEADER]), sessionSecretKey));
+	// } else if (headers && headers.hasOwnProperty(AUDIT_LOG_HEADER)) {
+	//     delete headers[AUDIT_LOG_HEADER];
+	// }
 
-    const req = {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            ...headers,
-        },
-    };
+	const req = {
+		method,
+		headers: {
+			"Content-Type": "application/json",
+			...headers,
+		},
+	};
 
-    if (body != null) {
-        req['body'] = JSON.stringify(body);
-    }
+	if (body != null) {
+		req["body"] = JSON.stringify(body);
+	}
 
-    return new Promise(async (resolve, reject) => {
-        let rawResponse;
-        try {
-            rawResponse = await fetch(url, req);
-        } catch (e) {
-            console.log(e);
-            reject({ errors: ['SERVER_OFFLINE'] });
-            return;
-        }
+	return new Promise(async (resolve, reject) => {
+		let rawResponse;
+		try {
+			rawResponse = await fetch(url, req);
+		} catch (e) {
+			console.log(e);
+			reject({ errors: ["SERVER_OFFLINE"] });
+			return;
+		}
 
-        if (typeof sideEffect === 'function') {
-            sideEffect(rawResponse);
-        }
+		if (typeof sideEffect === "function") {
+			sideEffect(rawResponse);
+		}
 
-        let data = await rawResponse.text();
-        if (data) {
-            try {
-                data = JSON.parse(data);
-            } catch (e) {
-                // pass
-            }
-        }
+		let data = await rawResponse.text();
+		if (data) {
+			try {
+				data = JSON.parse(data);
+			} catch (e) {
+				// pass
+			}
+		}
 
-        let decryptedData;
+		let decryptedData;
 
-        // compatibility to old axios library
-        if (data) {
-            data = {
-                data,
-            };
-        }
+		// compatibility to old axios library
+		if (data) {
+			data = {
+				data,
+			};
+		}
 
-        if (!rawResponse.ok) {
-            console.log(rawResponse);
-            console.log(data);
-            if (rawResponse.status === 404) {
-                if (rawResponse.statusText) {
-                    return reject(rawResponse.statusText);
-                }
-                return reject({ errors: ['RESOURCE_NOT_FOUND'] });
-            }
+		if (!rawResponse.ok) {
+			console.log(rawResponse);
+			console.log(data);
+			if (rawResponse.status === 404) {
+				if (rawResponse.statusText) {
+					return reject(rawResponse.statusText);
+				}
+				return reject({ errors: ["RESOURCE_NOT_FOUND"] });
+			}
 
-            if (rawResponse.status >= 500) {
-                if (rawResponse.statusText) {
-                    return reject(rawResponse.statusText);
-                }
-                return reject({ errors: ['SERVER_OFFLINE'] });
-            }
-            // received error 400. We fall through here and check below with rawResponse.ok whether we have to return
-            // a success or failed response
-        }
+			if (rawResponse.status >= 500) {
+				if (rawResponse.statusText) {
+					return reject(rawResponse.statusText);
+				}
+				return reject({ errors: ["SERVER_OFFLINE"] });
+			}
+			// received error 400. We fall through here and check below with rawResponse.ok whether we have to return
+			// a success or failed response
+		}
 
-        try {
-            decryptedData = decryptData(
-                sessionSecretKey,
-                data,
-                url,
-                req.method
-            );
-        } catch (e) {
-            return reject({ errors: ['UNENCRYPTED_RESPONSE_RECEIVED'] });
-        }
-        if (rawResponse.ok) {
-            return resolve(decryptedData);
-        } else {
-            return reject(decryptedData);
-        }
-    });
+		try {
+			decryptedData = decryptData(sessionSecretKey, data, url, req.method);
+		} catch (e) {
+			return reject({ errors: ["UNENCRYPTED_RESPONSE_RECEIVED"] });
+		}
+		if (rawResponse.ok) {
+			return resolve(decryptedData);
+		} else {
+			return reject(decryptedData);
+		}
+	});
 }
 
 function call(method, endpoint, body, headers, sessionSecretKey) {
-    const serverUrl = store.getState().server.url;
-    const deviceFingerprint = device.getDeviceFingerprint();
-    const sideEffect = (rawResponse) => {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        if (rawResponse.status === 403 && user.isLoggedIn()) {
-            // User did not have permission
-            user.logout(i18n.t('PERMISSION_DENIED'));
-        }
-        if (rawResponse.status === 401 && user.isLoggedIn()) {
-            // session expired, lets log the user out
-            user.logout(i18n.t('SESSION_EXPIRED'));
-        }
-        if (rawResponse.status === 423 && user.isLoggedIn()) {
-            // server error, lets log the user out
-            user.logout(rawResponse.statusText);
-        }
-        if (rawResponse.status === 502 && user.isLoggedIn()) {
-            // server error, lets log the user out
-            user.logout(rawResponse.statusText);
-        }
-        if (rawResponse.status === 503 && user.isLoggedIn()) {
-            // server error, lets log the user out
-            user.logout(rawResponse.statusText);
-        }
-    };
-    return _statelessCall(
-        method,
-        endpoint,
-        body,
-        headers,
-        sessionSecretKey,
-        serverUrl,
-        deviceFingerprint,
-        sideEffect
-    );
+	const serverUrl = store.getState().server.url;
+	const deviceFingerprint = device.getDeviceFingerprint();
+	const sideEffect = (rawResponse) => {
+		// The request was made and the server responded with a status code
+		// that falls out of the range of 2xx
+		if (rawResponse.status === 403 && user.isLoggedIn()) {
+			// User did not have permission
+			user.logout(i18n.t("PERMISSION_DENIED"));
+		}
+		if (rawResponse.status === 401 && user.isLoggedIn()) {
+			// session expired, lets log the user out
+			user.logout(i18n.t("SESSION_EXPIRED"));
+		}
+		if (rawResponse.status === 423 && user.isLoggedIn()) {
+			// server error, lets log the user out
+			user.logout(rawResponse.statusText);
+		}
+		if (rawResponse.status === 502 && user.isLoggedIn()) {
+			// server error, lets log the user out
+			user.logout(rawResponse.statusText);
+		}
+		if (rawResponse.status === 503 && user.isLoggedIn()) {
+			// server error, lets log the user out
+			user.logout(rawResponse.statusText);
+		}
+	};
+	return _statelessCall(
+		method,
+		endpoint,
+		body,
+		headers,
+		sessionSecretKey,
+		serverUrl,
+		deviceFingerprint,
+		sideEffect,
+	);
 }
 
 /**
@@ -221,12 +205,12 @@ function call(method, endpoint, body, headers, sessionSecretKey) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function info() {
-    const endpoint = '/info/';
-    const method = 'GET';
-    const data = null;
-    const headers = null;
+	const endpoint = "/info/";
+	const method = "GET";
+	const data = null;
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -235,12 +219,12 @@ function info() {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function healthcheck() {
-    const endpoint = '/healthcheck/';
-    const method = 'GET';
-    const data = null;
-    const headers = null;
+	const endpoint = "/healthcheck/";
+	const method = "GET";
+	const data = null;
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -252,15 +236,15 @@ function healthcheck() {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_stats_browser(token, session_secret_key) {
-    const endpoint = '/admin/stats/browser/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/stats/browser/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -272,15 +256,15 @@ function admin_stats_browser(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_stats_device(token, session_secret_key) {
-    const endpoint = '/admin/stats/device/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/stats/device/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -292,15 +276,15 @@ function admin_stats_device(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_stats_os(token, session_secret_key) {
-    const endpoint = '/admin/stats/os/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/stats/os/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -312,15 +296,15 @@ function admin_stats_os(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_stats_two_factor(token, session_secret_key) {
-    const endpoint = '/admin/stats/two-factor/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/stats/two-factor/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -332,15 +316,15 @@ function admin_stats_two_factor(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_info(token, session_secret_key) {
-    const endpoint = '/admin/info/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/info/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -354,26 +338,26 @@ function admin_info(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_user(token, session_secret_key, user_id, params) {
-    const endpoint = '/admin/user/' + (!user_id ? '' : user_id + '/');
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/user/" + (!user_id ? "" : user_id + "/");
+	const method = "GET";
+	const data = null;
 
-    const queryParams =
-        !params || Object.keys(params).length === 0
-            ? ''
-            : '?' + new URLSearchParams(params).toString();
+	const queryParams =
+		!params || Object.keys(params).length === 0
+			? ""
+			: "?" + new URLSearchParams(params).toString();
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(
-        method,
-        endpoint + queryParams,
-        data,
-        headers,
-        session_secret_key
-    );
+	return call(
+		method,
+		endpoint + queryParams,
+		data,
+		headers,
+		session_secret_key,
+	);
 }
 
 /**
@@ -386,26 +370,26 @@ function admin_user(token, session_secret_key, user_id, params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_session(token, session_secret_key, params) {
-    const endpoint = '/admin/session/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/session/";
+	const method = "GET";
+	const data = null;
 
-    const queryParams =
-        !params || Object.keys(params).length === 0
-            ? ''
-            : '?' + new URLSearchParams(params).toString();
+	const queryParams =
+		!params || Object.keys(params).length === 0
+			? ""
+			: "?" + new URLSearchParams(params).toString();
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(
-        method,
-        endpoint + queryParams,
-        data,
-        headers,
-        session_secret_key
-    );
+	return call(
+		method,
+		endpoint + queryParams,
+		data,
+		headers,
+		session_secret_key,
+	);
 }
 
 /**
@@ -419,26 +403,26 @@ function admin_session(token, session_secret_key, params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_group(token, session_secret_key, group_id, params) {
-    const endpoint = '/admin/group/' + (!group_id ? '' : group_id + '/');
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/group/" + (!group_id ? "" : group_id + "/");
+	const method = "GET";
+	const data = null;
 
-    const queryParams =
-        !params || Object.keys(params).length === 0
-            ? ''
-            : '?' + new URLSearchParams(params).toString();
+	const queryParams =
+		!params || Object.keys(params).length === 0
+			? ""
+			: "?" + new URLSearchParams(params).toString();
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(
-        method,
-        endpoint + queryParams,
-        data,
-        headers,
-        session_secret_key
-    );
+	return call(
+		method,
+		endpoint + queryParams,
+		data,
+		headers,
+		session_secret_key,
+	);
 }
 
 /**
@@ -453,24 +437,24 @@ function admin_group(token, session_secret_key, group_id, params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_update_group(
-    token,
-    session_secret_key,
-    group_id,
-    name,
-    forcedMembership
+	token,
+	session_secret_key,
+	group_id,
+	name,
+	forcedMembership,
 ) {
-    const endpoint = '/admin/group/';
-    const method = 'PUT';
-    const data = {
-        group_id: group_id,
-        name: name,
-        forced_membership: forcedMembership,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group/";
+	const method = "PUT";
+	const data = {
+		group_id: group_id,
+		name: name,
+		forced_membership: forcedMembership,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -483,17 +467,17 @@ function admin_update_group(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_security_report(token, session_secret_key, security_report_id) {
-    const endpoint =
-        '/admin/security-report/' +
-        (!security_report_id ? '' : security_report_id + '/');
-    const method = 'GET';
-    const data = null;
+	const endpoint =
+		"/admin/security-report/" +
+		(!security_report_id ? "" : security_report_id + "/");
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -505,15 +489,15 @@ function admin_security_report(token, session_secret_key, security_report_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_user(token, session_secret_key) {
-    const endpoint = '/admin/ldap/user/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/ldap/user/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -525,15 +509,15 @@ function admin_ldap_user(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_group(token, session_secret_key) {
-    const endpoint = '/admin/ldap/group/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/ldap/group/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -547,22 +531,22 @@ function admin_ldap_group(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_create_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    ldap_group_id
+	token,
+	session_secret_key,
+	group_id,
+	ldap_group_id,
 ) {
-    const endpoint = '/admin/ldap/group/map/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        ldap_group_id: ldap_group_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/ldap/group/map/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		ldap_group_id: ldap_group_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -577,24 +561,24 @@ function admin_ldap_create_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_update_group_map(
-    token,
-    session_secret_key,
-    ldap_group_map_id,
-    group_admin,
-    share_admin
+	token,
+	session_secret_key,
+	ldap_group_map_id,
+	group_admin,
+	share_admin,
 ) {
-    const endpoint = '/admin/ldap/group/map/';
-    const method = 'PUT';
-    const data = {
-        ldap_group_map_id: ldap_group_map_id,
-        group_admin: group_admin,
-        share_admin: share_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/ldap/group/map/";
+	const method = "PUT";
+	const data = {
+		ldap_group_map_id: ldap_group_map_id,
+		group_admin: group_admin,
+		share_admin: share_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -608,23 +592,23 @@ function admin_ldap_update_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_delete_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    ldap_group_id
+	token,
+	session_secret_key,
+	group_id,
+	ldap_group_id,
 ) {
-    const endpoint = '/admin/ldap/group/map/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-        ldap_group_id: ldap_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/ldap/group/map/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+		ldap_group_id: ldap_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -636,15 +620,15 @@ function admin_ldap_delete_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_ldap_group_sync(token, session_secret_key) {
-    const endpoint = '/admin/ldap/group/';
-    const method = 'POST';
-    const data = null;
+	const endpoint = "/admin/ldap/group/";
+	const method = "POST";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -656,15 +640,15 @@ function admin_ldap_group_sync(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_scim_group(token, session_secret_key) {
-    const endpoint = '/admin/scim/group/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/scim/group/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -677,17 +661,17 @@ function admin_scim_group(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_scim_group(token, session_secret_key, scim_group_id) {
-    const endpoint = '/admin/scim/group/';
-    const method = 'DELETE';
-    const data = {
-        scim_group_id: scim_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/scim/group/";
+	const method = "DELETE";
+	const data = {
+		scim_group_id: scim_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -699,15 +683,15 @@ function admin_delete_scim_group(token, session_secret_key, scim_group_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_saml_group(token, session_secret_key) {
-    const endpoint = '/admin/saml/group/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/saml/group/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -720,17 +704,17 @@ function admin_saml_group(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
-    const endpoint = '/admin/saml/group/';
-    const method = 'DELETE';
-    const data = {
-        saml_group_id: saml_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/saml/group/";
+	const method = "DELETE";
+	const data = {
+		saml_group_id: saml_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -743,17 +727,17 @@ function admin_delete_saml_group(token, session_secret_key, saml_group_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
-    const endpoint = '/admin/oidc/group/';
-    const method = 'DELETE';
-    const data = {
-        oidc_group_id: oidc_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/oidc/group/";
+	const method = "DELETE";
+	const data = {
+		oidc_group_id: oidc_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -766,17 +750,17 @@ function admin_delete_oidc_group(token, session_secret_key, oidc_group_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
-    const endpoint = '/admin/ldap/group/';
-    const method = 'DELETE';
-    const data = {
-        ldap_group_id: ldap_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/ldap/group/";
+	const method = "DELETE";
+	const data = {
+		ldap_group_id: ldap_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -788,15 +772,15 @@ function admin_delete_ldap_group(token, session_secret_key, ldap_group_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_saml_group_sync(token, session_secret_key) {
-    const endpoint = '/admin/saml/group/';
-    const method = 'POST';
-    const data = null;
+	const endpoint = "/admin/saml/group/";
+	const method = "POST";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -810,22 +794,22 @@ function admin_saml_group_sync(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_scim_create_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    scim_group_id
+	token,
+	session_secret_key,
+	group_id,
+	scim_group_id,
 ) {
-    const endpoint = '/admin/scim/group/map/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        scim_group_id: scim_group_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/scim/group/map/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		scim_group_id: scim_group_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -840,24 +824,24 @@ function admin_scim_create_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_scim_update_group_map(
-    token,
-    session_secret_key,
-    scim_group_map_id,
-    group_admin,
-    share_admin
+	token,
+	session_secret_key,
+	scim_group_map_id,
+	group_admin,
+	share_admin,
 ) {
-    const endpoint = '/admin/scim/group/map/';
-    const method = 'PUT';
-    const data = {
-        scim_group_map_id: scim_group_map_id,
-        group_admin: group_admin,
-        share_admin: share_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/scim/group/map/";
+	const method = "PUT";
+	const data = {
+		scim_group_map_id: scim_group_map_id,
+		group_admin: group_admin,
+		share_admin: share_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -871,23 +855,23 @@ function admin_scim_update_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_scim_delete_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    scim_group_id
+	token,
+	session_secret_key,
+	group_id,
+	scim_group_id,
 ) {
-    const endpoint = '/admin/scim/group/map/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-        scim_group_id: scim_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/scim/group/map/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+		scim_group_id: scim_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -901,22 +885,22 @@ function admin_scim_delete_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_saml_create_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    saml_group_id
+	token,
+	session_secret_key,
+	group_id,
+	saml_group_id,
 ) {
-    const endpoint = '/admin/saml/group/map/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        saml_group_id: saml_group_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/saml/group/map/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		saml_group_id: saml_group_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -931,24 +915,24 @@ function admin_saml_create_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_saml_update_group_map(
-    token,
-    session_secret_key,
-    saml_group_map_id,
-    group_admin,
-    share_admin
+	token,
+	session_secret_key,
+	saml_group_map_id,
+	group_admin,
+	share_admin,
 ) {
-    const endpoint = '/admin/saml/group/map/';
-    const method = 'PUT';
-    const data = {
-        saml_group_map_id: saml_group_map_id,
-        group_admin: group_admin,
-        share_admin: share_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/saml/group/map/";
+	const method = "PUT";
+	const data = {
+		saml_group_map_id: saml_group_map_id,
+		group_admin: group_admin,
+		share_admin: share_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -962,23 +946,23 @@ function admin_saml_update_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_saml_delete_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    saml_group_id
+	token,
+	session_secret_key,
+	group_id,
+	saml_group_id,
 ) {
-    const endpoint = '/admin/saml/group/map/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-        saml_group_id: saml_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/saml/group/map/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+		saml_group_id: saml_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -990,15 +974,15 @@ function admin_saml_delete_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_oidc_group(token, session_secret_key) {
-    const endpoint = '/admin/oidc/group/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/oidc/group/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1012,22 +996,22 @@ function admin_oidc_group(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_oidc_create_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    oidc_group_id
+	token,
+	session_secret_key,
+	group_id,
+	oidc_group_id,
 ) {
-    const endpoint = '/admin/oidc/group/map/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        oidc_group_id: oidc_group_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/oidc/group/map/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		oidc_group_id: oidc_group_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1042,24 +1026,24 @@ function admin_oidc_create_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_oidc_update_group_map(
-    token,
-    session_secret_key,
-    oidc_group_map_id,
-    group_admin,
-    share_admin
+	token,
+	session_secret_key,
+	oidc_group_map_id,
+	group_admin,
+	share_admin,
 ) {
-    const endpoint = '/admin/oidc/group/map/';
-    const method = 'PUT';
-    const data = {
-        oidc_group_map_id: oidc_group_map_id,
-        group_admin: group_admin,
-        share_admin: share_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/oidc/group/map/";
+	const method = "PUT";
+	const data = {
+		oidc_group_map_id: oidc_group_map_id,
+		group_admin: group_admin,
+		share_admin: share_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1073,23 +1057,23 @@ function admin_oidc_update_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_oidc_delete_group_map(
-    token,
-    session_secret_key,
-    group_id,
-    oidc_group_id
+	token,
+	session_secret_key,
+	group_id,
+	oidc_group_id,
 ) {
-    const endpoint = '/admin/oidc/group/map/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-        oidc_group_id: oidc_group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/oidc/group/map/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+		oidc_group_id: oidc_group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1104,24 +1088,24 @@ function admin_oidc_delete_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_create_user(
-    token,
-    session_secret_key,
-    username,
-    password,
-    email
+	token,
+	session_secret_key,
+	username,
+	password,
+	email,
 ) {
-    const endpoint = '/admin/user/';
-    const method = 'POST';
-    const data = {
-        username: username,
-        email: email,
-        password: password,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/user/";
+	const method = "POST";
+	const data = {
+		username: username,
+		email: email,
+		password: password,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1134,17 +1118,17 @@ function admin_create_user(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_user(token, session_secret_key, user_id) {
-    const endpoint = '/admin/user/';
-    const method = 'DELETE';
-    const data = {
-        user_id: user_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/user/";
+	const method = "DELETE";
+	const data = {
+		user_id: user_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1157,17 +1141,17 @@ function admin_delete_user(token, session_secret_key, user_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_wipe_user(token, session_secret_key, user_id) {
-    const endpoint = '/admin/user-wipe/';
-    const method = 'POST';
-    const data = {
-        user_id: user_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/user-wipe/";
+	const method = "POST";
+	const data = {
+		user_id: user_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1180,17 +1164,17 @@ function admin_wipe_user(token, session_secret_key, user_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_session(token, session_secret_key, session_id) {
-    const endpoint = '/admin/session/';
-    const method = 'DELETE';
-    const data = {
-        session_id: session_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/session/";
+	const method = "DELETE";
+	const data = {
+		session_id: session_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1204,26 +1188,26 @@ function admin_delete_session(token, session_secret_key, session_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_policy(token, session_secret_key, policy_id, params) {
-    const endpoint = '/admin/policy/' + (!policy_id ? '' : policy_id + '/');
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/admin/policy/" + (!policy_id ? "" : policy_id + "/");
+	const method = "GET";
+	const data = null;
 
-    const queryParams =
-        !params || Object.keys(params).length === 0
-            ? ''
-            : '?' + new URLSearchParams(params).toString();
+	const queryParams =
+		!params || Object.keys(params).length === 0
+			? ""
+			: "?" + new URLSearchParams(params).toString();
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(
-        method,
-        endpoint + queryParams,
-        data,
-        headers,
-        session_secret_key
-    );
+	return call(
+		method,
+		endpoint + queryParams,
+		data,
+		headers,
+		session_secret_key,
+	);
 }
 
 /**
@@ -1239,24 +1223,24 @@ function admin_policy(token, session_secret_key, policy_id, params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_create_policy(
-    token,
-    session_secret_key,
-    title,
-    config,
-    priority
+	token,
+	session_secret_key,
+	title,
+	config,
+	priority,
 ) {
-    const endpoint = '/admin/policy/';
-    const method = 'POST';
-    const data = {
-        title: title,
-        config: config,
-        priority: priority,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/";
+	const method = "POST";
+	const data = {
+		title: title,
+		config: config,
+		priority: priority,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1271,22 +1255,22 @@ function admin_create_policy(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_policy_create_group_map(
-    token,
-    session_secret_key,
-    policy_id,
-    group_id
+	token,
+	session_secret_key,
+	policy_id,
+	group_id,
 ) {
-    const endpoint = '/admin/policy/group/map/';
-    const method = 'POST';
-    const data = {
-        policy_id: policy_id,
-        group_id: group_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/group/map/";
+	const method = "POST";
+	const data = {
+		policy_id: policy_id,
+		group_id: group_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1300,23 +1284,23 @@ function admin_policy_create_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_policy_delete_group_map(
-    token,
-    session_secret_key,
-    policy_id,
-    group_id
+	token,
+	session_secret_key,
+	policy_id,
+	group_id,
 ) {
-    const endpoint = '/admin/policy/group/map/';
-    const method = 'DELETE';
-    const data = {
-        policy_id: policy_id,
-        group_id: group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/group/map/";
+	const method = "DELETE";
+	const data = {
+		policy_id: policy_id,
+		group_id: group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1331,22 +1315,22 @@ function admin_policy_delete_group_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_policy_create_user_map(
-    token,
-    session_secret_key,
-    policy_id,
-    user_id
+	token,
+	session_secret_key,
+	policy_id,
+	user_id,
 ) {
-    const endpoint = '/admin/policy/user/map/';
-    const method = 'POST';
-    const data = {
-        policy_id: policy_id,
-        user_id: user_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/user/map/";
+	const method = "POST";
+	const data = {
+		policy_id: policy_id,
+		user_id: user_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1360,23 +1344,23 @@ function admin_policy_create_user_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_policy_delete_user_map(
-    token,
-    session_secret_key,
-    policy_id,
-    user_id
+	token,
+	session_secret_key,
+	policy_id,
+	user_id,
 ) {
-    const endpoint = '/admin/policy/user/map/';
-    const method = 'DELETE';
-    const data = {
-        policy_id: policy_id,
-        user_id: user_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/user/map/";
+	const method = "DELETE";
+	const data = {
+		policy_id: policy_id,
+		user_id: user_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1393,26 +1377,26 @@ function admin_policy_delete_user_map(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_update_policy(
-    token,
-    session_secret_key,
-    policy_id,
-    title,
-    config,
-    priority
+	token,
+	session_secret_key,
+	policy_id,
+	title,
+	config,
+	priority,
 ) {
-    const endpoint = '/admin/policy/';
-    const method = 'PUT';
-    const data = {
-        policy_id: policy_id,
-        title: title,
-        config: config,
-        priority: priority,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/";
+	const method = "PUT";
+	const data = {
+		policy_id: policy_id,
+		title: title,
+		config: config,
+		priority: priority,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1425,17 +1409,17 @@ function admin_update_policy(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_policy(token, session_secret_key, policy_id) {
-    const endpoint = '/admin/policy/';
-    const method = 'DELETE';
-    const data = {
-        policy_id: policy_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/policy/";
+	const method = "DELETE";
+	const data = {
+		policy_id: policy_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1450,22 +1434,22 @@ function admin_delete_policy(token, session_secret_key, policy_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_create_group(
-    token,
-    session_secret_key,
-    name,
-    auto_create_folder
+	token,
+	session_secret_key,
+	name,
+	auto_create_folder,
 ) {
-    const endpoint = '/admin/group/';
-    const method = 'POST';
-    const data = {
-        name: name,
-        auto_create_folder: auto_create_folder,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group/";
+	const method = "POST";
+	const data = {
+		name: name,
+		auto_create_folder: auto_create_folder,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1491,42 +1475,42 @@ function admin_create_group(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function adminCreateShareRight(
-    token,
-    session_secret_key,
-    group_id,
-    read,
-    write,
-    grant,
-    shareData,
-    shareDataNonce,
-    groupShareRightKey,
-    groupShareRightKeyNonce,
-    groupShareRightTitle,
-    groupShareRightTitleNonce,
-    groupShareRightType,
-    groupShareRightTypeNonce
+	token,
+	session_secret_key,
+	group_id,
+	read,
+	write,
+	grant,
+	shareData,
+	shareDataNonce,
+	groupShareRightKey,
+	groupShareRightKeyNonce,
+	groupShareRightTitle,
+	groupShareRightTitleNonce,
+	groupShareRightType,
+	groupShareRightTypeNonce,
 ) {
-    const endpoint = '/admin/group-share-right/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        read: read,
-        write: write,
-        grant: grant,
-        share_data: shareData,
-        share_data_nonce: shareDataNonce,
-        group_share_right_key: groupShareRightKey,
-        group_share_right_key_nonce: groupShareRightKeyNonce,
-        group_share_right_title: groupShareRightTitle,
-        group_share_right_title_nonce: groupShareRightTitleNonce,
-        group_share_right_type: groupShareRightType,
-        group_share_right_type_nonce: groupShareRightTypeNonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group-share-right/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		read: read,
+		write: write,
+		grant: grant,
+		share_data: shareData,
+		share_data_nonce: shareDataNonce,
+		group_share_right_key: groupShareRightKey,
+		group_share_right_key_nonce: groupShareRightKeyNonce,
+		group_share_right_title: groupShareRightTitle,
+		group_share_right_title_nonce: groupShareRightTitleNonce,
+		group_share_right_type: groupShareRightType,
+		group_share_right_type_nonce: groupShareRightTypeNonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1539,17 +1523,17 @@ function adminCreateShareRight(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_group(token, session_secret_key, group_id) {
-    const endpoint = '/admin/group/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1564,24 +1548,24 @@ function admin_delete_group(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function admin_update_membership(
-    token,
-    session_secret_key,
-    membership_id,
-    group_admin,
-    share_admin
+	token,
+	session_secret_key,
+	membership_id,
+	group_admin,
+	share_admin,
 ) {
-    const endpoint = '/admin/membership/';
-    const method = 'PUT';
-    const data = {
-        membership_id: membership_id,
-        group_admin: group_admin,
-        share_admin: share_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/membership/";
+	const method = "PUT";
+	const data = {
+		membership_id: membership_id,
+		group_admin: group_admin,
+		share_admin: share_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1597,26 +1581,26 @@ function admin_update_membership(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function admin_update_group_share_right(
-    token,
-    session_secret_key,
-    group_share_right_id,
-    read,
-    write,
-    grant
+	token,
+	session_secret_key,
+	group_share_right_id,
+	read,
+	write,
+	grant,
 ) {
-    const endpoint = '/admin/group-share-right/';
-    const method = 'PUT';
-    const data = {
-        group_share_right_id: group_share_right_id,
-        read: read,
-        write: write,
-        grant: grant,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group-share-right/";
+	const method = "PUT";
+	const data = {
+		group_share_right_id: group_share_right_id,
+		read: read,
+		write: write,
+		grant: grant,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1629,17 +1613,17 @@ function admin_update_group_share_right(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_membership(token, session_secret_key, membership_id) {
-    const endpoint = '/admin/membership/';
-    const method = 'DELETE';
-    const data = {
-        membership_id: membership_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/membership/";
+	const method = "DELETE";
+	const data = {
+		membership_id: membership_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1652,21 +1636,21 @@ function admin_delete_membership(token, session_secret_key, membership_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_group_share_right(
-    token,
-    session_secret_key,
-    group_share_right_id
+	token,
+	session_secret_key,
+	group_share_right_id,
 ) {
-    const endpoint = '/admin/group-share-right/';
-    const method = 'DELETE';
-    const data = {
-        group_share_right_id: group_share_right_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/group-share-right/";
+	const method = "DELETE";
+	const data = {
+		group_share_right_id: group_share_right_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1679,17 +1663,17 @@ function admin_delete_group_share_right(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_duo(token, session_secret_key, duo_id) {
-    const endpoint = '/admin/duo/';
-    const method = 'DELETE';
-    const data = {
-        duo_id: duo_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/duo/";
+	const method = "DELETE";
+	const data = {
+		duo_id: duo_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1702,17 +1686,17 @@ function admin_delete_duo(token, session_secret_key, duo_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function adminDeleteIvalt(token, session_secret_key, ivaltId) {
-    const endpoint = '/admin/ivalt/';
-    const method = 'DELETE';
-    const data = {
-        ivalt_id: ivaltId,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/ivalt/";
+	const method = "DELETE";
+	const data = {
+		ivalt_id: ivaltId,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1725,17 +1709,17 @@ function adminDeleteIvalt(token, session_secret_key, ivaltId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
-    const endpoint = '/admin/yubikey-otp/';
-    const method = 'DELETE';
-    const data = {
-        yubikey_otp_id: yubikey_otp_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/yubikey-otp/";
+	const method = "DELETE";
+	const data = {
+		yubikey_otp_id: yubikey_otp_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1748,17 +1732,17 @@ function admin_delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
-    const endpoint = '/admin/webautn/';
-    const method = 'DELETE';
-    const data = {
-        webauthn_id: webauthn_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/webautn/";
+	const method = "DELETE";
+	const data = {
+		webauthn_id: webauthn_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1771,21 +1755,21 @@ function admin_delete_webauthn(token, session_secret_key, webauthn_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_google_authenticator(
-    token,
-    session_secret_key,
-    google_authenticator_id
+	token,
+	session_secret_key,
+	google_authenticator_id,
 ) {
-    const endpoint = '/admin/google-authenticator/';
-    const method = 'DELETE';
-    const data = {
-        google_authenticator_id: google_authenticator_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/google-authenticator/";
+	const method = "DELETE";
+	const data = {
+		google_authenticator_id: google_authenticator_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1798,21 +1782,21 @@ function admin_delete_google_authenticator(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_recovery_code(
-    token,
-    session_secret_key,
-    recovery_code_id
+	token,
+	session_secret_key,
+	recovery_code_id,
 ) {
-    const endpoint = '/admin/recovery-code/';
-    const method = 'DELETE';
-    const data = {
-        recovery_code_id: recovery_code_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/recovery-code/";
+	const method = "DELETE";
+	const data = {
+		recovery_code_id: recovery_code_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1825,21 +1809,21 @@ function admin_delete_recovery_code(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_emergency_code(
-    token,
-    session_secret_key,
-    emergency_code_id
+	token,
+	session_secret_key,
+	emergency_code_id,
 ) {
-    const endpoint = '/admin/emergency-code/';
-    const method = 'DELETE';
-    const data = {
-        emergency_code_id: emergency_code_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/emergency-code/";
+	const method = "DELETE";
+	const data = {
+		emergency_code_id: emergency_code_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1852,17 +1836,17 @@ function admin_delete_emergency_code(
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_delete_link_share(token, session_secret_key, link_share_id) {
-    const endpoint = '/admin/link-share/';
-    const method = 'DELETE';
-    const data = {
-        link_share_id: link_share_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/link-share/";
+	const method = "DELETE";
+	const data = {
+		link_share_id: link_share_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1879,28 +1863,28 @@ function admin_delete_link_share(token, session_secret_key, link_share_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function admin_update_user(
-    token,
-    session_secret_key,
-    user_id,
-    email,
-    is_active,
-    is_email_active,
-    is_superuser
+	token,
+	session_secret_key,
+	user_id,
+	email,
+	is_active,
+	is_email_active,
+	is_superuser,
 ) {
-    const endpoint = '/admin/user/';
-    const method = 'PUT';
-    const data = {
-        user_id: user_id,
-        email: email,
-        is_active: is_active,
-        is_email_active: is_email_active,
-        is_superuser: is_superuser,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/admin/user/";
+	const method = "PUT";
+	const data = {
+		user_id: user_id,
+		email: email,
+		is_active: is_active,
+		is_email_active: is_email_active,
+		is_superuser: is_superuser,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -1915,17 +1899,17 @@ function admin_update_user(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the login status
  */
 function login(login_info, login_info_nonce, public_key, session_duration) {
-    const endpoint = '/authentication/login/';
-    const method = 'POST';
-    const data = {
-        login_info: login_info,
-        login_info_nonce: login_info_nonce,
-        public_key: public_key,
-        session_duration: session_duration,
-    };
-    const headers = null;
+	const endpoint = "/authentication/login/";
+	const method = "POST";
+	const data = {
+		login_info: login_info,
+		login_info_nonce: login_info_nonce,
+		public_key: public_key,
+		session_duration: session_duration,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1938,14 +1922,14 @@ function login(login_info, login_info_nonce, public_key, session_duration) {
  * @returns {promise} Returns a promise with the login status
  */
 function samlInitiateLogin(saml_provider_id, return_to_url) {
-    const endpoint = '/saml/' + saml_provider_id + '/initiate-login/';
-    const method = 'POST';
-    const data = {
-        return_to_url: return_to_url,
-    };
-    const headers = null;
+	const endpoint = "/saml/" + saml_provider_id + "/initiate-login/";
+	const method = "POST";
+	const data = {
+		return_to_url: return_to_url,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1960,17 +1944,17 @@ function samlInitiateLogin(saml_provider_id, return_to_url) {
  * @returns {promise} Returns a promise with the login status
  */
 function samlLogin(login_info, login_info_nonce, public_key, session_duration) {
-    const endpoint = '/saml/login/';
-    const method = 'POST';
-    const data = {
-        login_info: login_info,
-        login_info_nonce: login_info_nonce,
-        public_key: public_key,
-        session_duration: session_duration,
-    };
-    const headers = null;
+	const endpoint = "/saml/login/";
+	const method = "POST";
+	const data = {
+		login_info: login_info,
+		login_info_nonce: login_info_nonce,
+		public_key: public_key,
+		session_duration: session_duration,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -1983,14 +1967,14 @@ function samlLogin(login_info, login_info_nonce, public_key, session_duration) {
  * @returns {promise} Returns a promise with the login status
  */
 function oidcInitiateLogin(oidc_provider_id, return_to_url) {
-    const endpoint = '/oidc/' + oidc_provider_id + '/initiate-login/';
-    const method = 'POST';
-    const data = {
-        return_to_url: return_to_url,
-    };
-    const headers = null;
+	const endpoint = "/oidc/" + oidc_provider_id + "/initiate-login/";
+	const method = "POST";
+	const data = {
+		return_to_url: return_to_url,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2005,17 +1989,17 @@ function oidcInitiateLogin(oidc_provider_id, return_to_url) {
  * @returns {promise} Returns a promise with the login status
  */
 function oidcLogin(login_info, login_info_nonce, public_key, session_duration) {
-    const endpoint = '/oidc/login/';
-    const method = 'POST';
-    const data = {
-        login_info: login_info,
-        login_info_nonce: login_info_nonce,
-        public_key: public_key,
-        session_duration: session_duration,
-    };
-    const headers = null;
+	const endpoint = "/oidc/login/";
+	const method = "POST";
+	const data = {
+		login_info: login_info,
+		login_info_nonce: login_info_nonce,
+		public_key: public_key,
+		session_duration: session_duration,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2028,16 +2012,16 @@ function oidcLogin(login_info, login_info_nonce, public_key, session_duration) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function ga_verify(token, ga_token, session_secret_key) {
-    const endpoint = '/authentication/ga-verify/';
-    const method = 'POST';
-    const data = {
-        ga_token: ga_token,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/ga-verify/";
+	const method = "POST";
+	const data = {
+		ga_token: ga_token,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2050,16 +2034,16 @@ function ga_verify(token, ga_token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function duo_verify(token, duo_token, session_secret_key) {
-    const endpoint = '/authentication/duo-verify/';
-    const method = 'POST';
-    const data = {
-        duo_token: duo_token,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/duo-verify/";
+	const method = "POST";
+	const data = {
+		duo_token: duo_token,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2072,16 +2056,16 @@ function duo_verify(token, duo_token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the verification status
  */
 function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
-    const endpoint = '/authentication/yubikey-otp-verify/';
-    const method = 'POST';
-    const data = {
-        yubikey_otp: yubikey_otp,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/yubikey-otp-verify/";
+	const method = "POST";
+	const data = {
+		yubikey_otp: yubikey_otp,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2095,22 +2079,22 @@ function yubikey_otp_verify(token, yubikey_otp, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function activateToken(
-    token,
-    verification,
-    verification_nonce,
-    session_secret_key
+	token,
+	verification,
+	verification_nonce,
+	session_secret_key,
 ) {
-    const endpoint = '/authentication/activate-token/';
-    const method = 'POST';
-    const data = {
-        verification: verification,
-        verification_nonce: verification_nonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/activate-token/";
+	const method = "POST";
+	const data = {
+		verification: verification,
+		verification_nonce: verification_nonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2122,15 +2106,15 @@ function activateToken(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function get_sessions(token, session_secret_key) {
-    const endpoint = '/authentication/sessions/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/authentication/sessions/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2143,16 +2127,16 @@ function get_sessions(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the logout status
  */
 function logout(token, session_secret_key, session_id) {
-    const endpoint = '/authentication/logout/';
-    const method = 'POST';
-    const data = {
-        session_id: session_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/logout/";
+	const method = "POST";
+	const data = {
+		session_id: session_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2173,34 +2157,34 @@ function logout(token, session_secret_key, session_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function register(
-    email,
-    username,
-    authkey,
-    public_key,
-    private_key,
-    private_key_nonce,
-    secret_key,
-    secret_key_nonce,
-    user_sauce,
-    base_url
+	email,
+	username,
+	authkey,
+	public_key,
+	private_key,
+	private_key_nonce,
+	secret_key,
+	secret_key_nonce,
+	user_sauce,
+	base_url,
 ) {
-    const endpoint = '/authentication/register/';
-    const method = 'POST';
-    const data = {
-        email: email,
-        username: username,
-        authkey: authkey,
-        public_key: public_key,
-        private_key: private_key,
-        private_key_nonce: private_key_nonce,
-        secret_key: secret_key,
-        secret_key_nonce: secret_key_nonce,
-        user_sauce: user_sauce,
-        base_url: base_url,
-    };
-    const headers = null;
+	const endpoint = "/authentication/register/";
+	const method = "POST";
+	const data = {
+		email: email,
+		username: username,
+		authkey: authkey,
+		public_key: public_key,
+		private_key: private_key,
+		private_key_nonce: private_key_nonce,
+		secret_key: secret_key,
+		secret_key_nonce: secret_key_nonce,
+		user_sauce: user_sauce,
+		base_url: base_url,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2212,14 +2196,14 @@ function register(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the activation status
  */
 function verify_email(activation_code) {
-    const endpoint = '/authentication/verify-email/';
-    const method = 'POST';
-    const data = {
-        activation_code: activation_code,
-    };
-    const headers = null;
+	const endpoint = "/authentication/verify-email/";
+	const method = "POST";
+	const data = {
+		activation_code: activation_code,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2239,32 +2223,32 @@ function verify_email(activation_code) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the update status
  */
 function update_user(
-    token,
-    session_secret_key,
-    email,
-    authkey,
-    authkey_old,
-    private_key,
-    private_key_nonce,
-    secret_key,
-    secret_key_nonce
+	token,
+	session_secret_key,
+	email,
+	authkey,
+	authkey_old,
+	private_key,
+	private_key_nonce,
+	secret_key,
+	secret_key_nonce,
 ) {
-    const endpoint = '/user/update/';
-    const method = 'PUT';
-    const data = {
-        email: email,
-        authkey: authkey,
-        authkey_old: authkey_old,
-        private_key: private_key,
-        private_key_nonce: private_key_nonce,
-        secret_key: secret_key,
-        secret_key_nonce: secret_key_nonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/update/";
+	const method = "PUT";
+	const data = {
+		email: email,
+		authkey: authkey,
+		authkey_old: authkey_old,
+		private_key: private_key,
+		private_key_nonce: private_key_nonce,
+		secret_key: secret_key,
+		secret_key_nonce: secret_key_nonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2280,26 +2264,26 @@ function update_user(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the recovery_data_id
  */
 function write_recoverycode(
-    token,
-    session_secret_key,
-    recovery_authkey,
-    recovery_data,
-    recovery_data_nonce,
-    recovery_sauce
+	token,
+	session_secret_key,
+	recovery_authkey,
+	recovery_data,
+	recovery_data_nonce,
+	recovery_sauce,
 ) {
-    const endpoint = '/recoverycode/';
-    const method = 'POST';
-    const data = {
-        recovery_authkey: recovery_authkey,
-        recovery_data: recovery_data,
-        recovery_data_nonce: recovery_data_nonce,
-        recovery_sauce: recovery_sauce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/recoverycode/";
+	const method = "POST";
+	const data = {
+		recovery_authkey: recovery_authkey,
+		recovery_data: recovery_data,
+		recovery_data_nonce: recovery_data_nonce,
+		recovery_sauce: recovery_sauce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2311,15 +2295,15 @@ function write_recoverycode(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the recovery_data
  */
 function enable_recoverycode(username, recovery_authkey) {
-    const endpoint = '/password/';
-    const method = 'POST';
-    const data = {
-        username: username,
-        recovery_authkey: recovery_authkey,
-    };
-    const headers = null;
+	const endpoint = "/password/";
+	const method = "POST";
+	const data = {
+		username: username,
+		recovery_authkey: recovery_authkey,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2333,22 +2317,22 @@ function enable_recoverycode(username, recovery_authkey) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the recovery_data
  */
 function set_password(
-    username,
-    recovery_authkey,
-    update_data,
-    update_data_nonce
+	username,
+	recovery_authkey,
+	update_data,
+	update_data_nonce,
 ) {
-    const endpoint = '/password/';
-    const method = 'PUT';
-    const data = {
-        username: username,
-        recovery_authkey: recovery_authkey,
-        update_data: update_data,
-        update_data_nonce: update_data_nonce,
-    };
-    const headers = null;
+	const endpoint = "/password/";
+	const method = "PUT";
+	const data = {
+		username: username,
+		recovery_authkey: recovery_authkey,
+		update_data: update_data,
+		update_data_nonce: update_data_nonce,
+	};
+	const headers = null;
 
-    return call(method, endpoint, data, headers);
+	return call(method, endpoint, data, headers);
 }
 
 /**
@@ -2361,14 +2345,14 @@ function set_password(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_datastore(token, session_secret_key, datastore_id) {
-    const endpoint = '/datastore/' + (!datastore_id ? '' : datastore_id + '/');
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/datastore/" + (!datastore_id ? "" : datastore_id + "/");
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2388,32 +2372,32 @@ function read_datastore(token, session_secret_key, datastore_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function create_datastore(
-    token,
-    session_secret_key,
-    type,
-    description,
-    encrypted_data,
-    encrypted_data_nonce,
-    is_default,
-    encrypted_data_secret_key,
-    encrypted_data_secret_key_nonce
+	token,
+	session_secret_key,
+	type,
+	description,
+	encrypted_data,
+	encrypted_data_nonce,
+	is_default,
+	encrypted_data_secret_key,
+	encrypted_data_secret_key_nonce,
 ) {
-    const endpoint = '/datastore/';
-    const method = 'PUT';
-    const data = {
-        type: type,
-        description: description,
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-        is_default: is_default,
-        secret_key: encrypted_data_secret_key,
-        secret_key_nonce: encrypted_data_secret_key_nonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/datastore/";
+	const method = "PUT";
+	const data = {
+		type: type,
+		description: description,
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+		is_default: is_default,
+		secret_key: encrypted_data_secret_key,
+		secret_key_nonce: encrypted_data_secret_key_nonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2427,18 +2411,18 @@ function create_datastore(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status of the delete operation
  */
 function delete_datastore(token, session_secret_key, datastore_id, authkey) {
-    const endpoint = '/datastore/';
-    const method = 'DELETE';
-    const data = {
-        datastore_id: datastore_id,
-        authkey: authkey,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/datastore/";
+	const method = "DELETE";
+	const data = {
+		datastore_id: datastore_id,
+		authkey: authkey,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2457,32 +2441,32 @@ function delete_datastore(token, session_secret_key, datastore_id, authkey) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function write_datastore(
-    token,
-    session_secret_key,
-    datastore_id,
-    encrypted_data,
-    encrypted_data_nonce,
-    encrypted_data_secret_key,
-    encrypted_data_secret_key_nonce,
-    description,
-    is_default
+	token,
+	session_secret_key,
+	datastore_id,
+	encrypted_data,
+	encrypted_data_nonce,
+	encrypted_data_secret_key,
+	encrypted_data_secret_key_nonce,
+	description,
+	is_default,
 ) {
-    const endpoint = '/datastore/';
-    const method = 'POST';
-    const data = {
-        datastore_id: datastore_id,
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-        secret_key: encrypted_data_secret_key,
-        secret_key_nonce: encrypted_data_secret_key_nonce,
-        description: description,
-        is_default: is_default,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/datastore/";
+	const method = "POST";
+	const data = {
+		datastore_id: datastore_id,
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+		secret_key: encrypted_data_secret_key,
+		secret_key_nonce: encrypted_data_secret_key_nonce,
+		description: description,
+		is_default: is_default,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2496,21 +2480,14 @@ function write_datastore(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_secret(token, session_secret_key, secret_id, synchronous) {
-    const endpoint = '/secret/' + secret_id + '/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/secret/" + secret_id + "/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(
-        method,
-        endpoint,
-        data,
-        headers,
-        session_secret_key,
-        synchronous
-    );
+	return call(method, endpoint, data, headers, session_secret_key, synchronous);
 }
 
 /**
@@ -2528,28 +2505,28 @@ function read_secret(token, session_secret_key, secret_id, synchronous) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the new secret_id
  */
 function create_secret(
-    token,
-    session_secret_key,
-    encrypted_data,
-    encrypted_data_nonce,
-    link_id,
-    parent_datastore_id,
-    parent_share_id
+	token,
+	session_secret_key,
+	encrypted_data,
+	encrypted_data_nonce,
+	link_id,
+	parent_datastore_id,
+	parent_share_id,
 ) {
-    const endpoint = '/secret/';
-    const method = 'PUT';
-    const data = {
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-        link_id: link_id,
-        parent_datastore_id: parent_datastore_id,
-        parent_share_id: parent_share_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/secret/";
+	const method = "PUT";
+	const data = {
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+		link_id: link_id,
+		parent_datastore_id: parent_datastore_id,
+		parent_share_id: parent_share_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2564,24 +2541,24 @@ function create_secret(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function write_secret(
-    token,
-    session_secret_key,
-    secret_id,
-    encrypted_data,
-    encrypted_data_nonce
+	token,
+	session_secret_key,
+	secret_id,
+	encrypted_data,
+	encrypted_data_nonce,
 ) {
-    const endpoint = '/secret/';
-    const method = 'POST';
-    const data = {
-        secret_id: secret_id,
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/secret/";
+	const method = "POST";
+	const data = {
+		secret_id: secret_id,
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2596,24 +2573,24 @@ function write_secret(
  * @returns {Promise<AxiosResponse<any>>} Returns promise with the status of the move
  */
 function move_secret_link(
-    token,
-    session_secret_key,
-    link_id,
-    new_parent_share_id,
-    new_parent_datastore_id
+	token,
+	session_secret_key,
+	link_id,
+	new_parent_share_id,
+	new_parent_datastore_id,
 ) {
-    const endpoint = '/secret/link/';
-    const method = 'POST';
-    const data = {
-        link_id: link_id,
-        new_parent_share_id: new_parent_share_id,
-        new_parent_datastore_id: new_parent_datastore_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/secret/link/";
+	const method = "POST";
+	const data = {
+		link_id: link_id,
+		new_parent_share_id: new_parent_share_id,
+		new_parent_datastore_id: new_parent_datastore_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2626,17 +2603,17 @@ function move_secret_link(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status of the delete operation
  */
 function delete_secret_link(token, session_secret_key, link_id) {
-    const endpoint = '/secret/link/';
-    const method = 'DELETE';
-    const data = {
-        link_id: link_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/secret/link/";
+	const method = "DELETE";
+	const data = {
+		link_id: link_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2649,14 +2626,14 @@ function delete_secret_link(token, session_secret_key, link_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_share(token, session_secret_key, share_id) {
-    const endpoint = '/share/' + share_id + '/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/" + share_id + "/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2668,14 +2645,14 @@ function read_share(token, session_secret_key, share_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_shares(token, session_secret_key) {
-    const endpoint = '/share/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2695,33 +2672,33 @@ function read_shares(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status and the new share id
  */
 function create_share(
-    token,
-    session_secret_key,
-    encrypted_data,
-    encrypted_data_nonce,
-    key,
-    key_nonce,
-    parent_share_id,
-    parent_datastore_id,
-    link_id
+	token,
+	session_secret_key,
+	encrypted_data,
+	encrypted_data_nonce,
+	key,
+	key_nonce,
+	parent_share_id,
+	parent_datastore_id,
+	link_id,
 ) {
-    const endpoint = '/share/';
-    const method = 'POST';
-    const data = {
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-        key: key,
-        key_nonce: key_nonce,
-        key_type: 'symmetric',
-        parent_share_id: parent_share_id,
-        parent_datastore_id: parent_datastore_id,
-        link_id: link_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/";
+	const method = "POST";
+	const data = {
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+		key: key,
+		key_nonce: key_nonce,
+		key_type: "symmetric",
+		parent_share_id: parent_share_id,
+		parent_datastore_id: parent_datastore_id,
+		link_id: link_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2736,24 +2713,24 @@ function create_share(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the status of the update
  */
 function write_share(
-    token,
-    session_secret_key,
-    share_id,
-    encrypted_data,
-    encrypted_data_nonce
+	token,
+	session_secret_key,
+	share_id,
+	encrypted_data,
+	encrypted_data_nonce,
 ) {
-    const endpoint = '/share/';
-    const method = 'PUT';
-    const data = {
-        share_id: share_id,
-        data: encrypted_data,
-        data_nonce: encrypted_data_nonce,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/";
+	const method = "PUT";
+	const data = {
+		share_id: share_id,
+		data: encrypted_data,
+		data_nonce: encrypted_data_nonce,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2766,14 +2743,14 @@ function write_share(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_share_rights(token, session_secret_key, share_id) {
-    const endpoint = '/share/rights/' + share_id + '/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/rights/" + share_id + "/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2785,14 +2762,14 @@ function read_share_rights(token, session_secret_key, share_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_share_rights_overview(token, session_secret_key) {
-    const endpoint = '/share/right/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2816,42 +2793,42 @@ function read_share_rights_overview(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function create_share_right(
-    token,
-    session_secret_key,
-    encrypted_title,
-    encrypted_title_nonce,
-    encrypted_type,
-    encrypted_type_nonce,
-    share_id,
-    user_id,
-    group_id,
-    key,
-    key_nonce,
-    read,
-    write,
-    grant
+	token,
+	session_secret_key,
+	encrypted_title,
+	encrypted_title_nonce,
+	encrypted_type,
+	encrypted_type_nonce,
+	share_id,
+	user_id,
+	group_id,
+	key,
+	key_nonce,
+	read,
+	write,
+	grant,
 ) {
-    const endpoint = '/share/right/';
-    const method = 'PUT';
-    const data = {
-        title: encrypted_title,
-        title_nonce: encrypted_title_nonce,
-        type: encrypted_type,
-        type_nonce: encrypted_type_nonce,
-        share_id: share_id,
-        user_id: user_id,
-        group_id: group_id,
-        key: key,
-        key_nonce: key_nonce,
-        read: read,
-        write: write,
-        grant: grant,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/";
+	const method = "PUT";
+	const data = {
+		title: encrypted_title,
+		title_nonce: encrypted_title_nonce,
+		type: encrypted_type,
+		type_nonce: encrypted_type_nonce,
+		share_id: share_id,
+		user_id: user_id,
+		group_id: group_id,
+		key: key,
+		key_nonce: key_nonce,
+		read: read,
+		write: write,
+		grant: grant,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2869,30 +2846,30 @@ function create_share_right(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function update_share_right(
-    token,
-    session_secret_key,
-    share_id,
-    user_id,
-    group_id,
-    read,
-    write,
-    grant
+	token,
+	session_secret_key,
+	share_id,
+	user_id,
+	group_id,
+	read,
+	write,
+	grant,
 ) {
-    const endpoint = '/share/right/';
-    const method = 'POST';
-    const data = {
-        share_id: share_id,
-        user_id: user_id,
-        group_id: group_id,
-        read: read,
-        write: write,
-        grant: grant,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/";
+	const method = "POST";
+	const data = {
+		share_id: share_id,
+		user_id: user_id,
+		group_id: group_id,
+		read: read,
+		write: write,
+		grant: grant,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2906,23 +2883,23 @@ function update_share_right(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function delete_share_right(
-    token,
-    session_secret_key,
-    user_share_right_id,
-    group_share_right_id
+	token,
+	session_secret_key,
+	user_share_right_id,
+	group_share_right_id,
 ) {
-    const endpoint = '/share/right/';
-    const method = 'DELETE';
-    const data = {
-        user_share_right_id: user_share_right_id,
-        group_share_right_id: group_share_right_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/";
+	const method = "DELETE";
+	const data = {
+		user_share_right_id: user_share_right_id,
+		group_share_right_id: group_share_right_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2934,14 +2911,14 @@ function delete_share_right(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_share_rights_inherit_overview(token, session_secret_key) {
-    const endpoint = '/share/right/inherit/';
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/inherit/";
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2958,26 +2935,26 @@ function read_share_rights_inherit_overview(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function accept_share_right(
-    token,
-    session_secret_key,
-    share_right_id,
-    key,
-    key_nonce,
-    key_type
+	token,
+	session_secret_key,
+	share_right_id,
+	key,
+	key_nonce,
+	key_type,
 ) {
-    const endpoint = '/share/right/accept/';
-    const method = 'POST';
-    const data = {
-        share_right_id: share_right_id,
-        key: key,
-        key_nonce: key_nonce,
-        key_type: key_type,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/accept/";
+	const method = "POST";
+	const data = {
+		share_right_id: share_right_id,
+		key: key,
+		key_nonce: key_nonce,
+		key_type: key_type,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -2990,16 +2967,16 @@ function accept_share_right(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function decline_share_right(token, session_secret_key, share_right_id) {
-    const endpoint = '/share/right/decline/';
-    const method = 'POST';
-    const data = {
-        share_right_id: share_right_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/right/decline/";
+	const method = "POST";
+	const data = {
+		share_right_id: share_right_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3013,17 +2990,17 @@ function decline_share_right(token, session_secret_key, share_right_id) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the user information
  */
 function search_user(token, session_secret_key, user_id, user_username) {
-    const endpoint = '/user/search/';
-    const method = 'POST';
-    const data = {
-        user_id: user_id,
-        user_username: user_username,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/search/";
+	const method = "POST";
+	const data = {
+		user_id: user_id,
+		user_username: user_username,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3036,16 +3013,16 @@ function search_user(token, session_secret_key, user_id, user_username) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the secret
  */
 function create_ga(token, session_secret_key, title) {
-    const endpoint = '/user/ga/';
-    const method = 'PUT';
-    const data = {
-        title: title,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/ga/";
+	const method = "PUT";
+	const data = {
+		title: title,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3057,15 +3034,15 @@ function create_ga(token, session_secret_key, title) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with a list of all TOTPs
  */
 function read_ga(token, session_secret_key) {
-    const endpoint = '/user/ga/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/user/ga/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3079,23 +3056,23 @@ function read_ga(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
 function activate_ga(
-    token,
-    session_secret_key,
-    google_authenticator_id,
-    google_authenticator_token
+	token,
+	session_secret_key,
+	google_authenticator_id,
+	google_authenticator_token,
 ) {
-    const endpoint = '/user/ga/';
-    const method = 'POST';
-    const data = {
-        google_authenticator_id: google_authenticator_id,
-        google_authenticator_token: google_authenticator_token,
-    };
+	const endpoint = "/user/ga/";
+	const method = "POST";
+	const data = {
+		google_authenticator_id: google_authenticator_id,
+		google_authenticator_token: google_authenticator_token,
+	};
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3108,18 +3085,18 @@ function activate_ga(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function delete_ga(token, session_secret_key, google_authenticator_id) {
-    const endpoint = '/user/ga/';
-    const method = 'DELETE';
-    const data = {
-        google_authenticator_id: google_authenticator_id,
-    };
+	const endpoint = "/user/ga/";
+	const method = "DELETE";
+	const data = {
+		google_authenticator_id: google_authenticator_id,
+	};
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3135,26 +3112,26 @@ function delete_ga(token, session_secret_key, google_authenticator_id) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the secret
  */
 function create_duo(
-    token,
-    session_secret_key,
-    title,
-    integration_key,
-    secret_key,
-    host
+	token,
+	session_secret_key,
+	title,
+	integration_key,
+	secret_key,
+	host,
 ) {
-    const endpoint = '/user/duo/';
-    const method = 'PUT';
-    const data = {
-        title: title,
-        integration_key: integration_key,
-        secret_key: secret_key,
-        host: host,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/duo/";
+	const method = "PUT";
+	const data = {
+		title: title,
+		integration_key: integration_key,
+		secret_key: secret_key,
+		host: host,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3166,15 +3143,15 @@ function create_duo(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with a list of all duo
  */
 function read_duo(token, session_secret_key) {
-    const endpoint = '/user/duo/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/user/duo/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3188,18 +3165,18 @@ function read_duo(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
 function activate_duo(token, session_secret_key, duo_id, duo_token) {
-    const endpoint = '/user/duo/';
-    const method = 'POST';
-    const data = {
-        duo_id: duo_id,
-        duo_token: duo_token,
-    };
+	const endpoint = "/user/duo/";
+	const method = "POST";
+	const data = {
+		duo_id: duo_id,
+		duo_token: duo_token,
+	};
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3212,18 +3189,18 @@ function activate_duo(token, session_secret_key, duo_id, duo_token) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function delete_duo(token, session_secret_key, duo_id) {
-    const endpoint = '/user/duo/';
-    const method = 'DELETE';
-    const data = {
-        duo_id: duo_id,
-    };
+	const endpoint = "/user/duo/";
+	const method = "DELETE";
+	const data = {
+		duo_id: duo_id,
+	};
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3237,17 +3214,17 @@ function delete_duo(token, session_secret_key, duo_id) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with the secret
  */
 function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
-    const endpoint = '/user/yubikey-otp/';
-    const method = 'PUT';
-    const data = {
-        title: title,
-        yubikey_otp: yubikey_otp,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/yubikey-otp/";
+	const method = "PUT";
+	const data = {
+		title: title,
+		yubikey_otp: yubikey_otp,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3259,15 +3236,15 @@ function create_yubikey_otp(token, session_secret_key, title, yubikey_otp) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise with a list of all Yubikey OTP token
  */
 function read_yubikey_otp(token, session_secret_key) {
-    const endpoint = '/user/yubikey-otp/';
-    const method = 'GET';
-    const data = null;
+	const endpoint = "/user/yubikey-otp/";
+	const method = "GET";
+	const data = null;
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3281,23 +3258,23 @@ function read_yubikey_otp(token, session_secret_key) {
  * @returns {Promise<AxiosResponse<any>>} Returns weather it was successful or not
  */
 function activate_yubikey_otp(
-    token,
-    session_secret_key,
-    yubikey_id,
-    yubikey_otp
+	token,
+	session_secret_key,
+	yubikey_id,
+	yubikey_otp,
 ) {
-    const endpoint = '/user/yubikey-otp/';
-    const method = 'POST';
-    const data = {
-        yubikey_id: yubikey_id,
-        yubikey_otp: yubikey_otp,
-    };
+	const endpoint = "/user/yubikey-otp/";
+	const method = "POST";
+	const data = {
+		yubikey_id: yubikey_id,
+		yubikey_otp: yubikey_otp,
+	};
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3310,18 +3287,18 @@ function activate_yubikey_otp(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
-    const endpoint = '/user/yubikey-otp/';
-    const method = 'DELETE';
-    const data = {
-        yubikey_otp_id: yubikey_otp_id,
-    };
+	const endpoint = "/user/yubikey-otp/";
+	const method = "DELETE";
+	const data = {
+		yubikey_otp_id: yubikey_otp_id,
+	};
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3338,26 +3315,26 @@ function delete_yubikey_otp(token, session_secret_key, yubikey_otp_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function create_share_link(
-    token,
-    session_secret_key,
-    link_id,
-    share_id,
-    parent_share_id,
-    parent_datastore_id
+	token,
+	session_secret_key,
+	link_id,
+	share_id,
+	parent_share_id,
+	parent_datastore_id,
 ) {
-    const endpoint = '/share/link/';
-    const method = 'PUT';
-    const data = {
-        link_id: link_id,
-        share_id: share_id,
-        parent_share_id: parent_share_id,
-        parent_datastore_id: parent_datastore_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/link/";
+	const method = "PUT";
+	const data = {
+		link_id: link_id,
+		share_id: share_id,
+		parent_share_id: parent_share_id,
+		parent_datastore_id: parent_datastore_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3373,24 +3350,24 @@ function create_share_link(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function move_share_link(
-    token,
-    session_secret_key,
-    link_id,
-    new_parent_share_id,
-    new_parent_datastore_id
+	token,
+	session_secret_key,
+	link_id,
+	new_parent_share_id,
+	new_parent_datastore_id,
 ) {
-    const endpoint = '/share/link/';
-    const method = 'POST';
-    const data = {
-        link_id: link_id,
-        new_parent_share_id: new_parent_share_id,
-        new_parent_datastore_id: new_parent_datastore_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/link/";
+	const method = "POST";
+	const data = {
+		link_id: link_id,
+		new_parent_share_id: new_parent_share_id,
+		new_parent_datastore_id: new_parent_datastore_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3403,17 +3380,17 @@ function move_share_link(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function delete_share_link(token, session_secret_key, link_id) {
-    const endpoint = '/share/link/';
-    const method = 'DELETE';
-    const data = {
-        link_id: link_id,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/share/link/";
+	const method = "DELETE";
+	const data = {
+		link_id: link_id,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3426,14 +3403,14 @@ function delete_share_link(token, session_secret_key, link_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group(token, session_secret_key, group_id) {
-    const endpoint = '/group/' + (!group_id ? '' : group_id + '/');
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/group/" + (!group_id ? "" : group_id + "/");
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3451,30 +3428,30 @@ function read_group(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function create_group(
-    token,
-    session_secret_key,
-    name,
-    secret_key,
-    secret_key_nonce,
-    private_key,
-    private_key_nonce,
-    public_key
+	token,
+	session_secret_key,
+	name,
+	secret_key,
+	secret_key_nonce,
+	private_key,
+	private_key_nonce,
+	public_key,
 ) {
-    const endpoint = '/group/';
-    const method = 'PUT';
-    const data = {
-        name: name,
-        secret_key: secret_key,
-        secret_key_nonce: secret_key_nonce,
-        private_key: private_key,
-        private_key_nonce: private_key_nonce,
-        public_key: public_key,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/group/";
+	const method = "PUT";
+	const data = {
+		name: name,
+		secret_key: secret_key,
+		secret_key_nonce: secret_key_nonce,
+		private_key: private_key,
+		private_key_nonce: private_key_nonce,
+		public_key: public_key,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3488,18 +3465,18 @@ function create_group(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function update_group(token, session_secret_key, group_id, name) {
-    const endpoint = '/group/';
-    const method = 'POST';
-    const data = {
-        group_id: group_id,
-        name: name,
-    };
+	const endpoint = "/group/";
+	const method = "POST";
+	const data = {
+		group_id: group_id,
+		name: name,
+	};
 
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3512,18 +3489,18 @@ function update_group(token, session_secret_key, group_id, name) {
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function delete_group(token, session_secret_key, group_id) {
-    const endpoint = '/group/';
-    const method = 'DELETE';
-    const data = {
-        group_id: group_id,
-    };
+	const endpoint = "/group/";
+	const method = "DELETE";
+	const data = {
+		group_id: group_id,
+	};
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3537,14 +3514,14 @@ function delete_group(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function read_group_rights(token, session_secret_key, group_id) {
-    const endpoint = '/group/rights/' + (!group_id ? '' : group_id + '/');
-    const method = 'GET';
-    const data = null;
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/group/rights/" + (!group_id ? "" : group_id + "/");
+	const method = "GET";
+	const data = null;
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3565,36 +3542,36 @@ function read_group_rights(token, session_secret_key, group_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function create_membership(
-    token,
-    session_secret_key,
-    group_id,
-    user_id,
-    secret_key,
-    secret_key_nonce,
-    secret_key_type,
-    private_key,
-    private_key_nonce,
-    private_key_type,
-    group_admin
+	token,
+	session_secret_key,
+	group_id,
+	user_id,
+	secret_key,
+	secret_key_nonce,
+	secret_key_type,
+	private_key,
+	private_key_nonce,
+	private_key_type,
+	group_admin,
 ) {
-    const endpoint = '/membership/';
-    const method = 'PUT';
-    const data = {
-        group_id: group_id,
-        user_id: user_id,
-        secret_key: secret_key,
-        secret_key_nonce: secret_key_nonce,
-        secret_key_type: secret_key_type,
-        private_key: private_key,
-        private_key_nonce: private_key_nonce,
-        private_key_type: private_key_type,
-        group_admin: group_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/membership/";
+	const method = "PUT";
+	const data = {
+		group_id: group_id,
+		user_id: user_id,
+		secret_key: secret_key,
+		secret_key_nonce: secret_key_nonce,
+		secret_key_type: secret_key_type,
+		private_key: private_key,
+		private_key_nonce: private_key_nonce,
+		private_key_type: private_key_type,
+		group_admin: group_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3608,22 +3585,22 @@ function create_membership(
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function update_membership(
-    token,
-    session_secret_key,
-    membership_id,
-    group_admin
+	token,
+	session_secret_key,
+	membership_id,
+	group_admin,
 ) {
-    const endpoint = '/membership/';
-    const method = 'POST';
-    const data = {
-        membership_id: membership_id,
-        group_admin: group_admin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/membership/";
+	const method = "POST";
+	const data = {
+		membership_id: membership_id,
+		group_admin: group_admin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3636,18 +3613,18 @@ function update_membership(
  * @returns {Promise<AxiosResponse<any>>} Returns a promise which can succeed or fail
  */
 function delete_membership(token, session_secret_key, membership_id) {
-    const endpoint = '/membership/';
-    const method = 'DELETE';
-    const data = {
-        membership_id: membership_id,
-    };
+	const endpoint = "/membership/";
+	const method = "DELETE";
+	const data = {
+		membership_id: membership_id,
+	};
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3661,16 +3638,16 @@ function delete_membership(token, session_secret_key, membership_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function accept_membership(token, session_secret_key, membership_id) {
-    const endpoint = '/membership/accept/';
-    const method = 'POST';
-    const data = {
-        membership_id: membership_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/membership/accept/";
+	const method = "POST";
+	const data = {
+		membership_id: membership_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3683,16 +3660,16 @@ function accept_membership(token, session_secret_key, membership_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function decline_membership(token, session_secret_key, membership_id) {
-    const endpoint = '/membership/decline/';
-    const method = 'POST';
-    const data = {
-        membership_id: membership_id,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/membership/decline/";
+	const method = "POST";
+	const data = {
+		membership_id: membership_id,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3705,17 +3682,17 @@ function decline_membership(token, session_secret_key, membership_id) {
  * @returns {Promise<AxiosResponse<any>>} promise
  */
 function delete_account(token, session_secret_key, authkey) {
-    const endpoint = '/user/delete/';
-    const method = 'DELETE';
-    const data = {
-        authkey: authkey,
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/user/delete/";
+	const method = "DELETE";
+	const data = {
+		authkey: authkey,
+	};
+	const headers = {
+		"Content-Type": "application/json",
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, session_secret_key);
+	return call(method, endpoint, data, headers, session_secret_key);
 }
 
 /**
@@ -3728,16 +3705,16 @@ function delete_account(token, session_secret_key, authkey) {
  * @returns {Promise} Returns a promise with the verification status
  */
 function webauthnVerifyInit(token, sessionSecretKey, origin) {
-    const endpoint = '/authentication/webauthn-verify/';
-    const method = 'PUT';
-    const data = {
-        origin: origin,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/webauthn-verify/";
+	const method = "PUT";
+	const data = {
+		origin: origin,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, sessionSecretKey);
+	return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
 /**
@@ -3750,162 +3727,162 @@ function webauthnVerifyInit(token, sessionSecretKey, origin) {
  * @returns {Promise} Returns a promise with the verification status
  */
 function webauthnVerify(token, sessionSecretKey, credential) {
-    const endpoint = '/authentication/webauthn-verify/';
-    const method = 'POST';
-    const data = {
-        credential: credential,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
+	const endpoint = "/authentication/webauthn-verify/";
+	const method = "POST";
+	const data = {
+		credential: credential,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
 
-    return call(method, endpoint, data, headers, sessionSecretKey);
+	return call(method, endpoint, data, headers, sessionSecretKey);
 }
 
 const ivaltVerify = function (token, sessionSecretKey, requestType) {
-    const endpoint = '/authentication/ivalt-verify/';
-    const method = 'POST';
-    const data = {
-        request_type: requestType,
-    };
-    const headers = {
-        Authorization: 'Token ' + token,
-    };
-    return call(method, endpoint, data, headers, sessionSecretKey);
+	const endpoint = "/authentication/ivalt-verify/";
+	const method = "POST";
+	const data = {
+		request_type: requestType,
+	};
+	const headers = {
+		Authorization: "Token " + token,
+	};
+	return call(method, endpoint, data, headers, sessionSecretKey);
 };
 
 const service = {
-    info,
-    healthcheck,
-    admin_stats_browser,
-    admin_stats_device,
-    admin_stats_os,
-    admin_stats_two_factor,
-    admin_info,
-    admin_user,
-    admin_session,
-    admin_group,
-    admin_update_group,
-    admin_security_report,
-    admin_create_user,
-    admin_delete_user,
-    admin_wipe_user,
-    admin_delete_session,
-    admin_policy,
-    admin_policy_create_group_map,
-    admin_policy_delete_group_map,
-    admin_policy_create_user_map,
-    admin_policy_delete_user_map,
-    admin_create_policy,
-    admin_update_policy,
-    admin_delete_policy,
-    admin_create_group,
-    adminCreateShareRight,
-    admin_delete_group,
-    admin_update_membership,
-    admin_update_group_share_right,
-    admin_delete_membership,
-    admin_delete_group_share_right,
-    admin_delete_duo,
-    adminDeleteIvalt,
-    admin_delete_yubikey_otp,
-    admin_delete_webauthn,
-    admin_delete_google_authenticator,
-    admin_delete_recovery_code,
-    admin_delete_emergency_code,
-    admin_delete_link_share,
-    admin_ldap_user,
-    admin_ldap_group,
-    admin_ldap_create_group_map,
-    admin_ldap_update_group_map,
-    admin_ldap_delete_group_map,
-    admin_ldap_group_sync,
-    admin_scim_group,
-    admin_delete_scim_group,
-    admin_saml_group,
-    admin_delete_saml_group,
-    admin_delete_oidc_group,
-    admin_delete_ldap_group,
-    admin_saml_group_sync,
-    admin_scim_create_group_map,
-    admin_scim_update_group_map,
-    admin_scim_delete_group_map,
-    admin_saml_create_group_map,
-    admin_saml_update_group_map,
-    admin_saml_delete_group_map,
-    admin_oidc_group,
-    admin_oidc_create_group_map,
-    admin_oidc_update_group_map,
-    admin_oidc_delete_group_map,
-    admin_update_user,
-    login,
-    samlInitiateLogin,
-    samlLogin,
-    oidcInitiateLogin,
-    oidcLogin,
-    ga_verify,
-    duo_verify,
-    yubikey_otp_verify,
-    activateToken,
-    get_sessions,
-    logout,
-    register,
-    verify_email,
-    update_user,
-    write_recoverycode,
-    enable_recoverycode,
-    set_password,
-    read_datastore,
-    write_datastore,
-    create_datastore,
-    delete_datastore,
-    read_secret,
-    write_secret,
-    create_secret,
-    move_secret_link,
-    delete_secret_link,
-    read_share,
-    read_shares,
-    write_share,
-    create_share,
-    read_share_rights,
-    read_share_rights_overview,
-    create_share_right,
-    update_share_right,
-    delete_share_right,
-    read_share_rights_inherit_overview,
-    accept_share_right,
-    decline_share_right,
-    search_user,
-    read_ga,
-    activate_ga,
-    delete_ga,
-    create_ga,
-    read_duo,
-    activate_duo,
-    delete_duo,
-    create_duo,
-    read_yubikey_otp,
-    activate_yubikey_otp,
-    delete_yubikey_otp,
-    create_yubikey_otp,
-    create_share_link,
-    move_share_link,
-    delete_share_link,
-    read_group,
-    create_group,
-    update_group,
-    delete_group,
-    read_group_rights,
-    create_membership,
-    update_membership,
-    delete_membership,
-    accept_membership,
-    decline_membership,
-    delete_account,
-    webauthnVerifyInit,
-    webauthnVerify,
-    ivaltVerify,
+	info,
+	healthcheck,
+	admin_stats_browser,
+	admin_stats_device,
+	admin_stats_os,
+	admin_stats_two_factor,
+	admin_info,
+	admin_user,
+	admin_session,
+	admin_group,
+	admin_update_group,
+	admin_security_report,
+	admin_create_user,
+	admin_delete_user,
+	admin_wipe_user,
+	admin_delete_session,
+	admin_policy,
+	admin_policy_create_group_map,
+	admin_policy_delete_group_map,
+	admin_policy_create_user_map,
+	admin_policy_delete_user_map,
+	admin_create_policy,
+	admin_update_policy,
+	admin_delete_policy,
+	admin_create_group,
+	adminCreateShareRight,
+	admin_delete_group,
+	admin_update_membership,
+	admin_update_group_share_right,
+	admin_delete_membership,
+	admin_delete_group_share_right,
+	admin_delete_duo,
+	adminDeleteIvalt,
+	admin_delete_yubikey_otp,
+	admin_delete_webauthn,
+	admin_delete_google_authenticator,
+	admin_delete_recovery_code,
+	admin_delete_emergency_code,
+	admin_delete_link_share,
+	admin_ldap_user,
+	admin_ldap_group,
+	admin_ldap_create_group_map,
+	admin_ldap_update_group_map,
+	admin_ldap_delete_group_map,
+	admin_ldap_group_sync,
+	admin_scim_group,
+	admin_delete_scim_group,
+	admin_saml_group,
+	admin_delete_saml_group,
+	admin_delete_oidc_group,
+	admin_delete_ldap_group,
+	admin_saml_group_sync,
+	admin_scim_create_group_map,
+	admin_scim_update_group_map,
+	admin_scim_delete_group_map,
+	admin_saml_create_group_map,
+	admin_saml_update_group_map,
+	admin_saml_delete_group_map,
+	admin_oidc_group,
+	admin_oidc_create_group_map,
+	admin_oidc_update_group_map,
+	admin_oidc_delete_group_map,
+	admin_update_user,
+	login,
+	samlInitiateLogin,
+	samlLogin,
+	oidcInitiateLogin,
+	oidcLogin,
+	ga_verify,
+	duo_verify,
+	yubikey_otp_verify,
+	activateToken,
+	get_sessions,
+	logout,
+	register,
+	verify_email,
+	update_user,
+	write_recoverycode,
+	enable_recoverycode,
+	set_password,
+	read_datastore,
+	write_datastore,
+	create_datastore,
+	delete_datastore,
+	read_secret,
+	write_secret,
+	create_secret,
+	move_secret_link,
+	delete_secret_link,
+	read_share,
+	read_shares,
+	write_share,
+	create_share,
+	read_share_rights,
+	read_share_rights_overview,
+	create_share_right,
+	update_share_right,
+	delete_share_right,
+	read_share_rights_inherit_overview,
+	accept_share_right,
+	decline_share_right,
+	search_user,
+	read_ga,
+	activate_ga,
+	delete_ga,
+	create_ga,
+	read_duo,
+	activate_duo,
+	delete_duo,
+	create_duo,
+	read_yubikey_otp,
+	activate_yubikey_otp,
+	delete_yubikey_otp,
+	create_yubikey_otp,
+	create_share_link,
+	move_share_link,
+	delete_share_link,
+	read_group,
+	create_group,
+	update_group,
+	delete_group,
+	read_group_rights,
+	create_membership,
+	update_membership,
+	delete_membership,
+	accept_membership,
+	decline_membership,
+	delete_account,
+	webauthnVerifyInit,
+	webauthnVerify,
+	ivaltVerify,
 };
 
 export default service;

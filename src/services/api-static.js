@@ -2,7 +2,7 @@
  * Gitlab service, that implements the Gitlab API
  */
 
-const BASE_URL = 'https://static.psono.com';
+const BASE_URL = "https://static.psono.com";
 
 /**
  *
@@ -13,12 +13,12 @@ const BASE_URL = 'https://static.psono.com';
  * @returns {Promise<string>} promise
  */
 async function get(ressource) {
-    const response = await fetch(BASE_URL + ressource);
-    return await response.json();
+	const response = await fetch(BASE_URL + ressource);
+	return await response.json();
 }
 
 const service = {
-    get,
+	get,
 };
 
 export default service;

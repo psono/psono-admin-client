@@ -1,4 +1,4 @@
-import action from '../actions/boundActionCreators';
+import action from "../actions/boundActionCreators";
 
 /**
  * Sends an info message
@@ -6,7 +6,7 @@ import action from '../actions/boundActionCreators';
  * @param {array} message The message to send
  */
 function infoSend(message) {
-    action.sendNotification(message, 'info');
+	action.sendNotification(message, "info");
 }
 
 /**
@@ -15,28 +15,28 @@ function infoSend(message) {
  * @param {array} message The message to send
  */
 function errorSend(message) {
-    action.sendNotification(message, 'danger');
+	action.sendNotification(message, "danger");
 }
 
 /**
  * Resets messages
  */
 function reset() {
-    action.setNotifications([]);
+	action.setNotifications([]);
 }
 
 /**
  * Resets messages
  */
 function set(messages) {
-    action.setNotifications(messages);
+	action.setNotifications(messages);
 }
 
 const service = {
-    infoSend,
-    errorSend,
-    reset,
-    set,
+	infoSend,
+	errorSend,
+	reset,
+	set,
 };
 
 export default service;

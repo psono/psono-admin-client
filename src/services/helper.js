@@ -9,9 +9,9 @@
  * @returns {boolean} Returns the split up url
  */
 function is_ipv4_address(address) {
-    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-        address
-    );
+	return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+		address,
+	);
 }
 
 /**
@@ -21,68 +21,65 @@ function is_ipv4_address(address) {
  * @returns {SplittedUrl} Returns the split up url
  */
 function parse_url(url) {
-    let authority;
-    let splitted_authority;
-    let splitted_domain;
-    let full_domain;
-    let top_domain;
-    let base_url;
-    let schema;
-    let port = null;
+	let authority;
+	let splitted_authority;
+	let splitted_domain;
+	let full_domain;
+	let top_domain;
+	let base_url;
+	let schema;
+	let port = null;
 
-    // According to RFC http://www.ietf.org/rfc/rfc3986.txt Appendix B
-    let pattern = new RegExp(
-        '^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?'
-    );
-    let matches = url.match(pattern);
+	// According to RFC http://www.ietf.org/rfc/rfc3986.txt Appendix B
+	let pattern = new RegExp(
+		"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+	);
+	let matches = url.match(pattern);
 
-    schema = matches[2];
-    base_url = matches[2] + '://';
+	schema = matches[2];
+	base_url = matches[2] + "://";
 
-    if (typeof matches[4] !== 'undefined') {
-        base_url = base_url + matches[4];
-        authority = matches[4].replace(/^(www\.)/, '');
-        splitted_authority = authority.split(':');
-    }
+	if (typeof matches[4] !== "undefined") {
+		base_url = base_url + matches[4];
+		authority = matches[4].replace(/^(www\.)/, "");
+		splitted_authority = authority.split(":");
+	}
 
-    if (
-        typeof splitted_authority !== 'undefined' &&
-        splitted_authority.length === 2
-    ) {
-        port = splitted_authority[splitted_authority.length - 1];
-    }
-    if (typeof splitted_authority !== 'undefined') {
-        splitted_domain = splitted_authority[0].split('.');
-        full_domain = splitted_authority[0];
-    }
+	if (
+		typeof splitted_authority !== "undefined" &&
+		splitted_authority.length === 2
+	) {
+		port = splitted_authority[splitted_authority.length - 1];
+	}
+	if (typeof splitted_authority !== "undefined") {
+		splitted_domain = splitted_authority[0].split(".");
+		full_domain = splitted_authority[0];
+	}
 
-    if (
-        typeof splitted_domain !== 'undefined' &&
-        is_ipv4_address(full_domain)
-    ) {
-        top_domain = full_domain;
-    } else if (typeof splitted_domain !== 'undefined') {
-        if (splitted_domain.length > 1) {
-            top_domain =
-                splitted_domain[splitted_domain.length - 2] +
-                '.' +
-                splitted_domain[splitted_domain.length - 1];
-        } else {
-            top_domain = splitted_domain[splitted_domain.length - 1];
-        }
-    }
+	if (typeof splitted_domain !== "undefined" && is_ipv4_address(full_domain)) {
+		top_domain = full_domain;
+	} else if (typeof splitted_domain !== "undefined") {
+		if (splitted_domain.length > 1) {
+			top_domain =
+				splitted_domain[splitted_domain.length - 2] +
+				"." +
+				splitted_domain[splitted_domain.length - 1];
+		} else {
+			top_domain = splitted_domain[splitted_domain.length - 1];
+		}
+	}
 
-    return {
-        scheme: schema,
-        base_url: base_url,
-        authority: authority, //remove leading www.
-        full_domain: full_domain,
-        top_domain: top_domain,
-        port: port,
-        path: matches[5],
-        query: matches[7],
-        fragment: matches[9],
-    };
+	return {
+		scheme: schema,
+		base_url: base_url,
+		authority: authority, //remove leading www.
+		full_domain: full_domain,
+		top_domain: top_domain,
+		port: port,
+		path: matches[5],
+		query: matches[7],
+		fragment: matches[9],
+	};
 }
 
 /**
@@ -93,8 +90,8 @@ function parse_url(url) {
  * @returns {string} The full domain of the url
  */
 function get_domain(url) {
-    const parsed_url = parse_url(url);
-    return parsed_url.full_domain;
+	const parsed_url = parse_url(url);
+	return parsed_url.full_domain;
 }
 
 /**
@@ -105,30 +102,30 @@ function get_domain(url) {
  * @returns {boolean} Returns if array1 starts with array2
  */
 function array_starts_with(array1, array2) {
-    if (!(array1 instanceof Array)) {
-        return false;
-    }
-    if (!(array2 instanceof Array)) {
-        return false;
-    }
+	if (!(array1 instanceof Array)) {
+		return false;
+	}
+	if (!(array2 instanceof Array)) {
+		return false;
+	}
 
-    if (array1.length < array2.length) {
-        return false;
-    }
+	if (array1.length < array2.length) {
+		return false;
+	}
 
-    for (let i = 0; i < array1.length; i++) {
-        if (i === array2.length) {
-            return true;
-        }
-        if (array1[i] instanceof Array && array2[i] instanceof Array) {
-            if (!array1[i].equals(array2[i])) {
-                return false;
-            }
-        } else if (array1[i] !== array2[i]) {
-            return false;
-        }
-    }
-    return true;
+	for (let i = 0; i < array1.length; i++) {
+		if (i === array2.length) {
+			return true;
+		}
+		if (array1[i] instanceof Array && array2[i] instanceof Array) {
+			if (!array1[i].equals(array2[i])) {
+				return false;
+			}
+		} else if (array1[i] !== array2[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 /**
@@ -138,13 +135,13 @@ function array_starts_with(array1, array2) {
  * @param {array} list The list object we want to fill
  */
 function create_list(obj, list) {
-    let i;
-    for (i = 0; obj.items && i < obj.items.length; i++) {
-        list.push(obj.items[i]);
-    }
-    for (i = 0; obj.folders && i < obj.folders.length; i++) {
-        create_list(obj.folders[i], list);
-    }
+	let i;
+	for (i = 0; obj.items && i < obj.items.length; i++) {
+		list.push(obj.items[i]);
+	}
+	for (i = 0; obj.folders && i < obj.folders.length; i++) {
+		create_list(obj.folders[i], list);
+	}
 }
 
 /**
@@ -155,7 +152,7 @@ function create_list(obj, list) {
  * @returns {*} Returns a duplicate of object
  */
 function duplicate_object(obj) {
-    return JSON.parse(JSON.stringify(obj));
+	return JSON.parse(JSON.stringify(obj));
 }
 
 /**
@@ -166,14 +163,13 @@ function duplicate_object(obj) {
  * @returns {string} The error message, if it matches
  */
 function validate_username_start(username, forbidden_chars) {
-    for (let i = 0; i < forbidden_chars.length; i++) {
-        if (
-            username.substring(0, forbidden_chars[i].length) ===
-            forbidden_chars[i]
-        ) {
-            return 'Usernames may not start with "' + forbidden_chars[i] + '"';
-        }
-    }
+	for (let i = 0; i < forbidden_chars.length; i++) {
+		if (
+			username.substring(0, forbidden_chars[i].length) === forbidden_chars[i]
+		) {
+			return 'Usernames may not start with "' + forbidden_chars[i] + '"';
+		}
+	}
 }
 
 /**
@@ -184,14 +180,14 @@ function validate_username_start(username, forbidden_chars) {
  * @returns {string} The error message, if it matches
  */
 function validate_username_end(username, forbidden_chars) {
-    for (let i = 0; i < forbidden_chars.length; i++) {
-        if (
-            username.substring(username.length - forbidden_chars[i].length) ===
-            forbidden_chars[i]
-        ) {
-            return 'Usernames may not end with "' + forbidden_chars[i] + '"';
-        }
-    }
+	for (let i = 0; i < forbidden_chars.length; i++) {
+		if (
+			username.substring(username.length - forbidden_chars[i].length) ===
+			forbidden_chars[i]
+		) {
+			return 'Usernames may not end with "' + forbidden_chars[i] + '"';
+		}
+	}
 }
 
 /**
@@ -202,11 +198,11 @@ function validate_username_end(username, forbidden_chars) {
  * @returns {string} The error message, if it matches
  */
 function validate_username_contain(username, forbidden_chars) {
-    for (let i = 0; i < forbidden_chars.length; i++) {
-        if (username.indexOf(forbidden_chars[i]) !== -1) {
-            return 'Usernames may not contain "' + forbidden_chars[i] + '"';
-        }
-    }
+	for (let i = 0; i < forbidden_chars.length; i++) {
+		if (username.indexOf(forbidden_chars[i]) !== -1) {
+			return 'Usernames may not contain "' + forbidden_chars[i] + '"';
+		}
+	}
 }
 
 /**
@@ -217,11 +213,11 @@ function validate_username_contain(username, forbidden_chars) {
  * @returns {string} The error message, if it matches
  */
 function validate_group_name_contain(group_name, forbidden_chars) {
-    for (let i = 0; i < forbidden_chars.length; i++) {
-        if (group_name.indexOf(forbidden_chars[i]) !== -1) {
-            return 'Group name may not contain "' + forbidden_chars[i] + '"';
-        }
-    }
+	for (let i = 0; i < forbidden_chars.length; i++) {
+		if (group_name.indexOf(forbidden_chars[i]) !== -1) {
+			return 'Group name may not contain "' + forbidden_chars[i] + '"';
+		}
+	}
 }
 
 /**
@@ -232,11 +228,11 @@ function validate_group_name_contain(group_name, forbidden_chars) {
  * @returns {string} The full username
  */
 function form_full_username(username, domain) {
-    if (username.indexOf('@') === -1) {
-        return username + '@' + domain;
-    } else {
-        return username;
-    }
+	if (username.indexOf("@") === -1) {
+		return username + "@" + domain;
+	} else {
+		return username;
+	}
 }
 
 /**
@@ -248,35 +244,35 @@ function form_full_username(username, domain) {
  * @returns {boolean|string} Returns true or a string with the error
  */
 function is_valid_username(username) {
-    const res = username.split('@');
-    username = res[0];
+	const res = username.split("@");
+	username = res[0];
 
-    const USERNAME_REGEXP = /^[a-z0-9.-]*$/i;
-    let error;
-    if (!USERNAME_REGEXP.test(username)) {
-        return 'Usernames may only contain letters, numbers, periods and dashes';
-    }
+	const USERNAME_REGEXP = /^[a-z0-9.-]*$/i;
+	let error;
+	if (!USERNAME_REGEXP.test(username)) {
+		return "Usernames may only contain letters, numbers, periods and dashes";
+	}
 
-    if (username.length < 3) {
-        return 'Usernames may not be shorter than 3 chars';
-    }
+	if (username.length < 3) {
+		return "Usernames may not be shorter than 3 chars";
+	}
 
-    error = validate_username_start(username, ['.', '-']);
-    if (error) {
-        return error;
-    }
+	error = validate_username_start(username, [".", "-"]);
+	if (error) {
+		return error;
+	}
 
-    error = validate_username_end(username, ['.', '-']);
-    if (error) {
-        return error;
-    }
+	error = validate_username_end(username, [".", "-"]);
+	if (error) {
+		return error;
+	}
 
-    error = validate_username_contain(username, ['..', '--', '.-', '-.']);
-    if (error) {
-        return error;
-    }
+	error = validate_username_contain(username, ["..", "--", ".-", "-."]);
+	if (error) {
+		return error;
+	}
 
-    return true;
+	return true;
 }
 
 /**
@@ -287,18 +283,18 @@ function is_valid_username(username) {
  * @returns {boolean|string} Returns true or a string with the error
  */
 function is_valid_group_name(group_name) {
-    let error;
+	let error;
 
-    if (group_name.length < 3) {
-        return 'Group name may not be shorter than 3 chars';
-    }
+	if (group_name.length < 3) {
+		return "Group name may not be shorter than 3 chars";
+	}
 
-    error = validate_group_name_contain(group_name, ['@']);
-    if (error) {
-        return error;
-    }
+	error = validate_group_name_contain(group_name, ["@"]);
+	if (error) {
+		return error;
+	}
 
-    return true;
+	return true;
 }
 
 /**
@@ -311,14 +307,14 @@ function is_valid_group_name(group_name) {
  * @returns {boolean|string} Returns true or a string with the error
  */
 function is_valid_password(password, password2) {
-    if (password.length < 12) {
-        return 'Password too short (min 12 chars).';
-    }
+	if (password.length < 12) {
+		return "Password too short (min 12 chars).";
+	}
 
-    if (password !== password2) {
-        return "Passwords don't match.";
-    }
-    return true;
+	if (password !== password2) {
+		return "Passwords don't match.";
+	}
+	return true;
 }
 
 /**
@@ -330,15 +326,15 @@ function is_valid_password(password, password2) {
  * @returns {Array} Returns the chunks with length "len" as array
  */
 function split_string_in_chunks(str, len) {
-    const size = Math.ceil(str.length / len);
-    const chunks = new Array(size);
-    let offset = 0;
+	const size = Math.ceil(str.length / len);
+	const chunks = new Array(size);
+	let offset = 0;
 
-    for (let i = 0; i < size; ++i, offset += len) {
-        chunks[i] = str.substring(offset, offset + len);
-    }
+	for (let i = 0; i < size; ++i, offset += len) {
+		chunks[i] = str.substring(offset, offset + len);
+	}
 
-    return chunks;
+	return chunks;
 }
 
 /**
@@ -349,19 +345,19 @@ function split_string_in_chunks(str, len) {
  * @param {function|undefined} [cmp_fct] (optional) Compare function
  */
 function removeFromArray(array, search, cmp_fct) {
-    if (!array) {
-        return;
-    }
-    if (typeof cmp_fct === 'undefined') {
-        cmp_fct = function (a, b) {
-            return a === b;
-        };
-    }
-    for (let i = array.length - 1; i >= 0; i--) {
-        if (cmp_fct(array[i], search)) {
-            array.splice(i, 1);
-        }
-    }
+	if (!array) {
+		return;
+	}
+	if (typeof cmp_fct === "undefined") {
+		cmp_fct = function (a, b) {
+			return a === b;
+		};
+	}
+	for (let i = array.length - 1; i >= 0; i--) {
+		if (cmp_fct(array[i], search)) {
+			array.splice(i, 1);
+		}
+	}
 }
 
 /**
@@ -370,18 +366,18 @@ function removeFromArray(array, search, cmp_fct) {
  * @param {string} content The content to copy
  */
 function copy_to_clipboard(content) {
-    const copy = function (e) {
-        e.preventDefault();
-        if (e.clipboardData) {
-            e.clipboardData.setData('text/plain', content);
-        } else if (window.clipboardData) {
-            window.clipboardData.setData('Text', content);
-        }
-    };
+	const copy = function (e) {
+		e.preventDefault();
+		if (e.clipboardData) {
+			e.clipboardData.setData("text/plain", content);
+		} else if (window.clipboardData) {
+			window.clipboardData.setData("Text", content);
+		}
+	};
 
-    document.addEventListener('copy', copy);
-    document.execCommand('copy');
-    document.removeEventListener('copy', copy);
+	document.addEventListener("copy", copy);
+	document.execCommand("copy");
+	document.removeEventListener("copy", copy);
 }
 
 /**
@@ -393,10 +389,10 @@ function copy_to_clipboard(content) {
  * @returns {boolean} Whether the string ends with the suffix or not
  */
 function endsWith(to_test, suffix) {
-    return (
-        suffix !== '' &&
-        to_test.indexOf(suffix, to_test.length - suffix.length) !== -1
-    );
+	return (
+		suffix !== "" &&
+		to_test.indexOf(suffix, to_test.length - suffix.length) !== -1
+	);
 }
 
 /**
@@ -405,17 +401,16 @@ function endsWith(to_test, suffix) {
  * @param {string} test Testable string
  */
 function get_password_filter(test) {
-    const regex = new RegExp(
-        test.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1'),
-        'i'
-    );
+	const regex = new RegExp(
+		test.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1"),
+		"i",
+	);
 
-    return function (datastore_entry) {
-        return (
-            regex.test(datastore_entry.name) ||
-            regex.test(datastore_entry.urlfilter)
-        );
-    };
+	return function (datastore_entry) {
+		return (
+			regex.test(datastore_entry.name) || regex.test(datastore_entry.urlfilter)
+		);
+	};
 }
 
 /**
@@ -425,70 +420,70 @@ function get_password_filter(test) {
  * @returns {{hours: (*|number), seconds: (*|number), minutes: (*|number), days: number, microseconds: number}}
  */
 function timeDifference(str) {
-    let days = 0,
-        hours = 0,
-        minutes = 0,
-        seconds = 0,
-        microseconds = 0;
+	let days = 0,
+		hours = 0,
+		minutes = 0,
+		seconds = 0,
+		microseconds = 0;
 
-    const parts = str.split(' ');
-    if (parts.length === 2) {
-        days = parseInt(parts[0], 10);
-        if (isNaN(days)) {
-            throw new Error('Invalid days format');
-        }
-    } else if (parts.length !== 1) {
-        throw new Error('Invalid input format');
-    }
+	const parts = str.split(" ");
+	if (parts.length === 2) {
+		days = parseInt(parts[0], 10);
+		if (isNaN(days)) {
+			throw new Error("Invalid days format");
+		}
+	} else if (parts.length !== 1) {
+		throw new Error("Invalid input format");
+	}
 
-    const time = parts[parts.length - 1];
-    const [timeWithoutMicroseconds, microsecondsStr] = time.split('.');
-    [hours, minutes, seconds] = timeWithoutMicroseconds.split(':').map(Number);
+	const time = parts[parts.length - 1];
+	const [timeWithoutMicroseconds, microsecondsStr] = time.split(".");
+	[hours, minutes, seconds] = timeWithoutMicroseconds.split(":").map(Number);
 
-    if (
-        isNaN(hours) ||
-        isNaN(minutes) ||
-        isNaN(seconds) ||
-        hours > 23 ||
-        minutes > 59 ||
-        seconds > 59
-    ) {
-        throw new Error('Invalid time format');
-    }
+	if (
+		isNaN(hours) ||
+		isNaN(minutes) ||
+		isNaN(seconds) ||
+		hours > 23 ||
+		minutes > 59 ||
+		seconds > 59
+	) {
+		throw new Error("Invalid time format");
+	}
 
-    if (microsecondsStr) {
-        microseconds = parseInt(microsecondsStr, 10);
-        if (isNaN(microseconds)) {
-            throw new Error('Invalid microseconds format');
-        }
-    }
+	if (microsecondsStr) {
+		microseconds = parseInt(microsecondsStr, 10);
+		if (isNaN(microseconds)) {
+			throw new Error("Invalid microseconds format");
+		}
+	}
 
-    return {
-        days,
-        hours,
-        minutes,
-        seconds,
-        microseconds,
-    };
+	return {
+		days,
+		hours,
+		minutes,
+		seconds,
+		microseconds,
+	};
 }
 
 const service = {
-    parse_url,
-    get_domain,
-    array_starts_with,
-    create_list,
-    duplicate_object,
-    form_full_username,
-    validate_group_name_contain,
-    is_valid_username,
-    is_valid_group_name,
-    is_valid_password,
-    split_string_in_chunks,
-    removeFromArray,
-    copy_to_clipboard,
-    endsWith,
-    get_password_filter,
-    timeDifference,
+	parse_url,
+	get_domain,
+	array_starts_with,
+	create_list,
+	duplicate_object,
+	form_full_username,
+	validate_group_name_contain,
+	is_valid_username,
+	is_valid_group_name,
+	is_valid_password,
+	split_string_in_chunks,
+	removeFromArray,
+	copy_to_clipboard,
+	endsWith,
+	get_password_filter,
+	timeDifference,
 };
 
 export default service;

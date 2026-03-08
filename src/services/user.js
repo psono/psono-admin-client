@@ -2,18 +2,18 @@
  * Users service, everything about login / logout ...
  */
 
-import action from '../actions/boundActionCreators';
-import host from './host';
-import psono_server from './api-server';
-import cryptoLibrary from './cryptoLibrary';
-import helper from './helper';
-import store from './store';
-import device from './device';
-import notification from './notification';
-import browserClient from './browser-client';
-import i18n from '../i18n';
+import action from "../actions/boundActionCreators";
+import host from "./host";
+import psono_server from "./api-server";
+import cryptoLibrary from "./cryptoLibrary";
+import helper from "./helper";
+import store from "./store";
+import device from "./device";
+import notification from "./notification";
+import browserClient from "./browser-client";
+import i18n from "../i18n";
 
-let sessionPassword = '';
+let sessionPassword = "";
 let verification = {};
 
 /**
@@ -28,16 +28,16 @@ let verification = {};
  * @returns {Promise<AxiosResponse<any>>}
  */
 function initiateLogin(username, server, remember_me, trust_device) {
-    action.setServerUrl(server);
-    let parsed_url = helper.parse_url(server);
+	action.setServerUrl(server);
+	let parsed_url = helper.parse_url(server);
 
-    username = helper.form_full_username(username, parsed_url['full_domain']);
-    action.setUserUsername(username);
-    action.setUserInfo1(remember_me, trust_device);
+	username = helper.form_full_username(username, parsed_url["full_domain"]);
+	action.setUserUsername(username);
+	action.setUserInfo1(remember_me, trust_device);
 
-    return host.checkHost(server).then((response) => {
-        return response;
-    });
+	return host.checkHost(server).then((response) => {
+		return response;
+	});
 }
 
 /**
@@ -49,53 +49,53 @@ function initiateLogin(username, server, remember_me, trust_device) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function samlLogin(samlTokenId) {
-    const serverPublicKey = store.getState().server.public_key;
-    const sessionKeys = cryptoLibrary.generatePublicPrivateKeypair();
-    const password = '';
-    const onSuccess = function (response) {
-        return handleLoginResponse(
-            response,
-            password,
-            sessionKeys,
-            serverPublicKey,
-            'SAML'
-        );
-    };
+	const serverPublicKey = store.getState().server.public_key;
+	const sessionKeys = cryptoLibrary.generatePublicPrivateKeypair();
+	const password = "";
+	const onSuccess = function (response) {
+		return handleLoginResponse(
+			response,
+			password,
+			sessionKeys,
+			serverPublicKey,
+			"SAML",
+		);
+	};
 
-    const onError = function (response) {
-        return Promise.reject(response.data);
-    };
+	const onError = function (response) {
+		return Promise.reject(response.data);
+	};
 
-    let login_info = {
-        saml_token_id: samlTokenId,
-        device_time: new Date().toISOString(),
-        device_fingerprint: device.getDeviceFingerprint(),
-        device_description: device.getDeviceDescription(),
-    };
+	let login_info = {
+		saml_token_id: samlTokenId,
+		device_time: new Date().toISOString(),
+		device_fingerprint: device.getDeviceFingerprint(),
+		device_description: device.getDeviceDescription(),
+	};
 
-    login_info = JSON.stringify(login_info);
+	login_info = JSON.stringify(login_info);
 
-    // encrypt the login infos
-    const loginInfoEnc = cryptoLibrary.encryptDataPublicKey(
-        login_info,
-        serverPublicKey,
-        sessionKeys.private_key
-    );
+	// encrypt the login infos
+	const loginInfoEnc = cryptoLibrary.encryptDataPublicKey(
+		login_info,
+		serverPublicKey,
+		sessionKeys.private_key,
+	);
 
-    let sessionDuration = 24 * 60 * 60;
-    const trustDevice = store.getState().user.trust_device;
-    if (trustDevice) {
-        sessionDuration = 24 * 60 * 60 * 30;
-    }
+	let sessionDuration = 24 * 60 * 60;
+	const trustDevice = store.getState().user.trust_device;
+	if (trustDevice) {
+		sessionDuration = 24 * 60 * 60 * 30;
+	}
 
-    return psono_server
-        .samlLogin(
-            loginInfoEnc['text'],
-            loginInfoEnc['nonce'],
-            sessionKeys.public_key,
-            sessionDuration
-        )
-        .then(onSuccess, onError);
+	return psono_server
+		.samlLogin(
+			loginInfoEnc["text"],
+			loginInfoEnc["nonce"],
+			sessionKeys.public_key,
+			sessionDuration,
+		)
+		.then(onSuccess, onError);
 }
 
 /**
@@ -108,12 +108,12 @@ function samlLogin(samlTokenId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function initiateSamlLogin(server, remember_me, trust_device) {
-    action.setServerUrl(server);
-    action.setUserInfo1(remember_me, trust_device);
+	action.setServerUrl(server);
+	action.setUserInfo1(remember_me, trust_device);
 
-    return host.checkHost(server).then((response) => {
-        return response;
-    });
+	return host.checkHost(server).then((response) => {
+		return response;
+	});
 }
 
 /**
@@ -124,13 +124,13 @@ function initiateSamlLogin(server, remember_me, trust_device) {
  * @returns {promise}
  */
 function get_saml_redirect_url(provider_id) {
-    const return_to_url = browserClient.get_saml_return_to_url();
+	const return_to_url = browserClient.get_saml_return_to_url();
 
-    return psono_server
-        .samlInitiateLogin(provider_id, return_to_url)
-        .then((result) => {
-            return result.data;
-        });
+	return psono_server
+		.samlInitiateLogin(provider_id, return_to_url)
+		.then((result) => {
+			return result.data;
+		});
 }
 
 /**
@@ -142,53 +142,53 @@ function get_saml_redirect_url(provider_id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function oidcLogin(oidcTokenId) {
-    const serverPublicKey = store.getState().server.public_key;
-    const sessionKeys = cryptoLibrary.generatePublicPrivateKeypair();
-    const password = '';
-    const onSuccess = function (response) {
-        return handleLoginResponse(
-            response,
-            password,
-            sessionKeys,
-            serverPublicKey,
-            'OIDC'
-        );
-    };
+	const serverPublicKey = store.getState().server.public_key;
+	const sessionKeys = cryptoLibrary.generatePublicPrivateKeypair();
+	const password = "";
+	const onSuccess = function (response) {
+		return handleLoginResponse(
+			response,
+			password,
+			sessionKeys,
+			serverPublicKey,
+			"OIDC",
+		);
+	};
 
-    const onError = function (response) {
-        return Promise.reject(response.data);
-    };
+	const onError = function (response) {
+		return Promise.reject(response.data);
+	};
 
-    let login_info = {
-        oidc_token_id: oidcTokenId,
-        device_time: new Date().toISOString(),
-        device_fingerprint: device.getDeviceFingerprint(),
-        device_description: device.getDeviceDescription(),
-    };
+	let login_info = {
+		oidc_token_id: oidcTokenId,
+		device_time: new Date().toISOString(),
+		device_fingerprint: device.getDeviceFingerprint(),
+		device_description: device.getDeviceDescription(),
+	};
 
-    login_info = JSON.stringify(login_info);
+	login_info = JSON.stringify(login_info);
 
-    // encrypt the login infos
-    const loginInfoEnc = cryptoLibrary.encryptDataPublicKey(
-        login_info,
-        serverPublicKey,
-        sessionKeys.private_key
-    );
+	// encrypt the login infos
+	const loginInfoEnc = cryptoLibrary.encryptDataPublicKey(
+		login_info,
+		serverPublicKey,
+		sessionKeys.private_key,
+	);
 
-    let sessionDuration = 24 * 60 * 60;
-    const trustDevice = store.getState().user.trust_device;
-    if (trustDevice) {
-        sessionDuration = 24 * 60 * 60 * 30;
-    }
+	let sessionDuration = 24 * 60 * 60;
+	const trustDevice = store.getState().user.trust_device;
+	if (trustDevice) {
+		sessionDuration = 24 * 60 * 60 * 30;
+	}
 
-    return psono_server
-        .oidcLogin(
-            loginInfoEnc['text'],
-            loginInfoEnc['nonce'],
-            sessionKeys.public_key,
-            sessionDuration
-        )
-        .then(onSuccess, onError);
+	return psono_server
+		.oidcLogin(
+			loginInfoEnc["text"],
+			loginInfoEnc["nonce"],
+			sessionKeys.public_key,
+			sessionDuration,
+		)
+		.then(onSuccess, onError);
 }
 
 /**
@@ -201,12 +201,12 @@ function oidcLogin(oidcTokenId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 function initiateOidcLogin(server, remember_me, trust_device) {
-    action.setServerUrl(server);
-    action.setUserInfo1(remember_me, trust_device);
+	action.setServerUrl(server);
+	action.setUserInfo1(remember_me, trust_device);
 
-    return host.checkHost(server).then((response) => {
-        return response;
-    });
+	return host.checkHost(server).then((response) => {
+		return response;
+	});
 }
 
 /**
@@ -217,13 +217,13 @@ function initiateOidcLogin(server, remember_me, trust_device) {
  * @returns {promise}
  */
 function get_oidc_redirect_url(provider_id) {
-    const return_to_url = browserClient.get_oidc_return_to_url();
+	const return_to_url = browserClient.get_oidc_return_to_url();
 
-    return psono_server
-        .oidcInitiateLogin(provider_id, return_to_url)
-        .then((result) => {
-            return result.data;
-        });
+	return psono_server
+		.oidcInitiateLogin(provider_id, return_to_url)
+		.then((result) => {
+			return result.data;
+		});
 }
 
 /**
@@ -234,26 +234,26 @@ function get_oidc_redirect_url(provider_id) {
  * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
  */
 function ga_verify(ga_token) {
-    const token = store.getState().user.token;
-    const session_secret_key = store.getState().user.session_secret_key;
+	const token = store.getState().user.token;
+	const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
-        .ga_verify(token, ga_token, session_secret_key)
-        .catch((response) => {
-            if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('non_field_errors')
-            ) {
-                return Promise.reject(response.data.non_field_errors);
-            } else if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('ga_token')
-            ) {
-                return Promise.reject(response.data.ga_token);
-            } else {
-                return Promise.reject(response);
-            }
-        });
+	return psono_server
+		.ga_verify(token, ga_token, session_secret_key)
+		.catch((response) => {
+			if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("non_field_errors")
+			) {
+				return Promise.reject(response.data.non_field_errors);
+			} else if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("ga_token")
+			) {
+				return Promise.reject(response.data.ga_token);
+			} else {
+				return Promise.reject(response);
+			}
+		});
 }
 
 /**
@@ -264,26 +264,26 @@ function ga_verify(ga_token) {
  * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
  */
 function duo_verify(duo_token) {
-    const token = store.getState().user.token;
-    const session_secret_key = store.getState().user.session_secret_key;
+	const token = store.getState().user.token;
+	const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
-        .duo_verify(token, duo_token, session_secret_key)
-        .catch((response) => {
-            if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('non_field_errors')
-            ) {
-                return Promise.reject(response.data.non_field_errors);
-            } else if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('duo_token')
-            ) {
-                return Promise.reject(response.data.duo_token);
-            } else {
-                return Promise.reject(response);
-            }
-        });
+	return psono_server
+		.duo_verify(token, duo_token, session_secret_key)
+		.catch((response) => {
+			if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("non_field_errors")
+			) {
+				return Promise.reject(response.data.non_field_errors);
+			} else if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("duo_token")
+			) {
+				return Promise.reject(response.data.duo_token);
+			} else {
+				return Promise.reject(response);
+			}
+		});
 }
 
 /**
@@ -294,26 +294,26 @@ function duo_verify(duo_token) {
  * @returns Promise<AxiosResponse<any>> Returns a promise with the login status
  */
 function yubikey_otp_verify(yubikey_otp) {
-    const token = store.getState().user.token;
-    const session_secret_key = store.getState().user.session_secret_key;
+	const token = store.getState().user.token;
+	const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
-        .yubikey_otp_verify(token, yubikey_otp, session_secret_key)
-        .catch((response) => {
-            if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('non_field_errors')
-            ) {
-                return Promise.reject(response.data.non_field_errors);
-            } else if (
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('yubikey_otp')
-            ) {
-                return Promise.reject(response.data.yubikey_otp);
-            } else {
-                return Promise.reject(response);
-            }
-        });
+	return psono_server
+		.yubikey_otp_verify(token, yubikey_otp, session_secret_key)
+		.catch((response) => {
+			if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("non_field_errors")
+			) {
+				return Promise.reject(response.data.non_field_errors);
+			} else if (
+				response.hasOwnProperty("data") &&
+				response.data.hasOwnProperty("yubikey_otp")
+			) {
+				return Promise.reject(response.data.yubikey_otp);
+			} else {
+				return Promise.reject(response);
+			}
+		});
 }
 
 /**
@@ -322,50 +322,50 @@ function yubikey_otp_verify(yubikey_otp) {
  * @returns Promise<AxiosResponse<any>> Returns a promise with the the final activate token was successful or not
  */
 function activateToken() {
-    const token = store.getState().user.token;
-    const sessionSecretKey = store.getState().user.session_secret_key;
-    const userSauce = store.getState().user.user_sauce;
+	const token = store.getState().user.token;
+	const sessionSecretKey = store.getState().user.session_secret_key;
+	const userSauce = store.getState().user.user_sauce;
 
-    const onSuccess = function (activationData) {
-        // decrypt user secret key
-        const userSecretKey = cryptoLibrary.decryptSecret(
-            activationData.data.user.secret_key,
-            activationData.data.user.secret_key_nonce,
-            sessionPassword,
-            userSauce
-        );
+	const onSuccess = function (activationData) {
+		// decrypt user secret key
+		const userSecretKey = cryptoLibrary.decryptSecret(
+			activationData.data.user.secret_key,
+			activationData.data.user.secret_key_nonce,
+			sessionPassword,
+			userSauce,
+		);
 
-        let serverSecretExists = ['SAML', 'OIDC', 'LDAP'].includes(
-            activationData.data.user.authentication
-        );
-        if (activationData.data.user.hasOwnProperty('server_secret_exists')) {
-            serverSecretExists = activationData.data.user.server_secret_exists;
-        }
+		let serverSecretExists = ["SAML", "OIDC", "LDAP"].includes(
+			activationData.data.user.authentication,
+		);
+		if (activationData.data.user.hasOwnProperty("server_secret_exists")) {
+			serverSecretExists = activationData.data.user.server_secret_exists;
+		}
 
-        action.setUserInfo3(
-            activationData.data.user.id,
-            activationData.data.user.email,
-            userSecretKey,
-            serverSecretExists
-        );
+		action.setUserInfo3(
+			activationData.data.user.id,
+			activationData.data.user.email,
+			userSecretKey,
+			serverSecretExists,
+		);
 
-        // no need anymore for the public / private session keys
-        sessionPassword = '';
-        verification = {};
+		// no need anymore for the public / private session keys
+		sessionPassword = "";
+		verification = {};
 
-        return {
-            response: 'success',
-        };
-    };
+		return {
+			response: "success",
+		};
+	};
 
-    return psono_server
-        .activateToken(
-            token,
-            verification.text,
-            verification.nonce,
-            sessionSecretKey
-        )
-        .then(onSuccess);
+	return psono_server
+		.activateToken(
+			token,
+			verification.text,
+			verification.nonce,
+			sessionSecretKey,
+		)
+		.then(onSuccess);
 }
 
 /**
@@ -380,178 +380,176 @@ function activateToken() {
  * @returns {Array} The list of required multifactor challenges to solve
  */
 function handleLoginResponse(
-    response,
-    password,
-    sessionKeys,
-    serverPublicKey,
-    defaultAuthentication
+	response,
+	password,
+	sessionKeys,
+	serverPublicKey,
+	defaultAuthentication,
 ) {
-    let decrypted_response_data = JSON.parse(
-        cryptoLibrary.decryptDataPublicKey(
-            response.data.login_info,
-            response.data.login_info_nonce,
-            serverPublicKey,
-            sessionKeys.private_key
-        )
-    );
-    const server_session_public_key =
-        decrypted_response_data.server_session_public_key ||
-        decrypted_response_data.session_public_key;
+	let decrypted_response_data = JSON.parse(
+		cryptoLibrary.decryptDataPublicKey(
+			response.data.login_info,
+			response.data.login_info_nonce,
+			serverPublicKey,
+			sessionKeys.private_key,
+		),
+	);
+	const server_session_public_key =
+		decrypted_response_data.server_session_public_key ||
+		decrypted_response_data.session_public_key;
 
-    if (
-        decrypted_response_data.hasOwnProperty('data') &&
-        decrypted_response_data.hasOwnProperty('data_nonce')
-    ) {
-        decrypted_response_data = JSON.parse(
-            cryptoLibrary.decryptDataPublicKey(
-                decrypted_response_data.data,
-                decrypted_response_data.data_nonce,
-                server_session_public_key,
-                sessionKeys.private_key
-            )
-        );
-    }
-    sessionPassword =
-        password || !decrypted_response_data.hasOwnProperty('password')
-            ? password
-            : decrypted_response_data.password;
+	if (
+		decrypted_response_data.hasOwnProperty("data") &&
+		decrypted_response_data.hasOwnProperty("data_nonce")
+	) {
+		decrypted_response_data = JSON.parse(
+			cryptoLibrary.decryptDataPublicKey(
+				decrypted_response_data.data,
+				decrypted_response_data.data_nonce,
+				server_session_public_key,
+				sessionKeys.private_key,
+			),
+		);
+	}
+	sessionPassword =
+		password || !decrypted_response_data.hasOwnProperty("password")
+			? password
+			: decrypted_response_data.password;
 
-    // decrypt the session key
-    let sessionSecretKey = decrypted_response_data.session_secret_key;
-    if (decrypted_response_data.hasOwnProperty('session_secret_key_nonce')) {
-        sessionSecretKey = cryptoLibrary.decryptDataPublicKey(
-            decrypted_response_data.session_secret_key,
-            decrypted_response_data.session_secret_key_nonce,
-            decrypted_response_data.session_public_key,
-            sessionKeys.private_key
-        );
-    }
+	// decrypt the session key
+	let sessionSecretKey = decrypted_response_data.session_secret_key;
+	if (decrypted_response_data.hasOwnProperty("session_secret_key_nonce")) {
+		sessionSecretKey = cryptoLibrary.decryptDataPublicKey(
+			decrypted_response_data.session_secret_key,
+			decrypted_response_data.session_secret_key_nonce,
+			decrypted_response_data.session_public_key,
+			sessionKeys.private_key,
+		);
+	}
 
-    const authentication = decrypted_response_data.user.authentication
-        ? decrypted_response_data.user.authentication
-        : defaultAuthentication;
+	const authentication = decrypted_response_data.user.authentication
+		? decrypted_response_data.user.authentication
+		: defaultAuthentication;
 
-    let user_private_key;
-    try {
-        // decrypt user private key which may fail if the user server's password isn't correct and the user
-        // needs to enter one
-        user_private_key = cryptoLibrary.decryptSecret(
-            decrypted_response_data.user.private_key,
-            decrypted_response_data.user.private_key_nonce,
-            sessionPassword,
-            decrypted_response_data.user.user_sauce
-        );
-    } catch (error) {
-        return {
-            require_password: (password) =>
-                handleLoginResponse(
-                    response,
-                    password,
-                    sessionKeys,
-                    serverPublicKey,
-                    defaultAuthentication
-                ),
-        };
-    }
+	let user_private_key;
+	try {
+		// decrypt user private key which may fail if the user server's password isn't correct and the user
+		// needs to enter one
+		user_private_key = cryptoLibrary.decryptSecret(
+			decrypted_response_data.user.private_key,
+			decrypted_response_data.user.private_key_nonce,
+			sessionPassword,
+			decrypted_response_data.user.user_sauce,
+		);
+	} catch (error) {
+		return {
+			require_password: (password) =>
+				handleLoginResponse(
+					response,
+					password,
+					sessionKeys,
+					serverPublicKey,
+					defaultAuthentication,
+				),
+		};
+	}
 
-    // decrypt the user_validator
-    const user_validator = cryptoLibrary.decryptDataPublicKey(
-        decrypted_response_data.user_validator,
-        decrypted_response_data.user_validator_nonce,
-        server_session_public_key,
-        user_private_key
-    );
+	// decrypt the user_validator
+	const user_validator = cryptoLibrary.decryptDataPublicKey(
+		decrypted_response_data.user_validator,
+		decrypted_response_data.user_validator_nonce,
+		server_session_public_key,
+		user_private_key,
+	);
 
-    // encrypt the validator as verification
-    verification = cryptoLibrary.encryptData(user_validator, sessionSecretKey);
+	// encrypt the validator as verification
+	verification = cryptoLibrary.encryptData(user_validator, sessionSecretKey);
 
-    action.setUserUsername(decrypted_response_data.user.username);
+	action.setUserUsername(decrypted_response_data.user.username);
 
-    action.setUserInfo2(
-        user_private_key,
-        decrypted_response_data.user.public_key,
-        sessionSecretKey,
-        decrypted_response_data.token,
-        decrypted_response_data.user.user_sauce,
-        authentication
-    );
+	action.setUserInfo2(
+		user_private_key,
+		decrypted_response_data.user.public_key,
+		sessionSecretKey,
+		decrypted_response_data.token,
+		decrypted_response_data.user.user_sauce,
+		authentication,
+	);
 
-    if (
-        decrypted_response_data.user.hasOwnProperty('language') &&
-        i18n.options.supportedLngs.includes(
-            decrypted_response_data.user.language
-        )
-    ) {
-        i18n.changeLanguage(decrypted_response_data.user.language);
-    }
+	if (
+		decrypted_response_data.user.hasOwnProperty("language") &&
+		i18n.options.supportedLngs.includes(decrypted_response_data.user.language)
+	) {
+		i18n.changeLanguage(decrypted_response_data.user.language);
+	}
 
-    return decrypted_response_data;
+	return decrypted_response_data;
 }
 
 function login(password, serverInfo, sendPlain) {
-    const username = store.getState().user.username;
-    const trust_device = store.getState().user.trust_device;
-    const server_public_key = serverInfo.info.public_key;
+	const username = store.getState().user.username;
+	const trust_device = store.getState().user.trust_device;
+	const server_public_key = serverInfo.info.public_key;
 
-    let authkey = cryptoLibrary.generateAuthkey(username, password);
+	let authkey = cryptoLibrary.generateAuthkey(username, password);
 
-    const session_keys = cryptoLibrary.generatePublicPrivateKeypair();
+	const session_keys = cryptoLibrary.generatePublicPrivateKeypair();
 
-    const onSuccess = function (response) {
-        return handleLoginResponse(
-            response,
-            password,
-            session_keys,
-            server_public_key,
-            'AUTHKEY'
-        );
-    };
+	const onSuccess = function (response) {
+		return handleLoginResponse(
+			response,
+			password,
+			session_keys,
+			server_public_key,
+			"AUTHKEY",
+		);
+	};
 
-    const onError = function (response) {
-        if (
-            response.hasOwnProperty('data') &&
-            response.data.hasOwnProperty('non_field_errors')
-        ) {
-            return Promise.reject(response.data.non_field_errors);
-        } else {
-            return Promise.reject(response);
-        }
-    };
+	const onError = function (response) {
+		if (
+			response.hasOwnProperty("data") &&
+			response.data.hasOwnProperty("non_field_errors")
+		) {
+			return Promise.reject(response.data.non_field_errors);
+		} else {
+			return Promise.reject(response);
+		}
+	};
 
-    let login_info = {
-        username: username,
-        authkey: authkey,
-        device_time: new Date().toISOString(),
-        device_fingerprint: device.getDeviceFingerprint(),
-        device_description: device.getDeviceDescription(),
-    };
+	let login_info = {
+		username: username,
+		authkey: authkey,
+		device_time: new Date().toISOString(),
+		device_fingerprint: device.getDeviceFingerprint(),
+		device_description: device.getDeviceDescription(),
+	};
 
-    if (sendPlain) {
-        login_info['password'] = password;
-    }
+	if (sendPlain) {
+		login_info["password"] = password;
+	}
 
-    login_info = JSON.stringify(login_info);
+	login_info = JSON.stringify(login_info);
 
-    // encrypt the login infos
-    const login_info_enc = cryptoLibrary.encryptDataPublicKey(
-        login_info,
-        server_public_key,
-        session_keys.private_key
-    );
+	// encrypt the login infos
+	const login_info_enc = cryptoLibrary.encryptDataPublicKey(
+		login_info,
+		server_public_key,
+		session_keys.private_key,
+	);
 
-    let session_duration = 24 * 60 * 60;
-    if (trust_device) {
-        session_duration = 24 * 60 * 60 * 30;
-    }
+	let session_duration = 24 * 60 * 60;
+	if (trust_device) {
+		session_duration = 24 * 60 * 60 * 30;
+	}
 
-    return psono_server
-        .login(
-            login_info_enc['text'],
-            login_info_enc['nonce'],
-            session_keys.public_key,
-            session_duration
-        )
-        .then(onSuccess, onError);
+	return psono_server
+		.login(
+			login_info_enc["text"],
+			login_info_enc["nonce"],
+			session_keys.public_key,
+			session_duration,
+		)
+		.then(onSuccess, onError);
 }
 
 /**
@@ -559,36 +557,36 @@ function login(password, serverInfo, sendPlain) {
  *
  * @param {string} msg An optional message to display
  */
-function logout(msg = '') {
-    const token = store.getState().user.token;
-    const session_secret_key = store.getState().user.session_secret_key;
+function logout(msg = "") {
+	const token = store.getState().user.token;
+	const session_secret_key = store.getState().user.session_secret_key;
 
-    psono_server.logout(token, session_secret_key);
-    action.logout(store.getState().user.remember_me);
-    if (msg) {
-        notification.infoSend(msg);
-    }
+	psono_server.logout(token, session_secret_key);
+	action.logout(store.getState().user.remember_me);
+	if (msg) {
+		notification.infoSend(msg);
+	}
 }
 
 function isLoggedIn() {
-    return store.getState().user.isLoggedIn;
+	return store.getState().user.isLoggedIn;
 }
 
 const service = {
-    initiateLogin,
-    samlLogin,
-    initiateSamlLogin,
-    get_saml_redirect_url,
-    oidcLogin,
-    initiateOidcLogin,
-    get_oidc_redirect_url,
-    login,
-    activateToken,
-    ga_verify,
-    duo_verify,
-    yubikey_otp_verify,
-    logout,
-    isLoggedIn,
+	initiateLogin,
+	samlLogin,
+	initiateSamlLogin,
+	get_saml_redirect_url,
+	oidcLogin,
+	initiateOidcLogin,
+	get_oidc_redirect_url,
+	login,
+	activateToken,
+	ga_verify,
+	duo_verify,
+	yubikey_otp_verify,
+	logout,
+	isLoggedIn,
 };
 
 export default service;

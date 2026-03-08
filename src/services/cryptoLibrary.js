@@ -2,17 +2,17 @@
  * Crypto library service providing all the crypto
  */
 
-import nacl from 'ecma-nacl';
-import uuid from 'uuid-js';
-import sha512 from 'js-sha512';
-import sha256 from 'js-sha256';
+import nacl from "ecma-nacl";
+import uuid from "uuid-js";
+import sha512 from "js-sha512";
+import sha256 from "js-sha256";
 
-import helper from './helper';
-import converter from './converter';
+import helper from "./helper";
+import converter from "./converter";
 
 function InvalidRecoveryCodeException(message) {
-    this.message = message;
-    this.name = 'InvalidRecoveryCodeException';
+	this.message = message;
+	this.name = "InvalidRecoveryCodeException";
 }
 
 /**
@@ -24,24 +24,24 @@ function InvalidRecoveryCodeException(message) {
  * @returns {Uint8Array} Random byte array
  */
 function randomBytes(count) {
-    let bs;
-    if (typeof module !== 'undefined' && module.exports) {
-        // add node.js implementations
-        const crypto = require('crypto');
-        return crypto.randomBytes(count);
-    } else if (window && window.crypto && window.crypto.getRandomValues) {
-        // add in-browser implementation
-        bs = new Uint8Array(count);
-        window.crypto.getRandomValues(bs);
-        return bs;
-    } else if (window && window.msCrypto && window.msCrypto.getRandomValues) {
-        // add in-browser implementation
-        bs = new Uint8Array(count);
-        window.msCrypto.getRandomValues(bs);
-        return bs;
-    } else {
-        throw new Error('No cryptographic random number generator');
-    }
+	let bs;
+	if (typeof module !== "undefined" && module.exports) {
+		// add node.js implementations
+		const crypto = require("crypto");
+		return crypto.randomBytes(count);
+	} else if (window && window.crypto && window.crypto.getRandomValues) {
+		// add in-browser implementation
+		bs = new Uint8Array(count);
+		window.crypto.getRandomValues(bs);
+		return bs;
+	} else if (window && window.msCrypto && window.msCrypto.getRandomValues) {
+		// add in-browser implementation
+		bs = new Uint8Array(count);
+		window.msCrypto.getRandomValues(bs);
+		return bs;
+	} else {
+		throw new Error("No cryptographic random number generator");
+	}
 }
 
 let scrypt_lookup_table = {};
@@ -50,9 +50,9 @@ let scrypt_lookup_table = {};
  * flushes the scrypt lookup table after 60 seconds
  */
 function clear_scrypt_lookup_table() {
-    setTimeout(function () {
-        scrypt_lookup_table = {};
-    }, 60000);
+	setTimeout(function () {
+		scrypt_lookup_table = {};
+	}, 60000);
 }
 
 /**
@@ -64,33 +64,33 @@ function clear_scrypt_lookup_table() {
  * @returns {string} The scrypt hash
  */
 function password_scrypt(password, salt) {
-    // Lets first generate our key from our user_sauce and password
-    const u = 14; //2^14 = 16MB
-    const r = 8;
-    const p = 1;
-    const l = 64; // 64 Bytes = 512 Bits
-    let k;
+	// Lets first generate our key from our user_sauce and password
+	const u = 14; //2^14 = 16MB
+	const r = 8;
+	const p = 1;
+	const l = 64; // 64 Bytes = 512 Bits
+	let k;
 
-    const lookup_hash = sha512(password) + sha512(salt);
+	const lookup_hash = sha512(password) + sha512(salt);
 
-    if (scrypt_lookup_table.hasOwnProperty(lookup_hash)) {
-        k = scrypt_lookup_table[lookup_hash];
-    } else {
-        k = converter.to_hex(
-            nacl.scrypt(
-                converter.encode_utf8(password),
-                converter.encode_utf8(salt),
-                u,
-                r,
-                p,
-                l,
-                function (pDone) {}
-            )
-        );
-        scrypt_lookup_table[lookup_hash] = k;
-        clear_scrypt_lookup_table();
-    }
-    return k;
+	if (scrypt_lookup_table.hasOwnProperty(lookup_hash)) {
+		k = scrypt_lookup_table[lookup_hash];
+	} else {
+		k = converter.to_hex(
+			nacl.scrypt(
+				converter.encode_utf8(password),
+				converter.encode_utf8(salt),
+				u,
+				r,
+				p,
+				l,
+				function (pDone) {},
+			),
+		);
+		scrypt_lookup_table[lookup_hash] = k;
+		clear_scrypt_lookup_table();
+	}
+	return k;
 }
 
 /**
@@ -112,14 +112,14 @@ function password_scrypt(password, salt) {
  * @returns {string} auth_key Scrypt hex value of the password with the sha512 of lowercase email as salt
  */
 function generateAuthkey(username, password) {
-    if (!username || !username.includes('@')) {
-        // security. Do not remove!
-        throw new Error('Malformed username.');
-    }
-    // takes the sha512(username) as salt.
-    // var salt = nacl.to_hex(nacl.crypto_hash_string(username.toLowerCase()));
-    const salt = sha512(username.toLowerCase());
-    return password_scrypt(password, salt);
+	if (!username || !username.includes("@")) {
+		// security. Do not remove!
+		throw new Error("Malformed username.");
+	}
+	// takes the sha512(username) as salt.
+	// var salt = nacl.to_hex(nacl.crypto_hash_string(username.toLowerCase()));
+	const salt = sha512(username.toLowerCase());
+	return password_scrypt(password, salt);
 }
 
 /**
@@ -128,7 +128,7 @@ function generateAuthkey(username, password) {
  * @returns {string} Returns secret key (hex encoded, 32 byte long)
  */
 function generateSecretKey() {
-    return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
+	return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
 }
 
 /**
@@ -138,13 +138,13 @@ function generateSecretKey() {
  * @returns {PublicPrivateKeyPair} Returns object with a public-private-key-pair
  */
 function generatePublicPrivateKeypair() {
-    const sk = randomBytes(32);
-    const pk = nacl.box.generate_pubkey(sk);
+	const sk = randomBytes(32);
+	const pk = nacl.box.generate_pubkey(sk);
 
-    return {
-        public_key: converter.to_hex(pk), // 32 Bytes = 256 Bits
-        private_key: converter.to_hex(sk), // 32 Bytes = 256 Bits
-    };
+	return {
+		public_key: converter.to_hex(pk), // 32 Bytes = 256 Bits
+		private_key: converter.to_hex(sk), // 32 Bytes = 256 Bits
+	};
 }
 
 /**
@@ -159,25 +159,25 @@ function generatePublicPrivateKeypair() {
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
 function encrypt_secret(secret, password, userSauce) {
-    if (userSauce.includes('@')) {
-        // security. Do not remove!
-        throw new Error(
-            'encrypt secret may not contain an @ as it may be a username'
-        );
-    }
+	if (userSauce.includes("@")) {
+		// security. Do not remove!
+		throw new Error(
+			"encrypt secret may not contain an @ as it may be a username",
+		);
+	}
 
-    const salt = sha512(userSauce);
-    const k = converter.from_hex(sha256(password_scrypt(password, salt))); // key
+	const salt = sha512(userSauce);
+	const k = converter.from_hex(sha256(password_scrypt(password, salt))); // key
 
-    // and now lets encrypt
-    const m = converter.encode_utf8(secret); // message
-    const n = randomBytes(24); // nonce
-    const c = nacl.secret_box.pack(m, n, k); //encrypted message
+	// and now lets encrypt
+	const m = converter.encode_utf8(secret); // message
+	const n = randomBytes(24); // nonce
+	const c = nacl.secret_box.pack(m, n, k); //encrypted message
 
-    return {
-        nonce: converter.to_hex(n),
-        text: converter.to_hex(c),
-    };
+	return {
+		nonce: converter.to_hex(n),
+		text: converter.to_hex(c),
+	};
 }
 
 /**
@@ -192,21 +192,21 @@ function encrypt_secret(secret, password, userSauce) {
  * @returns {string} secret The decrypted secret
  */
 function decryptSecret(text, nonce, password, userSauce) {
-    if (userSauce.includes('@')) {
-        // security. Do not remove!
-        throw new Error(
-            'encrypt secret may not contain an @ as it may be a username'
-        );
-    }
-    const salt = sha512(userSauce);
-    const k = converter.from_hex(sha256(password_scrypt(password, salt)));
+	if (userSauce.includes("@")) {
+		// security. Do not remove!
+		throw new Error(
+			"encrypt secret may not contain an @ as it may be a username",
+		);
+	}
+	const salt = sha512(userSauce);
+	const k = converter.from_hex(sha256(password_scrypt(password, salt)));
 
-    // and now lets decrypt
-    const n = converter.from_hex(nonce);
-    const c = converter.from_hex(text);
-    const m1 = nacl.secret_box.open(c, n, k);
+	// and now lets decrypt
+	const n = converter.from_hex(nonce);
+	const c = converter.from_hex(text);
+	const m1 = nacl.secret_box.open(c, n, k);
 
-    return converter.decode_utf8(m1);
+	return converter.decode_utf8(m1);
 }
 
 /**
@@ -219,15 +219,15 @@ function decryptSecret(text, nonce, password, userSauce) {
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
 function encryptData(data, secret_key) {
-    const k = converter.from_hex(secret_key);
-    const m = converter.encode_utf8(data);
-    const n = randomBytes(24);
-    const c = nacl.secret_box.pack(m, n, k);
+	const k = converter.from_hex(secret_key);
+	const m = converter.encode_utf8(data);
+	const n = randomBytes(24);
+	const c = nacl.secret_box.pack(m, n, k);
 
-    return {
-        nonce: converter.to_hex(n),
-        text: converter.to_hex(c),
-    };
+	return {
+		nonce: converter.to_hex(n),
+		text: converter.to_hex(c),
+	};
 }
 
 /**
@@ -241,12 +241,12 @@ function encryptData(data, secret_key) {
  * @returns {string} The decrypted data
  */
 function decryptData(text, nonce, secret_key) {
-    const k = converter.from_hex(secret_key);
-    const n = converter.from_hex(nonce);
-    const c = converter.from_hex(text);
-    const m1 = nacl.secret_box.open(c, n, k);
+	const k = converter.from_hex(secret_key);
+	const n = converter.from_hex(nonce);
+	const c = converter.from_hex(text);
+	const m1 = nacl.secret_box.open(c, n, k);
 
-    return converter.decode_utf8(m1);
+	return converter.decode_utf8(m1);
 }
 
 /**
@@ -260,16 +260,16 @@ function decryptData(text, nonce, secret_key) {
  * @returns {EncryptedValue} The encrypted text and the nonce
  */
 function encryptDataPublicKey(data, public_key, private_key) {
-    const p = converter.from_hex(public_key);
-    const s = converter.from_hex(private_key);
-    const m = converter.encode_utf8(data);
-    const n = randomBytes(24);
-    const c = nacl.box.pack(m, n, p, s);
+	const p = converter.from_hex(public_key);
+	const s = converter.from_hex(private_key);
+	const m = converter.encode_utf8(data);
+	const n = randomBytes(24);
+	const c = nacl.box.pack(m, n, p, s);
 
-    return {
-        nonce: converter.to_hex(n),
-        text: converter.to_hex(c),
-    };
+	return {
+		nonce: converter.to_hex(n),
+		text: converter.to_hex(c),
+	};
 }
 
 /**
@@ -284,13 +284,13 @@ function encryptDataPublicKey(data, public_key, private_key) {
  * @returns {string} The decrypted data
  */
 function decryptDataPublicKey(text, nonce, public_key, private_key) {
-    const p = converter.from_hex(public_key);
-    const s = converter.from_hex(private_key);
-    const n = converter.from_hex(nonce);
-    const c = converter.from_hex(text);
-    const m1 = nacl.box.open(c, n, p, s);
+	const p = converter.from_hex(public_key);
+	const s = converter.from_hex(private_key);
+	const n = converter.from_hex(nonce);
+	const c = converter.from_hex(text);
+	const m1 = nacl.box.open(c, n, p, s);
 
-    return converter.decode_utf8(m1);
+	return converter.decode_utf8(m1);
 }
 
 /**
@@ -299,7 +299,7 @@ function decryptDataPublicKey(text, nonce, public_key, private_key) {
  * @returns {string} Returns a random user sauce (32 bytes, hex encoded)
  */
 function generateUserSauce() {
-    return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
+	return converter.to_hex(randomBytes(32)); // 32 Bytes = 256 Bits
 }
 
 /**
@@ -311,7 +311,7 @@ function generateUserSauce() {
  * @returns {string} Returns n base58 encoded chars as checksum
  */
 function get_checksum(str, n) {
-    return converter.hex_to_base58(sha512(str)).substring(0, n);
+	return converter.hex_to_base58(sha512(str)).substring(0, n);
 }
 
 /**
@@ -320,29 +320,26 @@ function get_checksum(str, n) {
  * @returns {object} Returns a random user sauce (16 bytes, hex encoded)
  */
 function generate_recovery_code() {
-    const password_bytes = randomBytes(16); // 16 Bytes = 128 Bits
-    const password_hex = converter.to_hex(password_bytes);
-    const password_words = converter.hex_to_words(password_hex);
-    const password_base58 = converter.to_base58(password_bytes);
+	const password_bytes = randomBytes(16); // 16 Bytes = 128 Bits
+	const password_hex = converter.to_hex(password_bytes);
+	const password_words = converter.hex_to_words(password_hex);
+	const password_base58 = converter.to_base58(password_bytes);
 
-    // Then we split up everything in 11 digits long chunks
-    let recovery_code_chunks = helper.split_string_in_chunks(
-        password_base58,
-        11
-    );
-    // Then we loop over our chunks and use the base58 representation of the sha512 checksum to get 2 checksum
-    // digits, and append them to the original chunk
-    for (let i = 0; i < recovery_code_chunks.length; i++) {
-        recovery_code_chunks[i] += get_checksum(recovery_code_chunks[i], 2);
-    }
+	// Then we split up everything in 11 digits long chunks
+	let recovery_code_chunks = helper.split_string_in_chunks(password_base58, 11);
+	// Then we loop over our chunks and use the base58 representation of the sha512 checksum to get 2 checksum
+	// digits, and append them to the original chunk
+	for (let i = 0; i < recovery_code_chunks.length; i++) {
+		recovery_code_chunks[i] += get_checksum(recovery_code_chunks[i], 2);
+	}
 
-    return {
-        bytes: password_bytes,
-        hex: password_hex,
-        words: password_words,
-        base58: password_base58,
-        base58_checksums: recovery_code_chunks.join(''),
-    };
+	return {
+		bytes: password_bytes,
+		hex: password_hex,
+		words: password_words,
+		base58: password_base58,
+		base58_checksums: recovery_code_chunks.join(""),
+	};
 }
 
 /**
@@ -354,20 +351,20 @@ function generate_recovery_code() {
  * @returns {string} Returns recovery code without checksums
  */
 function recovery_code_strip_checksums(recovery_code_with_checksums) {
-    let recovery_code_chunks = helper.split_string_in_chunks(
-        recovery_code_with_checksums,
-        13
-    );
+	let recovery_code_chunks = helper.split_string_in_chunks(
+		recovery_code_with_checksums,
+		13,
+	);
 
-    for (let i = 0; i < recovery_code_chunks.length; i++) {
-        if (recovery_code_chunks[i].length < 2) {
-            throw new InvalidRecoveryCodeException(
-                'Recovery code chunks with a size < 2 are impossible'
-            );
-        }
-        recovery_code_chunks[i] = recovery_code_chunks[i].slice(0, -2);
-    }
-    return recovery_code_chunks.join('');
+	for (let i = 0; i < recovery_code_chunks.length; i++) {
+		if (recovery_code_chunks[i].length < 2) {
+			throw new InvalidRecoveryCodeException(
+				"Recovery code chunks with a size < 2 are impossible",
+			);
+		}
+		recovery_code_chunks[i] = recovery_code_chunks[i].slice(0, -2);
+	}
+	return recovery_code_chunks.join("");
 }
 
 /**
@@ -377,16 +374,16 @@ function recovery_code_strip_checksums(recovery_code_with_checksums) {
  * @returns {boolean} Returns weather the password chunk is valid
  */
 function recovery_password_chunk_pass_checksum(chunk_with_checksum) {
-    if (chunk_with_checksum.length < 2) return false;
-    const password = chunk_with_checksum.substring(
-        0,
-        chunk_with_checksum.length - 2
-    );
-    const checksum = chunk_with_checksum.substring(
-        chunk_with_checksum.length - 2
-    );
+	if (chunk_with_checksum.length < 2) return false;
+	const password = chunk_with_checksum.substring(
+		0,
+		chunk_with_checksum.length - 2,
+	);
+	const checksum = chunk_with_checksum.substring(
+		chunk_with_checksum.length - 2,
+	);
 
-    return get_checksum(password, 2) === checksum;
+	return get_checksum(password, 2) === checksum;
 }
 
 /**
@@ -395,8 +392,8 @@ function recovery_password_chunk_pass_checksum(chunk_with_checksum) {
  * @returns {uuid} Returns weather the password chunk is valid
  */
 function generate_uuid() {
-    const uuidv4 = uuid.create();
-    return uuidv4.toString();
+	const uuidv4 = uuid.create();
+	return uuidv4.toString();
 }
 
 /**
@@ -409,33 +406,33 @@ function generate_uuid() {
  * @returns {boolean} Returns whether the signature is correct or not
  */
 function validate_signature(message, signature, verify_key) {
-    return nacl.signing.verify(
-        converter.from_hex(signature),
-        converter.encode_utf8(message),
-        converter.from_hex(verify_key)
-    );
+	return nacl.signing.verify(
+		converter.from_hex(signature),
+		converter.encode_utf8(message),
+		converter.from_hex(verify_key),
+	);
 }
 
 const service = {
-    randomBytes,
-    sha256,
-    sha512,
-    generateAuthkey,
-    generateSecretKey,
-    generatePublicPrivateKeypair,
-    encrypt_secret,
-    decryptSecret,
-    encryptData,
-    decryptData,
-    encryptDataPublicKey,
-    decryptDataPublicKey,
-    generateUserSauce,
-    get_checksum,
-    generate_recovery_code,
-    recovery_code_strip_checksums,
-    recovery_password_chunk_pass_checksum,
-    generate_uuid,
-    validate_signature,
+	randomBytes,
+	sha256,
+	sha512,
+	generateAuthkey,
+	generateSecretKey,
+	generatePublicPrivateKeypair,
+	encrypt_secret,
+	decryptSecret,
+	encryptData,
+	decryptData,
+	encryptDataPublicKey,
+	decryptDataPublicKey,
+	generateUserSauce,
+	get_checksum,
+	generate_recovery_code,
+	recovery_code_strip_checksums,
+	recovery_password_chunk_pass_checksum,
+	generate_uuid,
+	validate_signature,
 };
 
 export default service;
