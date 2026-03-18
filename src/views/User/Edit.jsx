@@ -366,6 +366,13 @@ const UserEdit = () => {
 		});
 	};
 
+	const onRequirePasswordChangeToggle = (event) => {
+		setUser({
+			...user,
+			require_password_change: !user.require_password_change,
+		});
+	};
+
 	const save = () => {
 		setErrors([]);
 		setMsgs([]);
@@ -378,6 +385,7 @@ const UserEdit = () => {
 				user.is_active,
 				user.is_email_active,
 				user.is_superuser,
+				user.require_password_change,
 			)
 			.then(
 				(result) => {
@@ -512,7 +520,7 @@ const UserEdit = () => {
 									</GridItem>
 								</Grid>
 								<Grid container>
-									<GridItem xs={12} sm={12} md={4}>
+									<GridItem xs={12} sm={12} md={6}>
 										<CustomInput
 											labelText={t("REGISTRATION_DATE")}
 											id="create_date"
@@ -528,7 +536,7 @@ const UserEdit = () => {
 											}}
 										/>
 									</GridItem>
-									<GridItem xs={12} sm={12} md={8}>
+									<GridItem xs={12} sm={12} md={6}>
 										<CustomInput
 											labelText={t("EMAIL")}
 											id="email"
@@ -543,7 +551,7 @@ const UserEdit = () => {
 									</GridItem>
 								</Grid>
 								<Grid container>
-									<GridItem xs={12} sm={6} md={4}>
+									<GridItem xs={12} sm={6} md={6} lg={3}>
 										<div className={classes.checkbox}>
 											<Checkbox
 												tabIndex={1}
@@ -553,7 +561,7 @@ const UserEdit = () => {
 											{t("ACTIVE")}
 										</div>
 									</GridItem>
-									<GridItem xs={12} sm={6} md={4}>
+									<GridItem xs={12} sm={6} md={6} lg={3}>
 										<div className={classes.checkbox}>
 											<Checkbox
 												tabIndex={1}
@@ -563,7 +571,7 @@ const UserEdit = () => {
 											{t("EMAIL_VERIFIED")}
 										</div>
 									</GridItem>
-									<GridItem xs={12} sm={6} md={4}>
+									<GridItem xs={12} sm={6} md={6} lg={3}>
 										<div className={classes.checkbox}>
 											<Checkbox
 												tabIndex={1}
@@ -573,6 +581,18 @@ const UserEdit = () => {
 											{t("SUPERUSER")}
 										</div>
 									</GridItem>
+									{user.authentication === "AUTHKEY" && (
+										<GridItem xs={12} sm={6} md={6} lg={3}>
+											<div className={classes.checkbox}>
+												<Checkbox
+													tabIndex={1}
+													checked={!!user.require_password_change}
+													onClick={onRequirePasswordChangeToggle}
+												/>{" "}
+												{t("REQUIRE_PASSWORD_CHANGE")}
+											</div>
+										</GridItem>
+									)}
 									<GridItem xs={8} sm={8} md={8} style={{ marginTop: "20px" }}>
 										{errors.map((prop, index) => {
 											return (

@@ -1859,6 +1859,7 @@ function admin_delete_link_share(token, session_secret_key, link_share_id) {
  * @param {boolean} [is_active] (optional) Activates (or deactivates) the user
  * @param {boolean} [is_email_active] (optional) Activates (or deactivates) the user
  * @param {boolean} [is_superuser] (optional) Activates (or deactivates) the user
+ * @param {boolean} [require_password_change] (optional) Require a password change on next login
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
@@ -1870,6 +1871,7 @@ function admin_update_user(
 	is_active,
 	is_email_active,
 	is_superuser,
+	require_password_change,
 ) {
 	const endpoint = "/admin/user/";
 	const method = "PUT";
@@ -1879,6 +1881,7 @@ function admin_update_user(
 		is_active: is_active,
 		is_email_active: is_email_active,
 		is_superuser: is_superuser,
+		require_password_change: require_password_change,
 	};
 	const headers = {
 		Authorization: "Token " + token,

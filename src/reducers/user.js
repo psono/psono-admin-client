@@ -3,6 +3,7 @@ import {
 	SET_USER_INFO_1,
 	SET_USER_INFO_2,
 	SET_USER_INFO_3,
+	SET_REQUIRE_PASSWORD_CHANGE,
 	SET_SERVER_SECRET_EXISTS,
 	LOGOUT,
 } from "../actions/actionTypes";
@@ -27,6 +28,7 @@ function user(
 		user_sauce: "",
 		user_email: "",
 		user_id: "",
+		requirePasswordChange: false,
 	},
 	action,
 ) {
@@ -57,6 +59,11 @@ function user(
 				user_email: action.user_email,
 				user_secret_key: action.user_secret_key,
 				serverSecretExists: action.serverSecretExists,
+				requirePasswordChange: action.requirePasswordChange,
+			});
+		case SET_REQUIRE_PASSWORD_CHANGE:
+			return Object.assign({}, state, {
+				requirePasswordChange: action.requirePasswordChange,
 			});
 		case SET_SERVER_SECRET_EXISTS:
 			return Object.assign({}, state, {
@@ -82,6 +89,7 @@ function user(
 				session_secret_key: "",
 				token: "",
 				user_sauce: "",
+				requirePasswordChange: false,
 			});
 		default:
 			return state;

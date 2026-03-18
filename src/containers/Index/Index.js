@@ -56,6 +56,13 @@ const App = (props) => {
 		return <Redirect to="/login" />;
 	}
 
+	if (
+		store.getState().user.requirePasswordChange &&
+		location.pathname !== "/account/change-password"
+	) {
+		return <Redirect to="/account/change-password" />;
+	}
+
 	const { classes, ...rest } = props;
 
 	let variableLinks = [];

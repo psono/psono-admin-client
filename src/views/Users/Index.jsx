@@ -121,7 +121,6 @@ const UsersView = (props) => {
 					u.last_login = moment(u.last_login).format("YYYY-MM-DD HH:mm:ss");
 					u.is_active = u.is_active ? i18n.t("YES") : i18n.t("NO");
 					u.is_email_active = u.is_email_active ? i18n.t("YES") : i18n.t("NO");
-
 					u.yubikey_otp_enabled = u.yubikey_otp_enabled
 						? i18n.t("YES")
 						: i18n.t("NO");

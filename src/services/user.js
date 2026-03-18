@@ -347,6 +347,7 @@ function activateToken() {
 			activationData.data.user.email,
 			userSecretKey,
 			serverSecretExists,
+			activationData.data.user.require_password_change || false,
 		);
 
 		// no need anymore for the public / private session keys
@@ -572,6 +573,70 @@ function isLoggedIn() {
 	return store.getState().user.isLoggedIn;
 }
 
+/**
+ * Saves a new password for the currently authenticated user
+ *
+ * @param {string} newPassword The new password
+ * @param {string} newPasswordRepeat The repeated new password
+ * @param {string} oldPassword The old password
+ *
+ * @returns {Promise<{msgs: string[]}>}
+ */
+function saveNewPassword(newPassword, newPasswordRepeat, oldPassword) {
+	const passwordValidation = helper.is_valid_password(
+		newPassword,
+		newPasswordRepeat,
+	);
+	if (passwordValidation !== true) {
+		return Promise.reject({ errors: [passwordValidation] });
+	}
+
+	if (!oldPassword || oldPassword.length === 0) {
+		return Promise.reject({ errors: ["OLD_PASSWORD_REQUIRED"] });
+	}
+
+	const username = store.getState().user.username;
+	const userPrivateKey = store.getState().user.user_private_key;
+	const userSecretKey = store.getState().user.user_secret_key;
+	const userSauce = store.getState().user.user_sauce;
+	const token = store.getState().user.token;
+	const sessionSecretKey = store.getState().user.session_secret_key;
+
+	const authkeyOld = cryptoLibrary.generateAuthkey(username, oldPassword);
+	const authkey = cryptoLibrary.generateAuthkey(username, newPassword);
+
+	const privateKeyEnc = cryptoLibrary.encrypt_secret(
+		userPrivateKey,
+		newPassword,
+		userSauce,
+	);
+	const secretKeyEnc = cryptoLibrary.encrypt_secret(
+		userSecretKey,
+		newPassword,
+		userSauce,
+	);
+
+	return psono_server
+		.update_user(
+			token,
+			sessionSecretKey,
+			null,
+			authkey,
+			authkeyOld,
+			privateKeyEnc.text,
+			privateKeyEnc.nonce,
+			secretKeyEnc.text,
+			secretKeyEnc.nonce,
+		)
+		.then(
+			() => {
+				action.setRequirePasswordChange(false);
+				return { msgs: ["SAVE_SUCCESS"] };
+			},
+			() => Promise.reject({ errors: ["OLD_PASSWORD_INCORRECT"] }),
+		);
+}
+
 const service = {
 	initiateLogin,
 	samlLogin,
@@ -587,6 +652,7 @@ const service = {
 	yubikey_otp_verify,
 	logout,
 	isLoggedIn,
+	saveNewPassword,
 };
 
 export default service;

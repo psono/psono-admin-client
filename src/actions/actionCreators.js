@@ -4,6 +4,7 @@ import {
 	SET_USER_INFO_1,
 	SET_USER_INFO_2,
 	SET_USER_INFO_3,
+	SET_REQUIRE_PASSWORD_CHANGE,
 	SET_SERVER_SECRET_EXISTS,
 	LOGOUT,
 	SET_SERVER_URL,
@@ -58,6 +59,7 @@ function setUserInfo3(
 	user_email,
 	user_secret_key,
 	serverSecretExists,
+	requirePasswordChange = false,
 ) {
 	return (dispatch) => {
 		dispatch({
@@ -66,6 +68,16 @@ function setUserInfo3(
 			user_email,
 			user_secret_key,
 			serverSecretExists,
+			requirePasswordChange,
+		});
+	};
+}
+
+function setRequirePasswordChange(requirePasswordChange) {
+	return (dispatch) => {
+		dispatch({
+			type: SET_REQUIRE_PASSWORD_CHANGE,
+			requirePasswordChange,
 		});
 	};
 }
@@ -156,6 +168,7 @@ const actionCreators = {
 	setUserInfo1,
 	setUserInfo2,
 	setUserInfo3,
+	setRequirePasswordChange,
 	setServerSecretExists,
 	logout,
 	setServerInfo,

@@ -1,6 +1,7 @@
 import React from "react";
 import { compose } from "redux";
 import { withTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { withStyles, MenuItem, ListItemIcon, Hidden } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const HeaderLinks = (props) => {
 	const { t } = props;
 	const classes = useStyles();
+	const history = useHistory();
 	const [anchorTopMenuEl, setAnchorTopMenuEl] = React.useState(null);
 
 	const openTopMenu = (event) => {
@@ -54,6 +56,12 @@ const HeaderLinks = (props) => {
 	const logout = () => {
 		props.logout();
 	};
+
+	const openAccount = () => {
+		closeTopMenu();
+		history.push("/account/change-password");
+	};
+
 	return (
 		<div className={classes.flex}>
 			<div style={{ float: "right" }}>
@@ -96,6 +104,12 @@ const HeaderLinks = (props) => {
 						horizontal: "right",
 					}}
 				>
+					<MenuItem onClick={openAccount}>
+						<ListItemIcon className={classes.listItemIcon}>
+							<AccountCircleIcon className={classes.icon} />
+						</ListItemIcon>
+						<Typography variant="body2">{t("CHANGE_PASSWORD")}</Typography>
+					</MenuItem>
 					<MenuItem onClick={logout}>
 						<ListItemIcon className={classes.listItemIcon}>
 							<ExitToAppIcon className={classes.icon} />

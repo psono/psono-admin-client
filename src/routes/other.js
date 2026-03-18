@@ -6,10 +6,18 @@ import GroupShareRightCreate from "../views/Group/ShareRightCreate";
 import PolicyCreate from "../views/Policies/Create";
 import PolicyEdit from "../views/Policies/Edit";
 import UserCreate from "../views/User/Create";
+import ChangePassword from "../views/Account/ChangePassword";
 
 import { Person, Group, Policy, Timeline } from "@material-ui/icons";
 
 let routes = [
+	{
+		path: "/account/change-password",
+		sidebarName: "CHANGE_PASSWORD",
+		navbarName: "CHANGE_PASSWORD",
+		icon: Person,
+		component: ChangePassword,
+	},
 	{
 		path: "/user/:user_id",
 		sidebarName: "USER",
