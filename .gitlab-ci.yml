@@ -42,7 +42,7 @@ test-vulnerability-scan:
   except:
     - schedules
   stage: test
-  image: psono-docker.jfrog.io/node:lts-alpine
+  image: psono-docker.jfrog.io/node:22.11.0-slim
   script:
     - npm audit --audit-level high --json --omit=dev
   allow_failure: true
