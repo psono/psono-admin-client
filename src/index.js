@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { I18nextProvider } from 'react-i18next';
-import { Provider } from 'react-redux';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import 'moment-timezone';
+import React from "react";
+import ReactDOM from "react-dom";
+import { I18nextProvider } from "react-i18next";
+import { Provider } from "react-redux";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import "moment-timezone";
 
-import i18n from './i18n';
+import i18n from "./i18n";
 
-import App from './containers/App';
-import worker from './services/worker';
-import store from './services/store';
+import App from "./containers/App";
+import worker from "./services/worker";
+import store from "./services/store";
 
 /**
  * @typedef {Object} PublicPrivateKeyPair
@@ -50,15 +50,15 @@ import store from './services/store';
  *
  */
 
-import './assets/css/material-dashboard-react.css';
+import "./assets/css/material-dashboard-react.css";
 
 ReactDOM.render(
-    <Provider store={store}>
-        <I18nextProvider i18n={i18n}>
-            <CssBaseline />
-            <App />
-        </I18nextProvider>
-    </Provider>,
-    document.getElementById('root')
+	<Provider store={store}>
+		<I18nextProvider i18n={i18n}>
+			<CssBaseline />
+			<App />
+		</I18nextProvider>
+	</Provider>,
+	document.getElementById("root"),
 );
 worker.register();

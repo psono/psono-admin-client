@@ -1,12 +1,12 @@
-import client_js from './clientjs';
+import client_js from "./clientjs";
 
 let fingerprint;
 
 activate();
 function activate() {
-    getDeviceFingerprintAsync().then(function (local_fingerprint) {
-        fingerprint = local_fingerprint;
-    });
+	getDeviceFingerprintAsync().then(function (local_fingerprint) {
+		fingerprint = local_fingerprint;
+	});
 }
 
 /**
@@ -15,9 +15,9 @@ function activate() {
  * @returns Promise<AxiosResponse<any>> Returns promise with the device fingerprint
  */
 function getDeviceFingerprintAsync() {
-    return new Promise((resolve, reject) => {
-        resolve(client_js.getFingerprint());
-    });
+	return new Promise((resolve, reject) => {
+		resolve(client_js.getFingerprint());
+	});
 }
 
 /**
@@ -26,11 +26,11 @@ function getDeviceFingerprintAsync() {
  * @returns {string} Fingerprint of the device
  */
 function getDeviceFingerprint() {
-    if (fingerprint) {
-        return fingerprint;
-    }
-    fingerprint = client_js.getFingerprint();
-    return fingerprint;
+	if (fingerprint) {
+		return fingerprint;
+	}
+	fingerprint = client_js.getFingerprint();
+	return fingerprint;
 }
 
 /**
@@ -39,7 +39,7 @@ function getDeviceFingerprint() {
  * @returns {boolean} Is this an IE user
  */
 function is_ie() {
-    return client_js.isIE();
+	return client_js.isIE();
 }
 
 /**
@@ -48,7 +48,7 @@ function is_ie() {
  * @returns {boolean} Is this an Chrome user
  */
 function is_chrome() {
-    return client_js.isChrome();
+	return client_js.isChrome();
 }
 
 /**
@@ -57,7 +57,7 @@ function is_chrome() {
  * @returns {boolean} Is this an Firefox user
  */
 function is_firefox() {
-    return client_js.isFirefox();
+	return client_js.isFirefox();
 }
 
 /**
@@ -66,7 +66,7 @@ function is_firefox() {
  * @returns {boolean} Is this an Safari user
  */
 function is_safari() {
-    return client_js.isSafari();
+	return client_js.isSafari();
 }
 
 /**
@@ -75,7 +75,7 @@ function is_safari() {
  * @returns {boolean} Is this an Opera user
  */
 function is_opera() {
-    return client_js.isOpera();
+	return client_js.isOpera();
 }
 
 /**
@@ -84,36 +84,36 @@ function is_opera() {
  * @returns {string} Returns the device's description
  */
 function getDeviceDescription() {
-    let description = '';
-    if (typeof client_js.getDeviceVendor() !== 'undefined') {
-        description = description + client_js.getDeviceVendor() + ' ';
-    }
-    if (typeof client_js.getDevice() !== 'undefined') {
-        description = description + client_js.getDevice() + ' ';
-    }
-    if (typeof client_js.getOS() !== 'undefined') {
-        description = description + client_js.getOS() + ' ';
-    }
-    if (typeof client_js.getOSVersion() !== 'undefined') {
-        description = description + client_js.getOSVersion() + ' ';
-    }
-    if (typeof client_js.getBrowser() !== 'undefined') {
-        description = description + client_js.getBrowser() + ' ';
-    }
-    if (typeof client_js.getBrowserVersion() !== 'undefined') {
-        description = description + client_js.getBrowserVersion() + ' ';
-    }
-    return description;
+	let description = "";
+	if (typeof client_js.getDeviceVendor() !== "undefined") {
+		description = description + client_js.getDeviceVendor() + " ";
+	}
+	if (typeof client_js.getDevice() !== "undefined") {
+		description = description + client_js.getDevice() + " ";
+	}
+	if (typeof client_js.getOS() !== "undefined") {
+		description = description + client_js.getOS() + " ";
+	}
+	if (typeof client_js.getOSVersion() !== "undefined") {
+		description = description + client_js.getOSVersion() + " ";
+	}
+	if (typeof client_js.getBrowser() !== "undefined") {
+		description = description + client_js.getBrowser() + " ";
+	}
+	if (typeof client_js.getBrowserVersion() !== "undefined") {
+		description = description + client_js.getBrowserVersion() + " ";
+	}
+	return description;
 }
 
 const service = {
-    getDeviceFingerprint: getDeviceFingerprint,
-    is_ie: is_ie,
-    is_chrome: is_chrome,
-    is_firefox: is_firefox,
-    is_safari: is_safari,
-    is_opera: is_opera,
-    getDeviceDescription: getDeviceDescription,
+	getDeviceFingerprint: getDeviceFingerprint,
+	is_ie: is_ie,
+	is_chrome: is_chrome,
+	is_firefox: is_firefox,
+	is_safari: is_safari,
+	is_opera: is_opera,
+	getDeviceDescription: getDeviceDescription,
 };
 
 export default service;
