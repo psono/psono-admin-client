@@ -10,7 +10,7 @@ npm --version && \
 npm config set registry https://psono.jfrog.io/psono/api/npm/npm/ && \
 npm config set @devexpress:registry https://psono.jfrog.io/psono/api/npm/npm/ && \
 npm config set @types:registry https://psono.jfrog.io/psono/api/npm/npm/ && \
-npm ci && \
+npm ci --ignore-scripts --before="$(date -u -d '7 days ago' '+%Y-%m-%dT%H:%M:%SZ')" && \
 npm install -g karma-cli && \
 INLINE_RUNTIME_CHUNK=false npm run build && \
 ./var/update_version.sh && \
