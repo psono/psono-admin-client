@@ -347,6 +347,10 @@ const PolicyEdit = (props) => {
 			type: "boolean",
 		},
 		{
+			key: "COMPLIANCE_DISABLE_MULTIPLE_PASSWORD_DATASTORES",
+			type: "boolean",
+		},
+		{
 			key: "COMPLIANCE_DISABLE_OFFLINE_MODE",
 			type: "boolean",
 		},

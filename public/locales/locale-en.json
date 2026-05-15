@@ -34,6 +34,7 @@
   "POLICY_COMPLIANCE_DISABLE_EXPORT_OF_SHARED_ITEMS": "Disable export of shared items",
   "POLICY_COMPLIANCE_DISABLE_FILE_REPOSITORIES": "Disable file repositories",
   "POLICY_COMPLIANCE_DISABLE_LINK_SHARES": "Disable link shares",
+  "POLICY_COMPLIANCE_DISABLE_MULTIPLE_PASSWORD_DATASTORES": "Disable multiple password datastores",
   "POLICY_COMPLIANCE_DISABLE_OFFLINE_MODE": "Disable offline mode",
   "POLICY_COMPLIANCE_DISABLE_SHARES": "Disable shares",
   "POLICY_COMPLIANCE_DISABLE_RECOVERY_CODES": "Disable recovery codes",
