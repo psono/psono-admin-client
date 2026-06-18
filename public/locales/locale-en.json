@@ -370,7 +370,6 @@
   "WEBAUTHN_FIDO2_TOKEN_NOT_FOUND_FOR_THIS_ORIGIN": "FIDO2 / WebAuthn token not found for this origin",
   "TOTP": "TOTP",
   "ENTER_TOTP_BELOW": "Please enter your TOTP code below.",
-  "GOOGLE_AUTHENTICATION": "Google Authentication",
   "YUBIKEY": "Yubikey",
   "ENTER_YUBIKEY_BELOW": "Please enter your Yubikey below.",
   "YUBIKEY_AUTHENTICATION": "Yubikey Authentication",
