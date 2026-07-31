@@ -1444,6 +1444,224 @@ function admin_delete_policy(token, session_secret_key, policy_id) {
     return call(method, endpoint, data, headers, session_secret_key);
 }
 
+function admin_fileserver_cluster(
+    token,
+    session_secret_key,
+    cluster_id,
+    params
+) {
+    const endpoint =
+        '/admin/fileserver-cluster/' + (!cluster_id ? '' : cluster_id + '/');
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        endpoint + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_fileserver_cluster(
+    token,
+    session_secret_key,
+    title,
+    file_size_limit
+) {
+    return call(
+        'POST',
+        '/admin/fileserver-cluster/',
+        { title: title, file_size_limit: file_size_limit },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_fileserver_cluster(
+    token,
+    session_secret_key,
+    cluster_id,
+    title,
+    file_size_limit
+) {
+    return call(
+        'PUT',
+        '/admin/fileserver-cluster/',
+        {
+            cluster_id: cluster_id,
+            title: title,
+            file_size_limit: file_size_limit,
+        },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_fileserver_cluster(
+    token,
+    session_secret_key,
+    cluster_id
+) {
+    return call(
+        'DELETE',
+        '/admin/fileserver-cluster/',
+        { cluster_id: cluster_id },
+        {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + token,
+        },
+        session_secret_key
+    );
+}
+
+function admin_generate_fileserver_cluster_configuration(
+    token,
+    session_secret_key,
+    cluster_id
+) {
+    return call(
+        'POST',
+        '/admin/fileserver-cluster/configuration/',
+        { cluster_id: cluster_id },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_fileserver_shard(token, session_secret_key, shard_id, params) {
+    const endpoint =
+        '/admin/fileserver-shard/' + (!shard_id ? '' : shard_id + '/');
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        endpoint + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_fileserver_shard(
+    token,
+    session_secret_key,
+    title,
+    description,
+    active
+) {
+    return call(
+        'POST',
+        '/admin/fileserver-shard/',
+        { title: title, description: description, active: active },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_fileserver_shard(
+    token,
+    session_secret_key,
+    shard_id,
+    title,
+    description,
+    active
+) {
+    return call(
+        'PUT',
+        '/admin/fileserver-shard/',
+        {
+            shard_id: shard_id,
+            title: title,
+            description: description,
+            active: active,
+        },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_fileserver_shard(token, session_secret_key, shard_id) {
+    return call(
+        'DELETE',
+        '/admin/fileserver-shard/',
+        { shard_id: shard_id },
+        {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + token,
+        },
+        session_secret_key
+    );
+}
+
+function admin_create_fileserver_cluster_shard_link(
+    token,
+    session_secret_key,
+    cluster_id,
+    shard_id,
+    permissions
+) {
+    return call(
+        'POST',
+        '/admin/fileserver-cluster-shard-link/',
+        { cluster_id: cluster_id, shard_id: shard_id, ...permissions },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_fileserver_cluster_shard_link(
+    token,
+    session_secret_key,
+    link_id,
+    permissions
+) {
+    return call(
+        'PUT',
+        '/admin/fileserver-cluster-shard-link/',
+        { link_id: link_id, ...permissions },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_fileserver_cluster_shard_link(
+    token,
+    session_secret_key,
+    link_id
+) {
+    return call(
+        'DELETE',
+        '/admin/fileserver-cluster-shard-link/',
+        { link_id: link_id },
+        {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + token,
+        },
+        session_secret_key
+    );
+}
+
+function admin_fileserver(token, session_secret_key, fileserver_id, params) {
+    const endpoint =
+        '/admin/fileserver/' + (!fileserver_id ? '' : fileserver_id + '/');
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        endpoint + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
 /**
  * POST: Creates a managed group (for administrators)
  * (EE Only)
@@ -3814,6 +4032,19 @@ const service = {
     admin_create_policy,
     admin_update_policy,
     admin_delete_policy,
+    admin_fileserver_cluster,
+    admin_create_fileserver_cluster,
+    admin_update_fileserver_cluster,
+    admin_delete_fileserver_cluster,
+    admin_generate_fileserver_cluster_configuration,
+    admin_fileserver_shard,
+    admin_create_fileserver_shard,
+    admin_update_fileserver_shard,
+    admin_delete_fileserver_shard,
+    admin_create_fileserver_cluster_shard_link,
+    admin_update_fileserver_cluster_shard_link,
+    admin_delete_fileserver_cluster_shard_link,
+    admin_fileserver,
     admin_create_group,
     adminCreateShareRight,
     admin_delete_group,

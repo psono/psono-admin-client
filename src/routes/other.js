@@ -7,10 +7,48 @@ import PolicyCreate from '../views/Policies/Create';
 import PolicyEdit from '../views/Policies/Edit';
 import UserCreate from '../views/User/Create';
 import ChangePassword from '../views/Account/ChangePassword';
+import FileserverCluster from '../views/FileserverCluster/Edit';
+import FileserverShard from '../views/FileserverShard/Edit';
+import Fileserver from '../views/Fileserver/Edit';
 
-import { Person, Group, Policy, Timeline } from '@material-ui/icons';
+import { Person, Group, Policy, Timeline, Storage } from '@material-ui/icons';
 
 let routes = [
+    {
+        path: '/fileserver-clusters/create',
+        sidebarName: 'CREATE_FILESERVER_CLUSTER',
+        navbarName: 'CREATE_FILESERVER_CLUSTER',
+        icon: Storage,
+        component: FileserverCluster,
+    },
+    {
+        path: '/fileserver-cluster/:cluster_id',
+        sidebarName: 'FILESERVER_CLUSTER',
+        navbarName: 'FILESERVER_CLUSTER',
+        icon: Storage,
+        component: FileserverCluster,
+    },
+    {
+        path: '/fileserver-shards/create',
+        sidebarName: 'CREATE_FILESERVER_SHARD',
+        navbarName: 'CREATE_FILESERVER_SHARD',
+        icon: Storage,
+        component: FileserverShard,
+    },
+    {
+        path: '/fileserver-shard/:shard_id',
+        sidebarName: 'FILESERVER_SHARD',
+        navbarName: 'FILESERVER_SHARD',
+        icon: Storage,
+        component: FileserverShard,
+    },
+    {
+        path: '/fileserver/:fileserver_id',
+        sidebarName: 'FILESERVER',
+        navbarName: 'FILESERVER',
+        icon: Storage,
+        component: Fileserver,
+    },
     {
         path: '/account/change-password',
         sidebarName: 'SETTINGS',
