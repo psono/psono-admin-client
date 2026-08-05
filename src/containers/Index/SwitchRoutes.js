@@ -13,6 +13,7 @@ import samlRoutes from '../../routes/saml';
 import oidcRoutes from '../../routes/oidc';
 import otherRoutes from '../../routes/other';
 import fileserverRoutes from '../../routes/fileserver';
+import gatewayRoutes from '../../routes/gateway';
 
 const SwitchRoutes = (props) => {
     let location = useLocation();
@@ -21,6 +22,11 @@ const SwitchRoutes = (props) => {
     let variableLinks = [];
     if (state.server.files) {
         fileserverRoutes.forEach(function (route) {
+            variableLinks.push(route);
+        });
+    }
+    if (state.server.gateway) {
+        gatewayRoutes.forEach(function (route) {
             variableLinks.push(route);
         });
     }

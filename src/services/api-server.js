@@ -1662,6 +1662,127 @@ function admin_fileserver(token, session_secret_key, fileserver_id, params) {
     );
 }
 
+function admin_gateway_cluster(token, session_secret_key, cluster_id, params) {
+    const endpoint =
+        '/admin/gateway-cluster/' + (!cluster_id ? '' : cluster_id + '/');
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        endpoint + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_gateway_cluster(
+    token,
+    session_secret_key,
+    title,
+    allow_all
+) {
+    return call(
+        'POST',
+        '/admin/gateway-cluster/',
+        { title: title, allow_all: allow_all },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_gateway_cluster(
+    token,
+    session_secret_key,
+    cluster_id,
+    title,
+    allow_all
+) {
+    return call(
+        'PUT',
+        '/admin/gateway-cluster/',
+        { cluster_id: cluster_id, title: title, allow_all: allow_all },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_gateway_cluster(token, session_secret_key, cluster_id) {
+    return call(
+        'DELETE',
+        '/admin/gateway-cluster/',
+        { cluster_id: cluster_id },
+        {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + token,
+        },
+        session_secret_key
+    );
+}
+
+function admin_generate_gateway_cluster_configuration(
+    token,
+    session_secret_key,
+    cluster_id
+) {
+    return call(
+        'POST',
+        '/admin/gateway-cluster/configuration/',
+        { cluster_id: cluster_id },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_gateway_cluster_user_map(
+    token,
+    session_secret_key,
+    method,
+    cluster_id,
+    user_id
+) {
+    return call(
+        method,
+        '/admin/gateway-cluster/user/map/',
+        { cluster_id: cluster_id, user_id: user_id },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_gateway_cluster_group_map(
+    token,
+    session_secret_key,
+    method,
+    cluster_id,
+    group_id
+) {
+    return call(
+        method,
+        '/admin/gateway-cluster/group/map/',
+        { cluster_id: cluster_id, group_id: group_id },
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_gateway(token, session_secret_key, gateway_id, params) {
+    const endpoint = '/admin/gateway/' + (!gateway_id ? '' : gateway_id + '/');
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        endpoint + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
 /**
  * POST: Creates a managed group (for administrators)
  * (EE Only)
@@ -4045,6 +4166,14 @@ const service = {
     admin_update_fileserver_cluster_shard_link,
     admin_delete_fileserver_cluster_shard_link,
     admin_fileserver,
+    admin_gateway_cluster,
+    admin_create_gateway_cluster,
+    admin_update_gateway_cluster,
+    admin_delete_gateway_cluster,
+    admin_generate_gateway_cluster_configuration,
+    admin_gateway_cluster_user_map,
+    admin_gateway_cluster_group_map,
+    admin_gateway,
     admin_create_group,
     adminCreateShareRight,
     admin_delete_group,

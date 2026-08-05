@@ -15,6 +15,7 @@ import ldapLinks from '../../routes/ldap';
 import samlLinks from '../../routes/saml';
 import oidcLinks from '../../routes/oidc';
 import fileserverLinks from '../../routes/fileserver';
+import gatewayLinks from '../../routes/gateway';
 
 import appStyle from '../../assets/jss/material-dashboard-react/appStyle';
 
@@ -69,6 +70,9 @@ const App = (props) => {
     let variableLinks = [];
     if (store.getState().server.files) {
         fileserverLinks.forEach((link) => variableLinks.push(link));
+    }
+    if (store.getState().server.gateway) {
+        gatewayLinks.forEach((link) => variableLinks.push(link));
     }
     if (store.getState().server.type === 'EE') {
         eeLinks.forEach((link) => variableLinks.push(link));

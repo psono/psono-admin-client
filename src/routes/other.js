@@ -10,10 +10,40 @@ import ChangePassword from '../views/Account/ChangePassword';
 import FileserverCluster from '../views/FileserverCluster/Edit';
 import FileserverShard from '../views/FileserverShard/Edit';
 import Fileserver from '../views/Fileserver/Edit';
+import GatewayCluster from '../views/GatewayCluster/Edit';
+import Gateway from '../views/Gateway/Edit';
 
-import { Person, Group, Policy, Timeline, Storage } from '@material-ui/icons';
+import {
+    Person,
+    Group,
+    Policy,
+    Timeline,
+    Storage,
+    DesktopWindows,
+} from '@material-ui/icons';
 
 let routes = [
+    {
+        path: '/gateway-clusters/create',
+        sidebarName: 'CREATE_GATEWAY_CLUSTER',
+        navbarName: 'CREATE_GATEWAY_CLUSTER',
+        icon: DesktopWindows,
+        component: GatewayCluster,
+    },
+    {
+        path: '/gateway-cluster/:cluster_id',
+        sidebarName: 'GATEWAY_CLUSTER',
+        navbarName: 'GATEWAY_CLUSTER',
+        icon: DesktopWindows,
+        component: GatewayCluster,
+    },
+    {
+        path: '/gateway/:gateway_id',
+        sidebarName: 'GATEWAY',
+        navbarName: 'GATEWAY',
+        icon: DesktopWindows,
+        component: Gateway,
+    },
     {
         path: '/fileserver-clusters/create',
         sidebarName: 'CREATE_FILESERVER_CLUSTER',
