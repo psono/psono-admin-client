@@ -41,6 +41,7 @@ const SelectFieldLanguage = (props) => {
         onChange,
         value,
         className,
+        disabled,
     } = props;
 
     let defaultValue = null;
@@ -51,6 +52,7 @@ const SelectFieldLanguage = (props) => {
 
     return (
         <Autocomplete
+            disabled={disabled}
             options={lngs}
             disableClearable={required}
             classes={{
@@ -112,6 +114,7 @@ SelectFieldLanguage.propTypes = {
     size: PropTypes.string,
     onChange: PropTypes.func,
     className: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 export default SelectFieldLanguage;

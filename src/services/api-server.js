@@ -343,6 +343,183 @@ function admin_info(token, session_secret_key) {
     return call(method, endpoint, data, headers, session_secret_key);
 }
 
+function admin_authorization(token, session_secret_key) {
+    return call(
+        'GET',
+        '/admin/authorization/',
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_capability(token, session_secret_key) {
+    return call(
+        'GET',
+        '/admin/capability/',
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_tenant(token, session_secret_key, tenant_id, params) {
+    const queryParams =
+        !params || Object.keys(params).length === 0
+            ? ''
+            : '?' + new URLSearchParams(params).toString();
+    return call(
+        'GET',
+        '/admin/tenant/' + (tenant_id ? tenant_id + '/' : '') + queryParams,
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_tenant(token, session_secret_key, data) {
+    return call(
+        'POST',
+        '/admin/tenant/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_tenant(token, session_secret_key, tenant_id, data) {
+    return call(
+        'PUT',
+        '/admin/tenant/' + tenant_id + '/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_tenant(token, session_secret_key, tenant_id) {
+    return call(
+        'DELETE',
+        '/admin/tenant/' + tenant_id + '/',
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_tenant_membership(token, session_secret_key, method, data) {
+    return call(
+        method,
+        '/admin/tenant-membership/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_administrative_role(token, session_secret_key, role_id) {
+    return call(
+        'GET',
+        '/admin/administrative-role/' + (role_id ? role_id + '/' : ''),
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_administrative_role(token, session_secret_key, data) {
+    return call(
+        'POST',
+        '/admin/administrative-role/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_administrative_role(
+    token,
+    session_secret_key,
+    role_id,
+    data
+) {
+    return call(
+        'PUT',
+        '/admin/administrative-role/' + role_id + '/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_administrative_role(token, session_secret_key, role_id) {
+    return call(
+        'DELETE',
+        '/admin/administrative-role/' + role_id + '/',
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_administrative_role_assignment(
+    token,
+    session_secret_key,
+    assignment_id
+) {
+    return call(
+        'GET',
+        '/admin/administrative-role-assignment/' +
+            (assignment_id ? assignment_id + '/' : ''),
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_create_administrative_role_assignment(
+    token,
+    session_secret_key,
+    data
+) {
+    return call(
+        'POST',
+        '/admin/administrative-role-assignment/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_update_administrative_role_assignment(
+    token,
+    session_secret_key,
+    assignment_id,
+    data
+) {
+    return call(
+        'PUT',
+        '/admin/administrative-role-assignment/' + assignment_id + '/',
+        data,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
+function admin_delete_administrative_role_assignment(
+    token,
+    session_secret_key,
+    assignment_id
+) {
+    return call(
+        'DELETE',
+        '/admin/administrative-role-assignment/' + assignment_id + '/',
+        null,
+        { Authorization: 'Token ' + token },
+        session_secret_key
+    );
+}
+
 /**
  * GET: Returns a list of all users (for administrators) or the user details of a single user
  *
@@ -534,6 +711,99 @@ function admin_ldap_group(token, session_secret_key) {
     };
 
     return call(method, endpoint, data, headers, session_secret_key);
+}
+
+function admin_update_external_group_tenants(
+    token,
+    session_secret_key,
+    provider,
+    groupId,
+    tenantIds
+) {
+    const endpoint = '/admin/identity-provider/group-tenant/';
+    const method = 'PUT';
+    const data = {
+        provider,
+        group_id: groupId,
+        tenant_ids: tenantIds,
+    };
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, data, headers, session_secret_key);
+}
+
+function admin_update_ldap_group_tenants(
+    token,
+    session_secret_key,
+    ldapGroupId,
+    tenantIds
+) {
+    return admin_update_external_group_tenants(
+        token,
+        session_secret_key,
+        'ldap',
+        ldapGroupId,
+        tenantIds
+    );
+}
+
+function admin_update_saml_group_tenants(
+    token,
+    session_secret_key,
+    samlGroupId,
+    tenantIds
+) {
+    return admin_update_external_group_tenants(
+        token,
+        session_secret_key,
+        'saml',
+        samlGroupId,
+        tenantIds
+    );
+}
+
+function admin_update_oidc_group_tenants(
+    token,
+    session_secret_key,
+    oidcGroupId,
+    tenantIds
+) {
+    return admin_update_external_group_tenants(
+        token,
+        session_secret_key,
+        'oidc',
+        oidcGroupId,
+        tenantIds
+    );
+}
+
+function admin_update_scim_group_tenants(
+    token,
+    session_secret_key,
+    scimGroupId,
+    tenantIds
+) {
+    return admin_update_external_group_tenants(
+        token,
+        session_secret_key,
+        'scim',
+        scimGroupId,
+        tenantIds
+    );
+}
+
+function admin_identity_provider_tenant(token, session_secret_key, params) {
+    const query = new URLSearchParams(params || {}).toString();
+    const endpoint =
+        '/admin/identity-provider/tenant/' + (query ? `?${query}` : '');
+    const method = 'GET';
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call(method, endpoint, null, headers, session_secret_key);
 }
 
 /**
@@ -1112,7 +1382,8 @@ function admin_create_user(
     password,
     email,
     language,
-    require_password_change
+    require_password_change,
+    tenant_ids
 ) {
     const endpoint = '/admin/user/';
     const method = 'POST';
@@ -1122,6 +1393,7 @@ function admin_create_user(
         password: password,
         language: language,
         require_password_change: require_password_change,
+        tenant_ids: tenant_ids || [],
     };
     const headers = {
         Authorization: 'Token ' + token,
@@ -1139,11 +1411,17 @@ function admin_create_user(
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_delete_user(token, session_secret_key, user_id) {
+function admin_delete_user(
+    token,
+    session_secret_key,
+    user_id,
+    confirm_shared_ownership = false
+) {
     const endpoint = '/admin/user/';
     const method = 'DELETE';
     const data = {
         user_id: user_id,
+        confirm_shared_ownership: confirm_shared_ownership,
     };
     const headers = {
         'Content-Type': 'application/json',
@@ -1883,11 +2161,17 @@ function adminCreateShareRight(
  *
  * @returns {Promise<AxiosResponse<any>>}
  */
-function admin_delete_group(token, session_secret_key, group_id) {
+function admin_delete_group(
+    token,
+    session_secret_key,
+    group_id,
+    confirm_shared_ownership = false
+) {
     const endpoint = '/admin/group/';
     const method = 'DELETE';
     const data = {
         group_id: group_id,
+        confirm_shared_ownership: confirm_shared_ownership,
     };
     const headers = {
         'Content-Type': 'application/json',
@@ -4136,6 +4420,21 @@ const service = {
     admin_stats_os,
     admin_stats_two_factor,
     admin_info,
+    admin_authorization,
+    admin_capability,
+    admin_tenant,
+    admin_create_tenant,
+    admin_update_tenant,
+    admin_delete_tenant,
+    admin_tenant_membership,
+    admin_administrative_role,
+    admin_create_administrative_role,
+    admin_update_administrative_role,
+    admin_delete_administrative_role,
+    admin_administrative_role_assignment,
+    admin_create_administrative_role_assignment,
+    admin_update_administrative_role_assignment,
+    admin_delete_administrative_role_assignment,
     admin_user,
     admin_session,
     admin_group,
@@ -4191,13 +4490,17 @@ const service = {
     admin_delete_link_share,
     admin_ldap_user,
     admin_ldap_group,
+    admin_update_ldap_group_tenants,
+    admin_identity_provider_tenant,
     admin_ldap_create_group_map,
     admin_ldap_update_group_map,
     admin_ldap_delete_group_map,
     admin_ldap_group_sync,
     admin_scim_group,
+    admin_update_scim_group_tenants,
     admin_delete_scim_group,
     admin_saml_group,
+    admin_update_saml_group_tenants,
     admin_delete_saml_group,
     admin_delete_oidc_group,
     admin_delete_ldap_group,
@@ -4209,6 +4512,7 @@ const service = {
     admin_saml_update_group_map,
     admin_saml_delete_group_map,
     admin_oidc_group,
+    admin_update_oidc_group_tenants,
     admin_oidc_create_group_map,
     admin_oidc_update_group_map,
     admin_oidc_delete_group_map,

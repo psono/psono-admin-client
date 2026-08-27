@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 
-import { Checkbox, Grid } from '@material-ui/core';
+import { Checkbox, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Autocomplete, {
+    createFilterOptions,
+} from '@material-ui/lab/Autocomplete';
 
 import {
     RegularCard,
@@ -17,8 +20,10 @@ import store from '../../services/store';
 import i18n, { languages } from '../../i18n';
 import SelectFieldLanguage from '../../components/SelectField/Language';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
+import { hasCapabilityForTenantIds } from '../../services/authorization';
 
 const useStyles = makeStyles(customInputStyle);
+const filterOptions = createFilterOptions({ limit: 5 });
 
 const getDefaultLanguage = () => {
     const detectedLanguages = [];
@@ -67,6 +72,75 @@ const UserCreate = (props) => {
     const [password1, setPassword1] = useState('');
     const [password2, setPassword2] = useState('');
     const [createUserPossible, setCreateUserPossible] = useState(false);
+    const [tenantIds, setTenantIds] = useState([]);
+    const [tenants, setTenants] = useState([]);
+    const [selectedTenants, setSelectedTenants] = useState([]);
+    const [tenantSearch, setTenantSearch] = useState('');
+    const [tenantsLoading, setTenantsLoading] = useState(false);
+    const [createSuccess, setCreateSuccess] = useState(false);
+    const authorization = store.getState().user.authorization;
+    const createCapability = authorization.capabilities
+        ? authorization.capabilities['users.create']
+        : null;
+    const tenantScopeRequired = Boolean(
+        !authorization.is_superuser &&
+            createCapability &&
+            !createCapability.global
+    );
+
+    useEffect(() => {
+        if (authorization.is_superuser) return;
+        setTenants(
+            (createCapability ? createCapability.tenant_ids : []).map((id) => ({
+                id,
+                name: id,
+                is_active: true,
+            }))
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!authorization.is_superuser) return undefined;
+
+        let active = true;
+        setTenantsLoading(true);
+        const timer = setTimeout(() => {
+            psono_server
+                .admin_tenant(
+                    store.getState().user.token,
+                    store.getState().user.session_secret_key,
+                    undefined,
+                    { page_size: 5, page: 0, search: tenantSearch }
+                )
+                .then(
+                    (response) => {
+                        if (!active) return;
+                        setTenants(response.data.tenants);
+                        setTenantsLoading(false);
+                    },
+                    () => {
+                        if (!active) return;
+                        setTenants([]);
+                        setTenantsLoading(false);
+                    }
+                );
+        }, 300);
+
+        return () => {
+            active = false;
+            clearTimeout(timer);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tenantSearch]);
+
+    const selectableTenants = [
+        ...selectedTenants,
+        ...tenants.filter(
+            (tenant) =>
+                !selectedTenants.some((selected) => selected.id === tenant.id)
+        ),
+    ];
 
     const isCreateUserPossible = (username, email, password1, password2) => {
         const usernameValid =
@@ -137,8 +211,19 @@ const UserCreate = (props) => {
 
     const createUser = () => {
         setErrorsDict({});
+        setCreateSuccess(false);
         const onSuccess = (data) => {
-            setRedirectTo('/user/' + data.data.id);
+            if (
+                hasCapabilityForTenantIds(
+                    authorization,
+                    'users.read',
+                    tenantIds
+                )
+            ) {
+                setRedirectTo('/user/' + data.data.id);
+                return;
+            }
+            setCreateSuccess(true);
         };
         const onError = (data) => {
             setErrorsDict(data.data);
@@ -152,7 +237,8 @@ const UserCreate = (props) => {
                 password1,
                 email,
                 language,
-                requirePasswordChange
+                requirePasswordChange,
+                tenantIds
             )
             .then(onSuccess, onError);
     };
@@ -283,6 +369,75 @@ const UserCreate = (props) => {
                                             )}
                                         />
                                     </GridItem>
+                                    {(authorization.is_superuser ||
+                                        tenants.length > 0) && (
+                                        <GridItem xs={12} sm={12} md={6}>
+                                            <Autocomplete
+                                                multiple
+                                                autoHighlight
+                                                filterSelectedOptions
+                                                limitTags={5}
+                                                filterOptions={
+                                                    authorization.is_superuser
+                                                        ? (options) => options
+                                                        : filterOptions
+                                                }
+                                                inputValue={tenantSearch}
+                                                loading={tenantsLoading}
+                                                options={selectableTenants.filter(
+                                                    (tenant) => tenant.is_active
+                                                )}
+                                                getOptionLabel={(tenant) =>
+                                                    tenant.name
+                                                }
+                                                getOptionSelected={(
+                                                    option,
+                                                    value
+                                                ) => option.id === value.id}
+                                                value={selectedTenants}
+                                                onChange={(
+                                                    event,
+                                                    nextTenants
+                                                ) => {
+                                                    setSelectedTenants(
+                                                        nextTenants
+                                                    );
+                                                    setTenantIds(
+                                                        nextTenants.map(
+                                                            (tenant) =>
+                                                                tenant.id
+                                                        )
+                                                    );
+                                                    setTenantSearch('');
+                                                }}
+                                                onInputChange={(
+                                                    event,
+                                                    value,
+                                                    reason
+                                                ) => {
+                                                    if (
+                                                        reason === 'input' ||
+                                                        reason === 'clear'
+                                                    ) {
+                                                        setTenantSearch(value);
+                                                    }
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        fullWidth
+                                                        margin="normal"
+                                                        label={t('TENANTS')}
+                                                        inputProps={{
+                                                            ...params.inputProps,
+                                                            autoComplete:
+                                                                'new-password',
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </GridItem>
+                                    )}
                                     <GridItem xs={12} sm={12} md={12}>
                                         <div className={classes.checkbox}>
                                             <Checkbox
@@ -303,7 +458,11 @@ const UserCreate = (props) => {
                                 <Button
                                     color="primary"
                                     onClick={createUser}
-                                    disabled={!createUserPossible}
+                                    disabled={
+                                        !createUserPossible ||
+                                        (tenantScopeRequired &&
+                                            tenantIds.length === 0)
+                                    }
                                 >
                                     {t('CREATE_USER')}
                                 </Button>
@@ -318,6 +477,12 @@ const UserCreate = (props) => {
                                     />
                                 ) : (
                                     ''
+                                )}
+                                {createSuccess && (
+                                    <SnackbarContent
+                                        message={t('SAVE_SUCCESS')}
+                                        color="success"
+                                    />
                                 )}
                             </div>
                         }

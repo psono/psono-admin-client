@@ -20,6 +20,12 @@ import customInputStyle from '../../assets/jss/material-dashboard-react/customIn
 import store from '../../services/store';
 import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
 import SelectFieldLanguage from '../../components/SelectField/Language';
+import {
+    hasAnyScopeCapability,
+    hasCapabilityForTenantIds,
+    hasGlobalCapability,
+} from '../../services/authorization';
+import { apiErrorCode, isApiError } from '../../services/api-error';
 
 const useStyles = makeStyles(customInputStyle);
 const UserEdit = () => {
@@ -31,7 +37,31 @@ const UserEdit = () => {
     const [errors, setErrors] = useState([]);
     const [msgs, setMsgs] = useState([]);
     const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
+    const [confirmSharedDelete, setConfirmSharedDelete] = useState(false);
     const [wipeUserModalOpen, setWipeUserModalOpen] = useState(false);
+    const authorization = store.getState().user.authorization;
+    const targetCapability = (code) =>
+        Boolean(
+            user &&
+                hasCapabilityForTenantIds(authorization, code, user.tenant_ids)
+        );
+    const canUpdateUsers = targetCapability('users.update');
+    const canDeleteUsers = targetCapability('users.delete');
+    const canDeleteSessions = targetCapability('users.sessions.delete');
+    const canDeleteMfa = targetCapability('users.mfa.delete');
+    const canDeleteRecovery = targetCapability('users.recovery.delete');
+    const canDeleteLinkShares = targetCapability('users.link_shares.delete');
+    const canReadSessions = targetCapability('users.sessions.read');
+    const canReadRecovery = targetCapability('users.recovery.read');
+    // User detail memberships do not include the group's tenant_ids.
+    const canReadMemberships = hasAnyScopeCapability(
+        authorization,
+        'groups.memberships.read'
+    );
+    const canManageMemberships = hasGlobalCapability(
+        authorization,
+        'groups.memberships.manage'
+    );
 
     React.useEffect(() => {
         loadUser();
@@ -47,6 +77,10 @@ const UserEdit = () => {
             )
             .then((response) => {
                 const user = response.data;
+                user.sessions = user.sessions || [];
+                user.memberships = user.memberships || [];
+                user.recovery_codes = user.recovery_codes || [];
+                user.emergency_codes = user.emergency_codes || [];
 
                 user.sessions.forEach((u) => {
                     u.create_date = moment(u.create_date).format(
@@ -107,6 +141,7 @@ const UserEdit = () => {
                     u.admin = (
                         <Checkbox
                             checked={u.admin_raw}
+                            disabled={!canManageMemberships}
                             tabIndex={-1}
                             onClick={() => {
                                 handleToggleGroupAdmin(u);
@@ -129,6 +164,7 @@ const UserEdit = () => {
                     u.share_admin = (
                         <Checkbox
                             checked={u.share_admin_raw}
+                            disabled={!canManageMemberships}
                             tabIndex={-1}
                             onClick={() => {
                                 handleToggleShareAdmin(u);
@@ -452,6 +488,29 @@ const UserEdit = () => {
             );
     };
 
+    const deleteUser = (confirmSharedOwnership) => {
+        setErrors([]);
+        psono_server
+            .admin_delete_user(
+                store.getState().user.token,
+                store.getState().user.session_secret_key,
+                user.id,
+                confirmSharedOwnership
+            )
+            .then(() => history.push('/users'))
+            .catch((error) => {
+                if (
+                    !confirmSharedOwnership &&
+                    isApiError(error, 'SHARED_OWNERSHIP_CONFIRMATION_REQUIRED')
+                ) {
+                    setConfirmSharedDelete(true);
+                    setDeleteUserModalOpen(true);
+                    return;
+                }
+                setErrors([apiErrorCode(error)]);
+            });
+    };
+
     if (!user) {
         return null;
     }
@@ -475,22 +534,21 @@ const UserEdit = () => {
                 <DeleteConfirmDialog
                     title={t('DELETE_USER_S')}
                     onConfirm={() => {
-                        psono_server
-                            .admin_delete_user(
-                                store.getState().user.token,
-                                store.getState().user.session_secret_key,
-                                user.id
-                            )
-                            .then(() => {
-                                history.push('/user/');
-                            });
+                        const confirm = confirmSharedDelete;
                         setDeleteUserModalOpen(false);
+                        setConfirmSharedDelete(false);
+                        deleteUser(confirm);
                     }}
                     onAbort={() => {
                         setDeleteUserModalOpen(false);
+                        setConfirmSharedDelete(false);
                     }}
                 >
-                    {t('DELETE_USER_CONFIRM_DIALOG')}
+                    {t(
+                        confirmSharedDelete
+                            ? 'DELETE_SHARED_USER_CONFIRM_DIALOG'
+                            : 'DELETE_USER_CONFIRM_DIALOG'
+                    )}
                 </DeleteConfirmDialog>
             )}
             {wipeUserModalOpen && (
@@ -594,6 +652,7 @@ const UserEdit = () => {
                                             }}
                                             inputProps={{
                                                 value: user.email,
+                                                disabled: !canUpdateUsers,
                                                 onChange: onChangeEmailChange,
                                             }}
                                         />
@@ -605,6 +664,7 @@ const UserEdit = () => {
                                             fullWidth={true}
                                             required={true}
                                             margin="normal"
+                                            disabled={!canUpdateUsers}
                                         />
                                     </GridItem>
                                 </Grid>
@@ -614,6 +674,7 @@ const UserEdit = () => {
                                             <Checkbox
                                                 tabIndex={1}
                                                 checked={user.is_active}
+                                                disabled={!canUpdateUsers}
                                                 onClick={onIsActiveToggle}
                                             />{' '}
                                             {t('ACTIVE')}
@@ -624,6 +685,7 @@ const UserEdit = () => {
                                             <Checkbox
                                                 tabIndex={1}
                                                 checked={user.is_email_active}
+                                                disabled={!canUpdateUsers}
                                                 onClick={onIsEmailActiveToggle}
                                             />{' '}
                                             {t('EMAIL_VERIFIED')}
@@ -634,6 +696,9 @@ const UserEdit = () => {
                                             <Checkbox
                                                 tabIndex={1}
                                                 checked={user.is_superuser}
+                                                disabled={
+                                                    !authorization.is_superuser
+                                                }
                                                 onClick={onIsSuperuserToggle}
                                             />{' '}
                                             {t('SUPERUSER')}
@@ -647,6 +712,7 @@ const UserEdit = () => {
                                                     checked={
                                                         !!user.require_password_change
                                                     }
+                                                    disabled={!canUpdateUsers}
                                                     onClick={
                                                         onRequirePasswordChangeToggle
                                                     }
@@ -692,15 +758,22 @@ const UserEdit = () => {
                         }
                         footer={
                             <>
-                                <Button color="primary" onClick={save}>
-                                    {t('SAVE')}
-                                </Button>
-                                <Button
-                                    onClick={() => setDeleteUserModalOpen(true)}
-                                >
-                                    {t('DELETE')}
-                                </Button>
-                                {store.getState().server.type == 'EE' &&
+                                {canUpdateUsers && (
+                                    <Button color="primary" onClick={save}>
+                                        {t('SAVE')}
+                                    </Button>
+                                )}
+                                {canDeleteUsers && (
+                                    <Button
+                                        onClick={() =>
+                                            setDeleteUserModalOpen(true)
+                                        }
+                                    >
+                                        {t('DELETE')}
+                                    </Button>
+                                )}
+                                {canDeleteUsers &&
+                                    store.getState().server.type == 'EE' &&
                                     user.authentication !== 'AUTHKEY' && (
                                         <Button
                                             onClick={() =>
@@ -728,18 +801,37 @@ const UserEdit = () => {
                         recovery_codes={user.recovery_codes}
                         emergency_codes={user.emergency_codes}
                         link_shares={user.link_shares}
-                        onDeleteSessions={onDeleteSessions}
-                        onDeleteMemberships={onDeleteMemberships}
-                        onDeleteDuos={onDeleteDuos}
-                        onDeleteYubikeyOtps={onDeleteYubikeyOtps}
-                        onDeleteWebAuthns={onDeleteWebAuthns}
-                        onDeleteGoogleAuthenticators={
-                            onDeleteGoogleAuthenticators
+                        canReadSessions={canReadSessions}
+                        canReadMemberships={canReadMemberships}
+                        canReadRecovery={canReadRecovery}
+                        onDeleteSessions={
+                            canDeleteSessions ? onDeleteSessions : null
                         }
-                        onDeleteIvaltUser={onDeleteIvaltUser}
-                        onDeleteRecoveryCodes={onDeleteRecoveryCodes}
-                        onDeleteEmergencyCodes={onDeleteEmergencyCodes}
-                        onDeleteLinkShares={onDeleteLinkShares}
+                        onDeleteMemberships={
+                            canManageMemberships ? onDeleteMemberships : null
+                        }
+                        onDeleteDuos={canDeleteMfa ? onDeleteDuos : null}
+                        onDeleteYubikeyOtps={
+                            canDeleteMfa ? onDeleteYubikeyOtps : null
+                        }
+                        onDeleteWebAuthns={
+                            canDeleteMfa ? onDeleteWebAuthns : null
+                        }
+                        onDeleteGoogleAuthenticators={
+                            canDeleteMfa ? onDeleteGoogleAuthenticators : null
+                        }
+                        onDeleteIvaltUser={
+                            canDeleteMfa ? onDeleteIvaltUser : null
+                        }
+                        onDeleteRecoveryCodes={
+                            canDeleteRecovery ? onDeleteRecoveryCodes : null
+                        }
+                        onDeleteEmergencyCodes={
+                            canDeleteRecovery ? onDeleteEmergencyCodes : null
+                        }
+                        onDeleteLinkShares={
+                            canDeleteLinkShares ? onDeleteLinkShares : null
+                        }
                     />
                 </GridItem>
             </Grid>

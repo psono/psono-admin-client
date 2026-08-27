@@ -9,6 +9,9 @@ const routes = [
         navbarName: 'FILESERVER',
         icon: Storage,
         component: Fileservers,
+        requiredCapability: 'fileservers.read',
+        sidebarGroup: 'SETTINGS',
+        sidebarOrder: 90,
     },
 ];
 

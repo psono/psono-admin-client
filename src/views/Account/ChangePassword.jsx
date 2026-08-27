@@ -81,8 +81,8 @@ const ChangePassword = () => {
             <Grid container>
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
-                        cardTitle={t('SETTINGS')}
-                        cardSubtitle={t('LANGUAGE')}
+                        cardTitle={t('LANGUAGE')}
+                        cardSubtitle={t('LANGUAGE_DESCRIPTION')}
                         content={
                             <div>
                                 <Grid container>

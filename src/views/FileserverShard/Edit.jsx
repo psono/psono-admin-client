@@ -14,6 +14,7 @@ import {
 } from '../../components';
 import psono_server from '../../services/api-server';
 import store from '../../services/store';
+import { hasAnyScopeCapability } from '../../services/authorization';
 
 const FileserverShard = () => {
     const { t } = useTranslation();
@@ -25,6 +26,14 @@ const FileserverShard = () => {
     const [active, setActive] = useState(true);
     const [errors, setErrors] = useState({});
     const [saved, setSaved] = useState(false);
+    const canManage = hasAnyScopeCapability(
+        store.getState().user.authorization,
+        'fileservers.manage'
+    );
+    const canRead = hasAnyScopeCapability(
+        store.getState().user.authorization,
+        'fileservers.read'
+    );
     const credentials = () => [
         store.getState().user.token,
         store.getState().user.session_secret_key,
@@ -67,7 +76,13 @@ const FileserverShard = () => {
         request.then(
             (response) => {
                 if (!shard_id) {
-                    history.replace('/fileserver-shard/' + response.data.id);
+                    if (canRead) {
+                        history.replace(
+                            '/fileserver-shard/' + response.data.id
+                        );
+                    } else {
+                        setSaved(true);
+                    }
                     return;
                 }
                 setSaved(true);
@@ -138,6 +153,7 @@ const FileserverShard = () => {
                                     formControlProps={{ fullWidth: true }}
                                     inputProps={{
                                         value: title,
+                                        disabled: !canManage,
                                         onChange: (event) =>
                                             setTitle(event.target.value),
                                     }}
@@ -154,6 +170,7 @@ const FileserverShard = () => {
                                     formControlProps={{ fullWidth: true }}
                                     inputProps={{
                                         value: description,
+                                        disabled: !canManage,
                                         multiline: true,
                                         onChange: (event) =>
                                             setDescription(event.target.value),
@@ -169,6 +186,7 @@ const FileserverShard = () => {
                             <GridItem xs={12} sm={12} md={12}>
                                 <Checkbox
                                     checked={active}
+                                    disabled={!canManage}
                                     onChange={() => setActive(!active)}
                                 />
                                 {t('ACTIVE')}
@@ -176,27 +194,29 @@ const FileserverShard = () => {
                         </Grid>
                     }
                     footer={
-                        <div>
-                            <Button
-                                color="primary"
-                                disabled={!title}
-                                onClick={save}
-                            >
-                                {t(shard_id ? 'SAVE' : 'CREATE')}
-                            </Button>
-                            {saved && (
-                                <SnackbarContent
-                                    message={t('SAVE_SUCCESS')}
-                                    color="success"
-                                />
-                            )}
-                            {errors.non_field_errors && (
-                                <SnackbarContent
-                                    message={t(errors.non_field_errors)}
-                                    color="danger"
-                                />
-                            )}
-                        </div>
+                        canManage ? (
+                            <div>
+                                <Button
+                                    color="primary"
+                                    disabled={!title}
+                                    onClick={save}
+                                >
+                                    {t(shard_id ? 'SAVE' : 'CREATE')}
+                                </Button>
+                                {saved && (
+                                    <SnackbarContent
+                                        message={t('SAVE_SUCCESS')}
+                                        color="success"
+                                    />
+                                )}
+                                {errors.non_field_errors && (
+                                    <SnackbarContent
+                                        message={t(errors.non_field_errors)}
+                                        color="danger"
+                                    />
+                                )}
+                            </div>
+                        ) : null
                     }
                 />
             </GridItem>
