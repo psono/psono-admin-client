@@ -14,6 +14,7 @@ import {
 } from '../../components';
 import psono_server from '../../services/api-server';
 import store from '../../services/store';
+import { hasAnyScopeCapability } from '../../services/authorization';
 
 const FileserverCluster = () => {
     const { t } = useTranslation();
@@ -27,6 +28,14 @@ const FileserverCluster = () => {
     const [errors, setErrors] = useState({});
     const [saved, setSaved] = useState(false);
     const [configuration, setConfiguration] = useState('');
+    const canManage = hasAnyScopeCapability(
+        store.getState().user.authorization,
+        'fileservers.manage'
+    );
+    const canRead = hasAnyScopeCapability(
+        store.getState().user.authorization,
+        'fileservers.read'
+    );
     const credentials = () => [
         store.getState().user.token,
         store.getState().user.session_secret_key,
@@ -72,7 +81,13 @@ const FileserverCluster = () => {
         request.then(
             (response) => {
                 if (!cluster_id) {
-                    history.replace('/fileserver-cluster/' + response.data.id);
+                    if (canRead) {
+                        history.replace(
+                            '/fileserver-cluster/' + response.data.id
+                        );
+                    } else {
+                        setSaved(true);
+                    }
                     return;
                 }
                 setSaved(true);
@@ -146,7 +161,7 @@ const FileserverCluster = () => {
                     const capability = (field) => (
                         <Checkbox
                             checked={Boolean(link && link[field])}
-                            disabled={!link}
+                            disabled={!link || !canManage}
                             onChange={() => togglePermission(shard, field)}
                         />
                     );
@@ -157,6 +172,7 @@ const FileserverCluster = () => {
                         linked: (
                             <Checkbox
                                 checked={Boolean(link)}
+                                disabled={!canManage}
                                 onChange={() => toggleLink(shard)}
                             />
                         ),
@@ -236,6 +252,7 @@ const FileserverCluster = () => {
                                     formControlProps={{ fullWidth: true }}
                                     inputProps={{
                                         value: title,
+                                        disabled: !canManage,
                                         onChange: (event) =>
                                             setTitle(event.target.value),
                                     }}
@@ -254,6 +271,7 @@ const FileserverCluster = () => {
                                         type: 'number',
                                         min: 0,
                                         value: fileSizeLimit,
+                                        disabled: !canManage,
                                         onChange: (event) =>
                                             setFileSizeLimit(
                                                 event.target.value
@@ -273,31 +291,33 @@ const FileserverCluster = () => {
                         </Grid>
                     }
                     footer={
-                        <div>
-                            <Button
-                                color="primary"
-                                disabled={!title || !validFileSize}
-                                onClick={save}
-                            >
-                                {t(cluster_id ? 'SAVE' : 'CREATE')}
-                            </Button>
-                            {saved && (
-                                <SnackbarContent
-                                    message={t('SAVE_SUCCESS')}
-                                    color="success"
-                                />
-                            )}
-                            {errors.non_field_errors && (
-                                <SnackbarContent
-                                    message={t(errors.non_field_errors)}
-                                    color="danger"
-                                />
-                            )}
-                        </div>
+                        canManage ? (
+                            <div>
+                                <Button
+                                    color="primary"
+                                    disabled={!title || !validFileSize}
+                                    onClick={save}
+                                >
+                                    {t(cluster_id ? 'SAVE' : 'CREATE')}
+                                </Button>
+                                {saved && (
+                                    <SnackbarContent
+                                        message={t('SAVE_SUCCESS')}
+                                        color="success"
+                                    />
+                                )}
+                                {errors.non_field_errors && (
+                                    <SnackbarContent
+                                        message={t(errors.non_field_errors)}
+                                        color="danger"
+                                    />
+                                )}
+                            </div>
+                        ) : null
                     }
                 />
             </GridItem>
-            {cluster_id && (
+            {cluster_id && canManage && (
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
                         cardTitle={t('SHARD_LINKS')}
@@ -341,7 +361,7 @@ const FileserverCluster = () => {
                     />
                 </GridItem>
             )}
-            {cluster_id && (
+            {cluster_id && canManage && (
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
                         cardTitle={t('FILESERVER_CONFIGURATION')}

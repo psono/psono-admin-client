@@ -354,9 +354,18 @@ function activateToken() {
         sessionPassword = '';
         verification = {};
 
-        return {
-            response: 'success',
-        };
+        return psono_server
+            .admin_authorization(token, sessionSecretKey)
+            .then((response) => {
+                action.setAuthorization(response.data);
+                return {
+                    response: 'success',
+                };
+            })
+            .catch((error) => {
+                action.logout(store.getState().user.remember_me);
+                return Promise.reject(error);
+            });
     };
 
     return psono_server

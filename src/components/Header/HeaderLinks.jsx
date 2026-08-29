@@ -112,7 +112,7 @@ const HeaderLinks = (props) => {
                         <ListItemIcon className={classes.listItemIcon}>
                             <AccountCircleIcon className={classes.icon} />
                         </ListItemIcon>
-                        <Typography variant="body2">{t('SETTINGS')}</Typography>
+                        <Typography variant="body2">{t('ACCOUNT')}</Typography>
                     </MenuItem>
                     <MenuItem onClick={logout}>
                         <ListItemIcon className={classes.listItemIcon}>

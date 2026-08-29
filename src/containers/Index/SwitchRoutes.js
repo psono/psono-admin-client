@@ -14,6 +14,7 @@ import oidcRoutes from '../../routes/oidc';
 import otherRoutes from '../../routes/other';
 import fileserverRoutes from '../../routes/fileserver';
 import gatewayRoutes from '../../routes/gateway';
+import { authorizedRoutes } from '../../services/authorization';
 
 const SwitchRoutes = (props) => {
     let location = useLocation();
@@ -60,7 +61,17 @@ const SwitchRoutes = (props) => {
         });
     }
 
-    const routes = otherRoutes.concat(variableLinks, sidebarRoutes);
+    const authorization = state.user.authorization;
+    const visibleSidebarRoutes = authorizedRoutes(
+        sidebarRoutes.concat(variableLinks),
+        authorization
+    );
+    const visibleOtherRoutes = authorizedRoutes(otherRoutes, authorization);
+    const routes = visibleOtherRoutes.concat(visibleSidebarRoutes);
+    const defaultPath =
+        visibleSidebarRoutes.find((route) => !route.redirect)?.path ||
+        visibleOtherRoutes.find((route) => route.operationLanding)?.path ||
+        '/account/change-password';
 
     let match = null;
     for (let i = 0; i < routes.length; i++) {
@@ -77,7 +88,7 @@ const SwitchRoutes = (props) => {
                     return (
                         <Redirect
                             from={prop.path}
-                            to={prop.to}
+                            to={prop.path === '/' ? defaultPath : prop.to}
                             key={key}
                             {...rest}
                         />
@@ -98,6 +109,7 @@ const SwitchRoutes = (props) => {
                     />
                 );
             })}
+            <Redirect to={defaultPath} />
         </Switch>
     );
 };

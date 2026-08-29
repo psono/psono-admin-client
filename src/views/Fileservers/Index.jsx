@@ -15,6 +15,7 @@ import CustomTabs from '../../components/CustomTabs/CustomTabs';
 import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
 import psono_server from '../../services/api-server';
 import store from '../../services/store';
+import { hasAnyScopeCapability } from '../../services/authorization';
 
 const queryParams = (query) => {
     const params = {
@@ -36,6 +37,10 @@ const Fileservers = () => {
     const shardTableRef = useRef(null);
     const fileserverTableRef = useRef(null);
     const [pendingDelete, setPendingDelete] = useState(null);
+    const canManage = hasAnyScopeCapability(
+        store.getState().user.authorization,
+        'fileservers.manage'
+    );
     const credentials = () => [
         store.getState().user.token,
         store.getState().user.session_secret_key,
@@ -142,25 +147,31 @@ const Fileservers = () => {
             ]}
             data={loadClusters}
             actions={[
-                {
+                !canManage && {
+                    tooltip: t('DETAILS'),
+                    icon: Edit,
+                    onClick: (event, item) =>
+                        history.push('/fileserver-cluster/' + item.id),
+                },
+                canManage && {
                     tooltip: t('EDIT'),
                     icon: Edit,
                     onClick: (event, item) =>
                         history.push('/fileserver-cluster/' + item.id),
                 },
-                {
+                canManage && {
                     tooltip: t('DELETE'),
                     icon: Delete,
                     onClick: (event, item) =>
                         setPendingDelete({ type: 'cluster', item }),
                 },
-                {
+                canManage && {
                     tooltip: t('CREATE_FILESERVER_CLUSTER'),
                     isFreeAction: true,
                     icon: Add,
                     onClick: () => history.push('/fileserver-clusters/create'),
                 },
-            ]}
+            ].filter(Boolean)}
         />
     );
 
@@ -178,25 +189,31 @@ const Fileservers = () => {
             ]}
             data={loadShards}
             actions={[
-                {
+                !canManage && {
+                    tooltip: t('DETAILS'),
+                    icon: Edit,
+                    onClick: (event, item) =>
+                        history.push('/fileserver-shard/' + item.id),
+                },
+                canManage && {
                     tooltip: t('EDIT'),
                     icon: Edit,
                     onClick: (event, item) =>
                         history.push('/fileserver-shard/' + item.id),
                 },
-                {
+                canManage && {
                     tooltip: t('DELETE'),
                     icon: Delete,
                     onClick: (event, item) =>
                         setPendingDelete({ type: 'shard', item }),
                 },
-                {
+                canManage && {
                     tooltip: t('CREATE_FILESERVER_SHARD'),
                     isFreeAction: true,
                     icon: Add,
                     onClick: () => history.push('/fileserver-shards/create'),
                 },
-            ]}
+            ].filter(Boolean)}
         />
     );
 

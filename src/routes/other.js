@@ -12,6 +12,8 @@ import FileserverShard from '../views/FileserverShard/Edit';
 import Fileserver from '../views/Fileserver/Edit';
 import GatewayCluster from '../views/GatewayCluster/Edit';
 import Gateway from '../views/Gateway/Edit';
+import TenantEdit from '../views/Tenant/Edit';
+import AdministrativeRoleEdit from '../views/AdministrativeRole/Edit';
 
 import {
     Person,
@@ -50,6 +52,8 @@ let routes = [
         navbarName: 'CREATE_FILESERVER_CLUSTER',
         icon: Storage,
         component: FileserverCluster,
+        requiredCapability: 'fileservers.manage',
+        operationLanding: true,
     },
     {
         path: '/fileserver-cluster/:cluster_id',
@@ -57,6 +61,7 @@ let routes = [
         navbarName: 'FILESERVER_CLUSTER',
         icon: Storage,
         component: FileserverCluster,
+        requiredCapability: 'fileservers.read',
     },
     {
         path: '/fileserver-shards/create',
@@ -64,6 +69,8 @@ let routes = [
         navbarName: 'CREATE_FILESERVER_SHARD',
         icon: Storage,
         component: FileserverShard,
+        requiredCapability: 'fileservers.manage',
+        operationLanding: true,
     },
     {
         path: '/fileserver-shard/:shard_id',
@@ -71,6 +78,7 @@ let routes = [
         navbarName: 'FILESERVER_SHARD',
         icon: Storage,
         component: FileserverShard,
+        requiredCapability: 'fileservers.read',
     },
     {
         path: '/fileserver/:fileserver_id',
@@ -78,13 +86,15 @@ let routes = [
         navbarName: 'FILESERVER',
         icon: Storage,
         component: Fileserver,
+        requiredCapability: 'fileservers.read',
     },
     {
         path: '/account/change-password',
-        sidebarName: 'SETTINGS',
-        navbarName: 'SETTINGS',
+        sidebarName: 'ACCOUNT',
+        navbarName: 'ACCOUNT',
         icon: Person,
         component: ChangePassword,
+        allowAuthenticated: true,
     },
     {
         path: '/user/:user_id',
@@ -92,6 +102,7 @@ let routes = [
         navbarName: 'USER',
         icon: Person,
         component: UserEdit,
+        requiredCapability: 'users.read',
     },
     {
         path: '/security-report/:security_report_id',
@@ -99,6 +110,7 @@ let routes = [
         navbarName: 'SECURITY_REPORT',
         icon: Timeline,
         component: SecurityReportEdit,
+        requiredCapability: 'security_reports.read',
     },
     {
         path: '/policy/:policy_id',
@@ -113,6 +125,7 @@ let routes = [
         navbarName: 'CREATE_SHARE_RIGHT',
         icon: Group,
         component: GroupShareRightCreate,
+        requiredCapability: 'groups.shares.manage',
     },
     {
         path: '/group/:group_id',
@@ -120,6 +133,7 @@ let routes = [
         navbarName: 'GROUP',
         icon: Group,
         component: GroupEdit,
+        requiredCapability: 'groups.read',
     },
     {
         path: '/policies/create',
@@ -141,6 +155,40 @@ let routes = [
         navbarName: 'CREATE_USER',
         icon: Person,
         component: UserCreate,
+        requiredCapability: 'users.create',
+        operationLanding: true,
+    },
+    {
+        path: '/tenants/create',
+        sidebarName: 'CREATE_TENANT',
+        navbarName: 'CREATE_TENANT',
+        icon: Group,
+        component: TenantEdit,
+        superuserOnly: true,
+    },
+    {
+        path: '/tenant/:tenant_id',
+        sidebarName: 'TENANT',
+        navbarName: 'TENANT',
+        icon: Group,
+        component: TenantEdit,
+        superuserOnly: true,
+    },
+    {
+        path: '/administrative-roles/create',
+        sidebarName: 'CREATE_ADMINISTRATIVE_ROLE',
+        navbarName: 'CREATE_ADMINISTRATIVE_ROLE',
+        icon: Policy,
+        component: AdministrativeRoleEdit,
+        superuserOnly: true,
+    },
+    {
+        path: '/administrative-role/:role_id',
+        sidebarName: 'ADMINISTRATIVE_ROLE',
+        navbarName: 'ADMINISTRATIVE_ROLE',
+        icon: Policy,
+        component: AdministrativeRoleEdit,
+        superuserOnly: true,
     },
 ];
 

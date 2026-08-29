@@ -27,10 +27,14 @@ import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
 
 import SwitchRoutes from './SwitchRoutes';
+import { authorizedRoutes } from '../../services/authorization';
+import psonoServer from '../../services/api-server';
+import userService from '../../services/user';
 
 const App = (props) => {
     let location = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [authorizationReady, setAuthorizationReady] = useState(false);
     const mainPanelRef = useRef(null);
 
     const handleDrawerToggle = () => {
@@ -38,6 +42,33 @@ const App = (props) => {
     };
 
     const getRoute = () => location.pathname !== '/maps';
+
+    useEffect(() => {
+        if (!props.state.user.isLoggedIn) {
+            setAuthorizationReady(false);
+            return;
+        }
+        let active = true;
+        props.actions.setAuthorization(null);
+        psonoServer
+            .admin_authorization(
+                props.state.user.token,
+                props.state.user.session_secret_key
+            )
+            .then((response) => {
+                if (!active) return;
+                props.actions.setAuthorization(response.data);
+                setAuthorizationReady(true);
+            })
+            .catch(() => {
+                if (active && store.getState().user.isLoggedIn) {
+                    userService.logout();
+                }
+            });
+        return () => {
+            active = false;
+        };
+    }, [props.state.user.isLoggedIn, props.state.user.token]);
 
     useEffect(() => {
         if (!store.getState().user.isLoggedIn) {
@@ -56,6 +87,10 @@ const App = (props) => {
 
     if (!store.getState().user.isLoggedIn) {
         return <Redirect to="/login" />;
+    }
+
+    if (!authorizationReady) {
+        return null;
     }
 
     if (
@@ -96,13 +131,19 @@ const App = (props) => {
         oidcLinks.forEach((link) => variableLinks.push(link));
     }
 
-    const headerLinks = otherLinks.concat(variableLinks, sidebarLinks);
+    const authorization = props.state.user.authorization;
+    const visibleSidebarLinks = authorizedRoutes(
+        sidebarLinks.concat(variableLinks),
+        authorization
+    );
+    const visibleOtherLinks = authorizedRoutes(otherLinks, authorization);
+    const headerLinks = visibleOtherLinks.concat(visibleSidebarLinks);
 
     return (
         <div className={classes.wrapper}>
             <Notification />
             <Sidebar
-                routes={sidebarLinks.concat(variableLinks)}
+                routes={visibleSidebarLinks}
                 logo={logo}
                 image={image}
                 handleDrawerToggle={handleDrawerToggle}
@@ -112,7 +153,7 @@ const App = (props) => {
             />
             <div className={classes.mainPanel} ref={mainPanelRef}>
                 <Header
-                    routes={otherLinks.concat(headerLinks)}
+                    routes={headerLinks}
                     handleDrawerToggle={handleDrawerToggle}
                     {...rest}
                 />

@@ -9,6 +9,8 @@ const routes = [
         navbarName: 'GATEWAY',
         icon: DesktopWindows,
         component: Gateways,
+        sidebarGroup: 'SETTINGS',
+        sidebarOrder: 80,
     },
 ];
 
