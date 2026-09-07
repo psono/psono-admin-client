@@ -3,6 +3,10 @@ export function apiErrorCode(response) {
     const value =
         response.data.non_field_errors || response.data.errors || response.data;
     if (Array.isArray(value)) return value[0] || 'ERROR';
+    if (value && typeof value === 'object') {
+        const fieldError = Object.values(value).find(Array.isArray);
+        if (fieldError) return fieldError[0] || 'ERROR';
+    }
     return typeof value === 'string' ? value : 'ERROR';
 }
 

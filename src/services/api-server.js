@@ -1454,6 +1454,24 @@ function admin_wipe_user(token, session_secret_key, user_id) {
     return call(method, endpoint, data, headers, session_secret_key);
 }
 
+function admin_read_user_password_reset(token, session_secret_key, user_id) {
+    const endpoint = '/admin/user-password-reset/' + user_id + '/';
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call('GET', endpoint, null, headers, session_secret_key);
+}
+
+function admin_reset_user_password(token, session_secret_key, user_id, data) {
+    const endpoint = '/admin/user-password-reset/' + user_id + '/';
+    const headers = {
+        Authorization: 'Token ' + token,
+    };
+
+    return call('PUT', endpoint, data, headers, session_secret_key);
+}
+
 /**
  * DELETE: Deletes a session (for administrators)
  *
@@ -4443,6 +4461,8 @@ const service = {
     admin_create_user,
     admin_delete_user,
     admin_wipe_user,
+    admin_read_user_password_reset,
+    admin_reset_user_password,
     admin_delete_session,
     admin_policy,
     admin_policy_create_group_map,

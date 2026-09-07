@@ -19,6 +19,7 @@ import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import store from '../../services/store';
 import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
+import UserPasswordResetDialog from '../../components/Dialog/UserPasswordResetDialog';
 import SelectFieldLanguage from '../../components/SelectField/Language';
 import {
     hasAnyScopeCapability,
@@ -26,6 +27,7 @@ import {
     hasGlobalCapability,
 } from '../../services/authorization';
 import { apiErrorCode, isApiError } from '../../services/api-error';
+import { canResetUserPassword } from '../../services/user-password-reset';
 
 const useStyles = makeStyles(customInputStyle);
 const UserEdit = () => {
@@ -39,6 +41,7 @@ const UserEdit = () => {
     const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
     const [confirmSharedDelete, setConfirmSharedDelete] = useState(false);
     const [wipeUserModalOpen, setWipeUserModalOpen] = useState(false);
+    const [passwordResetModalOpen, setPasswordResetModalOpen] = useState(false);
     const authorization = store.getState().user.authorization;
     const targetCapability = (code) =>
         Boolean(
@@ -53,6 +56,11 @@ const UserEdit = () => {
     const canDeleteLinkShares = targetCapability('users.link_shares.delete');
     const canReadSessions = targetCapability('users.sessions.read');
     const canReadRecovery = targetCapability('users.recovery.read');
+    const showPasswordReset = canResetUserPassword(
+        user,
+        store.getState().server,
+        targetCapability('users.password.reset')
+    );
     // User detail memberships do not include the group's tenant_ids.
     const canReadMemberships = hasAnyScopeCapability(
         authorization,
@@ -573,6 +581,16 @@ const UserEdit = () => {
                     {t('WIPE_USER_CONFIRM_DIALOG')}
                 </DeleteConfirmDialog>
             )}
+            {passwordResetModalOpen && (
+                <UserPasswordResetDialog
+                    user={user}
+                    onSuccess={() => {
+                        setMsgs(['PASSWORD_RESET_SUCCESS']);
+                        loadUser();
+                    }}
+                    onAbort={() => setPasswordResetModalOpen(false)}
+                />
+            )}
             <Grid container>
                 <GridItem xs={12} sm={12} md={12}>
                     <RegularCard
@@ -770,6 +788,15 @@ const UserEdit = () => {
                                         }
                                     >
                                         {t('DELETE')}
+                                    </Button>
+                                )}
+                                {showPasswordReset && (
+                                    <Button
+                                        onClick={() =>
+                                            setPasswordResetModalOpen(true)
+                                        }
+                                    >
+                                        {t('RESET_PASSWORD')}
                                     </Button>
                                 )}
                                 {canDeleteUsers &&

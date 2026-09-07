@@ -22,6 +22,8 @@ const default_management = false;
 const default_public_key = '';
 const default_version = '';
 const default_web_client = '';
+const default_admin_recovery_password_reset_enabled = false;
+const default_compliance_server_secrets = 'noone';
 
 function server(
     state = {
@@ -43,6 +45,9 @@ function server(
         public_key: default_public_key,
         version: default_version,
         web_client: default_web_client,
+        admin_recovery_password_reset_enabled:
+            default_admin_recovery_password_reset_enabled,
+        compliance_server_secrets: default_compliance_server_secrets,
     },
     action
 ) {
@@ -67,6 +72,9 @@ function server(
                 public_key: default_public_key,
                 version: default_version,
                 web_client: default_web_client,
+                admin_recovery_password_reset_enabled:
+                    default_admin_recovery_password_reset_enabled,
+                compliance_server_secrets: default_compliance_server_secrets,
             });
         case SET_SERVER_INFO:
             return Object.assign({}, state, {
@@ -87,6 +95,12 @@ function server(
                 public_key: action.info.public_key,
                 version: action.info.version,
                 web_client: action.info.web_client,
+                admin_recovery_password_reset_enabled: Boolean(
+                    action.info.admin_recovery_password_reset_enabled
+                ),
+                compliance_server_secrets:
+                    action.info.compliance_server_secrets ||
+                    default_compliance_server_secrets,
             });
         case SET_SERVER_URL:
             return Object.assign({}, state, {

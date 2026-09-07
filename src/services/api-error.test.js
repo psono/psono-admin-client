@@ -13,4 +13,7 @@ test('extracts server validation errors', () => {
         true
     );
     expect(apiErrorCode({ data: { unexpected: true } })).toBe('ERROR');
+    expect(apiErrorCode({ data: { password: ['PASSWORD_TOO_SHORT'] } })).toBe(
+        'PASSWORD_TOO_SHORT'
+    );
 });
