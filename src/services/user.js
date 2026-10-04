@@ -4,7 +4,7 @@
 
 import action from '../actions/boundActionCreators';
 import host from './host';
-import psono_server from './api-server';
+import apiClient from './api-server';
 import cryptoLibrary from './cryptoLibrary';
 import helper from './helper';
 import store from './store';
@@ -12,6 +12,7 @@ import device from './device';
 import notification from './notification';
 import browserClient from './browser-client';
 import i18n from '../i18n';
+import { getHashingSettings } from './hashing-parameters';
 
 let sessionPassword = '';
 let verification = {};
@@ -88,7 +89,7 @@ function samlLogin(samlTokenId) {
         sessionDuration = 24 * 60 * 60 * 30;
     }
 
-    return psono_server
+    return apiClient
         .samlLogin(
             loginInfoEnc['text'],
             loginInfoEnc['nonce'],
@@ -126,7 +127,7 @@ function initiateSamlLogin(server, remember_me, trust_device) {
 function get_saml_redirect_url(provider_id) {
     const return_to_url = browserClient.get_saml_return_to_url();
 
-    return psono_server
+    return apiClient
         .samlInitiateLogin(provider_id, return_to_url)
         .then((result) => {
             return result.data;
@@ -181,7 +182,7 @@ function oidcLogin(oidcTokenId) {
         sessionDuration = 24 * 60 * 60 * 30;
     }
 
-    return psono_server
+    return apiClient
         .oidcLogin(
             loginInfoEnc['text'],
             loginInfoEnc['nonce'],
@@ -219,7 +220,7 @@ function initiateOidcLogin(server, remember_me, trust_device) {
 function get_oidc_redirect_url(provider_id) {
     const return_to_url = browserClient.get_oidc_return_to_url();
 
-    return psono_server
+    return apiClient
         .oidcInitiateLogin(provider_id, return_to_url)
         .then((result) => {
             return result.data;
@@ -237,7 +238,7 @@ function ga_verify(ga_token) {
     const token = store.getState().user.token;
     const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
+    return apiClient
         .ga_verify(token, ga_token, session_secret_key)
         .catch((response) => {
             if (
@@ -267,7 +268,7 @@ function duo_verify(duo_token) {
     const token = store.getState().user.token;
     const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
+    return apiClient
         .duo_verify(token, duo_token, session_secret_key)
         .catch((response) => {
             if (
@@ -297,7 +298,7 @@ function yubikey_otp_verify(yubikey_otp) {
     const token = store.getState().user.token;
     const session_secret_key = store.getState().user.session_secret_key;
 
-    return psono_server
+    return apiClient
         .yubikey_otp_verify(token, yubikey_otp, session_secret_key)
         .catch((response) => {
             if (
@@ -325,6 +326,8 @@ function activateToken() {
     const token = store.getState().user.token;
     const sessionSecretKey = store.getState().user.session_secret_key;
     const userSauce = store.getState().user.user_sauce;
+    const hashingAlgorithm = store.getState().user.hashingAlgorithm;
+    const hashingParameters = store.getState().user.hashingParameters;
 
     const onSuccess = function (activationData) {
         // decrypt user secret key
@@ -332,7 +335,9 @@ function activateToken() {
             activationData.data.user.secret_key,
             activationData.data.user.secret_key_nonce,
             sessionPassword,
-            userSauce
+            userSauce,
+            hashingAlgorithm,
+            hashingParameters
         );
 
         let serverSecretExists = ['SAML', 'OIDC', 'LDAP'].includes(
@@ -354,7 +359,7 @@ function activateToken() {
         sessionPassword = '';
         verification = {};
 
-        return psono_server
+        return apiClient
             .admin_authorization(token, sessionSecretKey)
             .then((response) => {
                 action.setAuthorization(response.data);
@@ -368,7 +373,7 @@ function activateToken() {
             });
     };
 
-    return psono_server
+    return apiClient
         .activateToken(
             token,
             verification.text,
@@ -396,7 +401,7 @@ function handleLoginResponse(
     serverPublicKey,
     defaultAuthentication
 ) {
-    let decrypted_response_data = JSON.parse(
+    const loginEnvelope = JSON.parse(
         cryptoLibrary.decryptDataPublicKey(
             response.data.login_info,
             response.data.login_info_nonce,
@@ -405,22 +410,56 @@ function handleLoginResponse(
         )
     );
     const server_session_public_key =
-        decrypted_response_data.server_session_public_key ||
-        decrypted_response_data.session_public_key;
+        loginEnvelope.server_session_public_key ||
+        loginEnvelope.session_public_key;
+    let decrypted_response_data;
 
     if (
-        decrypted_response_data.hasOwnProperty('data') &&
-        decrypted_response_data.hasOwnProperty('data_nonce')
+        Object.hasOwn(loginEnvelope, 'data') &&
+        Object.hasOwn(loginEnvelope, 'data_nonce')
     ) {
         decrypted_response_data = JSON.parse(
             cryptoLibrary.decryptDataPublicKey(
-                decrypted_response_data.data,
-                decrypted_response_data.data_nonce,
+                loginEnvelope.data,
+                loginEnvelope.data_nonce,
                 server_session_public_key,
                 sessionKeys.private_key
             )
         );
+    } else {
+        decrypted_response_data = loginEnvelope;
     }
+
+    if (!Object.hasOwn(decrypted_response_data.user, 'hashing_algorithm')) {
+        decrypted_response_data.user.hashing_algorithm =
+            defaultAuthentication === 'AUTHKEY'
+                ? store.getState().user.hashingAlgorithm
+                : 'scrypt';
+    }
+    if (!Object.hasOwn(decrypted_response_data.user, 'hashing_parameters')) {
+        decrypted_response_data.user.hashing_parameters =
+            defaultAuthentication === 'AUTHKEY'
+                ? store.getState().user.hashingParameters
+                : undefined;
+    }
+    if (
+        !Object.hasOwn(decrypted_response_data.user, 'require_password_change')
+    ) {
+        decrypted_response_data.user.require_password_change = false;
+    }
+    const { hashingAlgorithm, hashingParameters } = getHashingSettings(
+        decrypted_response_data.user.hashing_algorithm,
+        decrypted_response_data.user.hashing_parameters
+    );
+    Object.assign(decrypted_response_data.user, {
+        hashing_algorithm: hashingAlgorithm,
+        hashing_parameters: hashingParameters,
+    });
+    action.sethashingParameters(
+        decrypted_response_data.user.hashing_algorithm,
+        decrypted_response_data.user.hashing_parameters
+    );
+
     sessionPassword =
         password || !decrypted_response_data.hasOwnProperty('password')
             ? password
@@ -449,7 +488,9 @@ function handleLoginResponse(
             decrypted_response_data.user.private_key,
             decrypted_response_data.user.private_key_nonce,
             sessionPassword,
-            decrypted_response_data.user.user_sauce
+            decrypted_response_data.user.user_sauce,
+            decrypted_response_data.user.hashing_algorithm,
+            decrypted_response_data.user.hashing_parameters
         );
     } catch (error) {
         return {
@@ -498,29 +539,32 @@ function handleLoginResponse(
     return decrypted_response_data;
 }
 
-function login(password, serverInfo, sendPlain) {
-    const username = store.getState().user.username;
-    const trust_device = store.getState().user.trust_device;
-    const server_public_key = serverInfo.info.public_key;
-
-    let authkey = cryptoLibrary.generateAuthkey(username, password);
-
-    const session_keys = cryptoLibrary.generatePublicPrivateKeypair();
-
+function prelogin(username) {
     const onSuccess = function (response) {
-        return handleLoginResponse(
-            response,
-            password,
-            session_keys,
-            server_public_key,
-            'AUTHKEY'
-        );
+        if (
+            !Object.hasOwn(response.data, 'hashing_algorithm') ||
+            response.data.hashing_algorithm !== 'scrypt'
+        ) {
+            return Promise.reject('UNSUPPORTED_ALGORITHM_UPDATE_CLIENT');
+        }
+        if (!Object.hasOwn(response.data, 'hashing_parameters')) {
+            return Promise.reject('UNSUPPORTED_ALGORITHM_UPDATE_CLIENT');
+        }
+        try {
+            getHashingSettings(
+                response.data.hashing_algorithm,
+                response.data.hashing_parameters
+            );
+        } catch (error) {
+            return Promise.reject(error.message);
+        }
+        return response;
     };
 
     const onError = function (response) {
         if (
-            response.hasOwnProperty('data') &&
-            response.data.hasOwnProperty('non_field_errors')
+            Object.hasOwn(response, 'data') &&
+            Object.hasOwn(response.data, 'non_field_errors')
         ) {
             return Promise.reject(response.data.non_field_errors);
         } else {
@@ -528,40 +572,110 @@ function login(password, serverInfo, sendPlain) {
         }
     };
 
-    let login_info = {
-        username: username,
-        authkey: authkey,
-        device_time: new Date().toISOString(),
-        device_fingerprint: device.getDeviceFingerprint(),
-        device_description: device.getDeviceDescription(),
+    return apiClient.prelogin(username).then(onSuccess, onError);
+}
+
+function login(password, serverInfo, sendPlain) {
+    const username = store.getState().user.username;
+    const trustDevice = store.getState().user.trust_device;
+    const serverPublicKey = serverInfo.info.public_key;
+
+    const onSuccess = function (response) {
+        action.sethashingParameters(
+            response.data.hashing_algorithm,
+            response.data.hashing_parameters
+        );
+        const authkey = cryptoLibrary.generateAuthkey(
+            username,
+            password,
+            response.data.hashing_algorithm,
+            response.data.hashing_parameters
+        );
+        const sessionKeys = cryptoLibrary.generatePublicPrivateKeypair();
+
+        const onSuccess = function (response) {
+            return handleLoginResponse(
+                response,
+                password,
+                sessionKeys,
+                serverPublicKey,
+                'AUTHKEY'
+            );
+        };
+        const onError = function (response) {
+            if (
+                Object.hasOwn(response, 'data') &&
+                Object.hasOwn(response.data, 'non_field_errors')
+            ) {
+                return Promise.reject(response.data.non_field_errors);
+            } else {
+                return Promise.reject(response);
+            }
+        };
+
+        const loginInfo = {
+            username: username,
+            authkey: authkey,
+            device_time: new Date().toISOString(),
+            device_fingerprint: device.getDeviceFingerprint(),
+            device_description: device.getDeviceDescription(),
+        };
+        if (sendPlain) {
+            loginInfo.password = password;
+        }
+
+        const loginInfoEnc = cryptoLibrary.encryptDataPublicKey(
+            JSON.stringify(loginInfo),
+            serverPublicKey,
+            sessionKeys.private_key
+        );
+        let sessionDuration = 24 * 60 * 60;
+        if (trustDevice) {
+            sessionDuration = 24 * 60 * 60 * 30;
+        }
+
+        return apiClient
+            .login(
+                loginInfoEnc.text,
+                loginInfoEnc.nonce,
+                sessionKeys.public_key,
+                sessionDuration
+            )
+            .then(onSuccess, onError);
     };
+    const onError = (response) => Promise.reject(response);
 
-    if (sendPlain) {
-        login_info['password'] = password;
-    }
+    return prelogin(username).then(onSuccess, onError);
+}
 
-    login_info = JSON.stringify(login_info);
-
-    // encrypt the login infos
-    const login_info_enc = cryptoLibrary.encryptDataPublicKey(
-        login_info,
-        server_public_key,
-        session_keys.private_key
+function updateUser(
+    email,
+    authkey,
+    authkeyOld,
+    privateKey,
+    privateKeyNonce,
+    secretKey,
+    secretKeyNonce,
+    language,
+    hashingAlgorithm,
+    hashingParameters
+) {
+    const token = store.getState().user.token;
+    const sessionSecretKey = store.getState().user.session_secret_key;
+    return apiClient.updateUser(
+        token,
+        sessionSecretKey,
+        email,
+        authkey,
+        authkeyOld,
+        privateKey,
+        privateKeyNonce,
+        secretKey,
+        secretKeyNonce,
+        language,
+        hashingAlgorithm,
+        hashingParameters
     );
-
-    let session_duration = 24 * 60 * 60;
-    if (trust_device) {
-        session_duration = 24 * 60 * 60 * 30;
-    }
-
-    return psono_server
-        .login(
-            login_info_enc['text'],
-            login_info_enc['nonce'],
-            session_keys.public_key,
-            session_duration
-        )
-        .then(onSuccess, onError);
 }
 
 /**
@@ -573,7 +687,7 @@ function logout(msg = '') {
     const token = store.getState().user.token;
     const session_secret_key = store.getState().user.session_secret_key;
 
-    psono_server.logout(token, session_secret_key);
+    apiClient.logout(token, session_secret_key);
     action.logout(store.getState().user.remember_me);
     if (msg) {
         notification.infoSend(msg);
@@ -610,42 +724,54 @@ function saveNewPassword(newPassword, newPasswordRepeat, oldPassword) {
     const userPrivateKey = store.getState().user.user_private_key;
     const userSecretKey = store.getState().user.user_secret_key;
     const userSauce = store.getState().user.user_sauce;
-    const token = store.getState().user.token;
-    const sessionSecretKey = store.getState().user.session_secret_key;
+    const hashingAlgorithm = store.getState().user.hashingAlgorithm;
+    const hashingParameters = store.getState().user.hashingParameters;
+    const authkeyOld = cryptoLibrary.generateAuthkey(
+        username,
+        oldPassword,
+        hashingAlgorithm,
+        hashingParameters
+    );
+    const newAuthkey = cryptoLibrary.generateAuthkey(
+        username,
+        newPassword,
+        hashingAlgorithm,
+        hashingParameters
+    );
 
-    const authkeyOld = cryptoLibrary.generateAuthkey(username, oldPassword);
-    const authkey = cryptoLibrary.generateAuthkey(username, newPassword);
-
-    const privateKeyEnc = cryptoLibrary.encrypt_secret(
+    const privKeyEnc = cryptoLibrary.encryptSecret(
         userPrivateKey,
         newPassword,
-        userSauce
+        userSauce,
+        hashingAlgorithm,
+        hashingParameters
     );
-    const secretKeyEnc = cryptoLibrary.encrypt_secret(
+    const secretKeyEnc = cryptoLibrary.encryptSecret(
         userSecretKey,
         newPassword,
-        userSauce
+        userSauce,
+        hashingAlgorithm,
+        hashingParameters
     );
 
-    return psono_server
-        .update_user(
-            token,
-            sessionSecretKey,
-            null,
-            authkey,
-            authkeyOld,
-            privateKeyEnc.text,
-            privateKeyEnc.nonce,
-            secretKeyEnc.text,
-            secretKeyEnc.nonce
-        )
-        .then(
-            () => {
-                action.setRequirePasswordChange(false);
-                return { msgs: ['SAVE_SUCCESS'] };
-            },
-            () => Promise.reject({ errors: ['OLD_PASSWORD_INCORRECT'] })
-        );
+    const onSuccess = () => {
+        action.setRequirePasswordChange(false);
+        return { msgs: ['SAVE_SUCCESS'] };
+    };
+    const onError = () =>
+        Promise.reject({ errors: ['OLD_PASSWORD_INCORRECT'] });
+    return updateUser(
+        null,
+        newAuthkey,
+        authkeyOld,
+        privKeyEnc.text,
+        privKeyEnc.nonce,
+        secretKeyEnc.text,
+        secretKeyEnc.nonce,
+        undefined,
+        hashingAlgorithm,
+        hashingParameters
+    ).then(onSuccess, onError);
 }
 
 /**
@@ -656,26 +782,19 @@ function saveNewPassword(newPassword, newPasswordRepeat, oldPassword) {
  * @returns {Promise<{msgs: string[]}>}
  */
 function saveNewLanguage(language) {
-    const token = store.getState().user.token;
-    const sessionSecretKey = store.getState().user.session_secret_key;
-
-    return psono_server
-        .update_user(
-            token,
-            sessionSecretKey,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            language
-        )
-        .then(
-            () => ({ msgs: ['SAVE_SUCCESS'] }),
-            (result) => Promise.reject(result)
-        );
+    return updateUser(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        language
+    ).then(
+        () => ({ msgs: ['SAVE_SUCCESS'] }),
+        (result) => Promise.reject(result)
+    );
 }
 
 const service = {

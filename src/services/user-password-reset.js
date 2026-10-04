@@ -1,4 +1,5 @@
 import cryptoLibrary from './cryptoLibrary';
+import { getHashingSettings } from './hashing-parameters';
 
 const KEY_PATTERN = /^[0-9a-fA-F]{64}$/;
 
@@ -51,20 +52,42 @@ export function createAdminRecoveryResetPayload(
         throw new Error('ADMIN_RECOVERY_DATA_INVALID');
     }
 
+    // Updated servers advertise reset parameters. Older endpoints use the legacy format.
+    if (
+        Object.prototype.hasOwnProperty.call(recovery, 'hashing_algorithm') !==
+        Object.prototype.hasOwnProperty.call(recovery, 'hashing_parameters')
+    ) {
+        throw new Error('INVALID_HASHING_PARAMETER');
+    }
+    const { hashingAlgorithm, hashingParameters } = getHashingSettings(
+        recovery.hashing_algorithm,
+        recovery.hashing_parameters
+    );
     const userSauce = cryptoLibrary.generateUserSauce();
-    const encryptedPrivateKey = cryptoLibrary.encrypt_secret(
+    const encryptedPrivateKey = cryptoLibrary.encryptSecret(
         privateKey,
         password,
-        userSauce
+        userSauce,
+        hashingAlgorithm,
+        hashingParameters
     );
-    const encryptedSecretKey = cryptoLibrary.encrypt_secret(
+    const encryptedSecretKey = cryptoLibrary.encryptSecret(
         secretKey,
         password,
-        userSauce
+        userSauce,
+        hashingAlgorithm,
+        hashingParameters
     );
 
     return {
-        authkey: cryptoLibrary.generateAuthkey(recovery.username, password),
+        authkey: cryptoLibrary.generateAuthkey(
+            recovery.username,
+            password,
+            hashingAlgorithm,
+            hashingParameters
+        ),
+        hashing_algorithm: hashingAlgorithm,
+        hashing_parameters: hashingParameters,
         private_key: encryptedPrivateKey.text,
         private_key_nonce: encryptedPrivateKey.nonce,
         secret_key: encryptedSecretKey.text,

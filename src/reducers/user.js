@@ -4,10 +4,12 @@ import {
     SET_USER_INFO_2,
     SET_USER_INFO_3,
     SET_REQUIRE_PASSWORD_CHANGE,
+    SET_HASHING_PARAMETERS,
     SET_SERVER_SECRET_EXISTS,
     LOGOUT,
     SET_AUTHORIZATION,
 } from '../actions/actionTypes';
+import { LEGACY_HASHING_PARAMETERS } from '../services/hashing-parameters';
 
 const default_username = '';
 const default_remember_me = false;
@@ -20,6 +22,8 @@ function user(
         remember_me: default_remember_me,
         trust_device: default_trust_device,
         authentication: '',
+        hashingAlgorithm: 'scrypt',
+        hashingParameters: LEGACY_HASHING_PARAMETERS,
         user_secret_key: '',
         serverSecretExists: false,
         user_private_key: '',
@@ -67,6 +71,11 @@ function user(
             return Object.assign({}, state, {
                 requirePasswordChange: action.requirePasswordChange,
             });
+        case SET_HASHING_PARAMETERS:
+            return Object.assign({}, state, {
+                hashingAlgorithm: action.hashingAlgorithm,
+                hashingParameters: action.hashingParameters,
+            });
         case SET_SERVER_SECRET_EXISTS:
             return Object.assign({}, state, {
                 serverSecretExists: action.serverSecretExists,
@@ -86,6 +95,8 @@ function user(
                     ? state.trust_device
                     : default_trust_device,
                 authentication: '',
+                hashingAlgorithm: 'scrypt',
+                hashingParameters: LEGACY_HASHING_PARAMETERS,
                 user_secret_key: '',
                 serverSecretExists: false,
                 user_private_key: '',

@@ -5,6 +5,7 @@ import {
     SET_USER_INFO_2,
     SET_USER_INFO_3,
     SET_REQUIRE_PASSWORD_CHANGE,
+    SET_HASHING_PARAMETERS,
     SET_SERVER_SECRET_EXISTS,
     LOGOUT,
     SET_SERVER_URL,
@@ -79,6 +80,16 @@ function setRequirePasswordChange(requirePasswordChange) {
         dispatch({
             type: SET_REQUIRE_PASSWORD_CHANGE,
             requirePasswordChange,
+        });
+    };
+}
+
+function sethashingParameters(hashingAlgorithm, hashingParameters) {
+    return (dispatch) => {
+        dispatch({
+            type: SET_HASHING_PARAMETERS,
+            hashingAlgorithm,
+            hashingParameters,
         });
     };
 }
@@ -179,6 +190,7 @@ const actionCreators = {
     setUserInfo2,
     setUserInfo3,
     setRequirePasswordChange,
+    sethashingParameters,
     setServerSecretExists,
     logout,
     setServerInfo,

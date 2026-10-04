@@ -55,7 +55,7 @@ describe('user password reset', () => {
         }
     );
 
-    test('decrypts admin recovery locally and rewraps both keys', () => {
+    const assertResetPayload = (hashingParameters) => {
         const userKeyPair = cryptoLibrary.generatePublicPrivateKeypair();
         const recoveryKeyPair = cryptoLibrary.generatePublicPrivateKeypair();
         const privateKey = userKeyPair.private_key;
@@ -79,6 +79,10 @@ describe('user password reset', () => {
                 private_key_nonce: encryptedPrivateKey.nonce,
                 secret_key: encryptedSecretKey.text,
                 secret_key_nonce: encryptedSecretKey.nonce,
+                ...(hashingParameters && {
+                    hashing_algorithm: 'scrypt',
+                    hashing_parameters: hashingParameters,
+                }),
             },
             'new-password',
             recoveryKeyPair.private_key,
@@ -92,13 +96,27 @@ describe('user password reset', () => {
         expect(payload.secret_key).toMatch(/^[0-9a-f]{160}$/);
         expect(payload.secret_key_nonce).toMatch(/^[0-9a-f]{48}$/);
         expect(payload.require_password_change).toBe(false);
+        expect(payload.hashing_algorithm).toBe('scrypt');
+        expect(payload.hashing_parameters).toEqual(
+            hashingParameters || { u: 14, r: 8, p: 1, l: 64 }
+        );
+        expect(payload.authkey).toBe(
+            cryptoLibrary.generateAuthkey(
+                'target@example.com',
+                'new-password',
+                'scrypt',
+                payload.hashing_parameters
+            )
+        );
         expect(payload).not.toHaveProperty('admin_recovery_private_key');
         expect(
             cryptoLibrary.decryptSecret(
                 payload.private_key,
                 payload.private_key_nonce,
                 'new-password',
-                payload.user_sauce
+                payload.user_sauce,
+                payload.hashing_algorithm,
+                payload.hashing_parameters
             )
         ).toBe(privateKey);
         expect(
@@ -106,10 +124,17 @@ describe('user password reset', () => {
                 payload.secret_key,
                 payload.secret_key_nonce,
                 'new-password',
-                payload.user_sauce
+                payload.user_sauce,
+                payload.hashing_algorithm,
+                payload.hashing_parameters
             )
         ).toBe(secretKey);
-    });
+    };
+
+    test.each([undefined, { u: 15, r: 8, p: 1, l: 64 }])(
+        'decrypts admin recovery and rewraps using advertised parameters: %p',
+        assertResetPayload
+    );
 
     test('rejects the wrong admin recovery private key', () => {
         const userKeyPair = cryptoLibrary.generatePublicPrivateKeypair();

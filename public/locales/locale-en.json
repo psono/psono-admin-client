@@ -14,6 +14,8 @@
   "PASSWORD_INCORRECT": "Password incorrect",
   "OLD_PASSWORD_REQUIRED": "Old password required",
   "OLD_PASSWORD_INCORRECT": "Old password incorrect",
+  "UNSUPPORTED_ALGORITHM_UPDATE_CLIENT": "The server uses an unsupported hashing algorithm. Please update the admin client.",
+  "INVALID_HASHING_PARAMETER": "The server returned invalid password hashing parameters.",
   "DECRYPT": "Decrypt",
   "VERIFY_USER": "Verify user",
   "ENTER_PASSWORD_TO_DECRYPT_YOUR_DATASTORE": "Your datastore is protected by a separate password, which is necessary to access your data.",
