@@ -55,6 +55,7 @@
   "POLICY_COMPLIANCE_MIN_CLIPBOARD_CLEAR_DELAY": "Minimum permitted clipboard clear delay",
   "POLICY_COMPLIANCE_MAX_CLIPBOARD_CLEAR_DELAY": "Maximum permitted clipboard clear delay",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_PASSWORD_LENGTH": "Password generator default setting for password length",
+  "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_WORD_LENGTH": "Passphrase generator default number of words",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_LETTERS_UPPERCASE": "Password generator default setting for uppercase letters",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_LETTERS_LOWERCASE": "Password generator default setting for lowercase letters",
   "POLICY_COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_NUMBERS": "Password generator default setting for numbers",

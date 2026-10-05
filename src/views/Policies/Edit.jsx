@@ -439,6 +439,13 @@ const PolicyEdit = (props) => {
             type: 'int',
         },
         {
+            key: 'COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_WORD_LENGTH',
+            type: 'int',
+            defaultValue: 4,
+            min: 2,
+            max: 128,
+        },
+        {
             key: 'COMPLIANCE_PASSWORD_GENERATOR_DEFAULT_LETTERS_UPPERCASE',
             type: 'str',
         },
@@ -676,7 +683,8 @@ const PolicyEdit = (props) => {
                                                                               'key'
                                                                           ]
                                                                       ]
-                                                                    : '';
+                                                                    : setting.defaultValue ??
+                                                                      '';
                                                                 setConfig(
                                                                     newConfig
                                                                 );
@@ -718,6 +726,11 @@ const PolicyEdit = (props) => {
                                                             }}
                                                             inputProps={{
                                                                 type: 'number',
+                                                                inputProps: {
+                                                                    min: setting.min,
+                                                                    max: setting.max,
+                                                                    step: 1,
+                                                                },
                                                                 className:
                                                                     classes.input,
                                                                 disabled:
@@ -746,7 +759,8 @@ const PolicyEdit = (props) => {
                                                                               'key'
                                                                           ]
                                                                       ]
-                                                                    : '',
+                                                                    : setting.defaultValue ??
+                                                                      '',
                                                                 onChange: (
                                                                     event
                                                                 ) => {
