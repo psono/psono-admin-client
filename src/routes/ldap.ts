@@ -1,0 +1,19 @@
+import type { AdminRoute } from '../types/authorization';
+import LDAP from '../views/LDAP/Index';
+
+import { Business } from '@mui/icons-material';
+
+let routes: AdminRoute[] = [
+    {
+        path: '/ldap',
+        sidebarName: 'LDAP',
+        navbarName: 'LDAP',
+        icon: Business,
+        component: LDAP,
+        requiredCapability: 'identity_providers.read',
+        sidebarGroup: 'SETTINGS',
+        sidebarOrder: 40,
+    },
+];
+
+export default routes;

@@ -8,7 +8,7 @@ const paths = {
 };
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.tsx',
   output: {
     filename: 'static/js/[name].[contenthash:8].js',
     chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
@@ -36,7 +36,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -44,6 +44,10 @@ module.exports = {
             presets: [
               ['@babel/preset-env', { targets: { node: 'current' } }],
               '@babel/preset-react',
+              ['@babel/preset-typescript', {
+                allowDeclareFields: true,
+                onlyRemoveTypeImports: true,
+              }],
             ],
             plugins: [
               '@babel/plugin-proposal-class-properties',
@@ -73,7 +77,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     fallback: {
       "crypto": false,
       "buffer": require.resolve("buffer/"),

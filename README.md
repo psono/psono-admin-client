@@ -34,6 +34,17 @@ To start a server for development do the following
 
 Afterwards you can visit http://localhost:3000
 
+Application code and tests use strict TypeScript. Babel transpiles TypeScript for
+Webpack and Jest; the production build runs the type checker before bundling.
+
+## Check types
+
+    npm run typecheck
+
+For continuous type checking during development:
+
+    npm run typecheck:watch
+
 ## Build for production
 
 To build everything as standalone for production
@@ -58,6 +69,4 @@ To run unit tests
 # LICENSE
 
 Visit the [License.md](/LICENSE.md) for more details
-
-
 

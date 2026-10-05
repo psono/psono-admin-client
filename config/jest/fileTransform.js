@@ -8,14 +8,16 @@ module.exports = {
 
     if (filename.match(/\.svg$/)) {
       // Create a simple component that just renders the file basename
-      const pascalCaseName = path.basename(filename, '.svg')
+      const pascalCaseName = path
+        .basename(filename, '.svg')
         .split(/[-_\s]+/)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join('');
-      
+
       const componentName = `Svg${pascalCaseName}`;
-      
-      return `const React = require('react');
+
+      return {
+        code: `const React = require('react');
 module.exports = {
   __esModule: true,
   default: ${assetFilename},
@@ -31,10 +33,11 @@ module.exports = {
     };
   }),
 };
-`;
+`,
+      };
     }
 
-    return `module.exports = ${assetFilename};`;
+    return { code: `module.exports = ${assetFilename};` };
   },
   getCacheKey() {
     return 'fileTransform';

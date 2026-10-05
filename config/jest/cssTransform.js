@@ -2,7 +2,7 @@
 
 module.exports = {
   process() {
-    return 'module.exports = {};';
+    return { code: 'module.exports = {};' };
   },
   getCacheKey() {
     return 'cssTransform';

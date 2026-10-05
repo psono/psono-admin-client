@@ -1,0 +1,34 @@
+/**
+ * Store service
+ */
+
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { createLogger } from 'redux-logger';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+import rootReducer from '../reducers';
+import type { Middleware, AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+
+const middlewares: Middleware[] = [thunkMiddleware];
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    const loggerMiddleware = createLogger();
+    middlewares.push(loggerMiddleware);
+}
+
+const persistConfig = {
+    key: 'root',
+    blacklist: ['transient', 'notification'],
+    storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+let service = createStore(persistedReducer, applyMiddleware(...middlewares));
+export type RootState = ReturnType<typeof service.getState>;
+export type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>;
+
+export default service as typeof service & { dispatch: AppDispatch };
