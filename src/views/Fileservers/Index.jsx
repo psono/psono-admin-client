@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
-import Edit from '@material-ui/icons/Edit';
-import Storage from '@material-ui/icons/Storage';
-import Dns from '@material-ui/icons/Dns';
-import ViewModule from '@material-ui/icons/ViewModule';
+import { Grid } from '@mui/material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import Storage from '@mui/icons-material/Storage';
+import Dns from '@mui/icons-material/Dns';
+import ViewModule from '@mui/icons-material/ViewModule';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';

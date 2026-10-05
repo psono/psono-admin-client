@@ -8,7 +8,7 @@ import {
     DialogContentText,
     DialogTitle,
     TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import Button from '../CustomButtons/Button.jsx';

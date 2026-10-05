@@ -2,11 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-import { Group, Delete } from '@material-ui/icons';
+import { Group, Delete } from '@mui/icons-material';
 
 import { CustomMaterialTable } from '../../components';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
-import Add from '@material-ui/icons/Add';
+import Add from '@mui/icons-material/Add';
 
 const GroupCard = ({
     memberships,

@@ -22,7 +22,7 @@ import {
     Timeline,
     Storage,
     DesktopWindows,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 let routes = [
     {

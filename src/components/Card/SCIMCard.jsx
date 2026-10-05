@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core';
-import { Group } from '@material-ui/icons';
-import Delete from '@material-ui/icons/Delete';
-import Edit from '@material-ui/icons/Edit';
+import { withStyles } from '@mui/styles';
+import { Group } from '@mui/icons-material';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
 
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
 import { CustomMaterialTable } from '../../components';

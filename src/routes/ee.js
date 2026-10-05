@@ -1,4 +1,4 @@
-import { Policy } from '@material-ui/icons';
+import { Policy } from '@mui/icons-material';
 
 import Policies from '../views/Policies/Index';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Checkbox, Grid } from '@material-ui/core';
-import Group from '@material-ui/icons/Group';
-import Person from '@material-ui/icons/Person';
+import { Checkbox, Grid } from '@mui/material';
+import Group from '@mui/icons-material/Group';
+import Person from '@mui/icons-material/Person';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';

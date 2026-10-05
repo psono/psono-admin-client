@@ -4,10 +4,10 @@ import { Trans, useTranslation } from 'react-i18next';
 import { BarLoader } from 'react-spinners';
 import { useHistory } from 'react-router-dom';
 
-import { Grid, Checkbox, CircularProgress } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { Check } from '@material-ui/icons';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import { Grid, Checkbox, CircularProgress } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Check } from '@mui/icons-material';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
     RegularCard,
     Button,

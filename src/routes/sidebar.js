@@ -12,7 +12,7 @@ import {
     Group,
     Business,
     Security,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 let routes = [
     {

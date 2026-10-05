@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import { Checkbox, Grid } from '@material-ui/core';
+import { Checkbox, Grid } from '@mui/material';
 
 import {
     RegularCard,
@@ -12,11 +12,11 @@ import {
     SnackbarContent,
 } from '../../components/index';
 import psono_server from '../../services/api-server';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import store from '../../services/store';
 import moment from 'moment/moment';
-import { CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import cryptoLibrary from '../../services/cryptoLibrary';
 import { hasCapabilityForTenantIds } from '../../services/authorization';
 

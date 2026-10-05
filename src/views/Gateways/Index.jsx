@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
-import DesktopWindows from '@material-ui/icons/DesktopWindows';
-import Edit from '@material-ui/icons/Edit';
-import Storage from '@material-ui/icons/Storage';
+import { Grid } from '@mui/material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
+import DesktopWindows from '@mui/icons-material/DesktopWindows';
+import Edit from '@mui/icons-material/Edit';
+import Storage from '@mui/icons-material/Storage';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';

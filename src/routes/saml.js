@@ -1,7 +1,7 @@
 import SAML from '../views/SAML/Index';
 import SCIM from '../views/SCIM/Index';
 
-import { Business } from '@material-ui/icons';
+import { Business } from '@mui/icons-material';
 
 let routes = [
     {

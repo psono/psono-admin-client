@@ -144,6 +144,8 @@
   "MATERIAL_TABLE_EXPORT": "Export",
   "MATERIAL_TABLE_EXPORT_AS_CSV": "Export as CSV",
   "MATERIAL_TABLE_SEARCH": "Search",
+  "TABLE_BODY_TOOL_TIP": "Sort",
+  "TABLE_PAGINATION_DISPLAY_ROWS": "of",
   "USERNAME_OR_PASSWORD_WRONG": "Username or password is wrong",
   "INVALID_EMAIL_FORMAT": "Invalid email format",
   "INVALID_USERNAME_FORMAT": "Invalid username format",

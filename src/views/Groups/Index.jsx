@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
-import { Grid } from '@material-ui/core';
-import Edit from '@material-ui/icons/Edit';
-import Delete from '@material-ui/icons/Delete';
-import Add from '@material-ui/icons/Add';
+import { Grid } from '@mui/material';
+import Edit from '@mui/icons-material/Edit';
+import Delete from '@mui/icons-material/Delete';
+import Add from '@mui/icons-material/Add';
 
 import {
     GridItem,

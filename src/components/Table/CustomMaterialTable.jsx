@@ -1,282 +1,427 @@
-import React, { useState } from "react";
-import MaterialTable from "@material-table/core";
-import { withStyles } from "@material-ui/core";
-import { useTranslation } from "react-i18next";
-import PropTypes from "prop-types";
-import { forwardRef } from "react";
-import moment from "moment";
+import React, {
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+import MUIDataTable from 'mui-datatables';
+import { IconButton, LinearProgress, Tooltip } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
+import PropTypes from 'prop-types';
+import moment from 'moment';
 
-import AddBox from "@material-ui/icons/AddBox";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Check from "@material-ui/icons/Check";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
-import ChevronRight from "@material-ui/icons/ChevronRight";
-import Clear from "@material-ui/icons/Clear";
-import Delete from "@material-ui/icons/Delete";
-import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
-import Edit from "@material-ui/icons/Edit";
-import FilterList from "@material-ui/icons/FilterList";
-import FirstPage from "@material-ui/icons/FirstPage";
-import LastPage from "@material-ui/icons/LastPage";
-import Remove from "@material-ui/icons/Remove";
-import Save from "@material-ui/icons/Save";
-import Search from "@material-ui/icons/Search";
-import ViewColumn from "@material-ui/icons/ViewColumn";
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import createTableTheme from './theme';
+import '../../assets/fonts/opensans.css';
 
-import { tableStyle } from "../../variables/styles";
+const useStyles = makeStyles((theme) => ({
+    muiDataTable: {
+        fontFamily: theme.typography.fontFamily,
+        '& .MuiToolbar-gutters': { padding: '0 15px' },
+        '& .MuiTableCell-head, & .MuiTableCell-body': {
+            paddingLeft: '15px',
+            paddingRight: '15px',
+        },
+        '& .MuiTableCell-footer': { padding: 0 },
+        // Override the dashboard's global h6 rules for table titles.
+        '& .MuiTypography-h6': theme.typography.h6,
+    },
+}));
 
-const tableIcons = {
-	Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-	Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-	Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-	Delete: forwardRef((props, ref) => <Delete {...props} ref={ref} />),
-	DetailPanel: forwardRef((props, ref) => (
-		<ChevronRight {...props} ref={ref} />
-	)),
-	Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-	Export: forwardRef((props, ref) => <Save {...props} ref={ref} />),
-	Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-	FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-	LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-	NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-	PreviousPage: forwardRef((props, ref) => (
-		<ChevronLeft {...props} ref={ref} />
-	)),
-	ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-	Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-	SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-	ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-	ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-};
-
+// Adapt the dashboard's existing column, action and query contracts to mui-datatables.
 const CustomMaterialTable = ({
-	title,
-	columns,
-	data,
-	options,
-	actions,
-	tableRef,
+    title = '',
+    columns,
+    data,
+    options,
+    actions,
+    tableRef,
 }) => {
-	const { t } = useTranslation();
-	const [pageSize, setPageSize] = useState(5);
+    const { t } = useTranslation();
+    const classes = useStyles();
+    const remote = typeof data === 'function';
+    const [query, setQuery] = useState({
+        page: 0,
+        pageSize: options?.pageSize || 5,
+        search: '',
+        orderBy: undefined,
+        orderDirection: 'asc',
+    });
+    const [loadedData, setLoadedData] = useState([]);
+    const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(remote);
+    const [loadError, setLoadError] = useState(false);
+    const [refresh, setRefresh] = useState(0);
+    const dataSource = useRef(data);
+    dataSource.current = data;
 
-	const defaultOptions = {
-		pageSize,
-		headerStyle: {
-			fontSize: "12px",
-			color: "rgba(0, 0, 0, 0.54)",
-		},
-		searchFieldStyle: {
-			fontSize: "12px",
-			color: "rgba(0, 0, 0, 0.54)",
-		},
-	};
+    // Existing views use this handle after creating, updating or deleting rows.
+    useImperativeHandle(
+        tableRef,
+        () => ({ onQueryChange: () => setRefresh((value) => value + 1) }),
+        []
+    );
 
-	const mergedOptions = { ...defaultOptions, ...options };
+    useEffect(() => {
+        if (!remote) return undefined;
+        let active = true;
+        setLoading(true);
+        setLoadError(false);
+        Promise.resolve()
+            .then(() => dataSource.current(query))
+            .then(
+                (result) => {
+                    if (!active) return;
+                    const lastPage = Math.max(
+                        0,
+                        Math.ceil(result.totalCount / query.pageSize) - 1
+                    );
+                    if (query.page > lastPage) {
+                        setQuery((current) => ({ ...current, page: lastPage }));
+                        return;
+                    }
+                    setLoadedData(result.data);
+                    setCount(result.totalCount);
+                    setLoading(false);
+                },
+                (error) => {
+                    if (!active) return;
+                    console.error('Error loading table data:', error);
+                    setLoadedData([]);
+                    setCount(0);
+                    setLoadError(true);
+                    setLoading(false);
+                }
+            );
+        return () => {
+            active = false;
+        };
+    }, [remote, query, refresh]);
 
-	const downloaddataAsCsv = async (pageSize = 100) => {
-		let allData = [];
-		let currentPage = 0;
-		let hasMoreData = true;
+    const rows = remote ? loadedData : data || [];
+    const rowActions = (actions || []).filter(
+        (action) => action && !action.isFreeAction
+    );
+    const toolbarActions = (actions || []).filter(
+        (action) => action?.isFreeAction
+    );
+    const renderAction = (definition, row, key) => {
+        const action =
+            typeof definition === 'function' ? definition(row) : definition;
+        if (!action || action.hidden) return null;
+        const Icon = action.icon;
+        return (
+            <Tooltip key={key} title={action.tooltip || ''}>
+                <span>
+                    <IconButton
+                        size="large"
+                        aria-label={action.tooltip}
+                        disabled={action.disabled}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            action.onClick(event, row);
+                        }}
+                    >
+                        {React.isValidElement(Icon) ? Icon : <Icon />}
+                    </IconButton>
+                </span>
+            </Tooltip>
+        );
+    };
 
-		try {
-			// Handle case where data is already an array
-			if (typeof data !== "function") {
-				if (!Array.isArray(data)) {
-					throw new Error("Data must be either a function or an array");
-				}
+    // Keep original row objects for renderers, permission checks and actions.
+    const tableColumns = columns.map((column) => ({
+        name: column.field,
+        label: column.title,
+        options: {
+            sort: column.sorting !== false,
+            display: column.hidden ? 'false' : 'true',
+            ...(column.render && {
+                customBodyRenderLite: (dataIndex) =>
+                    column.render(rows[dataIndex]),
+            }),
+        },
+    }));
+    if (rowActions.length) {
+        tableColumns.push({
+            name: '__actions',
+            label: t('MATERIAL_TABLE_ACTIONS'),
+            options: {
+                sort: false,
+                filter: false,
+                viewColumns: false,
+                empty: true,
+                customHeadLabelRender: () => null,
+                customBodyRenderLite: (dataIndex) => (
+                    <div style={{ whiteSpace: 'nowrap' }}>
+                        {rowActions.map((action, index) =>
+                            renderAction(action, rows[dataIndex], index)
+                        )}
+                    </div>
+                ),
+            },
+        });
+    }
 
-				allData = data;
-				if (!allData.length) {
-					return;
-				}
+    const tableOptions = {
+        filter: false,
+        print: false,
+        download: false,
+        selectableRows: 'none',
+        rowsPerPage: query.pageSize,
+        rowsPerPageOptions: [5, 10, 20],
+        enableNestedDataAccess: '.',
+        setTableProps: () => ({ padding: 'normal', size: 'small' }),
+        textLabels: {
+            body: {
+                noMatch: loading
+                    ? t('LOADING')
+                    : loadError
+                    ? t('ERROR')
+                    : t('MATERIAL_TABLE_NO_RECORD_TO_DISPLAY'),
+                toolTip: t('TABLE_BODY_TOOL_TIP'),
+                columnHeaderTooltip: (column) =>
+                    `${t('TABLE_BODY_TOOL_TIP')} ${column.label}`,
+            },
+            pagination: {
+                next: t('MATERIAL_TABLE_NEXT_PAGE'),
+                previous: t('MATERIAL_TABLE_PREVIOUS_PAGE'),
+                rowsPerPage: t('MATERIAL_TABLE_ROWS_PER_PAGE'),
+                displayRows: t('TABLE_PAGINATION_DISPLAY_ROWS'),
+            },
+            toolbar: {
+                search: t('MATERIAL_TABLE_SEARCH'),
+                viewColumns: t('MATERIAL_TABLE_SHOW_COLUMNS'),
+            },
+            viewColumns: {
+                title: t('MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS'),
+                titleAria: t('MATERIAL_TABLE_SHOW_COLUMNS'),
+            },
+        },
+        onChangeRowsPerPage: (pageSize) =>
+            setQuery((current) => ({ ...current, pageSize, page: 0 })),
+        ...(options || {}),
+    };
+    if (remote) {
+        Object.assign(tableOptions, {
+            serverSide: true,
+            count,
+            page: query.page,
+            searchText: query.search || null,
+            sortOrder: query.orderBy
+                ? { name: query.orderBy.field, direction: query.orderDirection }
+                : {},
+            onTableChange: (action, state) => {
+                if (
+                    ![
+                        'changePage',
+                        'changeRowsPerPage',
+                        'search',
+                        'sort',
+                    ].includes(action)
+                ) {
+                    return;
+                }
+                setQuery({
+                    page: action === 'changePage' ? state.page : 0,
+                    pageSize: state.rowsPerPage,
+                    search: state.searchText || '',
+                    orderBy: columns.find(
+                        (column) => column.field === state.sortOrder?.name
+                    ),
+                    orderDirection: state.sortOrder?.direction || 'asc',
+                });
+            },
+        });
+    } else if (columns.some((column) => column.customSort)) {
+        tableOptions.customSort = (tableData, columnIndex, direction) => {
+            const column = columns[columnIndex];
+            return [...tableData].sort((a, b) => {
+                const result = column.customSort
+                    ? column.customSort(rows[a.index], rows[b.index])
+                    : String(a.data[columnIndex] ?? '').localeCompare(
+                          String(b.data[columnIndex] ?? ''),
+                          undefined,
+                          { numeric: true }
+                      );
+                return direction === 'desc' ? -result : result;
+            });
+        };
+    }
 
-				const headers = Object.keys(allData[0] || {}).sort();
-				return generateAndDownloadCsv(allData, headers);
-			}
+    const downloaddataAsCsv = async (pageSize = 100) => {
+        let allData = [];
+        let currentPage = 0;
+        let hasMoreData = true;
 
-			// Handle case where data is a function
-			const firstPageQuery = {
-				page: currentPage,
-				pageSize: pageSize,
-				search: "",
-			};
+        try {
+            // Handle case where data is already an array
+            if (typeof data !== 'function') {
+                if (!Array.isArray(data)) {
+                    throw new Error(
+                        'Data must be either a function or an array'
+                    );
+                }
 
-			const firstPageResponse = await data(firstPageQuery);
-			if (!firstPageResponse.data.length) {
-				return;
-			}
+                allData = data;
+                if (!allData.length) {
+                    return;
+                }
 
-			// Get headers from first item and sort alphabetically
-			const headers = Object.keys(firstPageResponse.data[0]).sort();
-			allData = [...firstPageResponse.data];
+                const headers = Object.keys(allData[0] || {}).sort();
+                return generateAndDownloadCsv(allData, headers);
+            }
 
-			// Continue fetching if there's more data
-			hasMoreData =
-				firstPageResponse.data.length === pageSize &&
-				allData.length < firstPageResponse.totalCount;
-			currentPage++;
+            // Handle case where data is a function
+            const firstPageQuery = {
+                page: currentPage,
+                pageSize: pageSize,
+                search: '',
+            };
 
-			// Fetch remaining pages
-			while (hasMoreData) {
-				const query = {
-					page: currentPage,
-					pageSize: pageSize,
-					search: "",
-				};
+            const firstPageResponse = await data(firstPageQuery);
+            if (!firstPageResponse.data.length) {
+                return;
+            }
 
-				const response = await data(query);
-				allData = [...allData, ...response.data];
+            // Get headers from first item and sort alphabetically
+            const headers = Object.keys(firstPageResponse.data[0]).sort();
+            allData = [...firstPageResponse.data];
 
-				hasMoreData =
-					response.data.length === pageSize &&
-					allData.length < response.totalCount;
-				currentPage++;
-			}
+            // Continue fetching if there's more data
+            hasMoreData =
+                firstPageResponse.data.length === pageSize &&
+                allData.length < firstPageResponse.totalCount;
+            currentPage++;
 
-			return generateAndDownloadCsv(allData, headers);
-		} catch (error) {
-			console.error("Error downloading data:", error);
-			throw error;
-		}
-	};
+            // Fetch remaining pages
+            while (hasMoreData) {
+                const query = {
+                    page: currentPage,
+                    pageSize: pageSize,
+                    search: '',
+                };
 
-	// Helper function to generate and download CSV
-	const generateAndDownloadCsv = (allData, headers) => {
-		// Convert data to CSV format
-		const csvContent = [
-			// Add headers
-			headers.join(","),
-			// Add data rows, handling missing fields
-			...allData.map((item) =>
-				headers
-					.map((header) => {
-						const value = item[header] ?? "";
-						// Handle special cases like arrays and objects
-						const processedValue =
-							typeof value === "object" ? JSON.stringify(value) : String(value);
-						// Escape commas, quotes, and newlines
-						const escapedValue = processedValue
-							.replace(/"/g, '""')
-							.replace(/\n/g, " ");
-						return `"${escapedValue}"`;
-					})
-					.join(","),
-			),
-		].join("\n");
+                const response = await data(query);
+                allData = [...allData, ...response.data];
 
-		// Create and download the CSV file
-		const blob = new Blob([csvContent], {
-			type: "text/csv;charset=utf-8;",
-		});
-		const link = document.createElement("a");
-		const url = URL.createObjectURL(blob);
+                hasMoreData =
+                    response.data.length === pageSize &&
+                    allData.length < response.totalCount;
+                currentPage++;
+            }
 
-		link.setAttribute("href", url);
-		link.setAttribute(
-			"download",
-			`download_${moment().format("YYYY-MM-DD_HH-mm-ss")}.csv`,
-		);
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
+            return generateAndDownloadCsv(allData, headers);
+        } catch (error) {
+            console.error('Error downloading data:', error);
+            throw error;
+        }
+    };
 
-		return {
-			totalItems: allData.length,
-			columns: headers,
-		};
-	};
+    // Helper function to generate and download CSV
+    const generateAndDownloadCsv = (allData, headers) => {
+        // Convert data to CSV format
+        const csvContent = [
+            // Add headers
+            headers.join(','),
+            // Add data rows, handling missing fields
+            ...allData.map((item) =>
+                headers
+                    .map((header) => {
+                        const value = item[header] ?? '';
+                        // Handle special cases like arrays and objects
+                        const processedValue =
+                            typeof value === 'object'
+                                ? JSON.stringify(value)
+                                : String(value);
+                        // Escape commas, quotes, and newlines
+                        const escapedValue = processedValue
+                            .replace(/"/g, '""')
+                            .replace(/\n/g, ' ');
+                        return `"${escapedValue}"`;
+                    })
+                    .join(',')
+            ),
+        ].join('\n');
 
-	if (!actions) {
-		actions = [];
-	}
+        // Create and download the CSV file
+        const blob = new Blob([csvContent], {
+            type: 'text/csv;charset=utf-8;',
+        });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
 
-	// Check if a download action already exists to prevent duplication
-	const downloadActionExists = actions.some(
-		(action) =>
-			action.icon === CloudDownloadIcon && action.isFreeAction === true,
-	);
+        link.setAttribute('href', url);
+        link.setAttribute(
+            'download',
+            `download_${moment().format('YYYY-MM-DD_HH-mm-ss')}.csv`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
 
-	if (!downloadActionExists) {
-		actions.push({
-			tooltip: t("DOWNLOAD"),
-			icon: CloudDownloadIcon,
-			isFreeAction: true,
-			onClick: (evt) => downloaddataAsCsv(),
-		});
-	}
+        return {
+            totalItems: allData.length,
+            columns: headers,
+        };
+    };
 
-	return (
-		<MaterialTable
-			onChangeRowsPerPage={setPageSize}
-			tableRef={tableRef}
-			icons={tableIcons}
-			title={title}
-			columns={columns}
-			data={data}
-			options={mergedOptions}
-			actions={actions}
-			localization={{
-				body: {
-					emptyDataSourceMessage: t("MATERIAL_TABLE_NO_RECORD_TO_DISPLAY"),
-					addTooltip: t("MATERIAL_TABLE_ADD"),
-					deleteTooltip: t("MATERIAL_TABLE_DELETE"),
-					editTooltip: t("MATERIAL_TABLE_EDIT"),
-					filterRow: {
-						filterTooltip: t("MATERIAL_TABLE_FILTER"),
-					},
-					editRow: {
-						deleteText: t("MATERIAL_TABLE_ARE_YOU_SURE_DELETE_THIS_ROW"),
-						cancelTooltip: t("MATERIAL_TABLE_CANCEL"),
-						saveTooltip: t("MATERIAL_TABLE_SAVE"),
-					},
-				},
-				grouping: {
-					placeholder: t("MATERIAL_TABLE_DRAG_HEADERS"),
-				},
-				header: {
-					actions: t("MATERIAL_TABLE_ACTIONS"),
-				},
-				pagination: {
-					labelDisplayedRows: t("MATERIAL_TABLE_FROM_TO_COUNT"),
-					labelRowsSelect: t("MATERIAL_TABLE_ROWS"),
-					labelRowsPerPage: t("MATERIAL_TABLE_ROWS_PER_PAGE"),
-					firstAriaLabel: t("MATERIAL_TABLE_FIRST_PAGE"),
-					firstTooltip: t("MATERIAL_TABLE_FIRST_PAGE"),
-					previousAriaLabel: t("MATERIAL_TABLE_PREVIOUS_PAGE"),
-					previousTooltip: t("MATERIAL_TABLE_PREVIOUS_PAGE"),
-					nextAriaLabel: t("MATERIAL_TABLE_NEXT_PAGE"),
-					nextTooltip: t("MATERIAL_TABLE_NEXT_PAGE"),
-					lastAriaLabel: t("MATERIAL_TABLE_LAST_PAGE"),
-					lastTooltip: t("MATERIAL_TABLE_LAST_PAGE"),
-				},
-				toolbar: {
-					addRemoveColumns: t("MATERIAL_TABLE_ADD_OR_REMOVE_COLUMNS"),
-					nRowsSelected: t("MATERIAL_TABLE_N_ROWS_SELECTED"),
-					showColumnsTitle: t("MATERIAL_TABLE_SHOW_COLUMNS"),
-					showColumnsAriaLabel: t("MATERIAL_TABLE_SHOW_COLUMNS"),
-					exportTitle: t("MATERIAL_TABLE_EXPORT"),
-					exportAriaLabel: t("MATERIAL_TABLE_EXPORT"),
-					exportName: t("MATERIAL_TABLE_EXPORT_AS_CSV"),
-					searchTooltip: t("MATERIAL_TABLE_SEARCH"),
-					searchPlaceholder: t("MATERIAL_TABLE_SEARCH"),
-				},
-			}}
-		/>
-	);
+    const downloadActionExists = toolbarActions.some(
+        (action) =>
+            action.icon === CloudDownloadIcon && action.isFreeAction === true
+    );
+
+    if (!downloadActionExists) {
+        toolbarActions.push({
+            tooltip: t('DOWNLOAD'),
+            icon: CloudDownloadIcon,
+            isFreeAction: true,
+            onClick: (evt) => downloaddataAsCsv(),
+        });
+    }
+    tableOptions.customToolbar = () =>
+        toolbarActions.map((action, index) =>
+            renderAction(action, undefined, index)
+        );
+
+    return (
+        <div>
+            {loading && <LinearProgress />}
+            <MUIDataTable
+                className={classes.muiDataTable}
+                title={title}
+                columns={tableColumns}
+                data={rows}
+                options={tableOptions}
+            />
+        </div>
+    );
 };
 
 CustomMaterialTable.propTypes = {
-	title: PropTypes.string,
-	columns: PropTypes.arrayOf(PropTypes.object),
-	data: PropTypes.oneOfType([
-		PropTypes.arrayOf(PropTypes.object),
-		PropTypes.func,
-	]),
-	actions: PropTypes.arrayOf(PropTypes.object),
-	options: PropTypes.object,
-	tableRef: PropTypes.object,
+    title: PropTypes.string,
+    columns: PropTypes.arrayOf(PropTypes.object),
+    data: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.object),
+        PropTypes.func,
+    ]),
+    actions: PropTypes.arrayOf(
+        PropTypes.oneOfType([PropTypes.object, PropTypes.func])
+    ),
+    options: PropTypes.object,
+    tableRef: PropTypes.object,
 };
 
-export default withStyles(tableStyle)(CustomMaterialTable);
+export default function ThemedCustomMaterialTable(props) {
+    const theme = useTheme();
+    const tableTheme = useMemo(() => createTableTheme(theme), [theme]);
+    return (
+        <ThemeProvider theme={tableTheme}>
+            <CustomMaterialTable {...props} />
+        </ThemeProvider>
+    );
+}

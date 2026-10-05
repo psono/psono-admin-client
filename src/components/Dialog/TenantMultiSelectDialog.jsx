@@ -6,8 +6,8 @@ import {
     DialogContent,
     DialogTitle,
     TextField,
-} from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+} from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'react-i18next';
 
 import Button from '../CustomButtons/Button.jsx';
@@ -108,7 +108,7 @@ const TenantMultiSelectDialog = ({ group, onSave, onAbort }) => {
                     loading={loading}
                     options={options}
                     getOptionLabel={(tenant) => tenant.name}
-                    getOptionSelected={(option, value) =>
+                    isOptionEqualToValue={(option, value) =>
                         option.id === value.id
                     }
                     value={selectedTenants}

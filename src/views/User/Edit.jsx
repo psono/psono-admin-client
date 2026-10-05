@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 import moment from 'moment';
 
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Checkbox } from '@material-ui/core';
-import { CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
+import { makeStyles } from '@mui/styles';
+import { Grid, Checkbox } from '@mui/material';
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 
 import {
     Button,

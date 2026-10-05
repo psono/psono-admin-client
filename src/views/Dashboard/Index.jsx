@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { useTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
-import { ArrowUpward, ArrowDownward, AccessTime } from '@material-ui/icons';
+import { ArrowUpward, ArrowDownward, AccessTime } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import ChartistGraph from 'react-chartist';
 

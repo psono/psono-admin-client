@@ -7,10 +7,10 @@ import {
     DialogTitle,
     Grid,
     TextField,
-} from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+} from '@mui/material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -204,7 +204,7 @@ const TenantEdit = () => {
                                     ? member.username
                                     : member.name
                             }
-                            getOptionSelected={(option, value) =>
+                            isOptionEqualToValue={(option, value) =>
                                 option.id === value.id
                             }
                             value={

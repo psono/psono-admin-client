@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
-import Edit from '@material-ui/icons/Edit';
+import { Grid } from '@mui/material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 

@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 
-import { Checkbox, Grid, TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import Autocomplete, {
-    createFilterOptions,
-} from '@material-ui/lab/Autocomplete';
+import { Checkbox, Grid, TextField } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import {
     RegularCard,
@@ -390,7 +388,7 @@ const UserCreate = (props) => {
                                                 getOptionLabel={(tenant) =>
                                                     tenant.name
                                                 }
-                                                getOptionSelected={(
+                                                isOptionEqualToValue={(
                                                     option,
                                                     value
                                                 ) => option.id === value.id}

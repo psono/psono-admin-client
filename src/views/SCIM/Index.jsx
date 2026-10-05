@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 
 import { SCIMCard, GridItem } from '../../components';
 import psono_server from '../../services/api-server';

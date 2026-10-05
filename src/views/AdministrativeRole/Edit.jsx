@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Grid, Typography } from '@material-ui/core';
+import { Checkbox, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useParams } from 'react-router-dom';
 

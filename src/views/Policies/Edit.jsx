@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Checkbox } from '@material-ui/core';
+import Input from '@mui/material/Input';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import { makeStyles } from '@mui/styles';
+import { Grid, Checkbox } from '@mui/material';
 
 import {
     Button,
@@ -20,11 +20,11 @@ import {
 } from '../../components';
 import psono_server from '../../services/api-server';
 import store from '../../services/store';
-import Person from '@material-ui/icons/Person';
-import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
-import Group from '@material-ui/icons/Group';
+import Person from '@mui/icons-material/Person';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import Group from '@mui/icons-material/Group';
 import CustomTabs from '../../components/CustomTabs/CustomTabs';
-import { CheckBox, CheckBoxOutlineBlank } from '@material-ui/icons';
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 
 const useStyles = makeStyles({
     formControl: {

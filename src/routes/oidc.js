@@ -1,6 +1,6 @@
 import OIDC from '../views/OIDC/Index';
 
-import { Business } from '@material-ui/icons';
+import { Business } from '@mui/icons-material';
 
 let routes = [
     {

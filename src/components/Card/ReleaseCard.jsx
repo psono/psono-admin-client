@@ -1,7 +1,7 @@
 import React from 'react';
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
 import { useTranslation } from 'react-i18next';
-import { Domain, DesktopWindows, DevicesOther, Web } from '@material-ui/icons';
+import { Domain, DesktopWindows, DevicesOther, Web } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
 import { CustomMaterialTable } from '../../components';

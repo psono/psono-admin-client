@@ -1,4 +1,4 @@
-import DesktopWindows from '@material-ui/icons/DesktopWindows';
+import DesktopWindows from '@mui/icons-material/DesktopWindows';
 
 import Gateways from '../views/Gateways/Index';
 

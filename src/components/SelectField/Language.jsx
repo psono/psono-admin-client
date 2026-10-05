@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { makeStyles } from '@mui/styles';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { languages } from '../../i18n';
 
@@ -69,7 +69,7 @@ const SelectFieldLanguage = (props) => {
                     onChange('');
                 }
             }}
-            getOptionSelected={(option, value) => {
+            isOptionEqualToValue={(option, value) => {
                 if (option) {
                     return option.value === value.value;
                 } else {

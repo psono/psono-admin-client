@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -19,13 +19,13 @@ import OsChartCard from '../../containers/ChartCard/os';
 import DeviceChartCard from '../../containers/ChartCard/device';
 import DeleteConfirmDialog from '../../components/Dialog/DeleteConfirmDialog';
 import CustomTabs from '../../components/CustomTabs/CustomTabs';
-import Person from '@material-ui/icons/Person';
-import Edit from '@material-ui/icons/Edit';
-import CheckBox from '@material-ui/icons/CheckBox';
-import NotInterested from '@material-ui/icons/NotInterested';
-import Delete from '@material-ui/icons/Delete';
-import Add from '@material-ui/icons/Add';
-import DevicesOther from '@material-ui/icons/DevicesOther';
+import Person from '@mui/icons-material/Person';
+import Edit from '@mui/icons-material/Edit';
+import CheckBox from '@mui/icons-material/CheckBox';
+import NotInterested from '@mui/icons-material/NotInterested';
+import Delete from '@mui/icons-material/Delete';
+import Add from '@mui/icons-material/Add';
+import DevicesOther from '@mui/icons-material/DevicesOther';
 import {
     hasAnyScopeCapability,
     hasCapabilityForTenantIds,

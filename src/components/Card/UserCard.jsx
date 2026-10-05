@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-import { DevicesOther, Group, Delete, Link } from '@material-ui/icons';
+import { DevicesOther, Group, Delete, Link } from '@mui/icons-material';
 
 import CustomTabs from '../../components/CustomTabs/CustomTabs.js';
 import { CustomMaterialTable } from '../../components';

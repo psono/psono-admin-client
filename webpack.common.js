@@ -36,14 +36,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /[\\/]@material-table[\\/]core[\\/]/,
-        resolve: {
-          alias: {
-            uuid$: path.resolve(__dirname, 'config/uuid-compat.js'),
-          },
-        },
-      },
-      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {

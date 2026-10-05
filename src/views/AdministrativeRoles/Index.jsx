@@ -11,13 +11,13 @@ import {
     MenuItem,
     Select,
     TextField,
-} from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Delete';
-import Edit from '@material-ui/icons/Edit';
-import Person from '@material-ui/icons/Person';
-import Security from '@material-ui/icons/Security';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+} from '@mui/material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import Person from '@mui/icons-material/Person';
+import Security from '@mui/icons-material/Security';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
@@ -350,7 +350,7 @@ const AdministrativeRoles = () => {
                                 loading={usersLoading}
                                 options={selectableUsers}
                                 getOptionLabel={(user) => user.username}
-                                getOptionSelected={(option, value) =>
+                                isOptionEqualToValue={(option, value) =>
                                     option.id === value.id
                                 }
                                 value={selectedUser}
@@ -418,7 +418,7 @@ const AdministrativeRoles = () => {
                                                 )
                                         )}
                                         getOptionLabel={(tenant) => tenant.name}
-                                        getOptionSelected={(option, value) =>
+                                        isOptionEqualToValue={(option, value) =>
                                             option.id === value.id
                                         }
                                         value={selectedTenants}

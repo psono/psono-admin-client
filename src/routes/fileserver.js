@@ -1,4 +1,4 @@
-import Storage from '@material-ui/icons/Storage';
+import Storage from '@mui/icons-material/Storage';
 
 import Fileservers from '../views/Fileservers/Index';
 
