@@ -5,6 +5,7 @@ import type { KnownHost } from '../types/state';
 import type { NotificationMessage } from '../types/state';
 import type { ApiRecord } from '../types/api';
 import type { HashingParameters } from '../types/api';
+import { LEGACY_HASHING_PARAMETERS } from '../services/hashing-parameters';
 import {
     SET_KNOWN_HOSTS,
     SET_USER_USERNAME,
@@ -72,7 +73,9 @@ function setUserInfo3(
     user_email: string,
     user_secret_key: string,
     serverSecretExists: boolean,
-    requirePasswordChange = false
+    requirePasswordChange = false,
+    defaultHashingAlgorithm = 'scrypt',
+    defaultHashingParameters: HashingParameters = LEGACY_HASHING_PARAMETERS
 ) {
     return (dispatch: Dispatch) => {
         dispatch({
@@ -82,6 +85,8 @@ function setUserInfo3(
             user_secret_key,
             serverSecretExists,
             requirePasswordChange,
+            defaultHashingAlgorithm,
+            defaultHashingParameters,
         });
     };
 }

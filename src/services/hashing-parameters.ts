@@ -27,3 +27,35 @@ export function getHashingSettings(
     return { hashingAlgorithm, hashingParameters: parameters };
 }
 import type { HashingParameters } from '../types/api';
+
+export function getHashingUpgrade(
+    algorithm: string,
+    current: HashingParameters,
+    defaultAlgorithm: string,
+    defaults: HashingParameters
+): HashingParameters | null {
+    if (
+        algorithm !== 'scrypt' ||
+        defaultAlgorithm !== algorithm ||
+        current.l !== 64 ||
+        defaults.l !== 64
+    ) {
+        return null;
+    }
+    const target: HashingParameters = { ...LEGACY_HASHING_PARAMETERS };
+    let stronger = false;
+    for (const name of ['u', 'r', 'p'] as const) {
+        const old = current[name];
+        const next = defaults[name];
+        if (
+            !Number.isSafeInteger(old) ||
+            !Number.isSafeInteger(next) ||
+            Math.min(old, next) < LEGACY_HASHING_PARAMETERS[name]
+        ) {
+            return null;
+        }
+        target[name] = Math.max(old, next);
+        stronger ||= target[name] > old;
+    }
+    return stronger ? target : null;
+}

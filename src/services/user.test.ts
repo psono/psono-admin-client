@@ -25,7 +25,28 @@ jest.mock('../actions/boundActionCreators', () => ({
             });
         }
     ),
-    setUserInfo3: jest.fn(),
+    setUserInfo3: jest.fn(
+        (
+            id,
+            email,
+            key,
+            serverSecretExists,
+            requirePasswordChange,
+            defaultHashingAlgorithm = 'scrypt',
+            defaultHashingParameters = legacy
+        ) => {
+            Object.assign(mockState.user, {
+                isLoggedIn: true,
+                user_id: id,
+                user_email: email,
+                user_secret_key: key,
+                serverSecretExists,
+                requirePasswordChange,
+                defaultHashingAlgorithm,
+                defaultHashingParameters,
+            });
+        }
+    ),
     setAuthorization: jest.fn(),
     setRequirePasswordChange: jest.fn(),
 }));
@@ -37,6 +58,7 @@ jest.mock('./api-server', () => ({
     activateToken: jest.fn(),
     admin_authorization: jest.fn(),
     updateUser: jest.fn(),
+    upgradeHashingParameters: jest.fn(),
 }));
 jest.mock('./host', () => ({}));
 jest.mock('./device', () => ({
@@ -174,6 +196,103 @@ describe('parameter-aware admin authentication', () => {
     afterEach(() => {
         jest.mocked(cryptoLibrary.generatePublicPrivateKeypair).mockRestore();
     });
+
+    test.each(['AUTHKEY', 'LDAP', 'SAML', 'OIDC'])(
+        'rewraps credentials asynchronously after %s login',
+        async (authentication) => {
+            const response = loginResponse(authentication, legacy, {
+                wrapped: true,
+            });
+            // Advertise a stronger profile while the actual credentials remain legacy.
+            const secret = cryptoLibrary.encryptSecret(
+                secretKey,
+                password,
+                'user-sauce',
+                'scrypt',
+                legacy
+            );
+            jest.mocked(api.activateToken).mockResolvedValue({
+                data: {
+                    default_hashing_algorithm: 'scrypt',
+                    default_hashing_parameters: stronger,
+                    user: {
+                        id: 'user-id',
+                        email: 'admin@example.com',
+                        authentication,
+                        secret_key: secret.text,
+                        secret_key_nonce: secret.nonce,
+                        require_password_change: true,
+                    },
+                },
+            });
+            jest.mocked(api.upgradeHashingParameters).mockResolvedValue({
+                data: {},
+            });
+            const info = { info: { public_key: serverPair.public_key } };
+            if (authentication === 'SAML') {
+                jest.mocked(api.samlLogin).mockResolvedValue(response);
+                await user.samlLogin('sso-token');
+            } else if (authentication === 'OIDC') {
+                jest.mocked(api.oidcLogin).mockResolvedValue(response);
+                await user.oidcLogin('sso-token');
+            } else {
+                jest.mocked(api.prelogin).mockResolvedValue({
+                    data: {
+                        hashing_algorithm: 'scrypt',
+                        hashing_parameters: legacy,
+                    },
+                });
+                jest.mocked(api.login).mockResolvedValue(response);
+                await user.login(password, info, authentication === 'LDAP');
+            }
+            await user.activateToken();
+            expect(api.updateUser).not.toHaveBeenCalled();
+            expect(api.upgradeHashingParameters).not.toHaveBeenCalled();
+            jest.advanceTimersByTime(0);
+            await Promise.resolve();
+            const args = jest.mocked(api.upgradeHashingParameters).mock
+                .calls[0];
+            expect(args.slice(8)).toEqual(['scrypt', stronger]);
+            expect(args[3]).toBe(
+                cryptoLibrary.generateAuthkey(
+                    'admin@example.com',
+                    password,
+                    'scrypt',
+                    legacy
+                )
+            );
+            expect(args[2]).toBe(
+                cryptoLibrary.generateAuthkey(
+                    'admin@example.com',
+                    password,
+                    'scrypt',
+                    stronger
+                )
+            );
+            expect(
+                cryptoLibrary.decryptSecret(
+                    args[4],
+                    args[5],
+                    password,
+                    'user-sauce',
+                    'scrypt',
+                    stronger
+                )
+            ).toBe(userPair.private_key);
+            expect(
+                cryptoLibrary.decryptSecret(
+                    args[6],
+                    args[7],
+                    password,
+                    'user-sauce',
+                    'scrypt',
+                    stronger
+                )
+            ).toBe(secretKey);
+            expect(mockState.user.hashingParameters).toEqual(stronger);
+            expect(mockState.user.requirePasswordChange).toBe(true);
+        }
+    );
 
     test.each([legacy, stronger])(
         'AUTHKEY login derives the prelogin cost and activates keys: %p',

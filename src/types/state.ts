@@ -9,6 +9,8 @@ export interface UserState {
     authentication: string;
     hashingAlgorithm: string;
     hashingParameters: HashingParameters;
+    defaultHashingAlgorithm: string;
+    defaultHashingParameters: HashingParameters;
     user_secret_key: string;
     serverSecretExists: boolean;
     user_private_key: string;

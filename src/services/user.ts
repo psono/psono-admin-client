@@ -13,7 +13,11 @@ import device from './device';
 import notification from './notification';
 import browserClient from './browser-client';
 import i18n from '../i18n';
-import { getHashingSettings } from './hashing-parameters';
+import {
+    getHashingSettings,
+    getHashingUpgrade,
+    LEGACY_HASHING_PARAMETERS,
+} from './hashing-parameters';
 import type { EncryptedValue, HashingParameters } from '../types/api';
 
 let sessionPassword = '';
@@ -332,10 +336,86 @@ function yubikey_otp_verify(yubikey_otp: string) {
 }
 
 /**
- * Handles the validation of the token with the server by solving the cryptographic puzzle
- *
- * @returns Promise<AxiosResponse<any>> Returns a promise with the the final activate token was successful or not
+ * Schedules a credential rewrap after login, retaining its password only for this task.
  */
+function scheduleHashingUpgrade(password: string, expectedToken: string) {
+    const state = store.getState();
+    const user = state.user;
+    if (!user.isLoggedIn || user.token !== expectedToken) return;
+    const current = { ...user.hashingParameters };
+    const target = getHashingUpgrade(
+        user.hashingAlgorithm,
+        current,
+        user.defaultHashingAlgorithm,
+        user.defaultHashingParameters
+    );
+    if (!target) return;
+    const isCurrentSession = () => {
+        const latestState = store.getState();
+        const latest = latestState.user;
+        return (
+            latestState.server.url === state.server.url &&
+            latest.token === expectedToken &&
+            latest.username === user.username &&
+            latest.hashingAlgorithm === user.hashingAlgorithm &&
+            (['u', 'r', 'p', 'l'] as const).every(
+                (name) => latest.hashingParameters[name] === current[name]
+            )
+        );
+    };
+    setTimeout(async () => {
+        try {
+            if (!isCurrentSession()) return;
+            const oldAuthkey = cryptoLibrary.generateAuthkey(
+                user.username,
+                password,
+                user.hashingAlgorithm,
+                current
+            );
+            const authkey = cryptoLibrary.generateAuthkey(
+                user.username,
+                password,
+                'scrypt',
+                target
+            );
+            const privateKey = cryptoLibrary.encryptSecret(
+                user.user_private_key,
+                password,
+                user.user_sauce,
+                'scrypt',
+                target
+            );
+            const secretKey = cryptoLibrary.encryptSecret(
+                user.user_secret_key,
+                password,
+                user.user_sauce,
+                'scrypt',
+                target
+            );
+            await apiClient.upgradeHashingParameters(
+                expectedToken,
+                user.session_secret_key,
+                authkey,
+                oldAuthkey,
+                privateKey.text,
+                privateKey.nonce,
+                secretKey.text,
+                secretKey.nonce,
+                'scrypt',
+                target
+            );
+            if (isCurrentSession()) {
+                action.sethashingParameters('scrypt', target);
+            }
+        } catch {
+            // A failed background upgrade can be retried on the next login.
+        } finally {
+            password = '';
+        }
+    }, 0);
+}
+
+/** Activates the verified session and schedules a background hashing upgrade. */
 function activateToken() {
     const token = store.getState().user.token;
     const sessionSecretKey = store.getState().user.session_secret_key;
@@ -344,15 +424,20 @@ function activateToken() {
     const hashingParameters = store.getState().user.hashingParameters;
 
     const onSuccess = function (activationData: any) {
+        const activeAlgorithm =
+            activationData.data.user.hashing_algorithm ?? hashingAlgorithm;
+        const activeParameters =
+            activationData.data.user.hashing_parameters ?? hashingParameters;
         // decrypt user secret key
         const userSecretKey = cryptoLibrary.decryptSecret(
             activationData.data.user.secret_key,
             activationData.data.user.secret_key_nonce,
             sessionPassword,
             userSauce,
-            hashingAlgorithm,
-            hashingParameters
+            activeAlgorithm,
+            activeParameters
         );
+        action.sethashingParameters(activeAlgorithm, activeParameters);
 
         let serverSecretExists = ['SAML', 'OIDC', 'LDAP'].includes(
             activationData.data.user.authentication
@@ -366,10 +451,16 @@ function activateToken() {
             activationData.data.user.email,
             userSecretKey,
             serverSecretExists,
-            activationData.data.user.require_password_change || false
+            activationData.data.user.require_password_change || false,
+            activationData.data.default_hashing_algorithm ?? 'scrypt',
+            {
+                ...LEGACY_HASHING_PARAMETERS,
+                ...activationData.data.default_hashing_parameters,
+            }
         );
 
         // no need anymore for the public / private session keys
+        let upgradePassword = sessionPassword;
         sessionPassword = '';
         verification = {};
 
@@ -377,11 +468,14 @@ function activateToken() {
             .admin_authorization(token, sessionSecretKey)
             .then((response) => {
                 action.setAuthorization(response.data);
+                scheduleHashingUpgrade(upgradePassword, token);
+                upgradePassword = '';
                 return {
                     response: 'success',
                 };
             })
             .catch((error) => {
+                upgradePassword = '';
                 action.logout(store.getState().user.remember_me);
                 return Promise.reject(error);
             });

@@ -26,6 +26,8 @@ function user(
         authentication: '',
         hashingAlgorithm: 'scrypt',
         hashingParameters: LEGACY_HASHING_PARAMETERS,
+        defaultHashingAlgorithm: 'scrypt',
+        defaultHashingParameters: LEGACY_HASHING_PARAMETERS,
         user_secret_key: '',
         serverSecretExists: false,
         user_private_key: '',
@@ -68,6 +70,12 @@ function user(
                 user_secret_key: action.user_secret_key,
                 serverSecretExists: action.serverSecretExists,
                 requirePasswordChange: action.requirePasswordChange,
+                defaultHashingAlgorithm:
+                    action.defaultHashingAlgorithm ?? 'scrypt',
+                defaultHashingParameters: {
+                    ...LEGACY_HASHING_PARAMETERS,
+                    ...action.defaultHashingParameters,
+                },
             });
         case SET_REQUIRE_PASSWORD_CHANGE:
             return Object.assign({}, state, {
@@ -99,6 +107,8 @@ function user(
                 authentication: '',
                 hashingAlgorithm: 'scrypt',
                 hashingParameters: LEGACY_HASHING_PARAMETERS,
+                defaultHashingAlgorithm: 'scrypt',
+                defaultHashingParameters: LEGACY_HASHING_PARAMETERS,
                 user_secret_key: '',
                 serverSecretExists: false,
                 user_private_key: '',
