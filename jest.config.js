@@ -1,14 +1,14 @@
 module.exports = {
   roots: ['<rootDir>/src'],
-  collectCoverageFrom: ['src/**/*.{js,jsx}', '!src/**/*.d.ts'],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
   setupFiles: ['react-app-polyfill/jsdom'],
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.{js,jsx}', '<rootDir>/src/**/*.{spec,test}.{js,jsx}'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.{ts,tsx}', '<rootDir>/src/**/*.{spec,test}.{ts,tsx}'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.[jt]sx?$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
+    '^(?!.*\\.([jt]sx?|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
@@ -21,6 +21,8 @@ module.exports = {
     '\\.(css|less)$': 'identity-obj-proxy',
   },
   moduleFileExtensions: [
+    'ts',
+    'tsx',
     'js',
     'jsx',
     'json',
