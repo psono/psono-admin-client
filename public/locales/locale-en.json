@@ -40,6 +40,7 @@
   "POLICY_COMPLIANCE_DISABLE_MULTIPLE_PASSWORD_DATASTORES": "Disable multiple password datastores",
   "POLICY_COMPLIANCE_DISABLE_OFFLINE_MODE": "Disable offline mode",
   "POLICY_COMPLIANCE_DISABLE_SHARES": "Disable shares",
+  "POLICY_COMPLIANCE_SERVER_SECRETS": "Server secrets (auto: SSO users only, noone: disabled, all: all users)",
   "POLICY_COMPLIANCE_DISABLE_RECOVERY_CODES": "Disable recovery codes",
   "POLICY_COMPLIANCE_DISABLE_UNMANAGED_GROUPS": "Disable unmanaged groups",
   "POLICY_COMPLIANCE_ENFORCE_2FA": "Enforce second factor authentication",

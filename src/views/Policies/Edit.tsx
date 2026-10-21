@@ -465,6 +465,12 @@ const PolicyEdit = (props: PolicyEditProps) => {
             type: 'str',
         },
         {
+            key: 'COMPLIANCE_SERVER_SECRETS',
+            type: 'select',
+            values: ['auto', 'noone', 'all'],
+            defaultValue: 'auto',
+        },
+        {
             key: 'ALLOWED_FILE_REPOSITORY_TYPES',
             type: 'multiselect',
             values: [
@@ -909,8 +915,10 @@ const PolicyEdit = (props: PolicyEditProps) => {
                                                         />
                                                     )}
 
-                                                    {setting['type'] ===
-                                                        'multiselect' && (
+                                                    {(setting['type'] ===
+                                                        'select' ||
+                                                        setting['type'] ===
+                                                            'multiselect') && (
                                                         <FormControl
                                                             className={
                                                                 classes.formControl
@@ -928,7 +936,23 @@ const PolicyEdit = (props: PolicyEditProps) => {
                                                                         'key'
                                                                     ]
                                                                 }
-                                                                multiple
+                                                                multiple={
+                                                                    setting[
+                                                                        'type'
+                                                                    ] ===
+                                                                    'multiselect'
+                                                                }
+                                                                disabled={
+                                                                    setting[
+                                                                        'type'
+                                                                    ] ===
+                                                                        'select' &&
+                                                                    !config.hasOwnProperty(
+                                                                        setting[
+                                                                            'key'
+                                                                        ]
+                                                                    )
+                                                                }
                                                                 value={
                                                                     config.hasOwnProperty(
                                                                         setting[
@@ -950,6 +974,12 @@ const PolicyEdit = (props: PolicyEditProps) => {
                                                                                   'key'
                                                                               ]
                                                                           ]
+                                                                        : setting[
+                                                                              'type'
+                                                                          ] ===
+                                                                          'select'
+                                                                        ? setting.defaultValue ??
+                                                                          ''
                                                                         : []
                                                                 }
                                                                 onChange={(

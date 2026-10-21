@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "repository": "git@gitlab.com:psono/psono-admin-client.git",
-  "author": "Sascha Pfeiffer",
+  "author": "Sascha Seitz",
   "license": "Apache-2.0",
   "homepage": "/portal",
   "dependencies": {
