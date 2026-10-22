@@ -6,7 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { BarLoader } from 'react-spinners';
 import { useHistory } from 'react-router-dom';
 
-import { Grid, Checkbox, CircularProgress } from '@mui/material';
+import { Grid, Checkbox, CircularProgress, Divider } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Check } from '@mui/icons-material';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -83,6 +83,16 @@ const useStyles = makeStyles((theme: Theme) => ({
         left: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 0,
+    },
+
+    borderSection: {
+        border: `1px solid ${theme.palette.divider}`,
+        padding: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+    },
+
+    separator: {
+        margin: '20px 15px',
     },
 }));
 
@@ -852,11 +862,19 @@ const LoginForm = (props: LoginFormProps) => {
         const server_style = adminClientConfig.allow_custom_server
             ? {}
             : { display: 'none' };
-        const regular_login_style =
+        const allowUsernamePasswordLogin =
             authentication_methods.includes('AUTHKEY') ||
-            authentication_methods.includes('LDAP')
-                ? {}
-                : { display: 'none' };
+            authentication_methods.includes('LDAP');
+        const ssoProviders = [
+            ...oidc_provider.map((provider: any) => ({
+                ...provider,
+                onClick: () => initiateOidcLogin(provider.provider_id),
+            })),
+            ...saml_provider.map((provider: any) => ({
+                ...provider,
+                onClick: () => initiateSamlLogin(provider.provider_id),
+            })),
+        ];
 
         return (
             <div className={classes.wrapper}>
@@ -870,66 +888,120 @@ const LoginForm = (props: LoginFormProps) => {
                             }}
                             autoComplete="off"
                         >
-                            <Grid container style={regular_login_style}>
-                                <GridItem xs={12} sm={12} md={12}>
-                                    <CustomInput
-                                        labelText={t('USERNAME')}
-                                        id="username"
-                                        formControlProps={{
-                                            fullWidth: true,
-                                        }}
-                                        inputProps={{
-                                            value: username,
-                                            onChange: onChangeUsername,
-                                            endAdornment:
-                                                domain &&
-                                                !username.includes('@') ? (
-                                                    <InputAdornment position="end">
-                                                        {'@' + domain}
-                                                    </InputAdornment>
-                                                ) : null,
-                                        }}
-                                    />
-                                </GridItem>
-                            </Grid>
-                            <Grid container style={regular_login_style}>
-                                <GridItem xs={12} sm={12} md={12}>
-                                    <CustomInput
-                                        labelText={t('PASSWORD')}
-                                        id="password"
-                                        formControlProps={{
-                                            fullWidth: true,
-                                        }}
-                                        inputProps={{
-                                            value: password,
-                                            onChange: onChangePassword,
-                                            type: 'password',
-                                        }}
-                                    />
-                                </GridItem>
-                            </Grid>
-                            {saml_provider.map((provider: any, i: any) => {
-                                const initiateSamlLoginHelper = () => {
-                                    return initiateSamlLogin(
-                                        provider.provider_id
-                                    );
-                                };
-                                return (
-                                    <Grid container key={i}>
+                            <div className={classes.borderSection}>
+                                {ssoProviders.map((provider, i) => (
+                                    <React.Fragment key={i}>
+                                        {i > 0 && (
+                                            <Divider
+                                                className={classes.separator}
+                                            >
+                                                {t('OR')}
+                                            </Divider>
+                                        )}
+                                        <Grid container>
+                                            <GridItem xs={12} sm={12} md={12}>
+                                                {provider.title}
+                                            </GridItem>
+                                            <GridItem
+                                                xs={12}
+                                                sm={12}
+                                                md={12}
+                                                style={{ marginTop: '8px' }}
+                                            >
+                                                <Button
+                                                    color="primary"
+                                                    onClick={provider.onClick}
+                                                    type={
+                                                        username && password
+                                                            ? 'button'
+                                                            : 'submit'
+                                                    }
+                                                    disabled={loginLoading}
+                                                >
+                                                    <span
+                                                        style={
+                                                            !loginLoading
+                                                                ? {}
+                                                                : {
+                                                                      display:
+                                                                          'none',
+                                                                  }
+                                                        }
+                                                    >
+                                                        {provider.button_name}
+                                                    </span>
+                                                    <BarLoader
+                                                        color={'#FFF'}
+                                                        height={17}
+                                                        width={37}
+                                                        loading={loginLoading}
+                                                    />
+                                                </Button>
+                                            </GridItem>
+                                        </Grid>
+                                    </React.Fragment>
+                                ))}
+                                {ssoProviders.length > 0 &&
+                                    allowUsernamePasswordLogin && (
+                                        <Divider className={classes.separator}>
+                                            {t('OR')}
+                                        </Divider>
+                                    )}
+                                {allowUsernamePasswordLogin && (
+                                    <Grid container>
+                                        <GridItem xs={12} sm={12} md={12}>
+                                            <CustomInput
+                                                labelText={t('USERNAME')}
+                                                id="username"
+                                                formControlProps={{
+                                                    fullWidth: true,
+                                                }}
+                                                inputProps={{
+                                                    value: username,
+                                                    onChange: onChangeUsername,
+                                                    endAdornment:
+                                                        domain &&
+                                                        !username.includes(
+                                                            '@'
+                                                        ) ? (
+                                                            <InputAdornment position="end">
+                                                                {'@' + domain}
+                                                            </InputAdornment>
+                                                        ) : null,
+                                                }}
+                                            />
+                                        </GridItem>
+                                        <GridItem xs={12} sm={12} md={12}>
+                                            <CustomInput
+                                                labelText={t('PASSWORD')}
+                                                id="password"
+                                                formControlProps={{
+                                                    fullWidth: true,
+                                                }}
+                                                inputProps={{
+                                                    value: password,
+                                                    onChange: onChangePassword,
+                                                    type: 'password',
+                                                }}
+                                            />
+                                        </GridItem>
                                         <GridItem
-                                            xs={4}
-                                            sm={4}
-                                            md={4}
-                                            style={{ marginTop: '20px' }}
+                                            xs={12}
+                                            sm={12}
+                                            md={12}
+                                            style={{
+                                                marginTop: '5px',
+                                                marginBottom: '5px',
+                                            }}
                                         >
-                                            {provider.title}
                                             <Button
                                                 color="primary"
-                                                onClick={
-                                                    initiateSamlLoginHelper
-                                                }
+                                                onClick={initiateLogin}
                                                 type="submit"
-                                                id="sad"
+                                                disabled={
+                                                    !(username && password) ||
+                                                    loginLoading
+                                                }
                                             >
                                                 <span
                                                     style={
@@ -941,7 +1013,7 @@ const LoginForm = (props: LoginFormProps) => {
                                                               }
                                                     }
                                                 >
-                                                    {provider.button_name}
+                                                    {t('LOGIN')}
                                                 </span>
                                                 <BarLoader
                                                     color={'#FFF'}
@@ -952,55 +1024,8 @@ const LoginForm = (props: LoginFormProps) => {
                                             </Button>
                                         </GridItem>
                                     </Grid>
-                                );
-                            })}
-                            {oidc_provider.map((provider: any, i: any) => {
-                                const initiateOidcLoginHelper = () => {
-                                    return initiateOidcLogin(
-                                        provider.provider_id
-                                    );
-                                };
-                                return (
-                                    <Grid container key={i}>
-                                        <GridItem
-                                            xs={4}
-                                            sm={4}
-                                            md={4}
-                                            style={{ marginTop: '20px' }}
-                                        >
-                                            {provider.title}
-                                            <Button
-                                                color="primary"
-                                                onClick={
-                                                    initiateOidcLoginHelper
-                                                }
-                                                type="submit"
-                                                id="sad"
-                                            >
-                                                <span
-                                                    style={
-                                                        !loginLoading
-                                                            ? {}
-                                                            : {
-                                                                  display:
-                                                                      'none',
-                                                              }
-                                                    }
-                                                >
-                                                    {provider.button_name}
-                                                </span>
-                                                <BarLoader
-                                                    color={'#FFF'}
-                                                    height={17}
-                                                    width={37}
-                                                    loading={loginLoading}
-                                                />
-                                            </Button>
-                                        </GridItem>
-                                    </Grid>
-                                );
-                            })}
-
+                                )}
+                            </div>
                             <Grid container>
                                 <GridItem xs={12} sm={12} md={12}>
                                     <Checkbox
@@ -1049,40 +1074,6 @@ const LoginForm = (props: LoginFormProps) => {
                                         }}
                                     />{' '}
                                     {t('TRUST_DEVICE')}
-                                </GridItem>
-                            </Grid>
-                            <Grid container style={regular_login_style}>
-                                <GridItem
-                                    xs={4}
-                                    sm={4}
-                                    md={4}
-                                    style={{ marginTop: '20px' }}
-                                >
-                                    <Button
-                                        color="primary"
-                                        onClick={initiateLogin}
-                                        type="submit"
-                                        disabled={
-                                            !(username && password) ||
-                                            loginLoading
-                                        }
-                                    >
-                                        <span
-                                            style={
-                                                !loginLoading
-                                                    ? {}
-                                                    : { display: 'none' }
-                                            }
-                                        >
-                                            {t('LOGIN')}
-                                        </span>
-                                        <BarLoader
-                                            color={'#FFF'}
-                                            height={17}
-                                            width={37}
-                                            loading={loginLoading}
-                                        />
-                                    </Button>
                                 </GridItem>
                             </Grid>
                             <Grid container>{errorGridItem}</Grid>
