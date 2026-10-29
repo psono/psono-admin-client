@@ -394,6 +394,11 @@ const PolicyEdit = (props: PolicyEditProps) => {
             type: 'boolean',
         },
         {
+            key: 'COMPLIANCE_ENFORCE_LOCKING',
+            type: 'boolean',
+            defaultValue: false,
+        },
+        {
             key: 'COMPLIANCE_ENFORCE_CENTRAL_SECURITY_REPORTS',
             type: 'boolean',
         },
@@ -424,6 +429,12 @@ const PolicyEdit = (props: PolicyEditProps) => {
         {
             key: 'COMPLIANCE_MAX_OFFLINE_CACHE_TIME_VALID',
             type: 'int',
+        },
+        {
+            key: 'COMPLIANCE_MAX_LOCK_TIMEOUT',
+            type: 'int',
+            defaultValue: 0,
+            min: 0,
         },
         {
             key: 'COMPLIANCE_CLIPBOARD_CLEAR_DELAY',
