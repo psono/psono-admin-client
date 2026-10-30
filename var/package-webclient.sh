@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
-cd /builds/esaqa/psono/psono-admin-client/build/
-zip -r /builds/esaqa/psono/psono-admin-client/build/psono.webclient.zip *
-cd /builds/esaqa/psono/psono-admin-client/
+set -e
+
+mkdir -p dist/webclient
+(
+    cd build
+    zip -r ../dist/webclient/psono.webclient.zip .
+)

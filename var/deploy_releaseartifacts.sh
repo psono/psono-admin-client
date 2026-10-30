@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
+set -e
+
+upload_if_exists() {
+    if [ -f "$1" ]; then
+        gcloud storage cp "$1" "$2"
+    fi
+}
+
 apt-get update && \
 apt-get install -y lsb-release curl gnupg && \
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && \
 apt-get update -y && apt-get install google-cloud-cli -y && \
 echo "$GOOGLE_APPLICATION_CREDENTIALS" > "/root/key.json" && \
-gcloud auth activate-service-account --key-file=/root/key.json && \
-curl -fL https://getcli.jfrog.io | sh && \
-./jfrog config add rt-server-1 --artifactory-url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials --interactive=false && \
-./jfrog rt dl psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip --flat && \
-gcloud storage cp webclient.zip gs://get.psono.com/psono/psono-admin-client/latest/adminclient.zip && \
-gcloud storage cp webclient.zip gs://get.psono.com/psono/psono-admin-client/$CI_COMMIT_REF_NAME/adminclient.zip && \
-gcloud storage cp sbom.json gs://get.psono.com/psono/psono-admin-client/$CI_COMMIT_REF_NAME/sbom.json && \
-gcloud storage cp sbom.json gs://get.psono.com/psono/psono-admin-client/latest/sbom.json
+gcloud auth activate-service-account --key-file=/root/key.json
+
+for target in latest "$CI_COMMIT_REF_NAME"; do
+    upload_if_exists webclient.zip "gs://get.psono.com/psono/psono-admin-client/$target/adminclient.zip"
+    upload_if_exists sbom.json "gs://get.psono.com/psono/psono-admin-client/$target/sbom.json"
+done

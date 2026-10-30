@@ -8,6 +8,8 @@
 
 # production
 /build
+/dist
+/webclient.zip
 
 # misc
 .DS_Store
