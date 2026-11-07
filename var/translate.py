@@ -28,6 +28,8 @@ LANGUAGE_CODES = [
     ("pt-br", "Portuguese Brazilian"),
     ("sv", "Swedish"),
     ("ru", "Russian"),
+    ("tr", "Turkish"),
+    ("uk", "Ukrainian"),
     ("zh-Hans", "Simplified Chinese"),
     ("zh-Hant", "Traditional Chinese"),
 ]
