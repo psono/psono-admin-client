@@ -50,6 +50,7 @@ function server(
         web_client: default_web_client,
         admin_recovery_password_reset_enabled:
             default_admin_recovery_password_reset_enabled,
+        admin_recovery_public_key_configured: undefined,
         compliance_server_secrets: default_compliance_server_secrets,
     },
     action: AnyAction
@@ -77,6 +78,7 @@ function server(
                 web_client: default_web_client,
                 admin_recovery_password_reset_enabled:
                     default_admin_recovery_password_reset_enabled,
+                admin_recovery_public_key_configured: undefined,
                 compliance_server_secrets: default_compliance_server_secrets,
             });
         case SET_SERVER_INFO:
@@ -101,6 +103,17 @@ function server(
                 admin_recovery_password_reset_enabled: Boolean(
                     action.info.admin_recovery_password_reset_enabled
                 ),
+                admin_recovery_public_key_configured:
+                    Object.prototype.hasOwnProperty.call(
+                        action.info,
+                        'admin_recovery_public_key'
+                    )
+                        ? Boolean(
+                              typeof action.info.admin_recovery_public_key ===
+                                  'string' &&
+                                  action.info.admin_recovery_public_key.trim()
+                          )
+                        : undefined,
                 compliance_server_secrets:
                     action.info.compliance_server_secrets ||
                     default_compliance_server_secrets,
