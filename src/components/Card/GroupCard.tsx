@@ -98,7 +98,7 @@ const GroupCard = ({
                             field: 'share_type',
                             title: t('TYPE'),
                             hidden: !shareRights.some(
-                                (shareRight: any) => shareRight.share_title
+                                (shareRight: any) => shareRight.share_type
                             ),
                         },
                         {
