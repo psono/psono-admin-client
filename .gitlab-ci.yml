@@ -1,20 +1,18 @@
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_TEST_IMAGE_JFROG: psono-docker.jfrog.io/psono/psono-admin-client:$CI_COMMIT_REF_NAME
-  CONTAINER_LATEST_IMAGE_JFROG: psono-docker.jfrog.io/psono/psono-admin-client:latest
 
 stages:
   - translate
+  - prepare
   - test
   - build
-  - release
   - deploy
 
 create-translations:
   except:
     - schedules
   stage: translate
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
   script:
     - apt-get update && apt-get install -y python3 python3-pip
     - pip3 install requests openai==1.55.3
@@ -22,13 +20,31 @@ create-translations:
   only:
     - master@esaqa/psono/psono-admin-client
 
+download-translations:
+  except:
+    - schedules
+  stage: prepare
+  image: python:3
+  script:
+    - pip install requests
+    - if [ "$CI_COMMIT_REF_NAME" = "develop" ]; then python3 var/upload_translations.py; fi
+    - python3 var/download_translations.py
+  artifacts:
+    name: "translations_$CI_COMMIT_REF_NAME"
+    expire_in: never
+    paths:
+      - public/locales/
+  only:
+    - branches@esaqa/psono/psono-admin-client
+    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
+
 test-unittests:
   except:
     - schedules
   stage: test
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
   script:
-    - sh ./var/build-ubuntu.sh
+    - sh ./var/prep-build.sh
     - npm test -- --coverage
 #    - apt-get install -y --no-install-recommends xvfb x11vnc fluxbox xterm
 #    - curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
@@ -42,27 +58,17 @@ test-vulnerability-scan:
   except:
     - schedules
   stage: test
-  image: psono-docker.jfrog.io/node:22.11.0-slim
+  image: node:22.11.0-slim
   script:
     - npm audit --audit-level high --json --omit=dev
   allow_failure: true
 
 
-test-upload-translations:
-  stage: test
-  image: psono-docker.jfrog.io/python:3
-  script:
-    - pip install requests
-    - python3 var/upload_translations.py
-    - python3 var/sync_translations.py
-  only:
-    - develop@esaqa/psono/psono-admin-client
-
 build-docker-image:
   except:
     - schedules
   stage: build
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
   services:
     - name: docker:25-dind
       alias: docker
@@ -71,10 +77,11 @@ build-docker-image:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375/
     DOCKER_TLS_CERTDIR: ""
+  dependencies:
+    - download-translations
   script:
     - apt-get update && apt-get install -y curl iptables libdevmapper1.02.1
-    - sh ./var/download_translations_from_artifactory.sh
-    - sh ./var/build-ubuntu.sh
+    - sh ./var/prep-build.sh
     - curl -fSL "https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/containerd.io_1.6.28-1_amd64.deb" -o containerd.deb && echo "3fcc3e44e6d507c346ae05bbaef8f4bb04dfa8da9f04af658537f7e373c91340 containerd.deb" | sha256sum -c -
     - curl -fSL "https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-buildx-plugin_0.12.1-1~ubuntu.22.04~jammy_amd64.deb" -o docker-buildx-plugin.deb && echo "3fb7cd11fd9bf7c31d81c1afa96c023519d9e6e17422192aa4d0aa2767ed0776 docker-buildx-plugin.deb" | sha256sum -c -
     - curl -fSL "https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce-cli_25.0.3-1~ubuntu.22.04~jammy_amd64.deb" -o docker-ce-cli.deb && echo "624abe860a3d9dd190c278263b3ae115d54ce1135774a79f84026a6ec6ebafd1 docker-ce-cli.deb" | sha256sum -c -
@@ -94,18 +101,14 @@ build-sbom:
   except:
     - schedules
   stage: build
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
   script:
-    - sh ./var/build-ubuntu.sh
+    - sh ./var/prep-build.sh
     - npx @cyclonedx/cyclonedx-npm > sbom.json
-    - mv /builds/esaqa/psono/psono-admin-client/sbom.json ../
-    - rm -Rf *
-    - rm -Rf .* 2> /dev/null || true
-    - mv ../sbom.json ./
   artifacts:
     name: "sbom_$CI_COMMIT_REF_NAME"
     paths:
-      - ./*
+      - sbom.json
   only:
     - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
@@ -114,96 +117,28 @@ build-webclient:
   except:
     - schedules
   stage: build
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
+  dependencies:
+    - download-translations
   script:
-    - sh ./var/download_translations_from_artifactory.sh
-    - sh ./var/build-ubuntu.sh
+    - sh ./var/prep-build.sh
     - sh ./var/package-webclient.sh
-    - >
-      if [ ! -z "$artifactory_credentials" ]; then
-        curl -fL https://getcli.jfrog.io | sh &&
-        ./jfrog config add rt-server-1 --artifactory-url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials --interactive=false &&
-        ./jfrog rt u --target-props="CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_COMMIT_SHA=$CI_COMMIT_SHA;CI_COMMIT_URL=$CI_PROJECT_URL/commit/$CI_COMMIT_SHA;CI_PROJECT_ID=$CI_PROJECT_ID;CI_PROJECT_NAME=$CI_PROJECT_NAME;CI_PROJECT_NAMESPACE=$CI_PROJECT_NAMESPACE;CI_PROJECT_URL=$CI_PROJECT_URL;CI_PIPELINE_ID=$CI_PIPELINE_ID;CI_PIPELINE_URL=$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID;CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME;CI_JOB_ID=$CI_JOB_ID;CI_JOB_URL=$CI_PROJECT_URL/-/jobs/$CI_JOB_ID;CI_JOB_NAME=$CI_JOB_NAME;CI_JOB_STAGE=$CI_JOB_STAGE;CI_RUNNER_ID=$CI_RUNNER_ID;GITLAB_USER_ID=$GITLAB_USER_ID;CI_SERVER_VERSION=$CI_SERVER_VERSION" /builds/esaqa/psono/psono-admin-client/build/psono.webclient.zip psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip &&
-        ./jfrog rt sp "psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip" "CI_COMMIT_TAG=$CI_COMMIT_TAG" || true
-      fi
-    - mv /builds/esaqa/psono/psono-admin-client/build ../
-    - rm -Rf *
-    - rm -Rf .* 2> /dev/null || true
-    - mv ../build/* ./
+    - cp dist/webclient/psono.webclient.zip webclient.zip
   artifacts:
     name: "webclient_$CI_COMMIT_REF_NAME"
     paths:
-    - ./*
+      - webclient.zip
+      - build/
   only:
     - branches@esaqa/psono/psono-admin-client
     - /^v[0-9]*\.[0-9]*\.[0-9]*$/
-
-release-artifacts:
-  except:
-    - schedules
-  stage: release
-  image: psono-docker.jfrog.io/ubuntu:22.04
-  script:
-    - apt-get update
-    - apt-get install -y curl
-    - curl -fL https://getcli.jfrog.io | sh
-    - ./jfrog config add rt-server-1 --artifactory-url=https://psono.jfrog.io/psono --user=gitlab --password=$artifactory_credentials --interactive=false
-    - ./jfrog rt cp --flat psono/admin-client/$CI_COMMIT_REF_NAME/webclient.zip psono/admin-client/latest/
-  only:
-    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
-
-
-release-docker-jfrog:
-  except:
-    - schedules
-  stage: release
-  image: psono-docker.jfrog.io/docker:25.0.3-git
-  services:
-    - name: docker:25-dind
-      alias: docker
-      command: ["--tls=false"]
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_TLS_CERTDIR: ""
-  script:
-    - apk add skopeo
-    - docker info
-    - echo $CI_JOB_TOKEN | docker login --username=gitlab-ci-token --password-stdin registry.gitlab.com
-    - echo $artifactory_credentials | docker login --username=gitlab --password-stdin psono-docker.jfrog.io
-    - skopeo copy --all docker://$CONTAINER_TEST_IMAGE docker://$CONTAINER_TEST_IMAGE_JFROG
-  only:
-    - /^v[0-9]*\.[0-9]*\.[0-9]*$/
-
-
-release-docker:
-  except:
-    - schedules
-  stage: release
-  image: psono-docker.jfrog.io/docker:25.0.3-git
-  services:
-    - name: docker:25-dind
-      alias: docker
-      command: ["--tls=false"]
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_TLS_CERTDIR: ""
-  script:
-    - apk add skopeo
-    - docker info
-    - echo $CI_JOB_TOKEN | docker login --username=gitlab-ci-token --password-stdin registry.gitlab.com
-    - echo $artifactory_credentials | docker login --username=gitlab --password-stdin psono-docker.jfrog.io
-    - skopeo copy --all docker://$CONTAINER_TEST_IMAGE docker://$CONTAINER_LATEST_IMAGE_JFROG
-  only:
-    - develop@esaqa/psono/psono-admin-client
-    - master@esaqa/psono/psono-admin-client
 
 deploy-docker:
   except:
     - schedules
   stage: deploy
-  image: psono-docker.jfrog.io/docker:25.0.3-git
+  image: docker:25.0.3-git
+  dependencies: []
   services:
     - name: docker:25-dind
       alias: docker
@@ -224,7 +159,8 @@ deploy-github:
   except:
     - schedules
   stage: deploy
-  image: psono-docker.jfrog.io/docker:25.0.3-git
+  image: docker:25.0.3-git
+  dependencies: []
   services:
     - name: docker:25-dind
       alias: docker
@@ -245,7 +181,7 @@ deploy-changelog:
   except:
     - schedules
   stage: deploy
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  image: ubuntu:22.04
   script:
     - sh ./var/deploy_changelog.sh
   environment:
@@ -258,10 +194,11 @@ deploy-changelog:
 deploy-nightlyartifacts:
   except:
     - schedules
-  stage: release
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  stage: deploy
+  image: ubuntu:22.04
   dependencies:
     - build-sbom
+    - build-webclient
   script:
     - sh ./var/deploy_nightlyartifacts.sh
   environment:
@@ -274,10 +211,11 @@ deploy-nightlyartifacts:
 deploy-releaseartifacts:
   except:
     - schedules
-  stage: release
-  image: psono-docker.jfrog.io/ubuntu:22.04
+  stage: deploy
+  image: ubuntu:22.04
   dependencies:
     - build-sbom
+    - build-webclient
   script:
     - sh ./var/deploy_releaseartifacts.sh
   environment:

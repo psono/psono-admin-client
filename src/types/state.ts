@@ -44,6 +44,7 @@ export interface ServerState {
     version: string;
     web_client: string;
     admin_recovery_password_reset_enabled: boolean;
+    admin_recovery_public_key_configured?: boolean;
     compliance_server_secrets: string;
 }
 

@@ -1,4 +1,5 @@
 import type { ApiRecord } from '../../types/api';
+import type { UserState } from '../../types/state';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -20,6 +21,82 @@ import psono_server from '../../services/api-server';
 import customInputStyle from '../../assets/jss/material-dashboard-react/customInputStyle';
 import store from '../../services/store';
 import { hasCapabilityForTenantIds } from '../../services/authorization';
+import cryptoLibrary from '../../services/cryptoLibrary';
+
+interface ShareMetadata {
+    share_title?: string;
+    share_type?: string;
+    share_title_encrypted?: string | null;
+    share_title_nonce?: string | null;
+    share_type_encrypted?: string | null;
+    share_type_nonce?: string | null;
+}
+
+interface GroupMetadata {
+    public_key: string;
+    own_group_user_secret?: {
+        secret_key: string;
+        secret_key_nonce: string;
+        secret_key_type: string;
+    } | null;
+    share_rights: ShareMetadata[];
+}
+
+export function decryptGroupShareMetadata(
+    group: GroupMetadata,
+    user: Pick<UserState, 'user_private_key' | 'user_secret_key'>
+) {
+    const rights = group.share_rights.map((right) => ({ ...right }));
+    const envelope = group.own_group_user_secret;
+    if (!envelope?.secret_key || !envelope.secret_key_nonce) {
+        return rights;
+    }
+
+    let groupSecretKey: string;
+    try {
+        if (envelope.secret_key_type === 'asymmetric') {
+            groupSecretKey = cryptoLibrary.decryptDataPublicKey(
+                envelope.secret_key,
+                envelope.secret_key_nonce,
+                group.public_key,
+                user.user_private_key
+            );
+        } else if (envelope.secret_key_type === 'symmetric') {
+            groupSecretKey = cryptoLibrary.decryptData(
+                envelope.secret_key,
+                envelope.secret_key_nonce,
+                user.user_secret_key
+            );
+        } else {
+            return rights;
+        }
+        if (!/^[0-9a-fA-F]{64}$/.test(groupSecretKey)) {
+            return rights;
+        }
+    } catch (_error) {
+        return rights;
+    }
+
+    for (const right of rights) {
+        for (const field of ['share_title', 'share_type'] as const) {
+            const ciphertext = right[`${field}_encrypted`];
+            const nonce = right[`${field}_nonce`];
+            if (!ciphertext || !nonce) {
+                continue;
+            }
+            try {
+                right[field] = cryptoLibrary.decryptData(
+                    ciphertext,
+                    nonce,
+                    groupSecretKey
+                );
+            } catch (_error) {
+                // Keep legacy plaintext (or the empty label) for this field.
+            }
+        }
+    }
+    return rights;
+}
 
 export interface GroupEditProps {
     state?: any;
@@ -78,6 +155,14 @@ const GroupEdit = (props: GroupEditProps) => {
             .then((response) => {
                 const group = response.data;
                 group.memberships = group.memberships || [];
+                group.share_rights = decryptGroupShareMetadata(
+                    {
+                        public_key: group.public_key,
+                        own_group_user_secret: group.own_group_user_secret,
+                        share_rights: group.share_rights,
+                    },
+                    store.getState().user
+                );
                 const canManageMemberships = hasCapabilityForTenantIds(
                     authorization,
                     'groups.memberships.manage',

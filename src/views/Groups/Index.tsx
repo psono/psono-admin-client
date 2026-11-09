@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
-import { Grid } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 import Edit from '@mui/icons-material/Edit';
 import Delete from '@mui/icons-material/Delete';
 import Add from '@mui/icons-material/Add';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
 
 import {
     GridItem,
@@ -30,6 +31,8 @@ const GroupsView = (props: GroupsViewProps) => {
     const [deleteGroups, setDeleteGroups] = useState<ApiRecord[]>([]);
     const [confirmSharedDelete, setConfirmSharedDelete] = useState(false);
     const [deleteError, setDeleteError] = useState('');
+    const server = store.getState().server;
+    const isEeServer = server.type === 'EE';
     const authorization = store.getState().user.authorization;
     const canForGroup = (code: any, group: any) =>
         hasCapabilityForTenantIds(authorization, code, group.tenant_ids);
@@ -71,6 +74,32 @@ const GroupsView = (props: GroupsViewProps) => {
 
     const onCreateGroup = () => {
         history.push('/groups/create/');
+    };
+
+    const renderKeyHealth = (group: ApiRecord) => {
+        if (
+            typeof group.has_active_user_key_copies !== 'boolean' ||
+            typeof group.admin_recovery_exists !== 'boolean'
+        ) {
+            return t('GROUP_KEY_HEALTH_NOT_REPORTED');
+        }
+        const hasUserCopies = group.has_active_user_key_copies;
+        const hasAdminEscrow = group.admin_recovery_exists;
+        const summary = hasUserCopies
+            ? 'GROUP_USER_KEY_COPIES_AVAILABLE'
+            : hasAdminEscrow
+            ? 'GROUP_ADMIN_RECOVERY_AVAILABLE'
+            : 'GROUP_NO_USER_COPIES_OR_ADMIN_ESCROW';
+        const details = `${t('GROUP_ACTIVE_USER_KEY_COPIES')}: ${t(
+            hasUserCopies ? 'YES' : 'NO'
+        )}; ${t('GROUP_ADMINISTRATOR_ESCROW')}: ${t(
+            hasAdminEscrow ? 'YES' : 'NO'
+        )}. ${t('GROUP_KEY_HEALTH_INFO')}`;
+        return (
+            <Tooltip title={details}>
+                <span>{t(summary)}</span>
+            </Tooltip>
+        );
     };
 
     const loadGroups = (query: any) => {
@@ -143,6 +172,17 @@ const GroupsView = (props: GroupsViewProps) => {
                             color="danger"
                         />
                     )}
+                    {isEeServer &&
+                        server.admin_recovery_public_key_configured ===
+                            false && (
+                            <SnackbarContent
+                                message={t(
+                                    'GROUP_ADMIN_RECOVERY_NOT_CONFIGURED'
+                                )}
+                                color="info"
+                                icon={InfoOutlined}
+                            />
+                        )}
                     <RegularCard
                         cardTitle={t('GROUP_MANAGEMENT')}
                         cardSubtitle={t('GROUP_LIST_INFO')}
@@ -172,6 +212,16 @@ const GroupsView = (props: GroupsViewProps) => {
                                         title: t('MANAGED'),
                                         sorting: false,
                                     },
+                                    ...(isEeServer
+                                        ? [
+                                              {
+                                                  field: 'key_health',
+                                                  title: t('GROUP_KEY_HEALTH'),
+                                                  sorting: false,
+                                                  render: renderKeyHealth,
+                                              },
+                                          ]
+                                        : []),
                                 ]}
                                 data={loadGroups}
                                 title={''}
