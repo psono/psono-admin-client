@@ -57,7 +57,8 @@ describe('user password reset', () => {
     );
 
     const assertResetPayload = (
-        hashingParameters: HashingParameters | undefined
+        hashingParameters: HashingParameters | undefined,
+        newUsername?: string
     ) => {
         const userKeyPair = cryptoLibrary.generatePublicPrivateKeypair();
         const recoveryKeyPair = cryptoLibrary.generatePublicPrivateKeypair();
@@ -89,7 +90,8 @@ describe('user password reset', () => {
             },
             'new-password',
             recoveryKeyPair.private_key,
-            false
+            false,
+            newUsername
         );
 
         expect(payload).not.toHaveProperty('source');
@@ -105,13 +107,18 @@ describe('user password reset', () => {
         );
         expect(payload.authkey).toBe(
             cryptoLibrary.generateAuthkey(
-                'target@example.com',
+                newUsername?.trim().toLowerCase() ?? 'target@example.com',
                 'new-password',
                 'scrypt',
                 payload.hashing_parameters
             )
         );
         expect(payload).not.toHaveProperty('admin_recovery_private_key');
+        if (newUsername !== undefined) {
+            expect(payload.username).toBe(newUsername.trim().toLowerCase());
+        } else {
+            expect(payload).not.toHaveProperty('username');
+        }
         expect(
             cryptoLibrary.decryptSecret(
                 payload.private_key,
@@ -136,8 +143,15 @@ describe('user password reset', () => {
 
     test.each([undefined, { u: 15, r: 8, p: 1, l: 64 }])(
         'decrypts admin recovery and rewraps using advertised parameters: %p',
-        assertResetPayload
+        (parameters) => assertResetPayload(parameters)
     );
+
+    test('rewraps the same keys and derives the login key for the new username', () => {
+        assertResetPayload(
+            { u: 14, r: 8, p: 1, l: 64 },
+            ' Renamed@EXAMPLE.COM '
+        );
+    });
 
     test('rejects the wrong admin recovery private key', () => {
         const userKeyPair = cryptoLibrary.generatePublicPrivateKeypair();

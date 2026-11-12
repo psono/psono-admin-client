@@ -20,16 +20,19 @@ import { createAdminRecoveryResetPayload } from '../../services/user-password-re
 
 export interface UserPasswordResetDialogProps {
     user?: any;
+    changeUsername?: boolean;
     onSuccess: (...args: any[]) => any;
     onAbort: (...args: any[]) => any;
 }
 const UserPasswordResetDialog = ({
     user,
+    changeUsername = false,
     onSuccess,
     onAbort,
 }: UserPasswordResetDialogProps) => {
     const { t } = useTranslation();
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState(user?.username || '');
     const [passwordRepeat, setPasswordRepeat] = useState('');
     const [adminRecoveryPrivateKey, setAdminRecoveryPrivateKey] = useState('');
     const [requirePasswordChange, setRequirePasswordChange] = useState(true);
@@ -42,6 +45,7 @@ const UserPasswordResetDialog = ({
         setPassword('');
         setPasswordRepeat('');
         setAdminRecoveryPrivateKey('');
+        setUsername('');
         setRequirePasswordChange(true);
         onAbort();
     };
@@ -69,7 +73,8 @@ const UserPasswordResetDialog = ({
                 response.data,
                 password,
                 adminRecoveryPrivateKey,
-                requirePasswordChange
+                requirePasswordChange,
+                changeUsername ? username : undefined
             );
 
             await psonoServer.admin_reset_user_password(
@@ -92,13 +97,32 @@ const UserPasswordResetDialog = ({
 
     return (
         <Dialog open fullWidth maxWidth="sm" onClose={() => close()}>
-            <DialogTitle>{t('RESET_USER_PASSWORD')}</DialogTitle>
+            <DialogTitle>
+                {t(changeUsername ? 'CHANGE_USERNAME' : 'RESET_USER_PASSWORD')}
+            </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    {t('RESET_USER_PASSWORD_DESCRIPTION')}
+                    {t(
+                        changeUsername
+                            ? 'CHANGE_USERNAME_PASSWORD_RESET_DESCRIPTION'
+                            : 'RESET_USER_PASSWORD_DESCRIPTION'
+                    )}
                 </DialogContentText>
+                {changeUsername && (
+                    <TextField
+                        autoFocus
+                        fullWidth
+                        margin="normal"
+                        label={t('USERNAME')}
+                        value={username}
+                        onChange={(event: any) =>
+                            setUsername(event.target.value)
+                        }
+                        disabled={saving}
+                    />
+                )}
                 <TextField
-                    autoFocus
+                    autoFocus={!changeUsername}
                     fullWidth
                     margin="normal"
                     label={t('NEW_PASSWORD')}
@@ -160,11 +184,12 @@ const UserPasswordResetDialog = ({
                         !password ||
                         !passwordRepeat ||
                         !passwordsMatch ||
-                        !adminRecoveryPrivateKey
+                        !adminRecoveryPrivateKey ||
+                        (changeUsername && !username.trim())
                     }
                     onClick={save}
                 >
-                    {t('RESET_PASSWORD')}
+                    {t(changeUsername ? 'CHANGE_USERNAME' : 'RESET_PASSWORD')}
                 </Button>
             </DialogActions>
         </Dialog>

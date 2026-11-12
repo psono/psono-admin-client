@@ -26,7 +26,8 @@ export function createAdminRecoveryResetPayload(
     recovery: AdminRecovery,
     password: string,
     adminRecoveryPrivateKey: string,
-    requirePasswordChange = true
+    requirePasswordChange = true,
+    newUsername?: string
 ) {
     const recoveryPrivateKey = adminRecoveryPrivateKey.trim();
     if (!KEY_PATTERN.test(recoveryPrivateKey)) {
@@ -88,9 +89,11 @@ export function createAdminRecoveryResetPayload(
         hashingParameters
     );
 
+    const username = newUsername?.trim().toLowerCase() ?? recovery.username;
     return {
+        ...(newUsername !== undefined ? { username } : {}),
         authkey: cryptoLibrary.generateAuthkey(
-            recovery.username,
+            username,
             password,
             hashingAlgorithm,
             hashingParameters
