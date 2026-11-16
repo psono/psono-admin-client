@@ -29,6 +29,7 @@ import {
 } from '../../services/authorization';
 import { apiErrorCode, isApiError } from '../../services/api-error';
 import { canResetUserPassword } from '../../services/user-password-reset';
+import { canChangeUsernameDirectly } from '../../services/user-username';
 
 const useStyles = makeStyles(customInputStyle);
 const UserEdit = () => {
@@ -37,12 +38,14 @@ const UserEdit = () => {
     const history = useHistory();
     const { user_id } = useParams<Record<string, string>>();
     const [user, setUser] = useState<ApiRecord | null>(null);
+    const [originalUsername, setOriginalUsername] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
     const [msgs, setMsgs] = useState<string[]>([]);
     const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
     const [confirmSharedDelete, setConfirmSharedDelete] = useState(false);
     const [wipeUserModalOpen, setWipeUserModalOpen] = useState(false);
     const [passwordResetModalOpen, setPasswordResetModalOpen] = useState(false);
+    const [usernameResetModalOpen, setUsernameResetModalOpen] = useState(false);
     const authorization = store.getState().user.authorization;
     const targetCapability = (code: any) =>
         Boolean(
@@ -62,6 +65,12 @@ const UserEdit = () => {
         store.getState().server,
         targetCapability('users.password.reset')
     );
+    const canEditUsername = canChangeUsernameDirectly(user, canUpdateUsers);
+    const canResetUsername =
+        canUpdateUsers &&
+        showPasswordReset &&
+        user?.authentication === 'AUTHKEY' &&
+        typeof user.server_secret_exists === 'boolean';
     // User detail memberships do not include the group's tenant_ids.
     const canReadMemberships = hasAnyScopeCapability(
         authorization,
@@ -221,6 +230,7 @@ const UserEdit = () => {
                     u.has_passphrase = u.has_passphrase ? t('YES') : t('NO');
                 });
                 setUser(user);
+                setOriginalUsername(user.username);
             });
     }
 
@@ -481,21 +491,29 @@ const UserEdit = () => {
                 user!.email,
                 user!.is_active,
                 user!.is_email_active,
-                user!.is_superuser,
+                authorization!.is_superuser ? user!.is_superuser : undefined,
                 user!.require_password_change,
-                user!.language
+                user!.language,
+                canEditUsername && user!.username !== originalUsername
+                    ? user!.username
+                    : undefined
             )
             .then(
                 (result) => {
                     setMsgs(['SAVE_SUCCESS']);
+                    loadUser();
                 },
                 (result) => {
-                    if (result.data.hasOwnProperty('email')) {
+                    if (result.data.hasOwnProperty('username')) {
+                        setErrors(result.data.username);
+                    } else if (result.data.hasOwnProperty('email')) {
                         setErrors(result.data.email);
                     } else if (result.data.hasOwnProperty('language')) {
                         setErrors(result.data.language);
                     } else if (result.data.hasOwnProperty('errors')) {
                         setErrors(result.data.errors);
+                    } else if (result.data.hasOwnProperty('non_field_errors')) {
+                        setErrors(result.data.non_field_errors);
                     } else {
                         setErrors([result.data]);
                     }
@@ -588,14 +606,22 @@ const UserEdit = () => {
                     {t('WIPE_USER_CONFIRM_DIALOG')}
                 </DeleteConfirmDialog>
             )}
-            {passwordResetModalOpen && (
+            {(passwordResetModalOpen || usernameResetModalOpen) && (
                 <UserPasswordResetDialog
                     user={user}
+                    changeUsername={usernameResetModalOpen}
                     onSuccess={() => {
-                        setMsgs(['PASSWORD_RESET_SUCCESS']);
+                        setMsgs([
+                            usernameResetModalOpen
+                                ? 'USERNAME_CHANGE_SUCCESS'
+                                : 'PASSWORD_RESET_SUCCESS',
+                        ]);
                         loadUser();
                     }}
-                    onAbort={() => setPasswordResetModalOpen(false)}
+                    onAbort={() => {
+                        setPasswordResetModalOpen(false);
+                        setUsernameResetModalOpen(false);
+                    }}
                 />
             )}
             <Grid container>
@@ -615,8 +641,13 @@ const UserEdit = () => {
                                             }}
                                             inputProps={{
                                                 value: user.username,
-                                                disabled: true,
-                                                readOnly: true,
+                                                disabled: !canEditUsername,
+                                                onChange: (event: any) =>
+                                                    setUser({
+                                                        ...user,
+                                                        username:
+                                                            event.target.value,
+                                                    }),
                                             }}
                                         />
                                     </GridItem>
@@ -634,6 +665,18 @@ const UserEdit = () => {
                                             }}
                                         />
                                     </GridItem>
+                                    {canEditUsername &&
+                                        user.username !== originalUsername &&
+                                        user.authentication === 'SAML' && (
+                                            <GridItem xs={12} sm={12} md={12}>
+                                                <SnackbarContent
+                                                    color="warning"
+                                                    message={t(
+                                                        'SAML_USERNAME_CHANGE_WARNING'
+                                                    )}
+                                                />
+                                            </GridItem>
+                                        )}
                                 </Grid>
                                 <Grid container>
                                     <GridItem xs={12} sm={12} md={12}>
@@ -804,6 +847,15 @@ const UserEdit = () => {
                                         }
                                     >
                                         {t('RESET_PASSWORD')}
+                                    </Button>
+                                )}
+                                {canResetUsername && (
+                                    <Button
+                                        onClick={() =>
+                                            setUsernameResetModalOpen(true)
+                                        }
+                                    >
+                                        {t('CHANGE_USERNAME')}
                                     </Button>
                                 )}
                                 {canDeleteUsers &&

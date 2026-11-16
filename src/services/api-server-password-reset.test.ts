@@ -58,6 +58,52 @@ describe('user password reset API', () => {
         );
     });
 
+    test('submits the new username together with reset credentials', async () => {
+        const payload = {
+            username: 'renamed@example.com',
+            authkey: 'a'.repeat(128),
+        };
+        await psonoServer.admin_reset_user_password(
+            'token',
+            null,
+            'user-id',
+            payload
+        );
+        expect(global.fetch).toHaveBeenCalledWith(
+            'https://server.example/admin/user-password-reset/user-id/',
+            expect.objectContaining({
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            })
+        );
+    });
+
+    test.each([undefined, 'renamed@example.com'])(
+        'sends an optional username in an ordinary user update: %p',
+        async (username) => {
+            await psonoServer.admin_update_user(
+                'token',
+                '',
+                'user-id',
+                undefined,
+                true,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                username
+            );
+            const body = JSON.parse(
+                jest.mocked(global.fetch).mock.calls[0][1]!.body as string
+            );
+            expect(body).toEqual({
+                user_id: 'user-id',
+                is_active: true,
+                ...(username ? { username } : {}),
+            });
+        }
+    );
+
     test('gets account parameters before login', async () => {
         await psonoServer.prelogin('admin@example.com');
         expect(global.fetch).toHaveBeenCalledWith(
